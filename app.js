@@ -1,21 +1,25 @@
 // server.js
 
-const { parse } = require('url');
+// const { parse } = require('url');
+// const dotenv = require('dotenv');
+// const next = require('next');
+import dotenv from 'dotenv';
+import { parse } from 'url';
+import next from 'next';
+import express from 'express';
 
-const next = require('next');
+dotenv.config();
 
 const dev = process.env.NODE_ENV !== 'production';
 
 const hostname = 'localhost';
 
-const port = 3000;
+const port = process.env.PORT;
 // when using middleware `hostname` and `port` must be provided below
 
 const nextApp = next({ dev, hostname, port });
 
 const handle = nextApp.getRequestHandler();
-
-const express = require('express');
 
 nextApp.prepare().then(() => {
 	const app = express();

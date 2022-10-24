@@ -1,124 +1,196 @@
-import { MegaMenu } from 'primereact/megamenu';
+import { InputText } from 'primereact/inputtext';
+import AppBar from '@mui/material/AppBar';
+import Box from '@mui/material/Box';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import Typography from '@mui/material/Typography';
+import Menu from '@mui/material/Menu';
+import MenuIcon from '@mui/icons-material/Menu';
+import Container from '@mui/material/Container';
+import Avatar from '@mui/material/Avatar';
+import Button from '@mui/material/Button';
+import Tooltip from '@mui/material/Tooltip';
+import MenuItem from '@mui/material/MenuItem';
+import AdbIcon from '@mui/icons-material/Adb';
+import { useState } from 'react';
+
+const pages = ['Products', 'Pricing', 'Blog'];
+const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 
 const Header = () => {
-	const items = [
-		{
-			label: 'Videos',
-			icon: 'pi pi-fw pi-video',
-			items: [
-				[
-					{
-						label: 'Video 1',
-						items: [{ label: 'Video 1.1' }, { label: 'Video 1.2' }],
-					},
-					{
-						label: 'Video 2',
-						items: [{ label: 'Video 2.1' }, { label: 'Video 2.2' }],
-					},
-				],
-				[
-					{
-						label: 'Video 3',
-						items: [{ label: 'Video 3.1' }, { label: 'Video 3.2' }],
-					},
-					{
-						label: 'Video 4',
-						items: [{ label: 'Video 4.1' }, { label: 'Video 4.2' }],
-					},
-				],
-			],
-		},
-		{
-			label: 'Users',
-			icon: 'pi pi-fw pi-users',
-			items: [
-				[
-					{
-						label: 'User 1',
-						items: [{ label: 'User 1.1' }, { label: 'User 1.2' }],
-					},
-					{
-						label: 'User 2',
-						items: [{ label: 'User 2.1' }, { label: 'User 2.2' }],
-					},
-				],
-				[
-					{
-						label: 'User 3',
-						items: [{ label: 'User 3.1' }, { label: 'User 3.2' }],
-					},
-					{
-						label: 'User 4',
-						items: [{ label: 'User 4.1' }, { label: 'User 4.2' }],
-					},
-				],
-				[
-					{
-						label: 'User 5',
-						items: [{ label: 'User 5.1' }, { label: 'User 5.2' }],
-					},
-					{
-						label: 'User 6',
-						items: [{ label: 'User 6.1' }, { label: 'User 6.2' }],
-					},
-				],
-			],
-		},
-		{
-			label: 'Events',
-			icon: 'pi pi-fw pi-calendar',
-			items: [
-				[
-					{
-						label: 'Event 1',
-						items: [{ label: 'Event 1.1' }, { label: 'Event 1.2' }],
-					},
-					{
-						label: 'Event 2',
-						items: [{ label: 'Event 2.1' }, { label: 'Event 2.2' }],
-					},
-				],
-				[
-					{
-						label: 'Event 3',
-						items: [{ label: 'Event 3.1' }, { label: 'Event 3.2' }],
-					},
-					{
-						label: 'Event 4',
-						items: [{ label: 'Event 4.1' }, { label: 'Event 4.2' }],
-					},
-				],
-			],
-		},
-		{
-			label: 'Settings',
-			icon: 'pi pi-fw pi-cog',
-			items: [
-				[
-					{
-						label: 'Setting 1',
-						items: [{ label: 'Setting 1.1' }, { label: 'Setting 1.2' }],
-					},
-					{
-						label: 'Setting 2',
-						items: [{ label: 'Setting 2.1' }, { label: 'Setting 2.2' }],
-					},
-					{
-						label: 'Setting 3',
-						items: [{ label: 'Setting 3.1' }, { label: 'Setting 3.2' }],
-					},
-				],
-				[
-					{
-						label: 'Technology 4',
-						items: [{ label: 'Setting 4.1' }, { label: 'Setting 4.2' }],
-					},
-				],
-			],
-		},
-	];
+	const [anchorElNav, setAnchorElNav] = useState();
+	const [anchorElUser, setAnchorElUser] = useState();
 
-	return <MegaMenu model={items} />;
+	const handleOpenNavMenu = (event) => {
+		setAnchorElNav(event.currentTarget);
+	};
+	const handleOpenUserMenu = (event) => {
+		setAnchorElUser(event.currentTarget);
+	};
+
+	const handleCloseNavMenu = () => {
+		setAnchorElNav(null);
+	};
+
+	const handleCloseUserMenu = () => {
+		setAnchorElUser(null);
+	};
+
+	return (
+		<div className='row'>
+			<nav className='navbar navbar-expand-lg bg-light'>
+				<div className='container-fluid '>
+					<div className='row lign-items-center'>
+						<div className='col-12 col-lg-3 col-xl-2 '>
+							<a className='navbar-brand ' href='#'>
+								Navbar
+							</a>
+						</div>
+
+						<div className='col col-md '>
+							<span className='p-input-icon-right'>
+								<i className='pi pi-spin pi-spinner' />
+								<InputText />
+							</span>
+						</div>
+
+						<div className=' col-auto' id='navbarSupportedContent' tabIndex='-1' ria-labelledby='offcanvasExampleLabel' style={{ flexShrink: 0 }}>
+							<ul className='navbar-nav me-auto mb-2 mb-lg-0'>
+								<li className='nav-item'>
+									<a className='nav-link active' aria-current='page' href='#'>
+										Hotline
+									</a>
+								</li>
+								<li className='nav-item'>
+									<a className='nav-link' href='#'>
+										Giỏ hàng
+									</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</nav>
+
+			<AppBar position='static'>
+				<Container maxWidth='xl'>
+					<Toolbar disableGutters>
+						<AdbIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+						<Typography
+							variant='h6'
+							noWrap
+							component='a'
+							href='/'
+							sx={{
+								mr: 2,
+								display: { xs: 'none', md: 'flex' },
+								fontFamily: 'monospace',
+								fontWeight: 700,
+								letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>
+							LOGO
+						</Typography>
+
+						<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
+							<IconButton
+								size='large'
+								aria-label='account of current user'
+								aria-controls='menu-appbar'
+								aria-haspopup='true'
+								onClick={handleOpenNavMenu}
+								color='inherit'
+							>
+								<MenuIcon />
+							</IconButton>
+							<Menu
+								id='menu-appbar'
+								anchorEl={anchorElNav}
+								anchorOrigin={{
+									vertical: 'bottom',
+									horizontal: 'left',
+								}}
+								keepMounted
+								transformOrigin={{
+									vertical: 'top',
+									horizontal: 'left',
+								}}
+								open={Boolean(anchorElNav)}
+								onClose={handleCloseNavMenu}
+								sx={{
+									display: { xs: 'block', md: 'none' },
+								}}
+							>
+								{pages.map((page) => (
+									<MenuItem key={page} onClick={handleCloseNavMenu}>
+										<Typography textAlign='center'>{page}</Typography>
+									</MenuItem>
+								))}
+							</Menu>
+						</Box>
+						<AdbIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+						<Typography
+							variant='h5'
+							noWrap
+							component='a'
+							href=''
+							sx={{
+								mr: 2,
+								display: { xs: 'flex', md: 'none' },
+								flexGrow: 1,
+								fontFamily: 'monospace',
+								fontWeight: 700,
+								letterSpacing: '.3rem',
+								color: 'inherit',
+								textDecoration: 'none',
+							}}
+						>
+							LOGO
+						</Typography>
+						<Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
+							{pages.map((page) => (
+								<Button key={page} onClick={handleCloseNavMenu} sx={{ my: 2, color: 'white', display: 'block' }}>
+									{page}
+								</Button>
+							))}
+						</Box>
+
+						<Box sx={{ flexGrow: 0 }}>
+							<Tooltip title='Open settings'>
+								<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+									<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
+								</IconButton>
+							</Tooltip>
+							<Menu
+								sx={{ mt: '45px' }}
+								id='menu-appbar'
+								anchorEl={anchorElUser}
+								anchorOrigin={{
+									vertical: 'top',
+									horizontal: 'right',
+								}}
+								keepMounted
+								transformOrigin={{
+									vertical: 'top',
+									horizontal: 'right',
+								}}
+								open={Boolean(anchorElUser)}
+								onClose={handleCloseUserMenu}
+							>
+								{settings.map((setting) => (
+									<MenuItem key={setting} onClick={handleCloseUserMenu}>
+										<Typography textAlign='center'>{setting}</Typography>
+									</MenuItem>
+								))}
+							</Menu>
+						</Box>
+					</Toolbar>
+				</Container>
+			</AppBar>
+		</div>
+	);
 };
 
 export default Header;

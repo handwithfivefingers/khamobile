@@ -1,6 +1,5 @@
 import Document, { Head, Main, NextScript, Html } from 'next/document';
 import React from 'react';
-import Header from '../component/UI/Header';
 
 export default class CustomDocument extends Document {
 	static async getInitialProps(ctx) {
@@ -16,10 +15,7 @@ export default class CustomDocument extends Document {
 					<link rel='shortcut icon' href='/' />
 				</Head>
 				<body>
-					<div className='wrapper'>
-						<Header />
-						<Main />
-					</div>
+					<Main />
 					<NextScript />
 				</body>
 			</Html>

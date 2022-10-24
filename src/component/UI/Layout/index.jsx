@@ -29,10 +29,11 @@ const CommonLayout = ({ children }) => {
 				<meta name='msapplication-wide310x150logo' content='/theme/frontend/images/favicon/mstile-310x150.png' />
 				<meta name='msapplication-square310x310logo' content='/theme/frontend/images/favicon/mstile-310x310.png' />
 			</Head>
-			<Header />
 
-			{children}
-
+			<div className='container-fluid'>
+				<Header />
+			</div>
+			<div className='container'>{children}</div>
 			<Footer />
 		</>
 	);
