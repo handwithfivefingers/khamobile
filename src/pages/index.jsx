@@ -1,13 +1,11 @@
 import Head from 'next/head';
-import Header from '../component/UI/Header';
-import CommonLayout from '../component/UI/Layout';
-import { Galleria } from 'primereact/galleria';
+import CommonLayout from 'component/UI/Layout';
 import { useEffect, useState } from 'react';
 
-import Homebanner_1 from '../asset/img/dai-hoi-thu-cu-doi-moi5.webp';
-import Homebanner_2 from '../asset/img/iphone-13-pro-max.webp';
-import Homebanner_3 from '../asset/img/iphone-14-san-hang.webp';
-import Homebanner_4 from '../asset/img/macbook-m2-gia-soc.jpg';
+import Homebanner_1 from 'assets/img/dai-hoi-thu-cu-doi-moi5.webp';
+import Homebanner_2 from 'assets/img/iphone-13-pro-max.webp';
+import Homebanner_3 from 'assets/img/iphone-14-san-hang.webp';
+import Homebanner_4 from 'assets/img/macbook-m2-gia-soc.jpg';
 
 const Home = () => {
 	const [images, setImages] = useState([
@@ -36,39 +34,6 @@ const Home = () => {
 			thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
 		},
 	]);
-	const responsiveOptions = [
-		{
-			breakpoint: '1024px',
-			numVisible: 4,
-		},
-		{
-			breakpoint: '768px',
-			numVisible: 2,
-		},
-		{
-			breakpoint: '560px',
-			numVisible: 1,
-		},
-	];
-
-	const itemTemplate = (item) => {
-		return (
-			<img
-				src={`${item?.itemImageSrc}`}
-				onError={(e) => (e.target.src = 'https://www.primefaces.org/wp-content/uploads/2020/05/placeholder.png')}
-				// alt={item.alt}
-				style={{ width: '100%' }}
-			/>
-		);
-	};
-
-	const thumbnailTemplate = (item) => {
-		return (
-			<b className='owl_home_caption__item' style={{ color: '#fff', fontSize: 12 }}>
-				{item.thumbnailImageSrc}
-			</b>
-		);
-	};
 
 	return (
 		<>
@@ -134,6 +99,8 @@ const Home = () => {
 		</>
 	);
 };
+
+
 
 Home.Layout = CommonLayout;
 

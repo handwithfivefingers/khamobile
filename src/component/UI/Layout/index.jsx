@@ -1,8 +1,20 @@
 import Head from 'next/head';
-import Footer from '../Footer';
-import Header from '../Header';
+import { useState } from 'react';
+import PageFooter from '../Footer';
+import CustomNavbar from '../Header';
+import { Container, Header, Content, Footer, Navbar, Nav } from 'rsuite';
+import { useRouter } from 'next/router';
 
 const CommonLayout = ({ children }) => {
+	const [activeKey, setActiveKey] = useState(null);
+
+	const router = useRouter();
+	const handleSelect = (e) => {
+		console.log(e);
+		if (e == 1) router.push('/');
+
+		if (e == 7) router.push('/admin');
+	};
 	return (
 		<>
 			<Head>
@@ -30,11 +42,17 @@ const CommonLayout = ({ children }) => {
 				<meta name='msapplication-square310x310logo' content='/theme/frontend/images/favicon/mstile-310x310.png' />
 			</Head>
 
-			<div className='container-fluid'>
-				<Header />
+			<div className='show-fake-browser navbar-page' style={{ minHeight: '100vh' }}>
+				<Container>
+					<CustomNavbar appearance='inverse' activeKey={activeKey} onSelect={handleSelect} />
+					<Content>
+						<div className='container'>{children}</div>
+					</Content>
+					<Footer>
+						<PageFooter />
+					</Footer>
+				</Container>
 			</div>
-			<div className='container'>{children}</div>
-			<Footer />
 		</>
 	);
 };

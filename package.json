@@ -4,6 +4,7 @@
 	"type": "module",
 	"scripts": {
 		"dev": "concurrently  \"nodemon --trace-deprecation app.js\" \"npm run storybook\"",
+		"dev-only": "concurrently  \"nodemon --trace-deprecation app.js\"",
 		"dev-next": "next dev",
 		"build": "next build",
 		"start": "next start",
@@ -12,11 +13,6 @@
 	},
 	"dependencies": {
 		"@craftjs/core": "^0.2.0-beta.8",
-		"@emotion/react": "^11.10.4",
-		"@emotion/styled": "^11.10.4",
-		"@fontsource/roboto": "^4.5.8",
-		"@mui/icons-material": "^5.10.9",
-		"@mui/material": "^5.10.10",
 		"bootstrap": "^5.2.2",
 		"clsx": "^1.1.1",
 		"dotenv": "^16.0.3",
@@ -27,7 +23,12 @@
 		"react-dom": "17.0.2",
 		"redux": "^4.2.0",
 		"redux-thunk": "^2.4.1",
-		"sass": "^1.55.0"
+		"rsuite": "^5.21.0",
+		"sass": "^1.55.0",
+		"@rsuite/icons": "^1.0.2",
+		"apexcharts": "^3.35.4",
+		"react-icons": "^4.4.0",
+		"react-apexcharts": "^1.4.0"
 	},
 	"devDependencies": {
 		"@babel/core": "^7.19.3",
@@ -54,6 +55,7 @@
 		"nodemailer": "^6.7.2",
 		"nodemon": "^2.0.15",
 		"shortid": "^2.2.16",
-		"slugify": "^1.6.4"
+		"slugify": "^1.6.4",
+		"typescript": "4.8.4"
 	}
 }
