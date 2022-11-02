@@ -1,0 +1,35 @@
+.card {
+	border-color: transparent;
+	// box-shadow: var(--main-box-shadow);
+	box-shadow: var(--main-box-shadow);
+	transition: var(--main-transition);
+	cursor: pointer;
+	&:hover {
+		box-shadow: rgb(45 45 45 / 5%) 0 2px 2px, rgb(49 49 49 / 5%) 0 4px 4px, rgb(42 42 42 / 5%) 0 8px 8px, rgb(32 32 32 / 5%) 0 16px 16px,
+	}
+
+	.cardImg {
+		position: relative;
+		top: 0;
+		background: #fff;
+		border-top-left-radius: 4px;
+		border-top-right-radius: 4px;
+		&::before {
+			content: '';
+			display: block;
+			padding-top: 75%;
+		}
+		.img {
+			height: 100% !important;
+			width: 100% !important;
+			object-position: center;
+			object-fit: contain;
+			border: 0;
+			position: absolute;
+			top: 0;
+			left: 0;
+			border-top-left-radius: 4px;
+			border-top-right-radius: 4px;
+		}
+	}
+}

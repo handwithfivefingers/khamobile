@@ -1,0 +1,7 @@
+.slideItem {
+	height: 200px;
+	// width: auto;
+	width: calc(100% - 20px) !important;
+	margin: 0 10px;
+	background-color: #eee;
+}

@@ -1,0 +1,16 @@
+.slick-prev:before,
+.slick-next:before {
+	color: #333;
+}
+
+.slick-track {
+	&:before {
+		padding: 10px;
+	}
+	&::after {
+		padding: 10px;
+	}
+	.slick-slide {
+		padding: 0 10px;
+	}
+}
