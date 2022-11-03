@@ -4,7 +4,7 @@ import PageFooter from '../Footer';
 import CustomNavbar from '../Header';
 import { Container, Header, Content, Footer, Navbar, Nav } from 'rsuite';
 import { useRouter } from 'next/router';
-
+import styles from './styles.module.scss';
 const CommonLayout = ({ children }) => {
 	const [activeKey, setActiveKey] = useState(null);
 
@@ -42,12 +42,10 @@ const CommonLayout = ({ children }) => {
 				<meta name='msapplication-square310x310logo' content='/theme/frontend/images/favicon/mstile-310x310.png' />
 			</Head>
 
-			<div className='show-fake-browser navbar-page' style={{ minHeight: '100vh' }}>
+			<div className={styles.wrapper} style={{ minHeight: '100vh' }}>
 				<Container>
 					<CustomNavbar appearance='inverse' activeKey={activeKey} onSelect={handleSelect} />
-					<Content>
-						<div className='container'>{children}</div>
-					</Content>
+					<Content>{children}</Content>
 					<Footer>
 						<PageFooter />
 					</Footer>

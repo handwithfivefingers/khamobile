@@ -11,6 +11,7 @@ import Heading from 'component/UI/Content/Heading';
 
 import CustomSlider from 'component/UI/Content/Slider';
 import { Panel } from 'rsuite';
+import Catalog from 'component/UI/Content/Catalog';
 
 const Home = () => {
 	return (
@@ -19,115 +20,135 @@ const Home = () => {
 				<title>Kha Mobile</title>
 			</Head>
 
-			<div className='row gx-2 gy-2'>
-				<div className='col-8'>
-					<SelfCarousel />
-				</div>
+			<section className='container-fluid' style={{ background: '#fff' }}>
+				<div className='row gx-2 gy-2'>
+					<div className='col-8'>
+						<SelfCarousel />
+					</div>
 
-				<div className='col-4'>
-					<div className='row gy-2'>
-						<div className='col-12'>
-							<img src={Homebanner_2.src} className='d-block w-100' alt='...' />
-						</div>
-						<div className='col-12'>
-							<img src={Homebanner_2.src} className='d-block w-100' alt='...' />
+					<div className='col-4'>
+						<div className='row gy-2'>
+							<div className='col-12'>
+								<img src={Homebanner_2.src} className='d-block w-100' alt='...' />
+							</div>
+							<div className='col-12'>
+								<img src={Homebanner_2.src} className='d-block w-100' alt='...' />
+							</div>
 						</div>
 					</div>
 				</div>
+			</section>
 
-				<div className='col-12'>
-					<Heading>IPHONE 14 SERIES - SẴN HÀNG GIAO NGAY!</Heading>
-				</div>
-				<div className='col-12'>
-					<div className='row gx-5 gy-5'>
-						<CustomSlider type='muti'>
-							{/* <div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div> */}
-								<Card />
-								<Card />
-								<Card />
-								<Card />
-								<Card />
-								<Card />
-								<Card />
+			<section className='container-fluid'>
+				<div className='row'>
+					<div className='col-12'>
+						<div className='container'>
+							<div className='row'>
+								<div className='col-12'>
+									<Heading type='h3' center>
+										IPHONE 14 SERIES - SẴN HÀNG GIAO NGAY!
+									</Heading>
+								</div>
 
-						</CustomSlider>
-					</div>
-				</div>
-
-				<div className='col-12'>
-					<Heading>Khách hàng của Kha Mobile</Heading>
-				</div>
-
-				<div className='col-12'>
-					<CustomSlider type='muti' />
-				</div>
-
-				<div className='col-12'>
-					<Heading>THÁNG TRI ÂN (Áp dụng từ ngày 01-20/11)</Heading>
-				</div>
-
-				<div className='col-12'>
-					<div className='row gx-2 gy-2'>
-						<div className='col-3'>
-							<Card />
-						</div>
-						<div className='col-3'>
-							<Card />
-						</div>
-						<div className='col-3'>
-							<Card />
-						</div>
-						<div className='col-3'>
-							<Card />
-						</div>
-						<div className='col-3'>
-							<Card />
-						</div>
-						<div className='col-3'>
-							<Card />
-						</div>
-						<div className='col-3'>
-							<Card />
+								<div className='col-12'>
+									<div className='row gx-5 gy-5'>
+										<CustomSlider type='muti'>
+											<Card />
+											<Card />
+											<Card />
+											<Card />
+											<Card />
+											<Card />
+											<Card />
+										</CustomSlider>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
+			</section>
 
-				<div className='col-12'>
-					<div className='row gx-2 gy-2'>
-						<div className='col-4'>
-							<Panel bordered>Baner 1</Panel>
-						</div>
-						<div className='col-4'>
-							<Panel bordered>Baner 2</Panel>
-						</div>
-						<div className='col-4'>
-							<Panel bordered>Baner 3</Panel>
+			<section className='container'>
+				<div className='row'>
+					<div className='col-12'>
+						<Heading type='h3' center>
+							Khách hàng của Kha Mobile
+						</Heading>
+					</div>
+
+					<div className='col-12'>
+						<CustomSlider type='muti' />
+					</div>
+				</div>
+			</section>
+
+			<section className='container'>
+				<div className='row'>
+					<div className='col-12'>
+						<Heading>THÁNG TRI ÂN (Áp dụng từ ngày 01-20/11)</Heading>
+					</div>
+
+					<div className='col-12'>
+						<div className='row gx-2 gy-2'>
+							<div className='col-3'>
+								<Card />
+							</div>
+							<div className='col-3'>
+								<Card />
+							</div>
+							<div className='col-3'>
+								<Card />
+							</div>
+							<div className='col-3'>
+								<Card />
+							</div>
+							<div className='col-3'>
+								<Card />
+							</div>
+							<div className='col-3'>
+								<Card />
+							</div>
+							<div className='col-3'>
+								<Card />
+							</div>
 						</div>
 					</div>
 				</div>
+			</section>
 
-				{/* Dynamic category block */}
-			</div>
+			<section className='container-fluid'>
+				<div className='row'>
+					<div className='col-12'>
+						<div className='row gx-2 gy-2'>
+							<div className='col-4'>
+								<Panel bordered>Baner 1</Panel>
+							</div>
+							<div className='col-4'>
+								<Panel bordered>Baner 2</Panel>
+							</div>
+							<div className='col-4'>
+								<Panel bordered>Baner 3</Panel>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section className='container'>
+				<div className='row'>
+					<div className='col-12'>
+						<Heading type='h3' center>
+							Danh mục mới nhatasF
+						</Heading>
+					</div>
+
+					<div className='col-12'>
+						<Catalog />
+					</div>
+				</div>
+			</section>
+			{/* Dynamic category block */}
 		</>
 	);
 };
