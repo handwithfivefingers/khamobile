@@ -1,88 +1,74 @@
-const env = require('dotenv')
+import express from 'express';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
+import path from 'path';
+import WebRouter from '#route/web';
+import AdminRouter from '#route/admin';
+import env from 'dotenv';
+import { TrackingApi } from '#middleware';
 
-const express = require('express')
+import multiparty from 'connect-multiparty';
+const multiMiddleware = multiparty();
+env.config();
 
-// const app = express()
+const { NODE_ENV } = process.env;
 
-const cors = require('cors')
-
-const cookieParser = require('cookie-parser')
-
-const path = require('path')
-
-const AppRouter = require('@route')
-
-const GitRouter = require('@route/v1/git')
-
-const { TrackingApi } = require('@middleware')
-
-env.config()
-
-const { NODE_ENV } = process.env
-
-const URL_PERMISSIONS = [
-  'http://localhost:3000',
-  'http://localhost:3001',
-  'http://localhost:3002',
-  'http://localhost:3003',
-  'https://app.thanhlapcongtyonline.vn',
-  'http://10.0.14.235:3003',
-]
+const URL_PERMISSIONS = ['http://localhost:3000', 'http://localhost:3001', 'http://localhost:3002', 'http://localhost:3003', 'http://10.0.14.235:3003'];
 
 const corsOptions = {
-  credentials: true,
-  origin: URL_PERMISSIONS,
+	credentials: true,
+	origin: URL_PERMISSIONS,
+};
+
+const __dirname = path.resolve('');
+
+global.__basedir = __dirname;
+
+class ConfigApp {
+	constructor(app) {
+		this.app = app;
+		console.log('Routed Loaded');
+	}
+
+	onInit = (handler) => {
+		this.onLoadConfig().onLoadUploadConfigs().onLoadRouter(handler).onHandlerError();
+	};
+
+	onLoadConfig = () => {
+		// this.app.use(multiMiddleware);
+		this.app.use(express.json());
+		this.app.use(cookieParser());
+		return this;
+	};
+
+	onLoadUploadConfigs = () => {
+		this.app.use('/public', cors(corsOptions), express.static(path.join(global.__basedir, 'uploads')));
+		return this;
+	};
+
+	onLoadRouter = (handler) => {
+		console.log('WebRouter', handler);
+
+		this.app.use('/api', cors(corsOptions), TrackingApi, WebRouter);
+
+		this.app.use('/api/admin', cors(corsOptions), TrackingApi, AdminRouter);
+
+		this.app.get('/a', (req, res) => this.app.render(req, res, '/a', req.query));
+
+		this.app.all('*', (req, res) => handler(req, res));
+
+		return this;
+	};
+
+	onHandlerError = () => {
+		this.app.use((err, req, res, next) => {
+			res.status(500).send({
+				error: err.stack,
+				message: 'Internal Server Error',
+			});
+		});
+		return this;
+	};
 }
 
-module.exports = class ConfigApp {
-  constructor(app) {
-    this.app = app
-    console.log('Routed Loaded')
-  }
-
-  onInit = () => {
-    this.onLoadConfig().onLoadUploadConfigs().onLoadRouter().onLoadSourceHTML().onHandlerError()
-  }
-
-  onLoadConfig = () => {
-    this.app.use(express.json())
-    this.app.use(cookieParser())
-    return this
-  }
-
-  onLoadUploadConfigs = () => {
-    this.app.use('/public', cors(corsOptions), express.static(path.join(global.__basedir, 'uploads')))
-
-    this.app.use('/robots.txt', (req, res) => {
-      let robotFile = path.join(global.__basedir, 'uploads', 'robots.txt')
-      res.sendFile(robotFile)
-    })
-    return this
-  }
-  onLoadRouter = () => {
-    this.app.use('/git', GitRouter)
-    this.app.use('/api', cors(corsOptions), TrackingApi, AppRouter)
-    return this
-  }
-
-  onLoadSourceHTML = () => {
-    this.app.use(express.static(path.join(global.__basedir, 'dist')))
-
-    if (NODE_ENV !== 'development') {
-      this.app.get('/*', cors(corsOptions), (req, res) => {
-        res.sendFile(path.join(global.__basedir, 'dist', 'index.html'))
-      })
-    }
-
-    return this
-  }
-  onHandlerError = () => {
-    this.app.use((err, req, res, next) => {
-      res.status(500).send({
-        error: err.stack,
-        message: 'Internal Server Error',
-      })
-    })
-    return this
-  }
-}
+export default ConfigApp;

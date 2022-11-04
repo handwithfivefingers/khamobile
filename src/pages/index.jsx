@@ -12,6 +12,8 @@ import Heading from 'component/UI/Content/Heading';
 import CustomSlider from 'component/UI/Content/Slider';
 import { Panel } from 'rsuite';
 import Catalog from 'component/UI/Content/Catalog';
+import ImageBlock from 'component/UI/Content/ImageBlock';
+import { TYPE_CAROUSEL } from 'src/constant/carousel.constant';
 
 const Home = () => {
 	return (
@@ -20,19 +22,21 @@ const Home = () => {
 				<title>Kha Mobile</title>
 			</Head>
 
-			<section className='container-fluid' style={{ background: '#fff' }}>
+			<section className='container-fluid'>
 				<div className='row gx-2 gy-2'>
-					<div className='col-8'>
-						<SelfCarousel />
-					</div>
+					<div className='col-12'>
+						<div className='container' style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
+							<div className='row'>
+								<div className='col-8'>
+									<SelfCarousel />
+								</div>
 
-					<div className='col-4'>
-						<div className='row gy-2'>
-							<div className='col-12'>
-								<img src={Homebanner_2.src} className='d-block w-100' alt='...' />
-							</div>
-							<div className='col-12'>
-								<img src={Homebanner_2.src} className='d-block w-100' alt='...' />
+								<div className='col-4'>
+									<div className='row gy-2'>
+										<ImageBlock src={Homebanner_2.src} className='col-12' alt='...' height={'50%'} />
+										<ImageBlock src={Homebanner_2.src} className='col-12' alt='...' height={'50%'} />
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -51,17 +55,14 @@ const Home = () => {
 								</div>
 
 								<div className='col-12'>
-									<div className='row gx-5 gy-5'>
-										<CustomSlider type='muti'>
-											<Card />
-											<Card />
-											<Card />
-											<Card />
-											<Card />
-											<Card />
-											<Card />
-										</CustomSlider>
-									</div>
+									<CustomSlider type={TYPE_CAROUSEL.MUTI}>
+										<Card />
+										<Card />
+										<Card />
+										<Card />
+										<Card />
+										<Card />
+									</CustomSlider>
 								</div>
 							</div>
 						</div>
@@ -78,7 +79,7 @@ const Home = () => {
 					</div>
 
 					<div className='col-12'>
-						<CustomSlider type='muti' />
+						<CustomSlider type={TYPE_CAROUSEL.MUTI} />
 					</div>
 				</div>
 			</section>
@@ -139,7 +140,7 @@ const Home = () => {
 				<div className='row'>
 					<div className='col-12'>
 						<Heading type='h3' center>
-							Danh mục mới nhatasF
+							SẢN PHẨM NỔI BẬT
 						</Heading>
 					</div>
 
@@ -148,7 +149,60 @@ const Home = () => {
 					</div>
 				</div>
 			</section>
-			{/* Dynamic category block */}
+
+			<section className='container'>
+				<div className='row'>
+					<div className='col-12'>
+						<Heading type='h3' center>
+							IPHONE 13 SERIES
+						</Heading>
+					</div>
+
+					<div className='col-12'>
+						<Catalog direction='rtl' />
+					</div>
+				</div>
+			</section>
+
+			<section className='container'>
+				<div className='row'>
+					<div className='col-12'>
+						<Heading type='h3' center>
+							IPHONE 99%
+						</Heading>
+					</div>
+
+					<div className='col-12'>
+						<Catalog />
+					</div>
+				</div>
+			</section>
+			<section className='container'>
+				<div className='row'>
+					<div className='col-12'>
+						<Heading type='h3' center>
+							IPAD
+						</Heading>
+					</div>
+
+					<div className='col-12'>
+						<Catalog direction='rtl' />
+					</div>
+				</div>
+			</section>
+			<section className='container'>
+				<div className='row'>
+					<div className='col-12'>
+						<Heading type='h3' center>
+							MACBOOK
+						</Heading>
+					</div>
+
+					<div className='col-12'>
+						<Catalog />
+					</div>
+				</div>
+			</section>
 		</>
 	);
 };

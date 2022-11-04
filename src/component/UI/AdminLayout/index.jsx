@@ -14,7 +14,6 @@ import DashboardIcon from '@rsuite/icons/Dashboard';
 import GroupIcon from '@rsuite/icons/legacy/Group';
 import MagicIcon from '@rsuite/icons/legacy/Magic';
 
-import CustomSidenav from './CustomSidenav';
 import styles from './styles.module.scss';
 
 const headerStyles = {
@@ -46,9 +45,11 @@ const AdminLayout = ({ children }) => {
 			<Container>
 				<Sidebar style={{ display: 'flex', flexDirection: 'column' }} width={expand ? 260 : 56} collapsible>
 					<Sidenav.Header>
-						<div style={headerStyles}>
-							<span style={{ marginLeft: 12 }}> BRAND</span>
-						</div>
+						<Link href='/' passHref>
+							<div style={headerStyles}>
+								<span style={{ marginLeft: 12 }}> BRAND</span>
+							</div>
+						</Link>
 					</Sidenav.Header>
 					<Sidenav expanded={expand} defaultOpenKeys={['3']} appearance='subtle'>
 						<Sidenav.Body>

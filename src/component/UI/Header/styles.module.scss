@@ -1,3 +1,25 @@
 .toolbar {
 	color: red;
 }
+
+.brand {
+	position: relative;
+	&::before {
+		position: absolute;
+		top: 0;
+		left: 0;
+		display: block;
+		padding-bottom: 100%;
+	}
+	padding: 18px 100px;
+	span {
+		top: 50% !important;
+		transform: translateY(calc(-50%));
+	}
+}
+
+.nav {
+	position: sticky;
+	top: 0;
+	z-index: 99;
+}

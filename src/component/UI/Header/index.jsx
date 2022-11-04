@@ -5,11 +5,16 @@ import CogIcon from '@rsuite/icons/legacy/Cog';
 import clsx from 'clsx';
 import styles from './styles.module.scss';
 import Link from 'next/link';
-
+import ImageBlock from '../Content/ImageBlock';
+import LOGO from 'assets/img/logo.png';
+import Image from 'next/image';
 const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
 	return (
-		<Navbar {...props}>
-			<Navbar.Brand href='#'>RSUITE</Navbar.Brand>
+		<Navbar {...props} className={styles.nav}>
+			<Navbar.Brand className={styles.brand} href='#' style={{ maxWidth: 200 }}>
+				{/* <ImageBlock  height={'20%'} /> */}
+				<Image src={LOGO} alt='Kha mobile' priority />
+			</Navbar.Brand>
 			<Nav onSelect={onSelect} activeKey={activeKey}>
 				<Nav.Item eventKey='1' icon={<HomeIcon />}>
 					Home
@@ -21,12 +26,13 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
 					<Nav.Item eventKey='5'>Team</Nav.Item>
 					<Nav.Item eventKey='6'>Contact</Nav.Item>
 				</Nav.Menu>
-				<Nav.Item eventKey='7'>
-					<a>Admin</a>
-				</Nav.Item>
 			</Nav>
 			<Nav pullRight>
-				<Nav.Item icon={<CogIcon />}>Settings</Nav.Item>
+				<Link href='/admin' passHref>
+					<Nav.Item icon={<CogIcon />} eventKey='7'>
+						Admin
+					</Nav.Item>
+				</Link>
 			</Nav>
 		</Navbar>
 	);

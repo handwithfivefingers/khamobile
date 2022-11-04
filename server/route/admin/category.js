@@ -1,20 +1,20 @@
-const express = require('express')
-const { upload, requireSignin } = require('@middleware')
+import express from 'express';
+import { upload } from '#middleware';
+import CategoryController from '#controller/admin/Category';
+import { isRequiresValidated, validateCreateCategory } from '#server/validator/category';
 
-const router = express.Router()
+const router = express.Router();
 
-const CategoryAdmin = require('@controller/admin/Category')
+const { createCategory } = CategoryController;
 
-const { createCategory, getCategory, hardDelete, updateCategory, reforceCategoriesData } = new CategoryAdmin()
+router.post('/category', upload.single('img'), validateCreateCategory, isRequiresValidated, createCategory);
 
-router.get('/category', requireSignin, getCategory)
+// router.post('/category', validateCreateCategory, isRequiresValidated, (req, res, next) => {
+// 	console.log(req.files);
+// 	console.log(req.fields);
+// 	console.log(req.body);
+// 	// console.log(req)
+// 	return res.sendStatus(200);
+// });
 
-router.post('/category', requireSignin, createCategory)
-
-router.post('/category/:_id', requireSignin, updateCategory)
-
-router.delete('/category/:_id', requireSignin, hardDelete)
-
-router.post('/force', requireSignin, reforceCategoriesData)
-
-module.exports = router
+export default router;

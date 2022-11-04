@@ -1,12 +1,8 @@
 .card {
 	border-color: transparent;
 	// box-shadow: var(--main-box-shadow);
-	box-shadow: var(--main-box-shadow);
-	transition: var(--main-transition);
+
 	cursor: pointer;
-	&:hover {
-		box-shadow: rgb(45 45 45 / 5%) 0 2px 2px, rgb(49 49 49 / 5%) 0 4px 4px, rgb(42 42 42 / 5%) 0 8px 8px, rgb(32 32 32 / 5%) 0 16px 16px,
-	}
 
 	.cardImg {
 		position: relative;
@@ -30,6 +26,29 @@
 			left: 0;
 			border-top-left-radius: 4px;
 			border-top-right-radius: 4px;
+		}
+	}
+}
+
+.shadow {
+	box-shadow: var(--main-box-shadow);
+	transition: var(--main-transition);
+}
+
+.hover {
+	&:hover {
+		box-shadow: var(--main-box-shadow-hover);
+	}
+}
+
+.border {
+	border: 1px solid #eee;
+}
+
+.cover {
+	.cardImg {
+		.img {
+			object-fit: cover;
 		}
 	}
 }

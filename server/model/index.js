@@ -103,10 +103,16 @@
 // 	OTP,
 // };
 
-import user from './user.js';
+import user from './user';
+import category from './category';
+import product from './product';
 import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema({ ...user }, { timestamps: true });
+const { Schema, model } = mongoose;
+
+const userSchema = new Schema({ ...user }, { timestamps: true });
+const categorySchema = new Schema({ ...category }, { timestamps: true });
+const productSchema = new Schema({ ...product }, { timestamps: true });
 
 userSchema.method({
 	authenticate: async function (password) {
@@ -115,6 +121,10 @@ userSchema.method({
 	},
 });
 
-const User = mongoose.model('User', userSchema);
+const User = model('User', userSchema);
 
-export default User;
+const Category = model('Category', categorySchema);
+
+const Product = model('Product', productSchema);
+
+export { Category, Product, User };

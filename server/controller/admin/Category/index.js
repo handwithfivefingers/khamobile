@@ -1,129 +1,171 @@
-const { Product, Category, Career } = require('@model')
-const { errHandler, successHandler } = require('@response')
-const { default: slugify } = require('slugify')
-// Fetch data
-const { equals, default: mongoose } = require('mongoose')
+// const { Product, Category, Career } = require('@model')
+// const { errHandler, successHandler } = require('@response')
+// const { default: slugify } = require('slugify')
+// // Fetch data
+// const { equals, default: mongoose } = require('mongoose')
 
-module.exports = class CategoryAdmin {
-  createCategory = async (req, res) => {
-    try {
-      let { name, parentCategory, type, price, slug } = req.body
-      let cateObj = {
-        name,
-        price,
-        slug: slugify(req.body.name),
-        type,
-        parentCategory,
-      }
+// module.exports = class CategoryAdmin {
+//   createCategory = async (req, res) => {
+//     try {
+//       let { name, parentCategory, type, price, slug } = req.body
+//       let cateObj = {
+//         name,
+//         price,
+//         slug: slugify(req.body.name),
+//         type,
+//         parentCategory,
+//       }
 
-      const _cateObj = new Category(cateObj)
+//       const _cateObj = new Category(cateObj)
 
-      await _cateObj.save()
+//       await _cateObj.save()
 
-      return successHandler(cateObj, res)
-    } catch (error) {
-      console.log(error)
+//       return successHandler(cateObj, res)
+//     } catch (error) {
+//       console.log(error)
 
-      return errHandler(error, res)
-    }
-  }
+//       return errHandler(error, res)
+//     }
+//   }
 
-  getCategory = async (req, res) => {
-    try {
-      let _cate = await Category.find({})
-      let data = await this.filterCate(_cate)
+//   getCategory = async (req, res) => {
+//     try {
+//       let _cate = await Category.find({})
+//       let data = await this.filterCate(_cate)
 
-      return successHandler(data, res)
-    } catch (error) {
-      console.log(error)
-      return errHandler(error, res)
-    }
-  }
+//       return successHandler(data, res)
+//     } catch (error) {
+//       console.log(error)
+//       return errHandler(error, res)
+//     }
+//   }
 
-  updateCategory = async (req, res) => {
-    try {
-      let { _id } = req.params
+//   updateCategory = async (req, res) => {
+//     try {
+//       let { _id } = req.params
 
-      let { name, type, price, parentCategory } = req.body
+//       let { name, type, price, parentCategory } = req.body
 
-      let _update = {
-        name,
-        type,
-        price,
-        parentCategory,
-      }
+//       let _update = {
+//         name,
+//         type,
+//         price,
+//         parentCategory,
+//       }
 
-      await Category.updateOne({ _id }, _update, { new: true })
+//       await Category.updateOne({ _id }, _update, { new: true })
 
-      return successHandler('Updated successfully', res)
-    } catch (error) {
-      console.log(error)
-      return errHandler(error, res)
-    }
-  }
+//       return successHandler('Updated successfully', res)
+//     } catch (error) {
+//       console.log(error)
+//       return errHandler(error, res)
+//     }
+//   }
 
-  hardDelete = async (req, res) => {
-    try {
-      let { _id } = req.params
-      await Category.findOneAndDelete({ _id })
+//   hardDelete = async (req, res) => {
+//     try {
+//       let { _id } = req.params
+//       await Category.findOneAndDelete({ _id })
 
-      return successHandler('Delete Success', res)
-    } catch (error) {
-      return errHandler(error, res)
-    }
-  }
+//       return successHandler('Delete Success', res)
+//     } catch (error) {
+//       return errHandler(error, res)
+//     }
+//   }
 
-  softDelete = async (req, res) => {
-    try {
-      await Category.updateOne({ _id: req.body._id }, { delete_flag: 1 })
-      return successHandler('Delete Success', res)
-    } catch (error) {
-      return errHandler(error, res)
-    }
-  }
+//   softDelete = async (req, res) => {
+//     try {
+//       await Category.updateOne({ _id: req.body._id }, { delete_flag: 1 })
+//       return successHandler('Delete Success', res)
+//     } catch (error) {
+//       return errHandler(error, res)
+//     }
+//   }
 
-  filterCate = async (cate) => {
-    let parent = cate.filter((item) => !item.parentCategory)
+//   filterCate = async (cate) => {
+//     let parent = cate.filter((item) => !item.parentCategory)
 
-    let child = cate.filter((item) => item.parentCategory)
+//     let child = cate.filter((item) => item.parentCategory)
 
-    let result = []
+//     let result = []
 
-    result = parent.reduce((result, current) => {
-      let item = child.filter((item) => current._id.equals(item.parentCategory))
+//     result = parent.reduce((result, current) => {
+//       let item = child.filter((item) => current._id.equals(item.parentCategory))
 
-      if (item) {
-        let children = item.map(({ _doc }) => _doc)
-        current = {
-          ...current._doc,
-          children,
-        }
-      }
+//       if (item) {
+//         let children = item.map(({ _doc }) => _doc)
+//         current = {
+//           ...current._doc,
+//           children,
+//         }
+//       }
 
-      return [...result, current]
-    }, [])
+//       return [...result, current]
+//     }, [])
 
-    return result
-  }
+//     return result
+//   }
 
-  reforceCategoriesData = async (req, res) => {
-    try {
-      return res.status(200).json({})
-      await Category.deleteMany({})
+//   reforceCategoriesData = async (req, res) => {
+//     try {
+//       return res.status(200).json({})
+//       await Category.deleteMany({})
 
-      await Category.insertMany(this.data)
+//       await Category.insertMany(this.data)
 
-      let data = await Category.find({})
+//       let data = await Category.find({})
 
-      return res.status(200).json({ data })
-    } catch (err) {
-      console.log(err)
-      return errHandler(err, res)
-    } finally {
-    }
-  }
+//       return res.status(200).json({ data })
+//     } catch (err) {
+//       console.log(err)
+//       return errHandler(err, res)
+//     } finally {
+//     }
+//   }
+// }
+
+// // backup
+
+// // "data":
+
+import { Category } from '#model';
+import shortid from 'shortid';
+import slugify from 'slugify';
+
+class CategoryController {
+	createCategory = async (req, res) => {
+		try {
+			let { name, description, slug, parentCategory } = req.body;
+
+			let _cate = await Category.findOne({ slug });
+
+			if (_cate) {
+				slug = slugify(name.toLowerCase() + '-' + shortid());
+			}
+
+			let _created = new Category({
+				name,
+				description,
+				slug: slug || slugify(req.body.name),
+				img: req.file?.fieldname || '',
+			});
+
+			let data = await _created.save();
+
+			return res.status(200).json({
+				message: 'Tạo mới thành công',
+				data,
+			});
+		} catch (error) {
+			console.log('CategoryController createCategory', error);
+
+			return res.status(400).json({
+				message: 'Tạo mới danh mục không thành công, vui lòng liên hệ admin',
+			});
+		}
+	};
 }
 
-// backup
+const CateController = new CategoryController();
 
-// "data":
+export default CateController;

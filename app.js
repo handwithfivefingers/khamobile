@@ -1,15 +1,11 @@
-// server.js
-
-// const { parse } = require('url');
-// const dotenv = require('dotenv');
-// const next = require('next');
 import dotenv from 'dotenv';
-// import { parse } from 'url';
 import next from 'next';
 import express from 'express';
-import ConfigDatabase from './server/configs/db.js';
-// import User from './server/model/index.js';
-// import bcrypt from 'bcryptjs';
+import ConfigDatabase from './server/configs/db';
+import { envInit } from '#server/configs/environment';
+import appConfigs from '#server/configs/defaultConfig';
+import bodyParser from 'body-parser';
+
 dotenv.config();
 
 const dev = process.env.NODE_ENV !== 'production';
@@ -21,20 +17,21 @@ const port = process.env.PORT;
 
 const nextApp = next({ dev, hostname, port });
 
-const handle = nextApp.getRequestHandler();
+const handle = await nextApp.getRequestHandler();
 
-nextApp.prepare().then(() => {
-	const app = express();
+const app = express();
 
-	app.get('/a', (req, res) => app.render(req, res, '/a', req.query));
+const { onInit } = new appConfigs(app);
 
-	app.all('*', (req, res) => handle(req, res));
+envInit();
 
-	app.listen(port, async (err) => {
-		if (err) throw err;
+await nextApp.prepare();
 
-		await ConfigDatabase.connectDB();
+onInit(handle);
 
-		console.log(`> Ready on http://localhost:${port}`);
-	});
+app.listen(port, async (err) => {
+	if (err) throw err;
+	await ConfigDatabase.connectDB();
+
+	console.log(`> Ready on http://localhost:${port}`);
 });

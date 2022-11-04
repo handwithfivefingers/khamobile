@@ -5,15 +5,12 @@
 @import './root';
 @import './carousel';
 @import './utility';
+@import './rsuite';
 
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap');
 
 $buttonPadding: 0.5rem 1rem;
 $inputPadding: 4px 8px;
-
-
-
-
 
 .bg-w {
 	background-color: #fff;

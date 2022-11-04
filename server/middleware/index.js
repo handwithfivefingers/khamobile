@@ -1,77 +1,85 @@
-const jwt = require('jsonwebtoken')
-const shortid = require('shortid')
+// const jwt = require('jsonwebtoken');
+// const shortid = require('shortid');
+// const path = require('path');
+// const multer = require('multer');
+// const { authFailedHandler, errHandler } = require('@response');
+// const { User } = require('../model');
 
-const path = require('path')
-const multer = require('multer')
-const { authFailedHandler, errHandler } = require('@response')
-const { User } = require('../model')
+import jwt from 'jsonwebtoken';
+import shortid from 'shortid';
+import path from 'path';
+import multer from 'multer';
 
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, path.join(path.dirname(global.__basedir), 'uploads'))
-  },
-  filename: function (req, file, cb) {
-    cb(null, shortid.generate() + '-' + file.originalname)
-  },
-})
+	destination: function (req, file, cb) {
+		cb(null, path.join(path.resolve(''), 'uploads'));
+	},
+	filename: function (req, file, cb) {
+		cb(null, shortid.generate() + '-' + file.originalname);
+	},
+});
 
-const upload = multer({ storage })
+export const upload = multer({ storage });
 
-const requireSignin = async (req, res, next) => {
-  try {
-    let token = req.cookies['sessionId']
+export const TrackingApi = async (req, res, next) => {
+	try {
+		// console.log(req)
+		let host = req.headers['host'];
+		let remoteAddress = req.socket['remoteAddress'];
+		// let originalUrl = req.socket['originalUrl']
+		console.log(host, req.originalUrl, remoteAddress);
+	} catch (err) {
+	} finally {
+		next();
+	}
+};
 
-    if (!token) throw { message: 'Authorization required' }
+// export default {
+// 	upload,
+// 	TrackingApi,
+// };
+// const requireSignin = async (req, res, next) => {
+// 	try {
+// 		let token = req.cookies['sessionId'];
 
-    const decoded = await jwt.verify(token, process.env.SECRET)
+// 		if (!token) throw { message: 'Authorization required' };
 
-    if (decoded) {
-      let { _id, role, updatedAt } = decoded
+// 		const decoded = await jwt.verify(token, process.env.SECRET);
 
-      let _user = await User.findOne({ _id })
+// 		if (decoded) {
+// 			let { _id, role, updatedAt } = decoded;
 
-      if (new Date(_user.updatedAt).getTime() !== new Date(updatedAt).getTime()) throw { message: 'Token Expired' }
+// 			let _user = await User.findOne({ _id });
 
-      const newToken = jwt.sign({ _id, role, updatedAt }, process.env.SECRET, {
-        expiresIn: process.env.EXPIRE_TIME,
-      })
+// 			if (new Date(_user.updatedAt).getTime() !== new Date(updatedAt).getTime()) throw { message: 'Token Expired' };
 
-      req.role = decoded.role
+// 			const newToken = jwt.sign({ _id, role, updatedAt }, process.env.SECRET, {
+// 				expiresIn: process.env.EXPIRE_TIME,
+// 			});
 
-      req.id = decoded._id
+// 			req.role = decoded.role;
 
-      var hour = 3600000
+// 			req.id = decoded._id;
 
-      res.cookie('sessionId', newToken, {
-        maxAge: 2 * 24 * hour,
-        httpOnly: true,
-      })
+// 			var hour = 3600000;
 
-      next()
-    }
-  } catch (err) {
-    // authFailedHandler(res)
-    res.clearCookie()
-    return authFailedHandler(res)
-    // return errHandler(err, res)
-  }
-}
+// 			res.cookie('sessionId', newToken, {
+// 				maxAge: 2 * 24 * hour,
+// 				httpOnly: true,
+// 			});
 
-const TrackingApi = async (req, res, next) => {
-  try {
-    // console.log(req)
-    let host = req.headers['host']
-    let remoteAddress = req.socket['remoteAddress']
-    // let originalUrl = req.socket['originalUrl']
-    console.log(host, req.originalUrl, remoteAddress)
-  } catch (err) {
-  } finally {
-    next()
-  }
-}
+// 			next();
+// 		}
+// 	} catch (err) {
+// 		// authFailedHandler(res)
+// 		res.clearCookie();
+// 		return authFailedHandler(res);
+// 		// return errHandler(err, res)
+// 	}
+// };
 
-module.exports = {
-  upload,
-  requireSignin,
-  TrackingApi,
-}
+// module.exports = {
+// 	upload,
+// 	requireSignin,
+// 	TrackingApi,
+// };

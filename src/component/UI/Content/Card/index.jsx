@@ -3,11 +3,21 @@ import demoImg from 'assets/img/demo-phone.png';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 
-export default function Card(props) {
+export default function Card({ imgSrc, shadow = true, border = true, hover, cover }) {
+	const classCard = clsx([
+		'card',
+		styles.card,
+		{
+			[styles.shadow]: shadow,
+			[styles.border]: border,
+			[styles.hover]: hover,
+			[styles.cover]: cover,
+		},
+	]);
 	return (
-		<div className={clsx('card', styles.card)}>
+		<div className={classCard}>
 			<div className={clsx('card-img-top', styles.cardImg)}>
-				<img src={demoImg.src} className={styles.img} alt='...' />
+				<img src={imgSrc || demoImg.src} className={styles.img} alt='...' />
 			</div>
 			<div className='card-body'>
 				<h5 className='card-title'>iPhone 14 256GB - Chính hãng VN/A</h5>

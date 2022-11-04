@@ -1,37 +1,56 @@
-const mongoose = require("mongoose");
+import mongoose from 'mongoose';
+export default {
+	name: {
+		type: String,
+		required: true,
+		trim: true,
+	},
 
+	price: {
+		type: Number,
+		required: true,
+	},
 
-module.exports = {
-  name: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-    index: true,
-    min: 3,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-  slug: {
-    type: String,
-    required: true,
-  },
-  parentId: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Product",
-    },
-  ],
-  type: {
-    type: String,
-    required: true,
-  },
-  categories: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Category",
-    },
-  ],
+	quantity: {
+		type: Number,
+		required: true,
+	},
+
+	stock: {
+		type: Number,
+	},
+
+	description: {
+		type: String,
+		trim: true,
+	},
+	slug: {
+		type: String,
+		required: true,
+	},
+
+	categories: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Category',
+		},
+	],
+
+	img: [
+		{
+			type: String,
+		},
+	],
+
+	reviews: [
+		{
+			userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+			review: String,
+		},
+	],
+
+	createdBy: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'User',
+	},
 };
