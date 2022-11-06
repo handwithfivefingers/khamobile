@@ -2,8 +2,11 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import path from 'path';
-import WebRouter from '#route/web';
-import AdminRouter from '#route/admin';
+// import WebRouter from '#route/web';
+
+// import AdminRouter from '#route/admin';
+import AppRouter from '#route/index';
+
 import env from 'dotenv';
 import { TrackingApi } from '#middleware';
 
@@ -51,9 +54,7 @@ class ConfigApp {
 	onLoadRouter = (handler) => {
 		console.log('WebRouter', handler);
 
-		this.app.use('/api', cors(corsOptions), TrackingApi, WebRouter);
-
-		this.app.use('/api/admin', cors(corsOptions), TrackingApi, AdminRouter);
+		this.app.use('/api', cors(corsOptions), TrackingApi, AppRouter);
 
 		this.app.get('/a', (req, res) => this.app.render(req, res, '/a', req.query));
 

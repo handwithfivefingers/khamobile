@@ -1,67 +1,73 @@
 import AdminLayout from 'component/UI/AdminLayout';
-import { Content, Header, Table } from 'rsuite';
-// import { mockUsers } from './mock';
-
+import { useEffect, useState } from 'react';
+import { Content, Table } from 'rsuite';
+import UserService from 'service/admin/User.service';
+import TOAST_STATUS from 'src/constant/message.constant';
+import { useCommonStore } from 'src/store/commonStore';
+import { useMessageStore } from 'src/store/messageStore';
 const { Column, HeaderCell, Cell } = Table;
 
-// const data = mockUsers(20);
-
 const Users = () => {
+	const changeTitle = useCommonStore((state) => state.changeTitle);
+	const pushMessage = useMessageStore((state) => state.pushMessage);
+	const [data, setData] = useState();
+	const [loading, setLoading] = useState();
+
+	useEffect(() => {
+		changeTitle('Page Users');
+		getUserData();
+	}, []);
+
+	const getUserData = async () => {
+		try {
+			setLoading(true);
+			const res = await UserService.getUser();
+			setData(res.data.data);
+			pushMessage({ message: 'Fetch user success', type: 'success', status: TOAST_STATUS.PUSHED });
+		} catch (error) {
+			console.log('error', error);
+			pushMessage({ message: 'Fetch user error', type: 'error', status: TOAST_STATUS.PUSHED });
+		} finally {
+			setLoading(false);
+		}
+	};
+
+
 	return (
 		<>
-			<Header>
-				<h2>Page Users</h2>
-			</Header>
-
 			<Content className={'bg-w'}>
 				<Table
 					height={400}
-					data={[]}
+					data={data}
 					onRowClick={(rowData) => {
 						console.log(rowData);
 					}}
+					bordered
+					cellBordered
+					loading={loading}
 				>
-					<Column width={60} align='center' fixed>
+					<Column align='center' fixed flexGrow={1}>
 						<HeaderCell>Id</HeaderCell>
-						<Cell dataKey='id' />
+						<Cell dataKey='_id' />
 					</Column>
 
-					<Column width={150}>
-						<HeaderCell>First Name</HeaderCell>
-						<Cell dataKey='firstName' />
+					<Column flexGrow={1}>
+						<HeaderCell>Username</HeaderCell>
+						<Cell dataKey='username' />
 					</Column>
 
-					<Column width={150}>
-						<HeaderCell>Last Name</HeaderCell>
-						<Cell dataKey='lastName' />
-					</Column>
-
-					<Column width={100}>
-						<HeaderCell>Gender</HeaderCell>
-						<Cell dataKey='gender' />
-					</Column>
-
-					<Column width={100}>
-						<HeaderCell>Age</HeaderCell>
-						<Cell dataKey='age' />
-					</Column>
-
-					<Column width={150}>
-						<HeaderCell>Postcode</HeaderCell>
-						<Cell dataKey='postcode' />
-					</Column>
-
-					<Column width={300}>
+					<Column flexGrow={1}>
 						<HeaderCell>Email</HeaderCell>
 						<Cell dataKey='email' />
 					</Column>
+
 					<Column width={80} fixed='right'>
 						<HeaderCell>...</HeaderCell>
 
 						<Cell>
 							{(rowData) => (
 								<span>
-									<a onClick={() => alert(`id:${rowData.id}`)}> Edit </a>
+									<a onClick={() => alert(`id:${rowData._id}`)}> Edit </a>
 								</span>
 							)}
 						</Cell>

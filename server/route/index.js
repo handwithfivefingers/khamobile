@@ -32,6 +32,14 @@
 
 // module.exports = AppRouter
 
+import express from 'express';
+import AdminRouter from './admin';
+import WebRouter from './web';
 
+const AppRouter = express();
 
+AppRouter.use('/', WebRouter);
 
+AppRouter.use('/admin', AdminRouter.UserRouter, AdminRouter.CateRouter);
+
+export default AppRouter;

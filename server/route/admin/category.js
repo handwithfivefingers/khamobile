@@ -5,7 +5,9 @@ import { isRequiresValidated, validateCreateCategory } from '#server/validator/c
 
 const router = express.Router();
 
-const { createCategory, updateCategory } = CategoryController;
+const { createCategory, updateCategory, getCategory } = CategoryController;
+
+router.get('/category', upload.none(), getCategory);
 
 router.post('/category', upload.fields([{ name: 'categoryImg', maxCount: 1 }]), validateCreateCategory, isRequiresValidated, createCategory);
 

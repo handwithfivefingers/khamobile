@@ -1,5 +1,5 @@
 export default {
-	name: {
+	username: {
 		type: String,
 		required: true,
 		trim: true,
@@ -21,11 +21,7 @@ export default {
 		enum: ['user', 'admin'],
 		default: 'user',
 	},
-	phone: {
-		type: String,
-		required: true,
-		unique: true,
-	},
+	phone: String,
 	delete_flag: {
 		type: Number,
 		enum: [0, 1],

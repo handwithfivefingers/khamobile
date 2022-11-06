@@ -1,4 +1,5 @@
 import CateRouter from './category';
+import UserRouter from './user';
 
-
-export default CateRouter;
+const Router = { CateRouter, UserRouter };
+export default Router;

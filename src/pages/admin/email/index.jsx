@@ -1,18 +1,17 @@
 import AdminLayout from 'component/UI/AdminLayout';
-import { Content, Header, Table } from 'rsuite';
-// import { mockUsers } from './mock';
+import { useEffect } from 'react';
+import { Content, Table } from 'rsuite';
+import { useCommonStore } from 'src/store/commonStore';
 
 const { Column, HeaderCell, Cell } = Table;
 
-// const data = mockUsers(20);
-
 const Email = () => {
+	const changeTitle = useCommonStore((state) => state.changeTitle);
+	useEffect(() => {
+		changeTitle('Page Email');
+	}, []);
 	return (
 		<>
-			<Header>
-				<h2>Page Email</h2>
-			</Header>
-
 			<Content className={'bg-w'}>
 				<Table
 					height={400}

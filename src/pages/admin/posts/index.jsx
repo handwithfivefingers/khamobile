@@ -1,5 +1,7 @@
 import AdminLayout from 'component/UI/AdminLayout';
+import { useEffect } from 'react';
 import { Content, Header, Table } from 'rsuite';
+import { useCommonStore } from 'src/store/commonStore';
 // import { mockUsers } from './mock';
 
 const { Column, HeaderCell, Cell } = Table;
@@ -7,12 +9,15 @@ const { Column, HeaderCell, Cell } = Table;
 // const data = mockUsers(20);
 
 const Posts = () => {
+	const changeTitle = useCommonStore((state) => state.changeTitle);
+
+	useEffect(() => {
+		changeTitle('Page Posts');
+	}, []);
+
 	return (
 		<>
-			<Header>
-				<h2>Page Posts</h2>
-			</Header>
-
+		
 			<Content className={'bg-w'}>
 				<Table
 					height={400}

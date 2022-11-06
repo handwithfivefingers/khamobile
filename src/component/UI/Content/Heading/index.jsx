@@ -27,7 +27,7 @@ export default function Heading(props) {
 	return (
 		<div className={styles.heading}>
 			{getHeading()}
-			<div className={'title__divider'} />
+			<div className={clsx(['title__divider', props?.divideClass])} />
 		</div>
 	);
 }

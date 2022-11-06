@@ -1,7 +1,7 @@
 import Head from 'next/head';
 import { useState } from 'react';
-import PageFooter from '../Footer';
-import CustomNavbar from '../Header';
+import PageFooter from './Footer';
+import CustomNavbar from './Header';
 import { Container, Header, Content, Footer, Navbar, Nav } from 'rsuite';
 import { useRouter } from 'next/router';
 import styles from './styles.module.scss';
@@ -44,7 +44,8 @@ const CommonLayout = ({ children }) => {
 
 			<div className={styles.wrapper} style={{ minHeight: '100vh' }}>
 				<Container>
-					<CustomNavbar appearance='inverse' activeKey={activeKey} onSelect={handleSelect} />
+					{/* <CustomNavbar appearance='inverse' activeKey={activeKey} onSelect={handleSelect} /> */}
+					<CustomNavbar activeKey={activeKey} onSelect={handleSelect} />
 					<Content>{children}</Content>
 					<Footer>
 						<PageFooter />

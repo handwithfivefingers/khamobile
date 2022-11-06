@@ -225,8 +225,25 @@ class CategoryController {
 			});
 		}
 	};
+
+	getCategory = async (req, res) => {
+		try {
+			let _cate = await Category.find();
+
+			console.log(_cate);
+			return res.status(200).json({
+				data: _cate,
+				message: MESSAGE.FETCHED(),
+			});
+		} catch (error) {
+			console.log('getCategory', error)
+			return res.status(400).json({
+				message: MESSAGE.SYSTEM_ERROR(),
+			});
+		}
+	};
 }
 
-const CateController = new CategoryController();
+const { ...CateController } = new CategoryController();
 
 export default CateController;
