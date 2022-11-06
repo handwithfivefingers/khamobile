@@ -5,16 +5,10 @@ import { isRequiresValidated, validateCreateCategory } from '#server/validator/c
 
 const router = express.Router();
 
-const { createCategory } = CategoryController;
+const { createCategory, updateCategory } = CategoryController;
 
-router.post('/category', upload.single('img'), validateCreateCategory, isRequiresValidated, createCategory);
+router.post('/category', upload.fields([{ name: 'categoryImg', maxCount: 1 }]), validateCreateCategory, isRequiresValidated, createCategory);
 
-// router.post('/category', validateCreateCategory, isRequiresValidated, (req, res, next) => {
-// 	console.log(req.files);
-// 	console.log(req.fields);
-// 	console.log(req.body);
-// 	// console.log(req)
-// 	return res.sendStatus(200);
-// });
+router.post('/category/:_id', upload.fields([{ name: 'categoryImg', maxCount: 1 }]), validateCreateCategory, isRequiresValidated, updateCategory);
 
 export default router;

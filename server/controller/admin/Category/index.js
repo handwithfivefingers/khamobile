@@ -129,8 +129,11 @@
 // // "data":
 
 import { Category } from '#model';
+import { handleDownloadFile } from '#server/middleware';
+import { MESSAGE } from '#server/constant/message';
 import shortid from 'shortid';
 import slugify from 'slugify';
+import mongoose from 'mongoose';
 
 class CategoryController {
 	createCategory = async (req, res) => {
@@ -139,28 +142,86 @@ class CategoryController {
 
 			let _cate = await Category.findOne({ slug });
 
-			if (_cate) {
-				slug = slugify(name.toLowerCase() + '-' + shortid());
-			}
+			if (_cate) slug = slugify(name.toLowerCase() + '-' + shortid());
+
+			let file = req.files;
+
+			let fileLength = Object.keys(file).length;
+
+			if (!fileLength && typeof req.body.categoryImg === 'string') {
+				file = await handleDownloadFile(req.body.categoryImg);
+				file = [file];
+			} else file = file.categoryImg;
 
 			let _created = new Category({
 				name,
 				description,
 				slug: slug || slugify(req.body.name),
-				img: req.file?.fieldname || '',
+				categoryImg: file,
+				type: 'category',
 			});
 
 			let data = await _created.save();
 
 			return res.status(200).json({
-				message: 'Tạo mới thành công',
+				message: MESSAGE.CREATED(),
 				data,
 			});
 		} catch (error) {
 			console.log('CategoryController createCategory', error);
 
 			return res.status(400).json({
-				message: 'Tạo mới danh mục không thành công, vui lòng liên hệ admin',
+				message: MESSAGE.ERROR_ADMIN('danh mục'),
+			});
+		}
+	};
+
+	updateCategory = async (req, res) => {
+		try {
+			// let { name, description, slug, parentCategory } = req.body;
+			let { _id } = req.params;
+
+			let { name, description, slug, parentCategory } = req.body;
+
+			let isFile = false;
+
+			let file = null;
+
+			if (req.files || typeof req.body.categoryImg === 'string') {
+				isFile = true;
+				file = req.files;
+
+				let fileLength = Object.keys(file).length;
+
+				if (!fileLength && typeof req.body.categoryImg === 'string') {
+					file = await handleDownloadFile(req.body.categoryImg);
+					file = [file];
+				} else file = file.categoryImg;
+			}
+
+			let _updated = {
+				name,
+				description,
+				slug: slug || slugify(req.body.name),
+			};
+
+			if (isFile) {
+				_updated.categoryImg = file;
+			}
+
+			if (parentCategory) {
+				_updated.parentCategory = parentCategory;
+			}
+
+			let data = await Category.updateOne({ _id }, _updated, { new: true });
+
+			return res.status(200).json({
+				message: MESSAGE.UPDATED(),
+				data,
+			});
+		} catch (error) {
+			return res.status(400).json({
+				message: error?.message || MESSAGE.ERROR_ADMIN('danh mục'),
 			});
 		}
 	};

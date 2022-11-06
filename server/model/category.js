@@ -17,9 +17,20 @@ export default {
 		unique: true,
 	},
 
-	img: {
+	categoryImg: [
+		{
+			filename: {
+				type: String,
+			},
+		},
+	],
+
+	type: {
 		type: String,
+		enum: ['product', 'category'],
+		default: 'category',
 	},
+
 	parentCategory: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Category',

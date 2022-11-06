@@ -12,7 +12,6 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
 	return (
 		<Navbar {...props} className={styles.nav}>
 			<Navbar.Brand className={styles.brand} href='#' style={{ maxWidth: 200 }}>
-				{/* <ImageBlock  height={'20%'} /> */}
 				<Image src={LOGO} alt='Kha mobile' priority />
 			</Navbar.Brand>
 			<Nav onSelect={onSelect} activeKey={activeKey}>

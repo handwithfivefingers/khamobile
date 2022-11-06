@@ -7,8 +7,10 @@ import AdminRouter from '#route/admin';
 import env from 'dotenv';
 import { TrackingApi } from '#middleware';
 
-import multiparty from 'connect-multiparty';
-const multiMiddleware = multiparty();
+// import multiparty from 'connect-multiparty';
+
+// const multiMiddleware = multiparty();
+
 env.config();
 
 const { NODE_ENV } = process.env;
