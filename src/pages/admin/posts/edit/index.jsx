@@ -1,21 +1,20 @@
 import AdminLayout from 'component/UI/AdminLayout';
-import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Button, Content, Header, Table } from 'rsuite';
 import { useCommonStore } from 'src/store/commonStore';
 
 const { Column, HeaderCell, Cell } = Table;
 
-const Posts = () => {
+const PostEdit = () => {
 	const changeTitle = useCommonStore((state) => state.changeTitle);
-	const router = useRouter();
+
 	useEffect(() => {
 		changeTitle('Page Posts');
 	}, []);
 
 	return (
 		<>
-			<Button onClick={() => router.push('./posts/create')}>Add</Button>
+			<Button>Add</Button>
 			<Content className={'bg-w'}>
 				<Table
 					height={400}
@@ -74,6 +73,6 @@ const Posts = () => {
 		</>
 	);
 };
-Posts.Admin = AdminLayout;
+PostEdit.Admin = AdminLayout;
 
-export default Posts;
+export default PostEdit;

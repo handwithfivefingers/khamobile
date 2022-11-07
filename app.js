@@ -4,7 +4,6 @@ import express from 'express';
 import ConfigDatabase from './server/configs/db';
 import { envInit } from '#server/configs/environment';
 import appConfigs from '#server/configs/defaultConfig';
-import bodyParser from 'body-parser';
 
 dotenv.config();
 

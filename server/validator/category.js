@@ -15,12 +15,19 @@ const isRequiresValidated = (req, res, next) => {
 		validationResult(req).throw();
 		next();
 	} catch (errors) {
-		fs.unlink(req.file.path, (err) => {
-			if (err) {
-				console.log(err);
-			}
-			console.log(`successfully deleted ${req.file.path}`);
+		req.files.forEach((element) => {
+
+			fs.unlink(
+				element.path,
+				(err) => {
+					if (err) {
+						console.log(err);
+					}
+					console.log(`successfully deleted ${element.path}`);
+				}
+			);
 		});
+		
 
 		res.status(400).send(errors);
 	}

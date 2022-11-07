@@ -27,7 +27,7 @@ export default {
 
 	type: {
 		type: String,
-		enum: ['product', 'category'],
+		enum: ['product', 'category', 'post'],
 		default: 'category',
 	},
 

@@ -1,12 +1,30 @@
 import AdminLayout from 'component/UI/AdminLayout';
 import { useEffect, useState } from 'react';
-import { Content, Table } from 'rsuite';
+import { Avatar, Content, Table } from 'rsuite';
 import CategoryService from 'service/admin/Category.service';
 import TOAST_STATUS from 'src/constant/message.constant';
 import { useCommonStore } from 'src/store/commonStore';
 import { useMessageStore } from 'src/store/messageStore';
 
 const { Column, HeaderCell, Cell } = Table;
+
+const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
+	return (
+		<Cell {...props} style={{ padding: 0 }}>
+			<div
+				style={{
+					borderRadius: 6,
+					marginTop: 2,
+					overflow: 'hidden',
+					display: 'flex',
+					justifyContent: 'center',
+				}}
+			>
+				<Avatar src={`/public/${rowData[dataKey]}`} />
+			</div>
+		</Cell>
+	);
+};
 
 const Products = () => {
 	const changeTitle = useCommonStore((state) => state.changeTitle);
@@ -45,40 +63,25 @@ const Products = () => {
 					}}
 					loading={loading}
 				>
-					<Column width={60} align='center' fixed>
-						<HeaderCell>Id</HeaderCell>
-						<Cell dataKey='id' />
-					</Column>
-
 					<Column width={150}>
-						<HeaderCell>First Name</HeaderCell>
-						<Cell dataKey='firstName' />
+						<HeaderCell></HeaderCell>
+						<CustomRenderCell dataKey='img' />
 					</Column>
 
-					<Column width={150}>
-						<HeaderCell>Last Name</HeaderCell>
-						<Cell dataKey='lastName' />
+					<Column width={150} flexGrow={1}>
+						<HeaderCell>Danh mục</HeaderCell>
+						<Cell dataKey='name' />
 					</Column>
 
-					<Column width={100}>
-						<HeaderCell>Gender</HeaderCell>
-						<Cell dataKey='gender' />
+					<Column width={150} flexGrow={1}>
+						<HeaderCell>Mô tả</HeaderCell>
+						<Cell dataKey='description' />
+					</Column>
+					<Column width={100} flexGrow={1}>
+						<HeaderCell>Đường dẫn </HeaderCell>
+						<Cell dataKey='slug' />
 					</Column>
 
-					<Column width={100}>
-						<HeaderCell>Age</HeaderCell>
-						<Cell dataKey='age' />
-					</Column>
-
-					<Column width={150}>
-						<HeaderCell>Postcode</HeaderCell>
-						<Cell dataKey='postcode' />
-					</Column>
-
-					<Column width={300}>
-						<HeaderCell>Email</HeaderCell>
-						<Cell dataKey='email' />
-					</Column>
 					<Column width={80} fixed='right'>
 						<HeaderCell>...</HeaderCell>
 

@@ -5,6 +5,7 @@ import Divider from 'component/UI/Content/Divider';
 import Heading from 'component/UI/Content/Heading';
 import SideFilter from 'component/UI/Content/SideFilter';
 import CommonLayout from 'component/UI/Layout';
+import Link from 'next/link';
 import React from 'react';
 import { useState } from 'react';
 import { Dropdown, Pagination, SelectPicker } from 'rsuite';
@@ -65,31 +66,66 @@ export default function Product(props) {
 									<SelectPicker data={pricingFilter} style={{ width: 224 }} />
 								</div>
 							</div>
-
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
+							<Link href='/product/product-1' passHref>
+								<div className='col-3'>
+									<Card />
+								</div>
+							</Link>
 						</div>
 					</CardBlock>
 					<div className={styles.pagi}>

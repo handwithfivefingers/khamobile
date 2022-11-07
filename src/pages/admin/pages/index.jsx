@@ -1,4 +1,5 @@
 import AdminLayout from 'component/UI/AdminLayout';
+import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import { Content, Table } from 'rsuite';
 import { useCommonStore } from 'src/store/commonStore';
@@ -6,9 +7,8 @@ import { useCommonStore } from 'src/store/commonStore';
 const { Column, HeaderCell, Cell } = Table;
 
 const Pages = () => {
-
 	const changeTitle = useCommonStore((state) => state.changeTitle);
-
+	const router = useRouter();
 	useEffect(() => {
 		changeTitle('Page Pages');
 	}, []);
@@ -18,9 +18,9 @@ const Pages = () => {
 			<Content className={'bg-w'}>
 				<Table
 					height={400}
-					data={[]}
+					data={[{ id: 1, page: 'Danh mục', slug: 'category' }]}
 					onRowClick={(rowData) => {
-						console.log(rowData);
+						router.push(`./pages/${rowData.slug}`);
 					}}
 				>
 					<Column width={60} align='center' fixed>
@@ -29,41 +29,22 @@ const Pages = () => {
 					</Column>
 
 					<Column width={150}>
-						<HeaderCell>First Name</HeaderCell>
-						<Cell dataKey='firstName' />
-					</Column>
-
-					<Column width={150}>
-						<HeaderCell>Last Name</HeaderCell>
-						<Cell dataKey='lastName' />
+						<HeaderCell>Page</HeaderCell>
+						<Cell dataKey='page' />
 					</Column>
 
 					<Column width={100}>
-						<HeaderCell>Gender</HeaderCell>
-						<Cell dataKey='gender' />
+						<HeaderCell>Đường dẫn</HeaderCell>
+						<Cell dataKey='slug' />
 					</Column>
 
-					<Column width={100}>
-						<HeaderCell>Age</HeaderCell>
-						<Cell dataKey='age' />
-					</Column>
-
-					<Column width={150}>
-						<HeaderCell>Postcode</HeaderCell>
-						<Cell dataKey='postcode' />
-					</Column>
-
-					<Column width={300}>
-						<HeaderCell>Email</HeaderCell>
-						<Cell dataKey='email' />
-					</Column>
 					<Column width={80} fixed='right'>
 						<HeaderCell>...</HeaderCell>
 
 						<Cell>
 							{(rowData) => (
 								<span>
-									<a onClick={() => alert(`id:${rowData.id}`)}> Edit </a>
+									<a onClick={() => router.push(`./pages/${rowData.slug}`)} > Edit </a>
 								</span>
 							)}
 						</Cell>

@@ -1,45 +1,30 @@
-// const express = require('express')
-
-// const AppRouter = express()
-
-// const AuthRoute = require('./v1/auth')
-// const ProductRoute = require('./v1/product')
-// const CategoryRoute = require('./v1/category')
-// const CareerRoute = require('./v1/career')
-// const CareerCategoryRoute = require('./v1/careerCategory')
-// const OrderRoute = require('./v1/order')
-// const ServiceRoute = require('./v1/service')
-// const UserRoute = require('./v1/user')
-// const AdminRoute = require('./admin')
-
-// const { MailRoute, ...AdminRouter } = AdminRoute
-// // Default User
-// AppRouter.use('/', AuthRoute, ProductRoute, CategoryRoute, CareerRoute, OrderRoute, ServiceRoute, UserRoute, CareerCategoryRoute, MailRoute)
-
-// // Admin
-// AppRouter.use(
-//   '/admin',
-//   AdminRouter.SettingRoute,
-//   AdminRouter.LogRoute,
-//   AdminRouter.AdminOrderRoute,
-//   AdminRouter.FileRoute,
-//   AdminRouter.UserRoute,
-//   AdminRouter.ProductAdmin,
-//   AdminRouter.CategoryAdmin,
-//   AdminRouter.CareerCate,
-//   AdminRouter.CareerAdmin,
-// )
-
-// module.exports = AppRouter
-
 import express from 'express';
+import { upload } from '#server/middleware';
 import AdminRouter from './admin';
 import WebRouter from './web';
 
 const AppRouter = express();
 
+const UploadRouter = (req, res, next) => {
+	try {
+		console.log('req.files', req.files);
+		return res.status(200).json({
+			url: `/public/${req.files.upload[0].filename}`,
+		});
+	} catch (error) {
+		console.log('UploadRouter', error);
+		return res.status(400).json({
+			error: {
+				message: 'The image upload failed because the image was too big (max 1.5MB).',
+			},
+		});
+	}
+};
+
 AppRouter.use('/', WebRouter);
 
 AppRouter.use('/admin', AdminRouter.UserRouter, AdminRouter.CateRouter);
+
+AppRouter.post('/upload', upload.fields([{ name: 'upload', maxCount: 1 }]), UploadRouter);
 
 export default AppRouter;

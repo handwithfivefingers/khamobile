@@ -44,11 +44,18 @@ export default function KMSidebar() {
 							</Nav.Item>
 						</Link>
 
-						<Link href='/admin/posts' passHref>
-							<Nav.Item eventKey='3' icon={<MagicIcon />}>
-								Posts
-							</Nav.Item>
-						</Link>
+						<Nav.Menu eventKey='3' icon={<GearCircleIcon />} title='Post'>
+							<Link href='/admin/posts' passHref>
+								<Nav.Item eventKey='3-1' icon={<GearCircleIcon />}>
+									Posts
+								</Nav.Item>
+							</Link>
+							<Link href='/admin/posts/category' passHref>
+								<Nav.Item eventKey='3-2' icon={<GearCircleIcon />}>
+									Danh mục
+								</Nav.Item>
+							</Link>
+						</Nav.Menu>
 
 						<Nav.Menu eventKey='4' icon={<GearCircleIcon />} title='Products'>
 							{/* Products */}

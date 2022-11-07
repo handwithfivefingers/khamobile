@@ -15,8 +15,8 @@ const AdminLayout = ({ children }) => {
 			<Container>
 				<KMSidebar />
 
-				<Container>
-					<div className='container'>
+				<Container className={styles.container}>
+					<div className='container-fluid'>
 						<div className='row'>
 							<div className='col-12'>
 								<Header>

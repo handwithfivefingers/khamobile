@@ -138,7 +138,7 @@ import mongoose from 'mongoose';
 class CategoryController {
 	createCategory = async (req, res) => {
 		try {
-			let { name, description, slug, parentCategory } = req.body;
+			let { name, description, slug, parentCategory, type } = req.body;
 
 			let _cate = await Category.findOne({ slug });
 
@@ -153,15 +153,20 @@ class CategoryController {
 				file = [file];
 			} else file = file.categoryImg;
 
-			let _created = new Category({
+			let _created = {
 				name,
 				description,
 				slug: slug || slugify(req.body.name),
 				categoryImg: file,
-				type: 'category',
-			});
+				type: type || 'category',
+			};
+			if (parentCategory) {
+				_created.parentCategory = parentCategory;
+			}
 
-			let data = await _created.save();
+			const _obj = new Category(_created);
+
+			let data = await _obj.save();
 
 			return res.status(200).json({
 				message: MESSAGE.CREATED(),
@@ -236,7 +241,7 @@ class CategoryController {
 				message: MESSAGE.FETCHED(),
 			});
 		} catch (error) {
-			console.log('getCategory', error)
+			console.log('getCategory', error);
 			return res.status(400).json({
 				message: MESSAGE.SYSTEM_ERROR(),
 			});

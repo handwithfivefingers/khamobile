@@ -5,31 +5,38 @@ import Divider from 'component/UI/Content/Divider';
 import Heading from 'component/UI/Content/Heading';
 import SideFilter from 'component/UI/Content/SideFilter';
 import CommonLayout from 'component/UI/Layout';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useState } from 'react';
 import { Dropdown, Pagination, SelectPicker } from 'rsuite';
+import CategoryService from 'service/admin/Category.service';
+import TOAST_STATUS from 'src/constant/message.constant';
+import { useMessageStore } from 'src/store/messageStore';
 import styles from './styles.module.scss';
 
-const pricingFilter = [
-	{
-		label: 'Từ thấp đến cao',
-		value: 'Từ thấp đến cao',
-	},
-	{
-		label: 'Từ cao đến đến',
-		value: 'Từ cao đến đến',
-	},
-	{
-		label: 'Mới nhất',
-		value: 'Mới nhất',
-	},
-	{
-		label: 'Hot nhất',
-		value: 'Hot nhất',
-	},
-];
 export default function Category(props) {
-	const [activePage, setActivePage] = useState(1);
+	const [data, setData] = useState([]);
+
+	const [loading, setLoading] = useState(false);
+
+	const pushMessage = useMessageStore((state) => state.pushMessage);
+
+	useEffect(() => {
+		getCateData();
+	}, []);
+	const getCateData = async () => {
+		try {
+			setLoading(true);
+			const res = await CategoryService.getCate();
+			setData(res.data.data);
+			pushMessage({ message: res.data.message, type: 'success', status: TOAST_STATUS.PUSHED });
+		} catch (error) {
+			console.log('error', error?.response?.data?.message);
+			pushMessage({ message: error?.response?.data?.message || error?.message || 'Something was wrong', type: 'error', status: TOAST_STATUS.PUSHED });
+		} finally {
+			setLoading(false);
+		}
+	};
+
 	return (
 		<div className='container'>
 			<div className='row'>
@@ -39,61 +46,20 @@ export default function Category(props) {
 					</Heading>
 				</div>
 
-				<div className='col-lg-2 col-md-12'>
-					<SideFilter />
-				</div>
-
-				<div className={clsx([styles.vr, 'col-lg-10 col-md-12'])}>
-					<CardBlock>
-						<div className='row gy-4'>
-							<div className='col-12'>
-								<p>
-									The category description can be positioned anywhere on the page via the layout page builder inside the Blocks module with full typography
-									control and advanced container styling options. The category image can also be added to the Category layouts automatically via the Blocks
-									module. This allows for more creative placements on the page. It can also be enabled/disabled on any device and comes with custom image
-									dimensions, including fit or fill (crop) options for all system images such as products, categories, banners, sliders, etc. Advanced Product
-									Filter module included. This is the most comprehensive set of filtering tools rivaling the top paid extensions. It supports Opencart filters,
-									price, availability, category, brands, options, attributes, tags, all included in the same Journal 3 package. Ajax Infinite Scroll with Load
-									More / Load Previous and browser back button support. Load products in category pages as you scroll down or by clicking the Load More button,
-									or disable this feature entirely and display the default pagination.
-								</p>
-							</div>
-							<Divider />
-							<div className='col-12'>
-								<div className={styles.filter}>
-									<label>Pricing: </label>
-									<SelectPicker data={pricingFilter} style={{ width: 224 }} />
+				<div className={styles.categories}>
+					<div className={styles.listCate}>
+						{data?.map((item, index) => {
+							return (
+								<div
+									className={clsx(styles.cateItem)}
+									style={{
+										backgroundImage: `url(https://cdn2.cellphones.com.vn/180x/https://cdn2.cellphones.com.vn/x/media/catalog/product/a/p/apple_care_1.png)`,
+									}}
+								>
+									{item.name}
 								</div>
-							</div>
-
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-							<div className='col-3'>
-								<Card />
-							</div>
-						</div>
-					</CardBlock>
-					<div className={styles.pagi}>
-						<Pagination prev last next first size='sm' total={100} limit={10} activePage={activePage} onChangePage={(page) => setActivePage(page)} />
+							);
+						})}
 					</div>
 				</div>
 			</div>

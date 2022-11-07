@@ -1,0 +1,12 @@
+.setting {
+	position: fixed;
+	bottom: 0;
+	left: 0;
+	min-height: 200px;
+
+	width: 100%;
+	background: #eee;
+	border: 1px solid #ccc;
+	display: flex;
+	flex-direction: row;
+}
