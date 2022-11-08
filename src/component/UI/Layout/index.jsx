@@ -44,7 +44,6 @@ const CommonLayout = ({ children }) => {
 
 			<div className={styles.wrapper} style={{ minHeight: '100vh' }}>
 				<Container>
-					{/* <CustomNavbar appearance='inverse' activeKey={activeKey} onSelect={handleSelect} /> */}
 					<CustomNavbar activeKey={activeKey} onSelect={handleSelect} />
 					<Content>{children}</Content>
 					<Footer>

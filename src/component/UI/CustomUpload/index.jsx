@@ -14,10 +14,15 @@ const CustomUpload = React.forwardRef((props, ref) => {
 
 	React.useEffect(() => {
 		if (props.file) {
-			props.file?.[0]?.blobFile &&
-				previewFile(props.file?.[0]?.blobFile, (value) => {
-					setFileInfo(value);
-				});
+			if (props.file[0]) {
+				if (props.file?.[0]?.blobFile) {
+					previewFile(props.file?.[0]?.blobFile, (value) => {
+						setFileInfo(value);
+					});
+				} else {
+					setFileInfo(`/public/${props.file[0]?.filename}`);
+				}
+			}
 		}
 	}, [props.file]);
 

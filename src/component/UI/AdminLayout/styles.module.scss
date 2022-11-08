@@ -16,4 +16,9 @@
 
 .container {
 	overflow-x: hidden;
+	position: relative;
+}
+
+.content {
+	min-height: calc(100vh - 90px);
 }

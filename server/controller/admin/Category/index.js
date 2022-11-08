@@ -135,6 +135,7 @@ import shortid from 'shortid';
 import slugify from 'slugify';
 import mongoose from 'mongoose';
 
+const equals = mongoose.equals;
 class CategoryController {
 	createCategory = async (req, res) => {
 		try {
@@ -148,7 +149,7 @@ class CategoryController {
 
 			let fileLength = Object.keys(file).length;
 
-			if (!fileLength && typeof req.body.categoryImg === 'string') {
+			if (!fileLength && req.body.categoryImg && typeof req.body.categoryImg === 'string') {
 				file = await handleDownloadFile(req.body.categoryImg);
 				file = [file];
 			} else file = file.categoryImg;
@@ -231,13 +232,38 @@ class CategoryController {
 		}
 	};
 
-	getCategory = async (req, res) => {
+	getSingleCategory = async (req, res) => {
 		try {
-			let _cate = await Category.find();
+			let { _id } = req.params;
 
-			console.log(_cate);
+			let _cate = await Category.findOne({
+				_id,
+			}).select('-__v -createdAt -updatedAt');
+
 			return res.status(200).json({
 				data: _cate,
+				message: MESSAGE.FETCHED(),
+			});
+		} catch (error) {
+			console.log('getSingleCategory', error);
+			return res.status(400).json({
+				message: MESSAGE.SYSTEM_ERROR(),
+			});
+		}
+	};
+
+	getCategory = async (req, res) => {
+		try {
+			let { type } = req.query;
+
+			let _cate = await Category.find({
+				type,
+			}).select('-__v -createdAt -updatedAt');
+
+			let _data = this.filterCate(_cate);
+
+			return res.status(200).json({
+				data: _data,
 				message: MESSAGE.FETCHED(),
 			});
 		} catch (error) {
@@ -245,6 +271,31 @@ class CategoryController {
 			return res.status(400).json({
 				message: MESSAGE.SYSTEM_ERROR(),
 			});
+		}
+	};
+
+	filterCate = (cateList, parentCategory = null) => {
+		try {
+			const categoryList = [];
+
+			let category;
+
+			if (parentCategory == null) {
+				category = cateList.filter((cat) => cat.parentCategory == undefined);
+			} else {
+				category = cateList.filter((cat) => cat.parentCategory?.equals(parentCategory));
+			}
+			for (let cate of category) {
+				categoryList.push({
+					...cate._doc,
+					children: this.filterCate(cateList, cate._id),
+				});
+			}
+
+			return categoryList.length > 0 ? categoryList : null;
+		} catch (error) {
+			console.log('filterCate', error);
+			throw error;
 		}
 	};
 }

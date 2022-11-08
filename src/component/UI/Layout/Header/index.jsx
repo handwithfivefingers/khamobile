@@ -13,6 +13,7 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
 				<Image src={LOGO} alt='Kha mobile' priority />
 			</Navbar.Brand>
 			<Nav onSelect={onSelect} activeKey={activeKey}>
+				
 				<Nav.Item eventKey='1' icon={<HomeIcon />}>
 					Home
 				</Nav.Item>
@@ -29,10 +30,14 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
 					<Nav.Item eventKey='4'>Danh mục</Nav.Item>
 				</Link>
 
+				<Link href='/tin-tuc' passHref>
+					<Nav.Item eventKey='5'>Tin tức</Nav.Item>
+				</Link>
+
 				<Nav.Menu title='About'>
-					<Nav.Item eventKey='5'>Company</Nav.Item>
-					<Nav.Item eventKey='6'>Team</Nav.Item>
-					<Nav.Item eventKey='7'>Contact</Nav.Item>
+					<Nav.Item eventKey='6'>Company</Nav.Item>
+					<Nav.Item eventKey='7'>Team</Nav.Item>
+					<Nav.Item eventKey='8'>Contact</Nav.Item>
 				</Nav.Menu>
 			</Nav>
 			<Nav pullRight>

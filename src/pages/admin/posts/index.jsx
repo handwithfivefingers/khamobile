@@ -1,7 +1,7 @@
 import AdminLayout from 'component/UI/AdminLayout';
 import { useRouter } from 'next/router';
-import { useEffect } from 'react';
-import { Button, Content, Header, Table } from 'rsuite';
+import React, { useEffect } from 'react';
+import { Button, Content, Header, Table, Tree } from 'rsuite';
 import { useCommonStore } from 'src/store/commonStore';
 
 const { Column, HeaderCell, Cell } = Table;
@@ -9,6 +9,7 @@ const { Column, HeaderCell, Cell } = Table;
 const Posts = () => {
 	const changeTitle = useCommonStore((state) => state.changeTitle);
 	const router = useRouter();
+
 	useEffect(() => {
 		changeTitle('Page Posts');
 	}, []);
@@ -71,6 +72,8 @@ const Posts = () => {
 					</Column>
 				</Table>
 			</Content>
+
+		
 		</>
 	);
 };
