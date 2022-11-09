@@ -106,6 +106,7 @@
 import user from './user';
 import category from './category';
 import product from './product';
+import post from './post';
 import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
@@ -113,6 +114,7 @@ const { Schema, model } = mongoose;
 const userSchema = new Schema({ ...user }, { timestamps: true });
 const categorySchema = new Schema({ ...category }, { timestamps: true });
 const productSchema = new Schema({ ...product }, { timestamps: true });
+const postSchema = new Schema({ ...post }, { timestamps: true });
 
 userSchema.method({
 	authenticate: async function (password) {
@@ -127,4 +129,6 @@ const Category = model('Category', categorySchema);
 
 const Product = model('Product', productSchema);
 
-export { Category, Product, User };
+const Post = model('Post', postSchema);
+
+export { Category, Product, User, Post };

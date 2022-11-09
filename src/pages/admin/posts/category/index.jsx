@@ -1,6 +1,7 @@
 import clsx from 'clsx';
 import AdminLayout from 'component/UI/AdminLayout';
 import Heading from 'component/UI/Content/Heading';
+import Select from 'component/UI/Content/MutiSelect';
 import CustomUpload from 'component/UI/CustomUpload';
 import Textarea from 'component/UI/Editor';
 import React, { useEffect, useState, useRef, forwardRef } from 'react';
@@ -31,14 +32,6 @@ const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
 		</Cell>
 	);
 };
-
-const Select = forwardRef((props, ref) => {
-	const { data } = props;
-
-	if (!data) return null;
-
-	return <MultiCascader ref={ref} data={data} menuWidth={180} cascade={false} style={{ width: '100%' }} {...props} />;
-});
 
 const PostCategory = () => {
 	const changeTitle = useCommonStore((state) => state.changeTitle);
@@ -108,14 +101,14 @@ const PostCategory = () => {
 	const handleSubmit = async () => {
 		try {
 			setLoading(true);
-			const formData = new FormData();
+			const formdata = new FormData();
 			for (let key in form) {
 				if (key === 'categoryImg') {
-					formData.append(key, form[key]?.[0]?.blobFile || null);
-				} else formData.append(key, form?.[key]);
+					formdata.append(key, form[key]?.[0]?.blobFile || null);
+				} else formdata.append(key, form?.[key]);
 			}
 
-			await CategoryService.createCate(formData);
+			await CategoryService.createCate(formdata);
 
 			pushMessage({ message: 'Create Success', type: 'success', status: TOAST_STATUS.PUSHED });
 		} catch (error) {
@@ -144,9 +137,9 @@ const PostCategory = () => {
 						<Form
 							formValue={form}
 							onCheck={(error) => console.log('checked')}
-							onChange={(formData) => {
+							onChange={(formVal) => {
 								console.log('changeing');
-								setForm(formData);
+								setForm(formVal);
 							}}
 							className={'row'}
 							fluid
