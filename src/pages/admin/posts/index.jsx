@@ -58,8 +58,7 @@ const Posts = () => {
 					data={posts || []}
 					onRowClick={(rowData) => {
 						router.push({
-							pathname: './posts/edit',
-							query: { slug: rowData.slug },
+							pathname: `./posts/${rowData.slug}`,
 						});
 					}}
 				>

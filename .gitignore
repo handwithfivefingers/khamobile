@@ -27,7 +27,7 @@ yarn-error.log*
 ## lock 
 
 package-lock.json
-/uploads/**
+# /uploads/**
 
 # local env files
 .env.local
