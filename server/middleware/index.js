@@ -61,7 +61,6 @@ export const handleDownloadFile = async (url) => {
 		data.pipe(fs.createWriteStream(filePath));
 
 		return { filename: fileName };
-		
 	} catch (error) {
 		throw error;
 	}

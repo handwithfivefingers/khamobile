@@ -23,8 +23,11 @@ class PostController {
 			let fileLength = Object.keys(file).length;
 
 			if (!fileLength && postImg && typeof postImg === 'string') {
+
 				file = await handleDownloadFile(postImg);
-				file = [file];
+
+				file = [{ ...file, filename: '/public/' + file.filename }];
+
 			} else file = file.postImg;
 
 			let _created = {
@@ -66,7 +69,7 @@ class PostController {
 			let file = null;
 			console.log('coming ??', req.files, typeof req.body.postImg, req.body.postImg !== 'null');
 
-			if (req.files || (typeof req.body.postImg === 'string')) {
+			if (req.files || typeof req.body.postImg === 'string') {
 				console.log('come in ??');
 				isFile = true;
 				file = req.files;
@@ -177,7 +180,7 @@ class PostController {
 
 			return res.status(200).json({
 				message: MESSAGE.FETCHED(),
-				data,
+				data: data || [],
 			});
 		} catch (error) {
 			return res.status(400).json({

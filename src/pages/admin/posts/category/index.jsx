@@ -36,13 +36,11 @@ const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
 const PostCategory = () => {
 	const changeTitle = useCommonStore((state) => state.changeTitle);
 
-	const pushMessage = useMessageStore((state) => state.pushMessage);
+	// const pushMessage = useMessageStore((state) => state.pushMessage);
 
 	const { loading, setLoading } = useLoaderStore((state) => state);
 
 	const [data, setData] = useState();
-
-	const [treeData, setTreeData] = useState([]);
 
 	const treeRef = useRef();
 
@@ -69,11 +67,9 @@ const PostCategory = () => {
 			let { data } = res.data;
 
 			setData(data);
-
-			pushMessage({ message: res.data.message, type: 'success', status: TOAST_STATUS.PUSHED });
 		} catch (error) {
 			console.log('error', error?.response?.data?.message);
-			pushMessage({ message: error?.response?.data?.message || error?.message || 'Something was wrong', type: 'error', status: TOAST_STATUS.PUSHED });
+			// pushMessage({ message: error?.response?.data?.message || error?.message || 'Something was wrong', type: 'error', status: TOAST_STATUS.PUSHED });
 		} finally {
 			setLoading(false);
 		}
@@ -89,10 +85,10 @@ const PostCategory = () => {
 
 			setForm({ ...data, parentCategory: [data.parentCategory] });
 
-			pushMessage({ message: res.data.message, type: 'success', status: TOAST_STATUS.PUSHED });
+			// pushMessage({ message: res.data.message, type: 'success', status: TOAST_STATUS.PUSHED });
 		} catch (error) {
 			console.log('error', error?.response?.data?.message);
-			pushMessage({ message: error?.response?.data?.message || error?.message || 'Something was wrong', type: 'error', status: TOAST_STATUS.PUSHED });
+			// pushMessage({ message: error?.response?.data?.message || error?.message || 'Something was wrong', type: 'error', status: TOAST_STATUS.PUSHED });
 		} finally {
 			setLoading(false);
 		}
@@ -110,14 +106,14 @@ const PostCategory = () => {
 
 			await CategoryService.createCate(formdata);
 
-			pushMessage({ message: 'Create Success', type: 'success', status: TOAST_STATUS.PUSHED });
+			// pushMessage({ message: 'Create Success', type: 'success', status: TOAST_STATUS.PUSHED });
 		} catch (error) {
 			console.log('error', error);
-			pushMessage({
-				message: error?.response?.data?.message || error?.response?.data?.errors?.[0]?.msg || error?.message,
-				type: 'error',
-				status: TOAST_STATUS.PUSHED,
-			});
+			// pushMessage({
+			// 	message: error?.response?.data?.message || error?.response?.data?.errors?.[0]?.msg || error?.message,
+			// 	type: 'error',
+			// 	status: TOAST_STATUS.PUSHED,
+			// });
 		} finally {
 			setLoading(false);
 		}
@@ -126,8 +122,6 @@ const PostCategory = () => {
 	const onHandleEdit = async (v) => {
 		return getCateById(v);
 	};
-
-	console.log(form);
 
 	return (
 		<>
@@ -176,7 +170,7 @@ const PostCategory = () => {
 						<Header>
 							<h2>Danh mục</h2>
 						</Header>
-						<Tree data={data} ref={treeRef} defaultExpandAll virtualized showIndentLine labelKey='name' valueKey='_id' onChange={(v) => onHandleEdit(v)} />
+						<Tree data={data || []} ref={treeRef} defaultExpandAll virtualized showIndentLine labelKey='name' valueKey='_id' onChange={(v) => onHandleEdit(v)} />
 					</Panel>
 				</div>
 				<Panel className={styles.btnAction}>

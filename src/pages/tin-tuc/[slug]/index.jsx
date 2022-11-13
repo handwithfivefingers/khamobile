@@ -9,23 +9,31 @@ import CardBlock from 'component/UI/Content/CardBlock';
 export default function PostDetail(props) {
 	const { seo, data } = props;
 
-	console.log(seo, data);
-
 	return (
 		<>
 			<PostHelmet seo={seo} />
 
-			<div className='container'>
+			<div className='container-fluid'>
 				<div className='row'>
 					<div className='col-12'>
-						<Heading type='h3' left divideClass={styles.divideLeft}>
-							{data?.title}
-						</Heading>
+						<div className={styles.heading} style={{ backgroundImage: `url(${data?.postImg?.[0]?.filename})` }}>
+							<Heading type='h3' left divideClass={styles.divideLeft}>
+								{data?.title}
+							</Heading>
+						</div>
 					</div>
 
-					<div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
-						<div className='row gy-4'>
-							<CardBlock>{parse(data?.content)}</CardBlock>
+					<div className='col-12'>
+						<div className='container'>
+							<div className='row'>
+								<div className={clsx([styles.vr, 'col-lg-8 col-md-12'])}>
+									<CardBlock>{parse(data?.content)}</CardBlock>
+								</div>
+
+								<div className={clsx([styles.vr, 'col-lg-4 col-md-12'])}>
+									<CardBlock>....</CardBlock>
+								</div>
+							</div>
 						</div>
 					</div>
 				</div>
