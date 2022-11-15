@@ -1,3 +1,25 @@
 .rs-container {
-    padding: 0;
+	padding: 0;
 }
+
+@media (min-width: 767px) {
+	h1,
+	h2,
+	h3,
+	h4,
+	h5,
+	h6 {
+		line-height: 2;
+	}
+	p {
+		font-size: 16px;
+		line-height: 2;
+	}
+}
+
+// .rs-table {
+// 	height: calc(100vh - 102px) !important;
+// 	.rs-table-body-row-wrapper {
+// 		height: calc(100vh - 150px) !important;
+// 	}
+// }

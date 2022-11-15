@@ -4,7 +4,7 @@ class ConfigDatabase {
 		this.mongoseOptions = {
 			useNewUrlParser: true,
 			useUnifiedTopology: true,
-			useCreateIndex: true,
+			// useCreateIndex: true,
 		};
 	}
 	connectDB = async () => {

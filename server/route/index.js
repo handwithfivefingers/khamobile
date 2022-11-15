@@ -23,7 +23,7 @@ const UploadRouter = (req, res, next) => {
 
 AppRouter.use('/', WebRouter);
 
-AppRouter.use('/admin', AdminRouter.UserRouter, AdminRouter.CateRouter, AdminRouter.PostRouter);
+AppRouter.use('/admin', AdminRouter.UserRouter, AdminRouter.CateRouter, AdminRouter.PostRouter, AdminRouter.ProductRouter, AdminRouter.ProductVariableRouter);
 
 AppRouter.post('/upload', upload.fields([{ name: 'upload', maxCount: 1 }]), UploadRouter);
 

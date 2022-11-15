@@ -3,7 +3,7 @@ import demoImg from 'assets/img/demo-phone.png';
 import styles from './styles.module.scss';
 import clsx from 'clsx';
 import { ButtonGroup, Panel, Placeholder, Stack, Button } from 'rsuite';
-
+import parse from 'html-react-parser';
 export default function CardPost({ loading = false, ...props }) {
 	if (loading) return <CardSkeleton {...props} />;
 	return <Card {...props} />;
@@ -35,7 +35,7 @@ function Card({ title, description, imgSrc, shadow, border, hover, cover }) {
 				<div className={styles.title}>
 					<h3>{title}</h3>
 				</div>
-				<p>{description}</p>
+				<p>{parse(description)}</p>
 			</div>
 		</div>
 	);

@@ -1,6 +1,8 @@
+import ProductCreateModal from 'component/Modal/Product/create';
 import AdminLayout from 'component/UI/AdminLayout';
-import { useEffect } from 'react';
-import { Content, Table } from 'rsuite';
+import { useRouter } from 'next/router';
+import { useEffect, useState } from 'react';
+import { Content, Table, Button, Modal } from 'rsuite';
 import { useCommonStore } from 'src/store/commonStore';
 
 const { Column, HeaderCell, Cell } = Table;
@@ -8,13 +10,18 @@ const { Column, HeaderCell, Cell } = Table;
 const Products = () => {
 	const changeTitle = useCommonStore((state) => state.changeTitle);
 
+	const [open, setOpen] = useState(false);
+	const router = useRouter();
 	useEffect(() => {
 		changeTitle('Page Products');
 	}, []);
 
+	const handleClose = () => setOpen(false);
+
 	return (
 		<>
 			<Content className={'bg-w'}>
+				<Button onClick={() => setOpen(true)}>Add</Button>
 				<Table
 					height={400}
 					data={[]}
@@ -69,6 +76,15 @@ const Products = () => {
 					</Column>
 				</Table>
 			</Content>
+
+			<Modal size={'full'} open={open} onClose={handleClose} keyboard={false}>
+				<Modal.Header>
+					<Modal.Title>Create</Modal.Title>
+				</Modal.Header>
+				<Modal.Body>
+					<ProductCreateModal />
+				</Modal.Body>
+			</Modal>
 		</>
 	);
 };

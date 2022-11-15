@@ -106,14 +106,20 @@
 import user from './user';
 import category from './category';
 import product from './product';
+import productVariable from './product_variable';
 import post from './post';
 import mongoose from 'mongoose';
 
 const { Schema, model } = mongoose;
 
 const userSchema = new Schema({ ...user }, { timestamps: true });
+
 const categorySchema = new Schema({ ...category }, { timestamps: true });
+
 const productSchema = new Schema({ ...product }, { timestamps: true });
+
+const productVariableSchema = new Schema({ ...productVariable }, { timestamps: true });
+
 const postSchema = new Schema({ ...post }, { timestamps: true });
 
 userSchema.method({
@@ -129,6 +135,8 @@ const Category = model('Category', categorySchema);
 
 const Product = model('Product', productSchema);
 
+const ProductVariable = model('ProductVariable', productVariableSchema);
+
 const Post = model('Post', postSchema);
 
-export { Category, Product, User, Post };
+export { Category, Product, User, Post, ProductVariable };

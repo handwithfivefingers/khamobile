@@ -74,7 +74,7 @@ export default function Category(props) {
 							return (
 								<Link href={`/tin-tuc/${post.slug}`} passHref>
 									<div className='col-12'>
-										<CardPost border hover shadow imgSrc={`/public/${post.postImg?.[0]?.filename}`} title={post?.title} description={post?.description} />
+										<CardPost border hover shadow imgSrc={`${post.postImg?.[0]?.filename}`} title={post?.title} description={post?.description} />
 									</div>
 								</Link>
 							);

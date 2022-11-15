@@ -11,19 +11,16 @@ export default {
 		required: true,
 	},
 
-	quantity: {
-		type: Number,
-		required: true,
-	},
+	quantity: Number,
 
-	stock: {
-		type: Number,
-	},
+	stock: Number,
 
-	description: {
-		type: String,
-		trim: true,
-	},
+	description: String,
+
+	content: String,
+
+	variable: [],
+	
 	slug: {
 		type: String,
 		required: true,

@@ -13,12 +13,30 @@ const Pages = () => {
 		changeTitle('Page Pages');
 	}, []);
 
+	const tableData = [
+		{
+			id: 1,
+			name: 'Homepage',
+			slug: 'home',
+		},
+		{
+			id: 2,
+			name: 'Danh mục',
+			slug: 'category',
+		},
+		{
+			id: 3,
+			name: 'Sản phẩm',
+			slug: 'san-pham',
+		},
+	];
+
 	return (
 		<>
 			<Content className={'bg-w'}>
 				<Table
 					height={400}
-					data={[{ id: 1, page: 'Danh mục', slug: 'category' }]}
+					data={tableData}
 					onRowClick={(rowData) => {
 						router.push(`./pages/${rowData.slug}`);
 					}}
@@ -29,8 +47,8 @@ const Pages = () => {
 					</Column>
 
 					<Column width={150}>
-						<HeaderCell>Page</HeaderCell>
-						<Cell dataKey='page' />
+						<HeaderCell>Trang</HeaderCell>
+						<Cell dataKey='name' />
 					</Column>
 
 					<Column width={100}>
@@ -44,7 +62,7 @@ const Pages = () => {
 						<Cell>
 							{(rowData) => (
 								<span>
-									<a onClick={() => router.push(`./pages/${rowData.slug}`)} > Edit </a>
+									<a onClick={() => router.push(`./pages/${rowData.slug}`)}> Edit </a>
 								</span>
 							)}
 						</Cell>
