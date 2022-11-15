@@ -1,53 +1,56 @@
-import mongoose from 'mongoose';
+import mongoose from "mongoose";
 export default {
-	name: {
-		type: String,
-		required: true,
-		trim: true,
-	},
+  title: {
+    type: String,
+    required: true,
+    trim: true,
+  },
 
-	price: {
-		type: Number,
-		required: true,
-	},
+  description: {
+    type: String,
+  },
 
-	quantity: Number,
+  content: {
+    type: String,
+  },
+  type: {
+    type: String,
+    enum: ["simple", "variant"],
+    default: ["simple"],
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
 
-	stock: Number,
+  quantity: {
+    type: Number,
+  },
 
-	description: String,
+  slug: {
+    type: String,
+    required: true,
+  },
 
-	content: String,
+  category: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Category",
+    },
+  ],
 
-	variable: [],
-	
-	slug: {
-		type: String,
-		required: true,
-	},
+  img: [
+    {
+      src: String,
+    },
+  ],
 
-	categories: [
-		{
-			type: mongoose.Schema.Types.ObjectId,
-			ref: 'Category',
-		},
-	],
+  variable: [],
 
-	img: [
-		{
-			type: String,
-		},
-	],
-
-	reviews: [
-		{
-			userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-			review: String,
-		},
-	],
-
-	createdBy: {
-		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User',
-	},
+  reviews: [
+    {
+      userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+      review: String,
+    },
+  ],
 };

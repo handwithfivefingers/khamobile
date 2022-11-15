@@ -1,92 +1,128 @@
-import ProductCreateModal from 'component/Modal/Product/create';
-import AdminLayout from 'component/UI/AdminLayout';
-import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
-import { Content, Table, Button, Modal } from 'rsuite';
-import { useCommonStore } from 'src/store/commonStore';
+import ProductCreateModal from "component/Modal/Product/create";
+import AdminLayout from "component/UI/AdminLayout";
+import { useRouter } from "next/router";
+import { useEffect, useState } from "react";
+import { Content, Table, Button, Modal } from "rsuite";
+import ProductService from "service/admin/Product.service";
+import { useCommonStore } from "src/store/commonStore";
 
 const { Column, HeaderCell, Cell } = Table;
 
 const Products = () => {
-	const changeTitle = useCommonStore((state) => state.changeTitle);
+  const changeTitle = useCommonStore((state) => state.changeTitle);
 
-	const [open, setOpen] = useState(false);
-	const router = useRouter();
-	useEffect(() => {
-		changeTitle('Page Products');
-	}, []);
+  const [open, setOpen] = useState(false);
+  const router = useRouter();
+  const [product, setProduct] = useState([]);
+  const [modal, setModal] = useState({
+    open: false,
+    component: null,
+  });
+  useEffect(() => {
+    changeTitle("Page Products");
+    getProducts();
+  }, []);
 
-	const handleClose = () => setOpen(false);
+  const handleClose = () => setModal({ open: false, component: null });
 
-	return (
-		<>
-			<Content className={'bg-w'}>
-				<Button onClick={() => setOpen(true)}>Add</Button>
-				<Table
-					height={400}
-					data={[]}
-					onRowClick={(rowData) => {
-						console.log(rowData);
-					}}
-				>
-					<Column width={60} align='center' fixed>
-						<HeaderCell>Id</HeaderCell>
-						<Cell dataKey='id' />
-					</Column>
+  const getProducts = async () => {
+    try {
+      const resp = await ProductService.getProduct();
+      setProduct(resp.data.data);
+    } catch (error) {
+      console.log("getProducts error: " + error);
+    }
+  };
 
-					<Column width={150}>
-						<HeaderCell>First Name</HeaderCell>
-						<Cell dataKey='firstName' />
-					</Column>
+  const onUpdate = async (formValue) => {
+    try {
+      // const resp = await ProductService.updateProduct(form._id);
+      const form = new FormData();
+      for (let key in formValue) {
+        if (key === "img") {
+          for (let img of formValue[key]) {
+            if (img.src && typeof img.src === "string") {
+              form.append(key, img.src);
+            } else if (img?.blobFile && img?.blobFile instanceof Blob) {
+              form.append(key, img?.blobFile);
+            }
+          }
+        } else if (key === "variable") {
+          form.append(key, JSON.stringify(formValue?.[key]));
+        } else form.append(key, formValue?.[key]);
+      }
 
-					<Column width={150}>
-						<HeaderCell>Last Name</HeaderCell>
-						<Cell dataKey='lastName' />
-					</Column>
+      await ProductService.updateProduct(formValue._id, form);
+    } catch (error) {
+      console.log("onUpdate error", error);
+    }
+  };
 
-					<Column width={100}>
-						<HeaderCell>Gender</HeaderCell>
-						<Cell dataKey='gender' />
-					</Column>
+  const onCreate = async (formValue) => {
+    try {
+      console.log(formValue);
+    } catch (error) {}
+  };
+  return (
+    <>
+      <Content className={"bg-w"}>
+        <Button
+          onClick={() =>
+            setModal({
+              open: true,
+              component: <ProductCreateModal onSubmit={onCreate} />,
+            })
+          }
+        >
+          Add
+        </Button>
+        <Table
+          height={400}
+          data={product}
+          onRowClick={(rowData) =>
+            setModal({
+              open: true,
+              component: (
+                <ProductCreateModal data={rowData} onSubmit={onUpdate} />
+              ),
+            })
+          }
+        >
+          <Column width={60} align="center" fixed>
+            <HeaderCell>Id</HeaderCell>
+            <Cell dataKey="_id" />
+          </Column>
 
-					<Column width={100}>
-						<HeaderCell>Age</HeaderCell>
-						<Cell dataKey='age' />
-					</Column>
+          <Column width={150}>
+            <HeaderCell>Title</HeaderCell>
+            <Cell dataKey="title" />
+          </Column>
 
-					<Column width={150}>
-						<HeaderCell>Postcode</HeaderCell>
-						<Cell dataKey='postcode' />
-					</Column>
+          <Column width={150}>
+            <HeaderCell>Content</HeaderCell>
+            <Cell dataKey="content" />
+          </Column>
 
-					<Column width={300}>
-						<HeaderCell>Email</HeaderCell>
-						<Cell dataKey='email' />
-					</Column>
-					<Column width={80} fixed='right'>
-						<HeaderCell>...</HeaderCell>
+          <Column width={100}>
+            <HeaderCell>Price</HeaderCell>
+            <Cell dataKey="price" />
+          </Column>
+        </Table>
+      </Content>
 
-						<Cell>
-							{(rowData) => (
-								<span>
-									<a onClick={() => alert(`id:${rowData.id}`)}> Edit </a>
-								</span>
-							)}
-						</Cell>
-					</Column>
-				</Table>
-			</Content>
-
-			<Modal size={'full'} open={open} onClose={handleClose} keyboard={false}>
-				<Modal.Header>
-					<Modal.Title>Create</Modal.Title>
-				</Modal.Header>
-				<Modal.Body>
-					<ProductCreateModal />
-				</Modal.Body>
-			</Modal>
-		</>
-	);
+      <Modal
+        size={"full"}
+        open={modal.open}
+        onClose={handleClose}
+        keyboard={false}
+      >
+        <Modal.Header>
+          <Modal.Title>Create</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{modal?.component}</Modal.Body>
+      </Modal>
+    </>
+  );
 };
 Products.Admin = AdminLayout;
 

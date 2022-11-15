@@ -1,143 +1,220 @@
 // const { Product, Category } = require('@model')
 // const { successHandler, errHandler } = require('@response')
 // const slugify = require('slugify')
-import { Product } from '#server/model';
-import { MESSAGE } from '#server/constant/message';
-import slugify from 'slugify';
+import { Product } from "#server/model";
+import { MESSAGE } from "#server/constant/message";
+import slugify from "slugify";
+import ProductModel from "./Model";
+import shortid from "shortid";
 
 export default class ProductController {
-	getProducts = async (req, res) => {
-		try {
-			let _product = await Product.find({});
+  getProducts = async (req, res) => {
+    try {
+      let _product = await Product.find({});
 
-			return res.status(200).json({
-				message: MESSAGE.FETCHED(),
-				data: _product,
-			});
-		} catch (error) {
-			console.log(error);
+      return res.status(200).json({
+        message: MESSAGE.FETCHED(),
+        data: _product,
+      });
+    } catch (error) {
+      console.log(error);
 
-			return res.status(400).json({
-				message: MESSAGE.ERROR_ADMIN('Sản phẩm'),
-			});
-		}
-	};
+      return res.status(400).json({
+        message: MESSAGE.ERROR_ADMIN("Sản phẩm"),
+      });
+    }
+  };
 
-	createProduct = async (req, res) => {
-		try {
-			const obj = {
-				name: req.body.name.toString(),
-				price: Number(req.body.price),
-				slug: slugify(req.body.name),
-				categories: req.body.categories,
-				type: req.body.type,
-			};
+  createProduct = async (req, res) => {
+    try {
+      console.log(req.files);
 
-			let product = await Product.findOne({
-				name: req.body.name,
-			});
+      const obj = {
+        title: req.body.title,
+        description: req.body.description,
+        content: req.body.content,
+        slug: req.body.slug + "-" + shortid(),
+        category: req.body.category,
+        type: req.body.type,
+      };
 
-			if (product) throw { message: 'Product already exists' };
+      if (req.body.type === "simple") {
+        obj.price = req.body.price;
+      } else if (req.body.type === "variant") {
+        obj.variant = req.body.variant;
+      }
 
-			const _product = new Product(obj);
+      if (req.files?.img) {
+        obj.img = req.files?.img?.map((file) => ({
+          src: "/public/" + file.filename,
+        }));
+      }
 
-			await _product.save();
+      const { ..._prodObject } = new ProductModel(obj);
 
-			return res.status(200).json({
-				message: MESSAGE.CREATED(),
-				data: _var,
-			});
-		} catch (err) {
-			console.log('createProduct error', err);
+      const _product = new Product(_prodObject);
 
-			return res.status(400).json({
-				message: MESSAGE.ERROR_ADMIN('Sản phẩm'),
-			});
-		}
-	};
+      await _product.save();
 
-	// getProducts = async (req, res) => {
-	//   try {
+      return res.status(200).json({
+        message: MESSAGE.CREATED(),
+        data: _product,
+      });
+    } catch (err) {
+      console.log("createProduct error", err);
 
-	//     let _product = await Product.find({}).populate('categories')
+      return res.status(400).json({
+        message: MESSAGE.ERROR_ADMIN("Sản phẩm"),
+      });
+    }
+  };
 
-	//     return successHandler(_product, res)
+  getProductBySlug = async (req, res) => {
+    try {
+      let _product = await Product.findOne({
+        slug: req.params.slug,
+      });
 
-	//   } catch (error) {
-	//     console.log(error)
-	//     return errHandler(error, res)
-	//   }
-	// }
+      return res.status(200).json({
+        message: MESSAGE.FETCHED(),
+        data: _product,
+      });
+    } catch (error) {
+      console.log(error);
 
-	// getSingleProduct = async (req, res) => {
-	//   try {
-	//   } catch (error) {}
-	// }
+      return res.status(400).json({
+        message: MESSAGE.ERROR_ADMIN("Sản phẩm"),
+      });
+    }
+  };
 
-	// updateProduct = async (req, res) => {
-	//   try {
-	//     let { _id } = req.params
+  updateProduct = async (req, res) => {
+    try {
+      const { _id } = req.params;
 
-	//     let { categories, name, price, type } = req.body
+      let objUpdate = {};
+      console.log(req.body);
 
-	//     // if (!categories) throw { message: 'No categories provided' }
+      Object.keys(req.body).forEach((key) => {
+        if (key === "img") {
+          if (Array.isArray(req.body[key])) {
+            objUpdate[key] = [...req.body[key].map((item) => ({ src: item }))];
+          } else {
+            objUpdate[key] = [{ src: req.body[key] }];
+          }
+        } else if (key === "variable") {
+          const parse = JSON.parse(req.body[key]);
+          console.log(parse);
+          objUpdate[key] = parse;
+        } else {
+          objUpdate[key] = req.body[key];
+        }
+      });
 
-	//     let _update = {
-	//       name,
-	//       price,
-	//       type,
-	//       categories,
-	//     }
+      if (req.files?.img?.length > 0) {
+        objUpdate.img = [
+          ...objUpdate.img,
+          ...req.files.img?.map((file) => ({
+            src: "/public/" + file.filename,
+          })),
+        ];
+      }
+      const { ...obj } = new ProductModel(objUpdate);
 
-	//     await Product.updateOne({ _id }, _update, { new: true })
+      const _prod = await Product.updateOne({ _id: _id }, obj, { new: true });
+      console.log(_prod);
+      return res.status(200).json({
+        message: "update product",
+        data: _prod,
+      });
+    } catch (error) {
+      console.log("update product error", error);
+      return res.status(400).json({ error });
+    }
+  };
 
-	//     return res.status(200).json({
-	//       message: ' ok',
-	//     })
-	//   } catch (error) {
-	//     console.log(error)
-	//     return errHandler(error, res)
-	//   }
-	// }
+  // getProducts = async (req, res) => {
+  //   try {
 
-	// deleteProduct = async (req, res) => {
-	//   try {
-	//     const { _id } = req.params
+  //     let _product = await Product.find({}).populate('categories')
 
-	//     // return;
-	//     await Product.findOneAndDelete({
-	//       _id,
-	//     })
+  //     return successHandler(_product, res)
 
-	//     return res.status(200).json({ message: 'Xóa sản phẩm thành công', status: 200 })
-	//   } catch (err) {
-	//     console.log('deleteProduct error')
+  //   } catch (error) {
+  //     console.log(error)
+  //     return errHandler(error, res)
+  //   }
+  // }
 
-	//     return errHandler(err, res)
-	//   }
-	// }
+  // getSingleProduct = async (req, res) => {
+  //   try {
+  //   } catch (error) {}
+  // }
 
-	// filterProductCate = (cate) => {
-	//   let res = []
+  // updateProduct = async (req, res) => {
+  //   try {
+  //     let { _id } = req.params
 
-	//   res = cate.reduce((result, current) => {
-	//     let [parent, child] = current
+  //     let { categories, name, price, type } = req.body
 
-	//     if (child) {
-	//       let index = result.findIndex((item) => item._id === parent)
+  //     // if (!categories) throw { message: 'No categories provided' }
 
-	//       if (index !== -1) {
-	//         result[index].child = [...result[index].child, { _id: child }]
-	//       } else {
-	//         result = [...result, { _id: parent, child: [{ _id: child }] }]
-	//       }
-	//     } else {
-	//       result = [...result, { _id: parent }]
-	//     }
+  //     let _update = {
+  //       name,
+  //       price,
+  //       type,
+  //       categories,
+  //     }
 
-	//     return [...result]
-	//   }, [])
+  //     await Product.updateOne({ _id }, _update, { new: true })
 
-	//   return res
-	// }
+  //     return res.status(200).json({
+  //       message: ' ok',
+  //     })
+  //   } catch (error) {
+  //     console.log(error)
+  //     return errHandler(error, res)
+  //   }
+  // }
+
+  // deleteProduct = async (req, res) => {
+  //   try {
+  //     const { _id } = req.params
+
+  //     // return;
+  //     await Product.findOneAndDelete({
+  //       _id,
+  //     })
+
+  //     return res.status(200).json({ message: 'Xóa sản phẩm thành công', status: 200 })
+  //   } catch (err) {
+  //     console.log('deleteProduct error')
+
+  //     return errHandler(err, res)
+  //   }
+  // }
+
+  // filterProductCate = (cate) => {
+  //   let res = []
+
+  //   res = cate.reduce((result, current) => {
+  //     let [parent, child] = current
+
+  //     if (child) {
+  //       let index = result.findIndex((item) => item._id === parent)
+
+  //       if (index !== -1) {
+  //         result[index].child = [...result[index].child, { _id: child }]
+  //       } else {
+  //         result = [...result, { _id: parent, child: [{ _id: child }] }]
+  //       }
+  //     } else {
+  //       result = [...result, { _id: parent }]
+  //     }
+
+  //     return [...result]
+  //   }, [])
+
+  //   return res
+  // }
 }

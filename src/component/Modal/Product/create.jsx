@@ -28,23 +28,30 @@ import ProductService from "service/admin/Product.service";
 import { TEXT, PRODUCT_TEXT } from "src/constant/text.constant";
 import { forwardRef } from "react";
 import { PRODUCT_TYPE } from "src/constant/select.constant";
+import { formatCurrency } from "src/helper";
 
 const CustomInputNumber = forwardRef((props, ref) => {
   return <InputNumber {...props} ref={ref} />;
 });
 const VariableItem = ({ rowValue = {}, onChange, rowIndex, variable }) => {
-  console.log(variable);
   const handleChange = (value, name) =>
     onChange(rowIndex, { ...rowValue, [name]: value });
   return (
     <>
-      {variable?.map((item, index) => {
+      {Object.keys(variable).map((key, index) => {
         return (
-          <FlexboxGrid.Item style={{ width: "calc(100% / 4 - 4px)" }}>
+          <FlexboxGrid.Item
+            style={{ width: "calc(100% / 4 - 4px)" }}
+            key={[key, index]}
+          >
             <SelectPicker
-              placeholder={TEXT[item.key]}
-              data={item.value?.map((item) => ({ value: item, label: item }))}
-              onChange={(value) => handleChange(value, item.key)}
+              value={rowValue[key]}
+              placeholder={TEXT[key]}
+              data={variable[key]?.map((item) => ({
+                value: item,
+                label: item,
+              }))}
+              onChange={(value) => handleChange(value, key)}
               style={{ width: "100%" }}
             />
           </FlexboxGrid.Item>
@@ -88,12 +95,19 @@ const OptionsControlInput = ({ value, onChange, variable }) => {
               variable={variable}
             />
             <FlexboxGrid.Item style={{ width: "calc(100% / 4 - 4px)" }}>
-              <InputNumber
+              <Input
                 style={{ width: "100%" }}
                 onChange={(value) =>
                   handleInputChange(index, { ...rowValue, price: value })
                 }
-				placeholder="Giá tiền"
+                value={formatCurrency(rowValue?.price)}
+                onFocus={(event) => (event.target.value = rowValue?.price)}
+                onBlur={(event) =>
+                  (event.target.value = event.target.value
+                    .replace("VNĐ", "")
+                    .replace(",", ""))
+                }
+                placeholder="Giá tiền"
               />
             </FlexboxGrid.Item>
           </>
@@ -111,10 +125,17 @@ const OptionsControlInput = ({ value, onChange, variable }) => {
 };
 
 const CustomSelect = forwardRef((props, ref) => {
-  return <SelectPicker {...props} ref={ref} data={PRODUCT_TYPE} />;
+  return (
+    <SelectPicker
+      {...props}
+      ref={ref}
+      data={PRODUCT_TYPE}
+      value={props.value}
+    />
+  );
 });
 
-const ProductCreateModal = () => {
+const ProductCreateModal = (props) => {
   const changeTitle = useCommonStore((state) => state.changeTitle);
   const router = useRouter();
 
@@ -140,6 +161,10 @@ const ProductCreateModal = () => {
     changeTitle("Create Post");
     getCateData();
     getVariables();
+    if (props.data) {
+      const newData = { ...props.data };
+      setForm(newData);
+    }
   }, []);
 
   const getCateData = async () => {
@@ -175,16 +200,10 @@ const ProductCreateModal = () => {
   const onSubmit = async () => {
     try {
       setLoading(true);
-      // const formdata = new FormData();
-      // for (let key in form) {
-      // 	if (key === 'postImg') {
-      // 		formdata.append(key, form[key]?.[0]?.blobFile || null);
-      // 	} else formdata.append(key, form?.[key]);
-      // }
 
-      // await PostService.createPost(formdata);
-
-      console.log(form);
+      if (props.onSubmit) {
+        props.onSubmit(form);
+      }
     } catch (error) {
       console.log("error", error, error?.response?.data?.message);
     } finally {
@@ -274,7 +293,7 @@ const ProductCreateModal = () => {
                   name="img"
                   accepter={CustomUpload}
                   action="#"
-                  file={form["img"]?.slice(-1)}
+                  // file={form["img"]?.slice(-1)}
                   group
                 />
               </Form.Group>
