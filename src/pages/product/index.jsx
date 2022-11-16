@@ -42,6 +42,8 @@ export default function Product(props) {
     try {
       const resp = await ProductService.getProduct();
       setProduct(resp.data.data);
+
+      console.log(resp.data.data);
     } catch (error) {
       console.log("getProducts error: " + error);
     }
@@ -102,6 +104,8 @@ export default function Product(props) {
                         title={prod.title}
                         price={prod.price}
                         underlinePrice={prod?.underlinePrice || null}
+                        type={prod.type}
+                        variable={prod.variable}
                       />
                     </div>
                   </Link>

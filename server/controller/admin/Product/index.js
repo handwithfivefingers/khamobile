@@ -36,6 +36,8 @@ export default class ProductController {
         slug: req.body.slug + "-" + shortid(),
         category: req.body.category,
         type: req.body.type,
+        primary_variant: req.body.primary_variant,
+        primary_value: req.body.primary_value,
       };
 
       if (req.body.type === "simple") {
@@ -104,7 +106,6 @@ export default class ProductController {
           }
         } else if (key === "variable") {
           const parse = JSON.parse(req.body[key]);
-          console.log(parse);
           objUpdate[key] = parse;
         } else {
           objUpdate[key] = req.body[key];

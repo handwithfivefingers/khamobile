@@ -11,9 +11,10 @@ const ProductService = {
   // createCate: async (form) => await axios.post(path.category, form),
 
   getProduct: async () => await axios.get(path.product),
-  
+
   updateProduct: async (id, form) =>
     await axios.post(path.product + "/" + id, form),
+  createProduct: async (form) => await axios.post(path.product, form),
 
   getVariables: async () => await axios.get(path.variable),
   updateVariable: async (id, form) =>

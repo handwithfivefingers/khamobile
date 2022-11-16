@@ -45,7 +45,7 @@ export default class ProductVariableController {
   updateVariable = async (req, res) => {
     try {
       const { _id } = req.params;
-
+      let _updated = {};
       if (req.body.type === "add") {
         // Add
         _updated = {
@@ -86,7 +86,7 @@ export default class ProductVariableController {
         data[item.key] = item.value;
       });
 
-	  console.log(data)
+      console.log(data);
       return res.status(200).json({
         message: MESSAGE.FETCHED(),
         data,

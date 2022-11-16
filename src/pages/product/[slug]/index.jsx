@@ -1,33 +1,28 @@
 import clsx from "clsx";
-import Head from "component/Head";
-import Card from "component/UI/Content/Card";
 import CardBlock from "component/UI/Content/CardBlock";
-import Divider from "component/UI/Content/Divider";
 import Heading from "component/UI/Content/Heading";
+import { KMSelect } from "component/UI/Content/KMInput";
 import SideFilter from "component/UI/Content/SideFilter";
+import JsonViewer from "component/UI/JsonViewer";
 import CommonLayout from "component/UI/Layout";
+import axios from "configs/axiosInstance";
+import parser from "html-react-parser";
 import Image from "next/image";
-import Link from "next/link";
-import React from "react";
-import { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
   Carousel,
-  Dropdown,
-  Form,
-  Pagination,
-  SelectPicker,
   FlexboxGrid,
+  Form,
   InputNumber,
-  ButtonGroup,
-  IconButton,
+  SelectPicker,
+  Button,
 } from "rsuite";
-import styles from "./styles.module.scss";
-import axios from "configs/axiosInstance";
-import { formatCurrency } from "src/helper";
-import parser from "html-react-parser";
-import { useEffect } from "react";
 import { TEXT } from "src/constant/text.constant";
-
+import { formatCurrency } from "src/helper";
+import styles from "./styles.module.scss";
+import _ from "lodash";
+import router from "server/route/v1/user";
+import { useRouter } from "next/router";
 const CustomPrice = ({ value }) => {
   return <div class="rs-plaintext">{formatCurrency(value)}</div>;
 };
@@ -132,12 +127,44 @@ const OptionsControlInput = ({ value, onChange, variable }) => {
     </>
   );
 };
+
 export default function ProductDetail({ data }) {
-  const [form, setForm] = useState();
+  const [form, setForm] = useState({
+    quantity: 1,
+  });
+  const router = useRouter();
   useEffect(() => {
-    setForm(data);
+    setForm({
+      ...form,
+      ...data,
+    });
   }, [data]);
 
+  const handleOptions = useMemo(() => {
+    return form?.variable?.map((item) => {
+      let newObj = { ...item };
+      delete newObj.price;
+      return {
+        label: Object.keys(newObj)
+          .map((key) => [key, newObj[key]].join(" : "))
+          .join(" - "),
+        value: JSON.stringify(item),
+      };
+    });
+  }, [form]);
+  const handleAddToCart = () => {
+    localStorage.setItem(
+      "khaMobileCart",
+      JSON.stringify([
+        {
+          ...form,
+          sku: { ...JSON.parse(form?.sku) },
+          quantity: form.quantity,
+        },
+      ])
+    );
+    router.push("/cart");
+  };
   return (
     <div className="container">
       <div className="row gy-4" style={{ paddingTop: "1.5rem" }}>
@@ -159,7 +186,7 @@ export default function ProductDetail({ data }) {
                     return (
                       <div style={{ position: "relative" }}>
                         <Image
-                          src={`http://localhost:3000${item.src}`}
+                          src={`${process.env.host}${item.src}`}
                           layout="fill"
                           objectFit="contain"
                         />
@@ -173,45 +200,80 @@ export default function ProductDetail({ data }) {
                 <Form
                   formValue={form}
                   layout="horizontal"
-                  className={clsx(styles.form, "form-product")}
+                  className={clsx(styles.form, "form-product  row gx-3 gy-3")}
                 >
-                  <Form.Group controlId="title">
-                    <Form.Control name="title" classPrefix="title" plaintext />
-                  </Form.Group>
-
-                  <Form.Group controlId="price">
-                    <Form.Control
-                      name="price"
-                      accepter={CustomPrice}
-                      classPrefix="price"
-                    />
-                  </Form.Group>
-
-                  <Form.Group controlId="description">
-                    <Form.Control
-                      name="description"
-                      classPrefix="description"
-                      accepter={CustomInput}
-                      plaintext
-                    />
-                  </Form.Group>
-
-                  <Form.Group controlId="quantity">
-                    <Form.ControlLabel>Số lượng:</Form.ControlLabel>
-                    <Form.Control name="quantity" accepter={InputNumber} />
-                  </Form.Group>
-
-                  {form?.type === "variant" && (
-                    <Form.Group controlId="variable">
-                      <Form.ControlLabel>Biến thể</Form.ControlLabel>
+                  <div className="col-12">
+                    <Form.Group controlId="title">
                       <Form.Control
-                        name={"variable"}
-                        accepter={OptionsControlInput}
-                        variable={form.variable}
+                        name="title"
+                        classPrefix="title"
+                        plaintext
                       />
                     </Form.Group>
-                  )}
+                  </div>
+                  <div className="col-12">
+                    <Form.Group controlId="price">
+                      <Form.Control
+                        name="price"
+                        accepter={CustomPrice}
+                        classPrefix="price"
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-12">
+                    <Form.Group controlId="description">
+                      <Form.Control
+                        name="description"
+                        classPrefix="description"
+                        accepter={CustomInput}
+                        plaintext
+                      />
+                    </Form.Group>
+                  </div>
+                  <div className="col-12">
+                    <Form.Group controlId="quantity">
+                      <Form.ControlLabel>Số lượng:</Form.ControlLabel>
+                      <Form.Control
+                        name="quantity"
+                        accepter={InputNumber}
+                        onChange={(value) =>
+                          setForm({ ...form, quantity: +value })
+                        }
+                      />
+                    </Form.Group>
+                  </div>
+                  <Form.Group controlId="color">
+                    <Form.ControlLabel>
+                      {form?.primary_variant}
+                    </Form.ControlLabel>
+                    <Form.Control name={"primary_value"} plaintext />
+                  </Form.Group>
+                  <Form.Group controlId="sku">
+                    <Form.ControlLabel>Loại :</Form.ControlLabel>
+                    <Form.Control
+                      accepter={KMSelect}
+                      data={handleOptions}
+                      onChange={(value) =>
+                        setForm({
+                          ...form,
+                          sku: value,
+                          skuPrice: +JSON.parse(value).price,
+                        })
+                      }
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="skuPrice">
+                    <Form.ControlLabel>Giá tiền :</Form.ControlLabel>
+                    <Form.Control
+                      name="skuPrice"
+                      plaintext
+                      value={form?.skuPrice * form?.quantity || 0}
+                    />
+                  </Form.Group>
+
+                  <Button onClick={() => handleAddToCart()}>Add to Cart</Button>
                 </Form>
+                <JsonViewer data={form} />
               </div>
             </div>
           </CardBlock>

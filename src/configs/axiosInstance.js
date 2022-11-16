@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const instance = axios.create({
-	baseURL: `http://localhost:3000/api`,
+	baseURL: `http://localhost:${process.env.port}/api`,
 	timeout: 1000 * 30, // Wait for 30 seconds
 	headers: {
 		'Access-Control-Allow-Origin': '*',

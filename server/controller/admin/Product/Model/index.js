@@ -10,6 +10,8 @@ class ProductModel {
       "img",
       "category",
       "variable",
+      "primary_variant",
+      "primary_value",
     ];
 
     for (let key in props) {

@@ -5,11 +5,9 @@ export default {
     required: true,
     trim: true,
   },
-
   description: {
     type: String,
   },
-
   content: {
     type: String,
   },
@@ -20,33 +18,28 @@ export default {
   },
   price: {
     type: Number,
-    required: true,
   },
-
   quantity: {
     type: Number,
   },
-
   slug: {
     type: String,
     required: true,
   },
-
   category: [
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: "Category",
     },
   ],
-
   img: [
     {
       src: String,
     },
   ],
-
   variable: [],
-
+  primary_variant: String,
+  primary_value: String,
   reviews: [
     {
       userId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

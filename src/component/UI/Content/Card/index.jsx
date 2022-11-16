@@ -13,6 +13,8 @@ export default function Card({
   title,
   price,
   underlinePrice,
+  type,
+  variable,
 }) {
   const classCard = clsx([
     "card",
@@ -24,6 +26,14 @@ export default function Card({
       [styles.cover]: cover,
     },
   ]);
+
+  const getPrice = (amount) => {
+    if (type === "simple") return formatCurrency(amount);
+    else if (type === "variant") {
+      let rangePrice = variable.map((item) => formatCurrency(item.price));
+      return rangePrice.join(" - ");
+    }
+  };
   return (
     <div className={classCard}>
       <div className={clsx("card-img-top", styles.cardImg)}>
@@ -32,7 +42,7 @@ export default function Card({
       <div className="card-body">
         <h5 className="card-title">{title}</h5>
         <p className="card-text">
-          <b className="price">{formatCurrency(price)}</b>
+          <b className="price">{getPrice(price)}</b>
         </p>
         <p className="card-text">
           <s>{formatCurrency(underlinePrice)}</s>

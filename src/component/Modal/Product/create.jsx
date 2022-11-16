@@ -29,10 +29,32 @@ import { TEXT, PRODUCT_TEXT } from "src/constant/text.constant";
 import { forwardRef } from "react";
 import { PRODUCT_TYPE } from "src/constant/select.constant";
 import { formatCurrency } from "src/helper";
+import { NumericFormat } from "react-number-format";
+import { KMSelect } from "component/UI/Content/KMInput";
+import { useCallback } from "react";
 
+const CustomInput = (props) => {
+  return <input name="title" class="rs-input" type="text" {...props} />;
+};
+
+const CustomInputPrice = ({ rowValue, onChange, name, ...props }) => {
+  return (
+    <NumericFormat
+      name={name}
+      customInput={CustomInput}
+      thousandSeparator=","
+      onValueChange={({ value }, sourceInfo) => onChange(value)}
+      placeholder="Giá tiền"
+      suffix=" VNĐ"
+      value={rowValue[name]}
+      {...props}
+    />
+  );
+};
 const CustomInputNumber = forwardRef((props, ref) => {
   return <InputNumber {...props} ref={ref} />;
 });
+
 const VariableItem = ({ rowValue = {}, onChange, rowIndex, variable }) => {
   const handleChange = (value, name) =>
     onChange(rowIndex, { ...rowValue, [name]: value });
@@ -41,7 +63,7 @@ const VariableItem = ({ rowValue = {}, onChange, rowIndex, variable }) => {
       {Object.keys(variable).map((key, index) => {
         return (
           <FlexboxGrid.Item
-            style={{ width: "calc(100% / 4 - 4px)" }}
+            style={{ width: "calc(100% / 3 - 4px)" }}
             key={[key, index]}
           >
             <SelectPicker
@@ -60,7 +82,7 @@ const VariableItem = ({ rowValue = {}, onChange, rowIndex, variable }) => {
     </>
   );
 };
-const OptionsControlInput = ({ value, onChange, variable }) => {
+const OptionsControlInput = ({ value, onChange, variable, base }) => {
   const [products, setProducts] = React.useState(value);
 
   const handleChangeProducts = (nextProducts) => {
@@ -82,6 +104,12 @@ const OptionsControlInput = ({ value, onChange, variable }) => {
     );
   };
 
+  // variable.delete(base)
+  // console.log(base)
+  // console.log(variable)
+  const newVariable = { ...variable };
+  delete newVariable[base];
+  console.log(newVariable);
   return (
     <>
       <FlexboxGrid style={{ gap: 4 }} justify="space-between">
@@ -92,22 +120,15 @@ const OptionsControlInput = ({ value, onChange, variable }) => {
               rowIndex={index}
               rowValue={rowValue}
               onChange={handleInputChange}
-              variable={variable}
+              variable={newVariable}
             />
-            <FlexboxGrid.Item style={{ width: "calc(100% / 4 - 4px)" }}>
-              <Input
-                style={{ width: "100%" }}
+            <FlexboxGrid.Item style={{ width: "calc(100% / 3 - 4px)" }}>
+              <CustomInputPrice
+                name="price"
+                rowValue={rowValue}
                 onChange={(value) =>
                   handleInputChange(index, { ...rowValue, price: value })
                 }
-                value={formatCurrency(rowValue?.price)}
-                onFocus={(event) => (event.target.value = rowValue?.price)}
-                onBlur={(event) =>
-                  (event.target.value = event.target.value
-                    .replace("VNĐ", "")
-                    .replace(",", ""))
-                }
-                placeholder="Giá tiền"
               />
             </FlexboxGrid.Item>
           </>
@@ -187,8 +208,6 @@ const ProductCreateModal = (props) => {
 
       setVariable(_variables.data.data);
 
-      // setForm((state) => ({ ...state, variable: _variables.data.data }));
-
       toaster.push(<Message>{_variables.data.message}</Message>);
     } catch (error) {
       console.log("getVariables error", error);
@@ -212,6 +231,7 @@ const ProductCreateModal = (props) => {
     }
   };
 
+  console.log(variable[form.primary_variable], form)
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
@@ -231,7 +251,7 @@ const ProductCreateModal = (props) => {
           >
             <CardBlock>
               <Form.Group controlId="title">
-                <Form.ControlLabel>Title</Form.ControlLabel>
+                <Form.ControlLabel>Tên sản phẩm</Form.ControlLabel>
                 <Form.Control name="title" />
               </Form.Group>
 
@@ -252,28 +272,81 @@ const ProductCreateModal = (props) => {
             </CardBlock>
 
             <CardBlock>
-              <Form.Group controlId="type">
-                <Form.ControlLabel>Loại sản phẩm</Form.ControlLabel>
-                <Form.Control name="type" accepter={CustomSelect} />
-              </Form.Group>
+              <FlexboxGrid justify="flex-start">
+                <FlexboxGrid.Item colspan={4}>
+                  <Form.Group controlId="type">
+                    <Form.ControlLabel>Loại sản phẩm</Form.ControlLabel>
+                    <Form.Control name="type" accepter={CustomSelect} />
+                  </Form.Group>
+                </FlexboxGrid.Item>
 
-              {form.type === PRODUCT_TEXT.SIMPLE && (
-                <Form.Group controlId="price">
-                  <Form.ControlLabel>Giá tiền</Form.ControlLabel>
-                  <Form.Control name="price" accepter={CustomInputNumber} />
-                </Form.Group>
-              )}
+                {form.type === PRODUCT_TEXT.SIMPLE && (
+                  <FlexboxGrid.Item colspan={4}>
+                    <Form.Group controlId="price">
+                      <Form.ControlLabel>Giá tiền</Form.ControlLabel>
+                      <NumericFormat
+                        name="price"
+                        customInput={CustomInput}
+                        thousandSeparator=","
+                        onValueChange={({ value }, sourceInfo) =>
+                          setForm({ ...form, price: value })
+                        }
+                        placeholder="Giá tiền"
+                        suffix=" VNĐ"
+                      />
+                    </Form.Group>
+                  </FlexboxGrid.Item>
+                )}
 
-              {form.type === PRODUCT_TEXT.VARIANT && (
-                <Form.Group controlId="variable">
-                  <Form.ControlLabel>Biến thể</Form.ControlLabel>
-                  <Form.Control
-                    name={"variable"}
-                    accepter={OptionsControlInput}
-                    variable={variable}
-                  />
-                </Form.Group>
-              )}
+                {form.type === PRODUCT_TEXT.VARIANT && (
+                  <>
+                    <FlexboxGrid.Item colspan={4}>
+                      <Form.Group controlId="primary_variant">
+                        <Form.ControlLabel>Tên biến thể</Form.ControlLabel>
+
+                        <Form.Control
+                          name={"primary_variant"}
+                          accepter={KMSelect}
+                          data={Object.keys(variable).map((key) => ({
+                            label: key,
+                            value: key,
+                          }))}
+                        />
+                      </Form.Group>
+                    </FlexboxGrid.Item>
+                    <FlexboxGrid.Item colspan={4}>
+                      <Form.Group controlId="primary_value">
+                        <Form.ControlLabel>Biến thể chính</Form.ControlLabel>
+
+                        <Form.Control
+                          name="primary_value"
+                          accepter={KMSelect}
+                          data={variable[form.primary_variant]?.map(
+                            (item) => ({
+                              label: item,
+                              value: item,
+                            })
+                          )}
+                        />
+                      </Form.Group>
+                    </FlexboxGrid.Item>
+                  </>
+                )}
+
+                {form?.primary_variant && (
+                  <FlexboxGrid.Item colspan={12}>
+                    <Form.Group controlId="variable">
+                      <Form.ControlLabel>Biến thể phụ</Form.ControlLabel>
+                      <Form.Control
+                        name={"variable"}
+                        accepter={OptionsControlInput}
+                        variable={variable}
+                        base={form?.primary_variant}
+                      />
+                    </Form.Group>
+                  </FlexboxGrid.Item>
+                )}
+              </FlexboxGrid>
             </CardBlock>
           </div>
           <div

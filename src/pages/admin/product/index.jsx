@@ -36,7 +36,6 @@ const Products = () => {
 
   const onUpdate = async (formValue) => {
     try {
-      // const resp = await ProductService.updateProduct(form._id);
       const form = new FormData();
       for (let key in formValue) {
         if (key === "img") {
@@ -60,8 +59,25 @@ const Products = () => {
 
   const onCreate = async (formValue) => {
     try {
-      console.log(formValue);
-    } catch (error) {}
+      const form = new FormData();
+      for (let key in formValue) {
+        if (key === "img") {
+          for (let img of formValue[key]) {
+            if (img.src && typeof img.src === "string") {
+              form.append(key, img.src);
+            } else if (img?.blobFile && img?.blobFile instanceof Blob) {
+              form.append(key, img?.blobFile);
+            }
+          }
+        } else if (key === "variable") {
+          form.append(key, JSON.stringify(formValue?.[key]));
+        } else form.append(key, formValue?.[key]);
+      }
+
+      await ProductService.createProduct(form);
+    } catch (error) {
+      console.log("onCreate error", error);
+    }
   };
   return (
     <>
@@ -115,6 +131,7 @@ const Products = () => {
         open={modal.open}
         onClose={handleClose}
         keyboard={false}
+        backdrop={"static"}
       >
         <Modal.Header>
           <Modal.Title>Create</Modal.Title>
