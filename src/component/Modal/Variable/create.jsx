@@ -17,8 +17,10 @@ import {
   IconButton,
   Input,
   InputNumber,
+  InputPicker,
 } from "rsuite";
 import { TEXT } from "src/constant/text.constant";
+import ProductService from "service/admin/Product.service";
 
 const Cell = ({ children, style, ...rest }) => (
   <td
@@ -100,8 +102,32 @@ const OptionsControlInput = ({ value, onChange, ...props }) => {
 const VariableModal = (props) => {
   const [form, setForm] = useState({
     groupVariable: [],
+    key: props.variableKey,
   });
+  const [variant, setVariant] = useState([]);
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    getVariables();
+  }, []);
 
+  const getVariables = async () => {
+    try {
+      setLoading(true);
+      let _variables = await ProductService.getVariables();
+
+      let option = Object.keys(_variables.data?.data).map((key) => ({
+        label: key,
+        value: key,
+      }));
+      setVariant(option);
+    } catch (error) {
+      console.log("getVariables error", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  console.log(variant);
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
@@ -119,12 +145,18 @@ const VariableModal = (props) => {
             <CardBlock>
               <Form.Group controlId="variable">
                 <Form.ControlLabel>
-                  Biến thể: {TEXT[props.variableKey]}
+                  Biến thể:
+                  <InputPicker
+                    value={form.key}
+                    data={variant}
+                    onChange={(value) => setForm({ ...form, key: value })}
+                  />
                 </Form.ControlLabel>
+
                 <Form.Control
                   name={"groupVariable"}
                   accepter={OptionsControlInput}
-                  label={TEXT[props.variableKey]}
+                  label={props.variableKey}
                 />
               </Form.Group>
             </CardBlock>

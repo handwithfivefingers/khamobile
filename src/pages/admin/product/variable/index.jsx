@@ -109,6 +109,7 @@ const ProductVariable = () => {
         <div className="row gy-4">
           {variable &&
             Object.keys(variable).map((key, index) => {
+              console.log(key)
               return (
                 <div className="col-12" key={[key, index]}>
                   <CardBlock>
@@ -116,7 +117,7 @@ const ProductVariable = () => {
                       bordered
                       header={
                         <Stack justifyContent="space-between">
-                          <span>{TEXT[key]}</span>
+                          <span>{key}</span>
                           <ButtonGroup>
                             <Button
                               appearance="primary"

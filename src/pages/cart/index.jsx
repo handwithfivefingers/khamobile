@@ -15,6 +15,7 @@ import {
   Table,
   Button,
 } from "rsuite";
+import { formatCurrency } from "src/helper";
 import styles from "./styles.module.scss";
 const { HeaderCell, Cell, Column } = Table;
 
@@ -44,17 +45,23 @@ const { HeaderCell, Cell, Column } = Table;
 
 export default function Cart(props) {
   const [data, setData] = useState([]);
+
   const [price, setPrice] = useState({
     total: 0,
     subTotal: 0,
   });
+
   useEffect(() => {
     let item = JSON.parse(localStorage.getItem("khaMobileCart"));
     if (item) {
-      const totalPrice = item.reduce(
-        (prev, current) => (prev += +current.skuPrice * +current.quantity),
-        0
-      );
+      const totalPrice = item.reduce((prev, current) => {
+        if (current.variable.length > 0) {
+          prev += +current.skuPrice * +current.quantity;
+        } else {
+          prev += +current.price * +current.quantity;
+        }
+        return prev;
+      }, 0);
 
       setData(item);
       setPrice({
@@ -63,8 +70,6 @@ export default function Cart(props) {
       });
     }
   }, []);
-
-  //   const [value, setValue] = React.useState(0);
 
   const handleMinus = () => {
     setValue(parseInt(value, 10) - 1);
@@ -93,7 +98,25 @@ export default function Cart(props) {
       <InputNumber
         size="sm"
         className={styles.customInputNumber}
-        value={rowData["skuPrice"] * rowData["quantity"]}
+        value={
+          rowData["skuPrice"]
+            ? formatCurrency(rowData["skuPrice"] * rowData["quantity"])
+            : formatCurrency(rowData["price"] * rowData["quantity"])
+        }
+        plaintext
+      />
+    </Cell>
+  );
+  const Pricing = ({ rowData, dataKey, ...props }) => (
+    <Cell {...props}>
+      <InputNumber
+        size="sm"
+        className={styles.customInputNumber}
+        value={
+          rowData["skuPrice"]
+            ? formatCurrency(rowData["skuPrice"] * rowData["quantity"])
+            : formatCurrency(rowData["price"] * rowData["quantity"])
+        }
         plaintext
       />
     </Cell>
@@ -112,14 +135,19 @@ export default function Cart(props) {
           <CardBlock>
             <Panel bordered bodyFill>
               <Table height={400} data={data} rowHeight={58}>
-                <Column width={200} align="center" flexGrow={1} verticalAlign="middle">
+                <Column
+                  width={200}
+                  align="center"
+                  flexGrow={1}
+                  verticalAlign="middle"
+                >
                   <HeaderCell>Tên sản phẩm</HeaderCell>
                   <Cell dataKey="title" />
                 </Column>
 
-                <Column align="center" verticalAlign="middle">
+                <Column align="center" verticalAlign="middle" flexGrow={1}>
                   <HeaderCell>Đơn giá</HeaderCell>
-                  <Cell dataKey="skuPrice" />
+                  <Pricing dataKey="sku" />
                 </Column>
 
                 <Column width={150} verticalAlign="middle" align="center">
@@ -127,7 +155,7 @@ export default function Cart(props) {
                   <QuantityCell dataKey="quantity" />
                 </Column>
 
-                <Column verticalAlign="middle" align="center">
+                <Column verticalAlign="middle" align="center" flexGrow={1}>
                   <HeaderCell>Tạm tính</HeaderCell>
                   <TotalCell dataKey="total" />
                 </Column>
@@ -142,11 +170,11 @@ export default function Cart(props) {
               <List>
                 <List.Item>
                   Tạm tính:
-                  {price.subTotal}₫
+                  {formatCurrency(price.subTotal)}
                 </List.Item>
                 <List.Item>
                   Tổng cộng:
-                  {price.total} ₫
+                  {formatCurrency(price.total)}
                 </List.Item>
 
                 <List.Item>

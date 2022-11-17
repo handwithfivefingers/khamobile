@@ -8,124 +8,21 @@ import CommonLayout from "component/UI/Layout";
 import axios from "configs/axiosInstance";
 import parser from "html-react-parser";
 import Image from "next/image";
-import React, { useEffect, useMemo, useState } from "react";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
 import {
-  Carousel,
-  FlexboxGrid,
-  Form,
-  InputNumber,
-  SelectPicker,
   Button,
+  ButtonGroup, Carousel, Form,
+  InputNumber
 } from "rsuite";
-import { TEXT } from "src/constant/text.constant";
 import { formatCurrency } from "src/helper";
 import styles from "./styles.module.scss";
-import _ from "lodash";
-import router from "server/route/v1/user";
-import { useRouter } from "next/router";
 const CustomPrice = ({ value }) => {
   return <div class="rs-plaintext">{formatCurrency(value)}</div>;
 };
 
 const CustomInput = ({ value }) => {
   return <div class="rs-plaintext">{value && parser(value)}</div>;
-};
-
-const VariableItem = ({ rowValue = {}, onChange, rowIndex, variable }) => {
-  // console.log(variable);
-
-  // const color = []
-
-  const color = variable.reduce((prev, current) => {
-    prev.push(current.color);
-    return prev;
-  }, []);
-  const memory = variable.reduce((prev, current) => {
-    prev.push(current.memory);
-    return prev;
-  }, []);
-  const version = variable.reduce((prev, current) => {
-    prev.push(current.version);
-    return prev;
-  }, []);
-
-  const handleChange = (value, name) =>
-    onChange(rowIndex, { ...rowValue, [name]: value });
-  return (
-    <>
-      {color.length && (
-        <FlexboxGrid.Item style={{ width: "calc(100% /3 - 4px)" }}>
-          <SelectPicker
-            placeholder={TEXT["color"]}
-            data={color?.map((item) => ({ value: item, label: item }))}
-            onChange={(value) => handleChange(value, "color")}
-            style={{ width: "100%" }}
-          />
-        </FlexboxGrid.Item>
-      )}
-      {version.length && (
-        <FlexboxGrid.Item style={{ width: "calc(100% / 3 - 4px)" }}>
-          <SelectPicker
-            placeholder={TEXT["version"]}
-            data={version?.map((item) => ({ value: item, label: item }))}
-            onChange={(value) => handleChange(value, "version")}
-            style={{ width: "100%" }}
-          />
-        </FlexboxGrid.Item>
-      )}
-      {memory.length && (
-        <FlexboxGrid.Item style={{ width: "calc(100% /3 - 4px)" }}>
-          <SelectPicker
-            placeholder={TEXT["memory"]}
-            data={memory?.map((item) => ({ value: item, label: item }))}
-            onChange={(value) => handleChange(value, "memory")}
-            style={{ width: "100%" }}
-          />
-        </FlexboxGrid.Item>
-      )}
-    </>
-  );
-};
-const OptionsControlInput = ({ value, onChange, variable }) => {
-  const [products, setProducts] = React.useState(value);
-
-  const handleChangeProducts = (nextProducts) => {
-    setProducts(nextProducts);
-    onChange(nextProducts);
-  };
-  const handleInputChange = (rowIndex, value) => {
-    const nextProducts = [...products];
-    nextProducts[rowIndex] = value;
-    handleChangeProducts(nextProducts);
-  };
-
-  const handleMinus = () => {
-    handleChangeProducts(products.slice(0, -1));
-  };
-
-  const handleAdd = () => {
-    handleChangeProducts(
-      products.concat([{ color: "", version: "", memory: "" }])
-    );
-  };
-
-  return (
-    <>
-      <FlexboxGrid style={{ gap: 4 }} justify="space-between">
-        {products?.map((rowValue, index) => (
-          <>
-            <VariableItem
-              key={index}
-              rowIndex={index}
-              rowValue={rowValue}
-              onChange={handleInputChange}
-              variable={variable}
-            />
-          </>
-        ))}
-      </FlexboxGrid>
-    </>
-  );
 };
 
 export default function ProductDetail({ data }) {
@@ -153,17 +50,75 @@ export default function ProductDetail({ data }) {
     });
   }, [form]);
   const handleAddToCart = () => {
-    localStorage.setItem(
-      "khaMobileCart",
-      JSON.stringify([
-        {
-          ...form,
-          sku: { ...JSON.parse(form?.sku) },
-          quantity: form.quantity,
-        },
-      ])
-    );
+    const cartItem = JSON.parse(localStorage.getItem("khaMobileCart"));
+
+    let listItem = [];
+
+    if (cartItem.length) {
+      listItem = [...cartItem];
+    }
+
+    if (form.variable.length > 0) {
+      listItem.push({
+        ...form,
+        sku: { ...JSON.parse(form?.sku) },
+        quantity: form.quantity,
+      });
+    } else {
+      listItem.push({
+        ...form,
+      });
+    }
+
+    localStorage.setItem("khaMobileCart", JSON.stringify(listItem));
+
     router.push("/cart");
+  };
+
+  const renderVariantProduct = () => {
+    let html = null;
+
+    if (form.variable?.length > 0) {
+      html = (
+        <>
+          <Form.Group controlId="color">
+            <Form.ControlLabel>{form?.primary_variant}</Form.ControlLabel>
+            <Form.Control name={"primary_value"} plaintext />
+          </Form.Group>
+          <Form.Group controlId="sku">
+            <Form.ControlLabel>Loại :</Form.ControlLabel>
+            <Form.Control
+              accepter={KMSelect}
+              data={handleOptions}
+              onChange={(value) =>
+                setForm({
+                  ...form,
+                  sku: value,
+                  skuPrice: +JSON.parse(value).price,
+                })
+              }
+            />
+          </Form.Group>
+          <Form.Group controlId="skuPrice">
+            <Form.ControlLabel>Giá tiền :</Form.ControlLabel>
+
+            {formatCurrency(form?.skuPrice * form?.quantity || 0)}
+          </Form.Group>
+        </>
+      );
+    } else {
+      html = (
+        <>
+          <Form.Group controlId="skuPrice">
+            <Form.ControlLabel>Giá tiền :</Form.ControlLabel>
+
+            {formatCurrency(form?.price * form?.quantity || 0)}
+          </Form.Group>
+        </>
+      );
+    }
+
+    return html;
   };
   return (
     <div className="container">
@@ -242,34 +197,8 @@ export default function ProductDetail({ data }) {
                       />
                     </Form.Group>
                   </div>
-                  <Form.Group controlId="color">
-                    <Form.ControlLabel>
-                      {form?.primary_variant}
-                    </Form.ControlLabel>
-                    <Form.Control name={"primary_value"} plaintext />
-                  </Form.Group>
-                  <Form.Group controlId="sku">
-                    <Form.ControlLabel>Loại :</Form.ControlLabel>
-                    <Form.Control
-                      accepter={KMSelect}
-                      data={handleOptions}
-                      onChange={(value) =>
-                        setForm({
-                          ...form,
-                          sku: value,
-                          skuPrice: +JSON.parse(value).price,
-                        })
-                      }
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="skuPrice">
-                    <Form.ControlLabel>Giá tiền :</Form.ControlLabel>
-                    <Form.Control
-                      name="skuPrice"
-                      plaintext
-                      value={form?.skuPrice * form?.quantity || 0}
-                    />
-                  </Form.Group>
+
+                  {renderVariantProduct()}
 
                   <Button onClick={() => handleAddToCart()}>Add to Cart</Button>
                 </Form>
@@ -279,8 +208,18 @@ export default function ProductDetail({ data }) {
           </CardBlock>
         </div>
 
-        <div className="col-lg-10 col-md-12"></div>
-        <div className="col-lg-2 col-md-12">
+        <div className="col-lg-9 col-md-12">
+          <CardBlock>
+            <ButtonGroup>
+              <Button>Tab 1</Button>
+              <Button>Tab 2</Button>
+              <Button>Tab 3</Button>
+            </ButtonGroup>
+
+            <div></div>
+          </CardBlock>
+        </div>
+        <div className="col-lg-3 col-md-12">
           <SideFilter />
         </div>
       </div>

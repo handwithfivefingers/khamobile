@@ -28,9 +28,11 @@ export default function Card({
   ]);
 
   const getPrice = (amount) => {
-    if (type === "simple") return formatCurrency(amount);
+    if (type === "simple") return formatCurrency(amount, { symbol: "" });
     else if (type === "variant") {
-      let rangePrice = variable.map((item) => formatCurrency(item.price));
+      let rangePrice = variable.map((item) =>
+        formatCurrency(item.price, { symbol: "" })
+      );
       return rangePrice.join(" - ");
     }
   };
@@ -42,14 +44,11 @@ export default function Card({
       <div className="card-body">
         <h5 className="card-title">{title}</h5>
         <p className="card-text">
-          <b className="price">{getPrice(price)}</b>
+          <b className="price">{getPrice(price)} VNĐ</b>
         </p>
         <p className="card-text">
           <s>{formatCurrency(underlinePrice)}</s>
         </p>
-        {/* <p className={styles.priceTragop}>
-          <span>Hoặc trả trước</span>700,000 đ
-        </p> */}
       </div>
     </div>
   );

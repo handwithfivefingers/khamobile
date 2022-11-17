@@ -1,6 +1,6 @@
 import currencyFormat from "currency-formatter";
 
-const formatCurrency = (str) => {
+const formatCurrency = (str, options) => {
   //   let result;
 
   const option = {
@@ -8,6 +8,7 @@ const formatCurrency = (str) => {
     precision: 0,
     thousang: ",",
     format: "%v %s",
+    ...options,
   };
   const result = currencyFormat.format(str, option);
   return result;

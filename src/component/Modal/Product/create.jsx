@@ -99,14 +99,14 @@ const OptionsControlInput = ({ value, onChange, variable, base }) => {
     handleChangeProducts(products.slice(0, -1));
   };
   const handleAdd = () => {
-    handleChangeProducts(
-      products.concat([{ color: "", version: "", memory: "", price: "" }])
-    );
+    let VariantObject = { "Màu sắc": "", "Phiên bản": "", "Bộ nhớ": "", price: "" };
+
+    delete VariantObject[base];
+    console.log(VariantObject)
+    handleChangeProducts(products.concat([VariantObject]));
   };
 
-  // variable.delete(base)
-  // console.log(base)
-  // console.log(variable)
+ 
   const newVariable = { ...variable };
   delete newVariable[base];
   console.log(newVariable);
@@ -231,7 +231,7 @@ const ProductCreateModal = (props) => {
     }
   };
 
-  console.log(variable[form.primary_variable], form)
+  console.log(variable[form.primary_variable], form);
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
@@ -321,12 +321,10 @@ const ProductCreateModal = (props) => {
                         <Form.Control
                           name="primary_value"
                           accepter={KMSelect}
-                          data={variable[form.primary_variant]?.map(
-                            (item) => ({
-                              label: item,
-                              value: item,
-                            })
-                          )}
+                          data={variable[form.primary_variant]?.map((item) => ({
+                            label: item,
+                            value: item,
+                          }))}
                         />
                       </Form.Group>
                     </FlexboxGrid.Item>
@@ -366,7 +364,6 @@ const ProductCreateModal = (props) => {
                   name="img"
                   accepter={CustomUpload}
                   action="#"
-                  // file={form["img"]?.slice(-1)}
                   group
                 />
               </Form.Group>
