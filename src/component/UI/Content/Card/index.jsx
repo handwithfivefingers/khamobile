@@ -30,10 +30,22 @@ export default function Card({
   const getPrice = (amount) => {
     if (type === "simple") return formatCurrency(amount, { symbol: "" });
     else if (type === "variant") {
-      let rangePrice = variable.map((item) =>
-        formatCurrency(item.price, { symbol: "" })
+      let rangePrice = variable.reduce(
+        (prev, current) => {
+          if (prev[0] > current.price) {
+            prev[0] = current.price;
+          }
+          if (prev[1] < current.price) {
+            prev[1] = current.price;
+          }
+          return prev;
+        },
+        [999999999999, 0]
       );
-      return rangePrice.join(" - ");
+      console.log("rangePrice", rangePrice);
+      return rangePrice
+        .map((item) => formatCurrency(item, { symbol: "" }))
+        .join(" - ");
     }
   };
   return (

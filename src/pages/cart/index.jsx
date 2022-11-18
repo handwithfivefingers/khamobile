@@ -53,9 +53,10 @@ export default function Cart(props) {
 
   useEffect(() => {
     let item = JSON.parse(localStorage.getItem("khaMobileCart"));
+    console.log(item)
     if (item) {
       const totalPrice = item.reduce((prev, current) => {
-        if (current.variable.length > 0) {
+        if (current.variable?.length > 0) {
           prev += +current.skuPrice * +current.quantity;
         } else {
           prev += +current.price * +current.quantity;

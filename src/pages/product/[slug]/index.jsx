@@ -1,7 +1,6 @@
 import clsx from "clsx";
 import CardBlock from "component/UI/Content/CardBlock";
 import Heading from "component/UI/Content/Heading";
-import { KMSelect } from "component/UI/Content/KMInput";
 import SideFilter from "component/UI/Content/SideFilter";
 import JsonViewer from "component/UI/JsonViewer";
 import CommonLayout from "component/UI/Layout";
@@ -9,128 +8,197 @@ import axios from "configs/axiosInstance";
 import parser from "html-react-parser";
 import Image from "next/image";
 import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
+import { useRef } from "react";
+import { useEffect } from "react";
+import { useMemo, useState } from "react";
+import { BiCart, BiDollarCircle } from "react-icons/bi";
 import {
   Button,
-  ButtonGroup, Carousel, Form,
-  InputNumber
+  ButtonGroup,
+  Carousel,
+  Divider,
+  Form,
+  InputNumber,
+  Panel,
+  Rate,
+  Schema,
 } from "rsuite";
 import { formatCurrency } from "src/helper";
 import styles from "./styles.module.scss";
-const CustomPrice = ({ value }) => {
-  return <div class="rs-plaintext">{formatCurrency(value)}</div>;
-};
 
-const CustomInput = ({ value }) => {
-  return <div class="rs-plaintext">{value && parser(value)}</div>;
+const CustomInputNumber = ({ rowKey, value, ...props }) => {
+  return <InputNumber value={value} {...props} />;
 };
 
 export default function ProductDetail({ data }) {
+  const formRef = useRef();
+  const [toggleContent, setToggleContent] = useState(false);
+
   const [form, setForm] = useState({
     quantity: 1,
+    img: data?.img,
   });
+
   const router = useRouter();
+
   useEffect(() => {
-    setForm({
-      ...form,
-      ...data,
-    });
-  }, [data]);
+    if (data?.variable.length) {
+      setForm({
+        ...form,
+        sku: JSON.stringify(data?.variable?.[0]),
+        skuPrice: data?.variable?.[0]?.price,
+      });
+    } else {
+      setForm({
+        ...form,
+        skuPrice: data?.price,
+      });
+    }
+  }, []);
 
   const handleOptions = useMemo(() => {
-    return form?.variable?.map((item) => {
+    return data?.variable?.map((item) => {
       let newObj = { ...item };
       delete newObj.price;
       return {
-        label: Object.keys(newObj)
-          .map((key) => [key, newObj[key]].join(" : "))
-          .join(" - "),
+        label: Object.keys(newObj).map((key) => [
+          key,
+          " : ",
+          newObj[key],
+          <br />,
+        ]),
         value: JSON.stringify(item),
       };
     });
-  }, [form]);
+  }, [data]);
+
   const handleAddToCart = () => {
     const cartItem = JSON.parse(localStorage.getItem("khaMobileCart"));
 
     let listItem = [];
 
-    if (cartItem.length) {
+    if (cartItem?.length) {
       listItem = [...cartItem];
     }
 
-    if (form.variable.length > 0) {
-      listItem.push({
-        ...form,
-        sku: { ...JSON.parse(form?.sku) },
-        quantity: form.quantity,
-      });
-    } else {
-      listItem.push({
-        ...form,
-      });
+    listItem.push(form);
+
+    localStorage.setItem("khaMobileCart", JSON.stringify(listItem));
+  };
+
+  const handleBuyNow = () => {
+    const cartItem = JSON.parse(localStorage.getItem("khaMobileCart"));
+
+    let listItem = [];
+
+    if (cartItem?.length) {
+      listItem = [...cartItem];
     }
+
+    listItem.push(form);
 
     localStorage.setItem("khaMobileCart", JSON.stringify(listItem));
 
     router.push("/cart");
   };
 
-  const renderVariantProduct = () => {
+  const renderVariantProduct = useMemo(() => {
     let html = null;
 
-    if (form.variable?.length > 0) {
+    if (data.variable?.length > 0) {
       html = (
         <>
-          <Form.Group controlId="color">
-            <Form.ControlLabel>{form?.primary_variant}</Form.ControlLabel>
-            <Form.Control name={"primary_value"} plaintext />
-          </Form.Group>
-          <Form.Group controlId="sku">
-            <Form.ControlLabel>Loại :</Form.ControlLabel>
-            <Form.Control
-              accepter={KMSelect}
-              data={handleOptions}
-              onChange={(value) =>
-                setForm({
-                  ...form,
-                  sku: value,
-                  skuPrice: +JSON.parse(value).price,
-                })
-              }
-            />
-          </Form.Group>
-          <Form.Group controlId="skuPrice">
-            <Form.ControlLabel>Giá tiền :</Form.ControlLabel>
-
-            {formatCurrency(form?.skuPrice * form?.quantity || 0)}
-          </Form.Group>
-        </>
-      );
-    } else {
-      html = (
-        <>
-          <Form.Group controlId="skuPrice">
-            <Form.ControlLabel>Giá tiền :</Form.ControlLabel>
-
-            {formatCurrency(form?.price * form?.quantity || 0)}
-          </Form.Group>
+          <div className={"row gx-2 gy-2 align-items-center w-100"}>
+            {[...handleOptions].map((item) => {
+              return (
+                <div
+                  className={clsx([
+                    " col-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3",
+                  ])}
+                  onClick={() =>
+                    setForm({
+                      ...form,
+                      sku: item.value,
+                      skuPrice: +JSON.parse(item.value).price,
+                    })
+                  }
+                >
+                  <div
+                    className={clsx(
+                      "shadow-sm rounded border",
+                      styles.skuSelect,
+                      {
+                        [styles.active]: form.sku === item.value,
+                      }
+                    )}
+                  >
+                    {item.label}
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </>
       );
     }
 
     return html;
+  }, [data, form]);
+
+  const calculatePrice = () => {
+    let html = null;
+
+    if (data.variable?.length > 0) {
+      html = formatCurrency(form?.skuPrice * form?.quantity || 0);
+    } else {
+      html = formatCurrency(form?.skuPrice * form?.quantity || 0);
+    }
+
+    return html;
   };
+
+  const getPrice = (product, type = "simple") => {
+    if (type === "simple")
+      return formatCurrency(product?.price, { symbol: "" });
+    else if (type === "variant") {
+      let rangePrice = product?.variable?.reduce(
+        (prev, current) => {
+          if (prev[0] > current.price) {
+            prev[0] = current.price;
+          }
+          if (prev[1] < current.price) {
+            prev[1] = current.price;
+          }
+          return prev;
+        },
+        [999999999999, 0]
+      );
+      return rangePrice
+        .map((item) => formatCurrency(item, { symbol: "" }))
+        .join(" - ");
+    }
+  };
+
+  const model = Schema.Model({
+    quantity: Schema.Types.StringType()
+      .isRequired("Số lượng không chính xác, vui lòng thử lại")
+      .minLength(0),
+    skuPrice: Schema.Types.StringType().isRequired(
+      "Giá tiền không chính xác, vui lòng reload lại page"
+    ),
+  });
+  const readMore = () => {};
   return (
-    <div className="container">
+    <div className="container product_detail">
       <div className="row gy-4" style={{ paddingTop: "1.5rem" }}>
         <Heading type="h1" left divideClass={styles.divideLeft}>
-          Sản phẩm
+          {data.title}
         </Heading>
 
         <div className={clsx([styles.vr, "col-lg-12 col-md-12"])}>
-          <CardBlock>
-            <div className="row gy-4">
-              <div className="col-6">
+          <div className="row gy-4">
+            <div className="col-6">
+              <CardBlock>
                 <Carousel
                   placement={"left"}
                   shape={"bar"}
@@ -149,74 +217,99 @@ export default function ProductDetail({ data }) {
                     );
                   })}
                 </Carousel>
-              </div>
+              </CardBlock>
+            </div>
 
-              <div className="col-6">
-                <Form
-                  formValue={form}
-                  layout="horizontal"
-                  className={clsx(styles.form, "form-product  row gx-3 gy-3")}
-                >
-                  <div className="col-12">
-                    <Form.Group controlId="title">
-                      <Form.Control
-                        name="title"
-                        classPrefix="title"
-                        plaintext
-                      />
-                    </Form.Group>
-                  </div>
-                  <div className="col-12">
-                    <Form.Group controlId="price">
-                      <Form.Control
-                        name="price"
-                        accepter={CustomPrice}
-                        classPrefix="price"
-                      />
-                    </Form.Group>
-                  </div>
-                  <div className="col-12">
-                    <Form.Group controlId="description">
-                      <Form.Control
-                        name="description"
-                        classPrefix="description"
-                        accepter={CustomInput}
-                        plaintext
-                      />
-                    </Form.Group>
-                  </div>
-                  <div className="col-12">
-                    <Form.Group controlId="quantity">
-                      <Form.ControlLabel>Số lượng:</Form.ControlLabel>
+            <div className="col-6">
+              <CardBlock>
+                <Form ref={formRef} model={model}>
+                  <Panel className="py-4">
+                    <TabsList data={data} />
+
+                    <Divider />
+                    <div
+                      className={clsx(
+                        "d-inline-flex align-items-center w-100",
+                        styles.groupVariant
+                      )}
+                      style={{ gap: 4 }}
+                    >
+                      <p className={styles.productPricing}>
+                        {calculatePrice()}
+                      </p>
+                      <Divider vertical className={styles.divider} />
+
+                      {renderVariantProduct}
+                    </div>
+                    <Divider />
+
+                    <div
+                      className={clsx(
+                        "d-inline-flex align-items-center",
+                        styles.groupVariant
+                      )}
+                      style={{ gap: 4 }}
+                    >
                       <Form.Control
                         name="quantity"
-                        accepter={InputNumber}
+                        accepter={CustomInputNumber}
+                        style={{ width: 60 }}
+                        defaultValue={form.quantity}
                         onChange={(value) =>
-                          setForm({ ...form, quantity: +value })
+                          setForm({ ...form, quantity: value })
                         }
+                        min={1}
                       />
-                    </Form.Group>
-                  </div>
 
-                  {renderVariantProduct()}
+                      <Divider vertical />
 
-                  <Button onClick={() => handleAddToCart()}>Add to Cart</Button>
+                      <Button
+                        color="red"
+                        appearance="primary"
+                        className={styles.btnIcon}
+                        onClick={handleAddToCart}
+                      >
+                        <BiCart />
+                        Thêm vào giỏ hàng
+                      </Button>
+                      <Button
+                        color="blue"
+                        appearance="primary"
+                        className={styles.btnIcon}
+                        onClick={handleBuyNow}
+                      >
+                        <BiDollarCircle />
+                        Mua ngay
+                      </Button>
+                    </div>
+                  </Panel>
                 </Form>
-                <JsonViewer data={form} />
-              </div>
+              </CardBlock>
+
+              {/* <JsonViewer data={form} /> */}
             </div>
-          </CardBlock>
+          </div>
         </div>
 
         <div className="col-lg-9 col-md-12">
           <CardBlock>
-            <ButtonGroup>
-              <Button>Tab 1</Button>
-              <Button>Tab 2</Button>
-              <Button>Tab 3</Button>
-            </ButtonGroup>
-
-            <div></div>
+            <div
+              className={clsx(styles.productContent, {
+                [styles.open]: toggleContent,
+              })}
+            >
+              {parser(data?.content)}
+              {!toggleContent && (
+                <Button
+                  appearance="ghost"
+                  color="red"
+                  onClick={() => setToggleContent(true)}
+                  className={styles.btnToggle}
+                >
+                  Xem thêm
+                </Button>
+              )}
+            </div>
           </CardBlock>
         </div>
         <div className="col-lg-3 col-md-12">
@@ -241,3 +334,65 @@ export const getServerSideProps = async (ctx) => {
 };
 
 ProductDetail.Layout = CommonLayout;
+
+const TabsList = (props) => {
+  const [tabs, setTabs] = useState("description");
+  const tabsList = [
+    {
+      key: "description",
+      active: "red",
+      name: "Mô tả",
+      appearance: "primary",
+    },
+    {
+      key: "information",
+      active: "red",
+      appearance: "primary",
+      name: "Thông tin sản phẩm",
+    },
+    {
+      key: "preview",
+      name: "Review",
+      active: "red",
+      appearance: "primary",
+    },
+  ];
+
+  const handleRenderTabs = () => {
+    if (tabs === "preview") {
+      return (
+        <>
+          <div
+            className="d-inline-flex align-items-center"
+            style={{ gap: 4, height: "100%" }}
+          >
+            <Rate defaultValue={3} size="xs" readOnly />
+            <div>Base on 1 Reviews</div>
+            <div>Write a review</div>
+          </div>
+        </>
+      );
+    } else if (tabs === "information") {
+      return <div>information</div>;
+    } else if (tabs === "description") {
+      return <div>{parser(props?.data?.description)}</div>;
+    }
+  };
+
+  return (
+    <>
+      <ButtonGroup>
+        {tabsList.map((item) => (
+          <Button
+            onClick={() => setTabs(item.key)}
+            color={tabs === item.key ? item.active : ""}
+            appearance={tabs === item.key ? item.appearance : "ghost"}
+          >
+            {item.name}
+          </Button>
+        ))}
+      </ButtonGroup>
+      <div style={{ paddingTop: 20 }}>{handleRenderTabs()}</div>
+    </>
+  );
+};
