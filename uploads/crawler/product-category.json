@@ -1,0 +1,70 @@
+[
+  {
+    "category": "IPHONE",
+    "href": [
+      "https://khamobile.vn/product-category/iphone/iphone-14-series/",
+      "https://khamobile.vn/product-category/iphone/iphone-14-pro/",
+      "https://khamobile.vn/product-category/iphone/iphone-14-plus/",
+      "https://khamobile.vn/product-category/iphone/iphone-14/",
+      "https://khamobile.vn/product-category/iphone/iphone-13-pro-13-pro-max-chinh-hang-vn-a/",
+      "https://khamobile.vn/product-category/iphone/iphone-13-pro-13-pro-max-quoc-te/",
+      "https://khamobile.vn/product-category/iphone/iphone-13-quoc-te/",
+      "https://khamobile.vn/product-category/iphone/iphone-13-mini/"
+    ]
+  },
+  {
+    "category": "Ipad",
+    "href": [
+      "https://khamobile.vn/product-category/ipad/ipad-air-5/",
+      "https://khamobile.vn/product-category/ipad/ipad-mini-6/",
+      "https://khamobile.vn/product-category/ipad-pro-2020/",
+      "https://khamobile.vn/product-category/ipad/ipad-gen-9-nguyen-seal-chua-active/"
+    ]
+  },
+  {
+    "category": "Iphone 99%",
+    "href": [
+      "https://khamobile.vn/product/iphone-12-promax-quoc-te-99/",
+      "https://khamobile.vn/product/iphone-13-pro-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-13-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-12-promax-pro-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-12-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-11-promax-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-11-pro-64-256gb/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-11-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-xsm-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-xs-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-xr-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-x-quoc-te-99/",
+      "https://khamobile.vn/product-category/iphone-99/iphone-8-plus-quoc-te-99/"
+    ]
+  },
+  {
+    "category": "Apple Watch",
+    "href": [
+      "https://khamobile.vn/product-category/apple-watch/apple-watch-se-40mm-44mm-gps-sport-band/",
+      "https://khamobile.vn/product-category/apple-watch/apple-watch-series-6-40mm-44mm-gps-lte-sport-band/",
+      "https://khamobile.vn/product-category/apple-watch/apple-watch-series-7-41mm-44mm-gps-lte-sport-band/"
+    ]
+  },
+  {
+    "category": "Macbook",
+    "href": [
+      "https://khamobile.vn/product-category/macbook/macbook-m2/",
+      "https://khamobile.vn/product-category/macbook-air-2020-13-inch-chip-apple-m1-ram-8gb/",
+      "https://khamobile.vn/product-category/macbook/macbook-pro-2020-13-inch-chip-apple-m1/",
+      "https://khamobile.vn/product-category/macbook-pro-14-m1-pro/",
+      "https://khamobile.vn/product-category/macbook-pro-2019-16in/",
+      "https://khamobile.vn/product-category/macbook-pro-16-m1-max/"
+    ]
+  },
+  {
+    "category": "Accessories",
+    "href": [
+      "https://khamobile.vn/product-category/accessories/aipod-pro/",
+      "https://khamobile.vn/product-category/accessories/airpod-2/",
+      "https://khamobile.vn/product-category/accessories/airpod-3/",
+      "https://khamobile.vn/product-category/accessories/apple-pencil/"
+    ]
+  }
+]

@@ -6,7 +6,11 @@ import { MESSAGE } from "#server/constant/message";
 import slugify from "slugify";
 import ProductModel from "./Model";
 import shortid from "shortid";
-
+import axios from "axios";
+import PuppeteerController from "#server/controller/Service/Puppeteer";
+import fs from "fs";
+import path from "path";
+import mongoose from "mongoose";
 export default class ProductController {
   getProducts = async (req, res) => {
     try {
@@ -134,88 +138,229 @@ export default class ProductController {
     }
   };
 
-  // getProducts = async (req, res) => {
-  //   try {
+  test = async (req, res) => {
+    try {
+      // let { data } = await axios.get(
+      //   "https://khamobile.vn/wp-json/wp/v2/product?per_page=100&page=1&_embed"
+      // );
+      // const baseImgPath = "https://khamobile.vn/wp-json/wp/v2/media/";
 
-  //     let _product = await Product.find({}).populate('categories')
+      // data = data.map((item) => {
+      //   let featureImg = baseImgPath + item.featured_media;
 
-  //     return successHandler(_product, res)
+      //   return {
+      //     slug: item.slug,
+      //     title: item.title.rendered,
+      //     content: item.title.rendered,
+      //     description: item.title.excerpt,
 
-  //   } catch (error) {
-  //     console.log(error)
-  //     return errHandler(error, res)
+      //   };
+      // });
+      this.khaMobileCrawler();
+
+      return res.status(200).json({
+        message: "Starting browser",
+      });
+    } catch (error) {
+      console.log("update product error", error);
+      return res.status(400).json({ error });
+    }
+  };
+
+  khaMobileCrawlerProductCategory = async () => {
+    const {
+      page,
+      browser,
+      status: isBrowserReady,
+    } = await new PuppeteerController().startBrowser("https://khamobile.vn/");
+
+    //id menu:  mega-menu-primary
+    // li 3rd -> ul.mega-sub-menu
+    //
+    let selector = "#mega-menu-primary";
+
+    if (!isBrowserReady) throw { message: "Browser was error" };
+
+    await page.waitForSelector(selector);
+
+    const text = await page.evaluate(() => {
+      let list = [];
+      let data = [];
+      let megaMenu = document.getElementById("mega-menu-primary");
+
+      if (!megaMenu) return "";
+
+      let sanphamItem = megaMenu.querySelectorAll("li")[2];
+
+      let listItemHasChildren = sanphamItem.querySelectorAll(
+        ".mega-menu-item-has-children"
+      );
+
+      for (let item of listItemHasChildren) {
+        // get list parent category
+        list.push(item);
+      }
+
+      for (let subCate of list) {
+        let subChild = subCate
+          .querySelector(".mega-sub-menu")
+          .querySelectorAll("a[href]");
+        subChild = [...subChild].map((item) => item.href);
+
+        data.push({
+          category: subCate.querySelector("a").textContent,
+          link: subChild,
+        });
+      }
+      return data;
+    });
+
+    fs.writeFile(
+      path.join(
+        path.resolve(""),
+        "uploads",
+        "crawler",
+        "product-category.json"
+      ),
+      JSON.stringify(text),
+      "utf8",
+      (error, data) => {
+        if (error) console.log(error);
+        if (data) console.log(data);
+      }
+    );
+
+    browser.close();
+  };
+
+  // khaMobileCrawler = async () => {
+  //   const data = JSON.parse(
+  //     fs.readFileSync(
+  //       path.join(
+  //         path.resolve(""),
+  //         "uploads",
+  //         "crawler",
+  //         "product-category.json"
+  //       ),
+  //       "utf8"
+  //     )
+  //   );
+  //   console.log("data", data, typeof data);
+  //   let result = [];
+  //   for (let cate of data) {
+  //     let dataCategory = {
+  //       category: cate.category,
+  //     };
+  //     // console.log("cate", cate.href);
+
+  //     let group = cate.href.map((item) => this.getProductLink(item));
+
+  //     // console.log("group", group);
+
+  //     const listPromise = await Promise.all(group);
+  //     dataCategory = {
+  //       ...dataCategory,
+  //       data: listPromise,
+  //     };
+  //     result.push(dataCategory);
   //   }
-  // }
 
-  // getSingleProduct = async (req, res) => {
-  //   try {
-  //   } catch (error) {}
-  // }
-
-  // updateProduct = async (req, res) => {
-  //   try {
-  //     let { _id } = req.params
-
-  //     let { categories, name, price, type } = req.body
-
-  //     // if (!categories) throw { message: 'No categories provided' }
-
-  //     let _update = {
-  //       name,
-  //       price,
-  //       type,
-  //       categories,
+  //   fs.writeFile(
+  //     path.join(path.resolve(""), "uploads", "crawler", "product.json"),
+  //     JSON.stringify(result),
+  //     "utf8",
+  //     (error, data) => {
+  //       if (error) console.log(error);
+  //       if (data) console.log(data);
   //     }
+  //   );
+  // };
 
-  //     await Product.updateOne({ _id }, _update, { new: true })
-
-  //     return res.status(200).json({
-  //       message: ' ok',
-  //     })
-  //   } catch (error) {
-  //     console.log(error)
-  //     return errHandler(error, res)
-  //   }
-  // }
-
-  // deleteProduct = async (req, res) => {
+  // getProductLink = async (url) => {
+  //   let browser;
   //   try {
-  //     const { _id } = req.params
+  //     const {
+  //       page,
+  //       browser: brows,
+  //       status: isBrowserReady,
+  //     } = await new PuppeteerController().startBrowser(url);
+  //     browser = brows;
+  //     // await page.waitForNavigation();
 
-  //     // return;
-  //     await Product.findOneAndDelete({
-  //       _id,
-  //     })
+  //     if (!isBrowserReady) throw { message: "Browser was error" };
 
-  //     return res.status(200).json({ message: 'Xóa sản phẩm thành công', status: 200 })
-  //   } catch (err) {
-  //     console.log('deleteProduct error')
+  //     let productItem =
+  //       ".products .product-small.col .woocommerce-loop-product__link";
+  //     const text = await page.evaluate((prodQuery) => {
+  //       let data = [];
+  //       let prods = document.querySelectorAll(prodQuery);
+  //       let title = document.querySelector('h1.shop-page-title').innerText;
 
-  //     return errHandler(err, res)
-  //   }
-  // }
-
-  // filterProductCate = (cate) => {
-  //   let res = []
-
-  //   res = cate.reduce((result, current) => {
-  //     let [parent, child] = current
-
-  //     if (child) {
-  //       let index = result.findIndex((item) => item._id === parent)
-
-  //       if (index !== -1) {
-  //         result[index].child = [...result[index].child, { _id: child }]
-  //       } else {
-  //         result = [...result, { _id: parent, child: [{ _id: child }] }]
+  //       for (let prod of prods) {
+  //         data.push({
+  //           href: prod.href,
+  //         });
   //       }
-  //     } else {
-  //       result = [...result, { _id: parent }]
-  //     }
+  //       return { title, data };
+  //     }, productItem);
+  //     console.log(text);
+  //     return text;
+  //   } catch (error) {
+  //     console.log(url, " : ", error);
+  //   } finally {
+  //     browser.close();
+  //   }
+  // };
 
-  //     return [...result]
-  //   }, [])
+  createMutipleProduct = async (req, res) => {
+    try {
+      const { title, description, content, variant } = req.body;
+      var _id = new mongoose.Types.ObjectId();
 
-  //   return res
-  // }
+      let _prod = new Product({
+        _id,
+        title,
+        slug:
+          slugify(title.toLowerCase().split(" ").join("-")) + "-" + shortid(),
+        description,
+        content,
+        parent: 0,
+        type: "variant",
+      });
+
+      await _prod.save();
+
+      for (let item of variant) {
+        let model = new Product({
+          title: title + " " + item.primary_key,
+          slug:
+            slugify(
+              (title + " " + item.primary_key)
+                .toLowerCase()
+                .split(" ")
+                .join("-")
+            ) +
+            "-" +
+            shortid(),
+          description,
+          content,
+          parentId: _id,
+          parent: 1,
+          price: item.price,
+          color: item.color,
+          type: "variant",
+        });
+        await model.save();
+      }
+
+      return res.status(200).json({
+        message: "ok",
+      });
+    } catch (error) {
+      console.log(error);
+      return res.status(400).json({
+        error,
+      });
+    }
+  };
 }

@@ -26,6 +26,11 @@ export default {
     type: String,
     required: true,
   },
+  parent: Number,
+  parentId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Product",
+  },
   category: [
     {
       type: mongoose.Schema.Types.ObjectId,

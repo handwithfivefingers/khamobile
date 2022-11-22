@@ -5,7 +5,7 @@ import ProductController from "#controller/admin/Product";
 
 const router = express.Router();
 
-const { getProducts, createProduct, getProductBySlug, updateProduct } =
+const { getProducts, createProduct, getProductBySlug, updateProduct, createMutipleProduct } =
   new ProductController();
 
 router.get("/product", upload.none(), getProducts);
@@ -15,6 +15,8 @@ router.post(
   upload.fields([{ name: "img", maxCount: 10 }]),
   createProduct
 );
+
+router.get("/product/test", upload.none(), createMutipleProduct);
 
 router.get("/product/:slug", upload.none(), getProductBySlug);
 

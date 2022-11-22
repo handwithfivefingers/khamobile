@@ -1,185 +1,204 @@
-const puppeteer = require('puppeteer')
-const moment = require('moment')
+// const puppeteer = require("puppeteer");
+// const moment = require("moment");
+import puppeteer from "puppeteer";
+import moment from "moment";
 const minimal_args = [
-  '--autoplay-policy=user-gesture-required',
-  '--disable-background-networking',
-  '--disable-background-timer-throttling',
-  '--disable-backgrounding-occluded-windows',
-  '--disable-breakpad',
-  '--disable-client-side-phishing-detection',
-  '--disable-component-update',
-  '--disable-default-apps',
-  '--disable-dev-shm-usage',
-  '--disable-domain-reliability',
-  '--disable-extensions',
-  '--disable-features=AudioServiceOutOfProcess',
-  '--disable-hang-monitor',
-  '--disable-ipc-flooding-protection',
-  '--disable-notifications',
-  '--disable-offer-store-unmasked-wallet-cards',
-  '--disable-popup-blocking',
-  '--disable-print-preview',
-  '--disable-prompt-on-repost',
-  '--disable-renderer-backgrounding',
-  '--disable-setuid-sandbox',
-  '--disable-speech-api',
-  '--disable-sync',
-  '--hide-scrollbars',
-  '--ignore-gpu-blacklist',
-  '--metrics-recording-only',
-  '--mute-audio',
-  '--no-default-browser-check',
-  '--no-first-run',
-  '--no-pings',
-  '--no-sandbox',
-  '--no-zygote',
-  '--password-store=basic',
-  '--use-gl=swiftshader',
-  '--use-mock-keychain',
-]
+  "--autoplay-policy=user-gesture-required",
+  "--disable-background-networking",
+  "--disable-background-timer-throttling",
+  "--disable-backgrounding-occluded-windows",
+  "--disable-breakpad",
+  "--disable-client-side-phishing-detection",
+  "--disable-component-update",
+  "--disable-default-apps",
+  "--disable-dev-shm-usage",
+  "--disable-domain-reliability",
+  "--disable-extensions",
+  "--disable-features=AudioServiceOutOfProcess",
+  "--disable-hang-monitor",
+  "--disable-ipc-flooding-protection",
+  "--disable-notifications",
+  "--disable-offer-store-unmasked-wallet-cards",
+  "--disable-popup-blocking",
+  "--disable-print-preview",
+  "--disable-prompt-on-repost",
+  "--disable-renderer-backgrounding",
+  "--disable-setuid-sandbox",
+  "--disable-speech-api",
+  "--disable-sync",
+  "--hide-scrollbars",
+  "--ignore-gpu-blacklist",
+  "--metrics-recording-only",
+  "--mute-audio",
+  "--no-default-browser-check",
+  "--no-first-run",
+  "--no-pings",
+  "--no-sandbox",
+  "--no-zygote",
+  "--password-store=basic",
+  "--use-gl=swiftshader",
+  "--use-mock-keychain",
+];
 
-const blocked_domains = ['googlesyndication.com', 'adservice.google.com', 'googleads.g.doubleclick.net', 'googletagservices.com']
-
-module.exports = class PuppeteerController {
+const blocked_domains = [
+  "googlesyndication.com",
+  "adservice.google.com",
+  "googleads.g.doubleclick.net",
+  "googletagservices.com",
+];
+export default class PuppeteerController {
   startBrowser = async (url) => {
-    let browser
-    let page
+    let browser;
+    let page;
     try {
-      browser = await puppeteer.launch({ headless: true, args: minimal_args })
+      browser = await puppeteer.launch({ headless: true, args: minimal_args });
 
-      page = await browser.newPage()
+      page = await browser.newPage();
 
-      await this.blockUnnessesaryRequest(page)
+      await this.blockUnnessesaryRequest(page);
 
-      console.log('Already blocked domain')
+      console.log("Already blocked domain");
 
-      await page.goto('https://masothue.com/')
+      await page.goto(url);
 
-      console.log('Tab https://masothue.com/ are ready to use')
+      console.log(`Tab ${url} are ready to use`);
 
-      return { page, browser, status: true }
+      return { page, browser, status: true };
     } catch (error) {
-      console.log('openTab error' + error)
+      console.log("openTab error" + error);
 
-      return { page, browser, status: false }
+      return { page, browser, status: false };
     }
-  }
+  };
 
   catchScreenShot = async () => {
     return await page.screenshot({
-      path: `uploads/puppeteer/${moment().format('DDMMYYYY-HHmm')}.png`,
+      path: `uploads/puppeteer/${moment().format("DDMMYYYY-HHmm")}.png`,
       fullPage: true,
-    })
-  }
+    });
+  };
 
   handleCatching = () => {
     try {
-      let blockItem = ['modal-inform']
+      let blockItem = ["modal-inform"];
     } catch (error) {}
-  }
+  };
 
   search = async (req, res) => {
-    let browser
+    let browser;
     try {
-      const { page, browser: brows, status: isBrowserReady } = await this.startBrowser()
+      const {
+        page,
+        browser: brows,
+        status: isBrowserReady,
+      } = await this.startBrowser();
 
-      browser = brows
+      browser = brows;
 
-      let selector = 'input[name=q]'
+      // block Selection
 
-      let actionSelector = 'button[type="submit"]'
+      let selector = "input[name=q]";
 
-      let mainContent = '#main section .container'
+      let actionSelector = 'button[type="submit"]';
 
-      let query = req.body?.q?.toLowerCase()
+      let mainContent = "#main section .container";
 
-      if (!query) throw { message: 'Invalid query string' }
+      let query = req.body?.q?.toLowerCase();
 
-      const listQuery = ['#main section .container table.table-taxinfo thead span', '#main section .container div.tax-listing div h3']
+      if (!query) throw { message: "Invalid query string" };
 
-      if (!isBrowserReady) throw { message: 'Browser was error' }
+      const listQuery = [
+        "#main section .container table.table-taxinfo thead span",
+        "#main section .container div.tax-listing div h3",
+      ];
 
-      await page.waitForSelector(selector)
+      // block Selection
 
-      await page.$eval(selector, (el, v) => (el.value = v), query)
+      if (!isBrowserReady) throw { message: "Browser was error" };
 
-      await page.click(actionSelector)
+      await page.waitForSelector(selector);
 
-      console.log('begin search modal-inform')
+      await page.$eval(selector, (el, v) => (el.value = v), query);
 
-      await this.delay(250)
+      await page.click(actionSelector);
+
+      console.log("begin search modal-inform");
+
+      await this.delay(250);
 
       let isModalShow = await page.evaluate((value) => {
-        console.log('search Modal')
+        console.log("search Modal");
 
-        let modal = document.querySelector('#modal-inform')
+        let modal = document.querySelector("#modal-inform");
 
-        if (modal && modal.style.display === 'block') {
+        if (modal && modal.style.display === "block") {
           return {
             status: true,
-            message: modal.querySelector('.modal-body').innerHTML || modal.querySelector('.modal-body').innerText,
-          }
+            message:
+              modal.querySelector(".modal-body").innerHTML ||
+              modal.querySelector(".modal-body").innerText,
+          };
         }
-        return { status: false, message: 'Modal not found' }
-      })
+        return { status: false, message: "Modal not found" };
+      });
 
       if (isModalShow.status) {
-        throw isModalShow
+        throw isModalShow;
       }
 
-      console.log('begin Navigation')
+      console.log("begin Navigation");
 
-      await page.waitForSelector(mainContent, { timeout: 2000 })
+      await page.waitForSelector(mainContent, { timeout: 2000 });
 
-      console.log('begin search item')
+      console.log("begin search item");
 
       const text = await page.evaluate((v) => {
-        let html = []
+        let html = [];
         for (let i = 0; i < v.length; i++) {
-          let itemQuery = v[i]
-          let target = document.querySelector(itemQuery)
+          let itemQuery = v[i];
+          let target = document.querySelector(itemQuery);
           if (target) {
-            html.push(target?.textContent || target?.innerHTML)
-            break
+            html.push(target?.textContent || target?.innerHTML);
+            break;
           }
         }
-        return html
-      }, listQuery)
+        return html;
+      }, listQuery);
 
       return res.status(200).json({
-        message: 'done',
+        message: "done",
         data: text,
-      })
+      });
     } catch (error) {
-      console.log('search error: ' + JSON.stringify(error, null, 2))
+      console.log("search error: " + JSON.stringify(error, null, 2));
 
       return res.status(400).json({
         error,
-      })
+      });
     } finally {
-      browser.close()
+      browser.close();
     }
-  }
+  };
 
   blockUnnessesaryRequest = async (page) => {
     try {
-      await page.setRequestInterception(true)
-      page.on('request', (request) => {
-        const url = request.url()
+      await page.setRequestInterception(true);
+      page.on("request", (request) => {
+        const url = request.url();
         if (blocked_domains.some((domain) => url.includes(domain))) {
-          request.abort()
+          request.abort();
         } else {
-          request.continue()
+          request.continue();
         }
-      })
+      });
     } catch (error) {
-      console.log('blockUnnessesaryRequest error:', error)
+      console.log("blockUnnessesaryRequest error:", error);
     }
-  }
+  };
 
   delay = (time) => {
     return new Promise(function (resolve) {
-      setTimeout(resolve, time)
-    })
-  }
+      setTimeout(resolve, time);
+    });
+  };
 }
