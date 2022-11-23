@@ -17,7 +17,6 @@ const qs = require('query-string')
 const crypto = require('crypto')
 
 const moment = require('moment')
-const { log } = require('console')
 
 libre.convertAsync = require('util').promisify(libre.convert)
 

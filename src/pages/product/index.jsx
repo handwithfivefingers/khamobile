@@ -100,7 +100,7 @@ export default function Product(props) {
                   <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
                     <div className="col-3">
                       <Card
-                        imgSrc={prod.img?.[0].filename}
+                        imgSrc={prod.img?.[0]?.filename}
                         title={prod.title}
                         price={prod.price}
                         underlinePrice={prod?.underlinePrice || null}

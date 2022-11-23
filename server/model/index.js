@@ -103,40 +103,59 @@
 // 	OTP,
 // };
 
-import user from './user';
-import category from './category';
-import product from './product';
-import productVariable from './product_variable';
-import post from './post';
-import mongoose from 'mongoose';
+import user from './user'
+import category from './category'
+import product from './product'
+import productVariable from './product_variable'
+import productOption from './product_option'
+import post from './post'
+import mongoose from 'mongoose'
 
-const { Schema, model } = mongoose;
+const { Schema, model } = mongoose
 
-const userSchema = new Schema({ ...user }, { timestamps: true });
+const userSchema = new Schema({ ...user }, { timestamps: true })
 
-const categorySchema = new Schema({ ...category }, { timestamps: true });
+const categorySchema = new Schema({ ...category }, { timestamps: true })
 
-const productSchema = new Schema({ ...product }, { timestamps: true });
+const productSchema = new Schema({ ...product }, { timestamps: true })
 
-const productVariableSchema = new Schema({ ...productVariable }, { timestamps: true });
+const productVariableSchema = new Schema({ ...productVariable }, { timestamps: true })
+const productOptionSchema = new Schema({ ...productOption }, { timestamps: true })
 
-const postSchema = new Schema({ ...post }, { timestamps: true });
+const postSchema = new Schema({ ...post }, { timestamps: true })
 
 userSchema.method({
-	authenticate: async function (password) {
-		console.log(password, this.hash_password);
-		return await bcrypt.compare(password, this.hash_password);
-	},
-});
+  authenticate: async function (password) {
+    console.log(password, this.hash_password)
+    return await bcrypt.compare(password, this.hash_password)
+  },
+})
 
-const User = model('User', userSchema);
+const User = model('User', userSchema)
 
-const Category = model('Category', categorySchema);
+const Category = model('Category', categorySchema)
 
-const Product = model('Product', productSchema);
+const Product = model('Product', productSchema)
 
-const ProductVariable = model('ProductVariable', productVariableSchema);
+const ProductVariable = model('ProductVariable', productVariableSchema)
 
-const Post = model('Post', postSchema);
+const ProductOption = model('ProductOption', productOptionSchema)
 
-export { Category, Product, User, Post, ProductVariable };
+const Post = model('Post', postSchema)
+
+
+
+// mongoose.plugin(function (schema) {
+//   schema.prototype.aggregateOne = function (pipeline) {
+//     var cur = this.aggregate(pipeline)
+//     if (!cur.hasNext()) return null
+//     return cur.next()
+//   }
+// })
+// Product.prototype.aggregateOne = function (pipeline) {
+//   var cur = this.aggregate(pipeline)
+//   if (!cur.hasNext()) return null
+//   return cur.next()
+// }
+
+export { Category, Product, User, Post, ProductVariable, ProductOption }
