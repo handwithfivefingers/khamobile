@@ -1,53 +1,53 @@
-import clsx from "clsx";
-import Card from "component/UI/Content/Card";
-import CardBlock from "component/UI/Content/CardBlock";
-import Divider from "component/UI/Content/Divider";
-import Heading from "component/UI/Content/Heading";
-import SideFilter from "component/UI/Content/SideFilter";
-import CommonLayout from "component/UI/Layout";
-import Link from "next/link";
-import React from "react";
-import { useEffect } from "react";
-import { useState } from "react";
-import { Dropdown, Pagination, SelectPicker } from "rsuite";
-import ProductService from "service/admin/Product.service";
-import styles from "./styles.module.scss";
+import clsx from 'clsx'
+import Card from 'component/UI/Content/Card'
+import CardBlock from 'component/UI/Content/CardBlock'
+import Divider from 'component/UI/Content/Divider'
+import Heading from 'component/UI/Content/Heading'
+import SideFilter from 'component/UI/Content/SideFilter'
+import CommonLayout from 'component/UI/Layout'
+import Link from 'next/link'
+import React from 'react'
+import { useEffect } from 'react'
+import { useState } from 'react'
+import { Dropdown, Pagination, SelectPicker } from 'rsuite'
+import ProductService from 'service/admin/Product.service'
+import styles from './styles.module.scss'
 
 const pricingFilter = [
   {
-    label: "Từ thấp đến cao",
-    value: "Từ thấp đến cao",
+    label: 'Từ thấp đến cao',
+    value: 'Từ thấp đến cao',
   },
   {
-    label: "Từ cao đến đến",
-    value: "Từ cao đến đến",
+    label: 'Từ cao đến đến',
+    value: 'Từ cao đến đến',
   },
   {
-    label: "Mới nhất",
-    value: "Mới nhất",
+    label: 'Mới nhất',
+    value: 'Mới nhất',
   },
   {
-    label: "Hot nhất",
-    value: "Hot nhất",
+    label: 'Hot nhất',
+    value: 'Hot nhất',
   },
-];
+]
 export default function Product(props) {
-  const [activePage, setActivePage] = useState(1);
-  const [product, setProduct] = useState([]);
+  const [activePage, setActivePage] = useState(1)
+  const [product, setProduct] = useState([])
   useEffect(() => {
-    getProducts();
-  }, []);
+    getProducts()
+  }, [])
 
   const getProducts = async () => {
     try {
-      const resp = await ProductService.getProduct();
-      setProduct(resp.data.data);
+      const resp = await ProductService.getProduct()
+      setProduct(resp.data.data)
 
-      console.log(resp.data.data);
+      console.log(resp.data.data)
     } catch (error) {
-      console.log("getProducts error: " + error);
+      console.log('getProducts error: ' + error)
     }
-  };
+  }
 
   return (
     <div className="container">
@@ -62,29 +62,22 @@ export default function Product(props) {
           <SideFilter />
         </div>
 
-        <div className={clsx([styles.vr, "col-lg-10 col-md-12"])}>
+        <div className={clsx([styles.vr, 'col-lg-10 col-md-12'])}>
           <CardBlock>
             <div className="row gy-4">
               <div className="col-12">
                 <p>
-                  The category description can be positioned anywhere on the
-                  page via the layout page builder inside the Blocks module with
-                  full typography control and advanced container styling
-                  options. The category image can also be added to the Category
-                  layouts automatically via the Blocks module. This allows for
-                  more creative placements on the page. It can also be
-                  enabled/disabled on any device and comes with custom image
-                  dimensions, including fit or fill (crop) options for all
-                  system images such as products, categories, banners, sliders,
-                  etc. Advanced Product Filter module included. This is the most
-                  comprehensive set of filtering tools rivaling the top paid
-                  extensions. It supports Opencart filters, price, availability,
-                  category, brands, options, attributes, tags, all included in
-                  the same Journal 3 package. Ajax Infinite Scroll with Load
-                  More / Load Previous and browser back button support. Load
-                  products in category pages as you scroll down or by clicking
-                  the Load More button, or disable this feature entirely and
-                  display the default pagination.
+                  The category description can be positioned anywhere on the page via the layout page builder inside the
+                  Blocks module with full typography control and advanced container styling options. The category image
+                  can also be added to the Category layouts automatically via the Blocks module. This allows for more
+                  creative placements on the page. It can also be enabled/disabled on any device and comes with custom
+                  image dimensions, including fit or fill (crop) options for all system images such as products,
+                  categories, banners, sliders, etc. Advanced Product Filter module included. This is the most
+                  comprehensive set of filtering tools rivaling the top paid extensions. It supports Opencart filters,
+                  price, availability, category, brands, options, attributes, tags, all included in the same Journal 3
+                  package. Ajax Infinite Scroll with Load More / Load Previous and browser back button support. Load
+                  products in category pages as you scroll down or by clicking the Load More button, or disable this
+                  feature entirely and display the default pagination.
                 </p>
               </div>
               <Divider />
@@ -101,7 +94,7 @@ export default function Product(props) {
                     <div className="col-3">
                       <Card
                         imgSrc={prod.img?.[0]?.filename}
-                        title={prod.title}
+                        title={prod.title.join(' ')}
                         price={prod.price}
                         underlinePrice={prod?.underlinePrice || null}
                         type={prod.type}
@@ -109,7 +102,7 @@ export default function Product(props) {
                       />
                     </div>
                   </Link>
-                );
+                )
               })}
             </div>
           </CardBlock>
@@ -129,7 +122,7 @@ export default function Product(props) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-Product.Layout = CommonLayout;
+Product.Layout = CommonLayout

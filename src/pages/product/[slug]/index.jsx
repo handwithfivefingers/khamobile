@@ -279,20 +279,6 @@ export default function ProductDetail({ data }) {
   )
 }
 
-export const getServerSideProps = async (ctx) => {
-  const { slug } = ctx.query
-
-  const resp = await axios.get('/admin/product' + '/' + 'test/' + slug)
-
-  return {
-    props: {
-      data: resp.data.data,
-    },
-  }
-}
-
-ProductDetail.Layout = CommonLayout
-
 const TabsList = (props) => {
   const [tabs, setTabs] = useState('description')
   const tabsList = [
@@ -351,3 +337,17 @@ const TabsList = (props) => {
     </>
   )
 }
+
+export const getServerSideProps = async (ctx) => {
+  const { slug } = ctx.query
+
+  const resp = await axios.get('/admin/product' + '/' + slug)
+
+  return {
+    props: {
+      data: resp.data.data,
+    },
+  }
+}
+
+ProductDetail.Layout = CommonLayout

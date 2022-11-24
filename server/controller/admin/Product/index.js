@@ -14,11 +14,35 @@ import mongoose, { startSession } from 'mongoose'
 export default class ProductController {
   getProducts = async (req, res) => {
     try {
-      let _product = await Product.find({})
+      // let _product = await Product.find({})
+      // let _prod = await ProductOption.find({}).populate({ path: 'parentId', select: 'slug primaryKey title' })
+      let _prod = await ProductOption.aggregate([
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'parentId',
+            foreignField: '_id',
+            as: 'child',
+          },
+        },
+        {
+          $unwind: '$child',
+        },
+        {
+          $project: {
+            _id: '$_id',
+            title: ['$child.title', '$primaryKey'],
+            slug: '$slug',
+            price: '$price',
+          },
+        },
+      ])
+
+      console.log(_prod)
 
       return res.status(200).json({
         message: MESSAGE.FETCHED(),
-        data: _product,
+        data: _prod,
       })
     } catch (error) {
       console.log(error)
@@ -77,21 +101,21 @@ export default class ProductController {
 
   getProductBySlug = async (req, res) => {
     try {
-      // let _product = await Product.aggregate({
-      //   slug: req.params.slug,
-      // });
+      let _product = await ProductOption.findOne({ slug: req.params.slug })
 
-      let _product = await Product.aggregate([
+      let parentId = _product.parentId
+
+      let _relationProd = await ProductOption.aggregate([
         {
           $match: {
-            slug: req.params.slug,
+            parentId,
           },
         },
         {
           $lookup: {
             from: 'products',
-            localField: '_id',
-            foreignField: 'parentId',
+            localField: 'parentId',
+            foreignField: '_id',
             as: 'child',
           },
         },
@@ -100,33 +124,61 @@ export default class ProductController {
         },
         {
           $project: {
-            // child: {
-            //   $map: {
-            //     input: "$child",
-            //     as: "item",
-            //     in: {
-            //       title: "$$item.title",
-            //       price: "$$item.price",
-            //       slug: "$$item.slug",
-            //     },
-            //   },
-            // },
-            title: '$title',
-            slug: '$slug',
-            content: '$content',
-            description: '$description',
-            child: {
-              title: '$child.title',
-              price: '$child.price',
-              slug: '$child.slug',
+            title: '$child.title',
+            child: '$child',
+            primaryKey: '$primaryKey',
+            spec: '$child.spec',
+            price: '$price',
+            variant: '$variant',
+          },
+        },
+        {
+          $group: {
+            _id: '$primaryKey',
+            item: {
+              $push: {
+                title: '$title',
+                value: '$primaryKey',
+                price: '$price',
+                variant: '$variant',
+              },
             },
           },
         },
       ])
 
+      // let _product = await Product.aggregate([
+      //   {
+      //     $match: {
+      //       slug: req.params.slug,
+      //     },
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: 'products',
+      //       localField: 'parentId',
+      //       foreignField: '_id',
+      //       as: 'child',
+      //     },
+      //   },
+      //   {
+      //     $unwind: '$child',
+      //   },
+      //   {
+      //     $project: {
+      //       title: '$title',
+      //       slug: '$slug',
+      //       content: '$content',
+      //       description: '$description',
+      //       child: '$child',
+      //     },
+      //   },
+      // ])
+
       return res.status(200).json({
         message: MESSAGE.FETCHED(),
         data: _product,
+        _relationProd,
       })
     } catch (error) {
       console.log(error)
@@ -355,10 +407,12 @@ export default class ProductController {
 
       const _id = new mongoose.Types.ObjectId()
 
+      const slug = slugify(title.toLowerCase().split(' ').join('-'))
+
       let _prod = {
         _id,
         title,
-        slug: slugify(title.toLowerCase().split(' ').join('-')) + '-' + shortid(),
+        slug,
         description,
         content,
       }
@@ -383,7 +437,7 @@ export default class ProductController {
 
       for (let _var of variant) {
         for (let item of _var?.items) {
-          await this.createProductOption({ parentId: _id, variant: item, primaryKey: _var.v })
+          await this.createProductOption({ parentId: _id, variant: item, primaryKey: _var.v, slug })
         }
       }
       // create product Option
@@ -410,13 +464,15 @@ export default class ProductController {
    * @param {*} parentId
    * @param { *__key : value, price }  variant
    */
-  createProductOption = async ({ parentId, variant, primaryKey }) => {
+  createProductOption = async ({ parentId, variant, primaryKey = '', slug }) => {
     try {
+      let newSlug = slug + '-' + primaryKey
+
       let _product = {
         parentId,
         primaryKey,
+        slug: slugify(newSlug) + '-' + shortid(),
       }
-      console.log(variant)
 
       if (variant) {
         let { price, ...variable } = variant
@@ -480,13 +536,11 @@ export default class ProductController {
         },
       ]
       if (primary) {
-        pipe.push(
-          {
-            $match: {
-              'child.primaryKey': primary,
-            },
+        pipe.push({
+          $match: {
+            'child.primaryKey': primary,
           },
-        )
+        })
       }
       let _product = await Product.aggregate(pipe)
 
