@@ -20,9 +20,12 @@ const CustomInputNumber = ({ rowKey, value, ...props }) => {
   return <InputNumber value={value} {...props} />
 }
 
-export default function ProductDetail({ data }) {
+export default function ProductDetail({ data, _relationProd }) {
   const formRef = useRef()
+
   const [toggleContent, setToggleContent] = useState(false)
+
+  const [activeVariant, setActiveVariant] = useState([])
 
   const [form, setForm] = useState({
     quantity: 1,
@@ -32,30 +35,20 @@ export default function ProductDetail({ data }) {
   const router = useRouter()
 
   useEffect(() => {
-    if (data?.child?.length > 1) {
-      setForm({
-        ...form,
-        sku: JSON.stringify(data?.variable?.[0]),
-        skuPrice: data?.variable?.[0]?.price,
-      })
-    } else {
-      setForm({
-        ...form,
-        skuPrice: data?.child?.price,
-      })
+    if (data) {
+      if (_relationProd.length > 0) {
+        let { primaryKey } = data
+        let index = _relationProd.findIndex((item) => item._id === primaryKey)
+        if (index !== -1) setActiveVariant(_relationProd[index])
+      } else {
+        setForm({
+          ...form,
+          skuPrice: data.price,
+          _id: data?._id,
+        })
+      }
     }
   }, [])
-
-  const handleOptions = useMemo(() => {
-    return data?.variable?.map((item) => {
-      let newObj = { ...item }
-      delete newObj.price
-      return {
-        label: Object.keys(newObj).map((key) => [key, ' : ', newObj[key], <br />]),
-        value: JSON.stringify(item),
-      }
-    })
-  }, [data])
 
   const handleAddToCart = () => {
     const cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
@@ -66,7 +59,13 @@ export default function ProductDetail({ data }) {
       listItem = [...cartItem]
     }
 
-    listItem.push(form)
+    let index = listItem.findIndex((item) => item._id === form._id)
+
+    if (index !== -1) {
+      listItem[index].quantity = listItem[index].quantity + +form.quantity
+    } else {
+      listItem.push(form)
+    }
 
     localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
   }
@@ -80,84 +79,108 @@ export default function ProductDetail({ data }) {
       listItem = [...cartItem]
     }
 
-    listItem.push(form)
+    let index = listItem.findIndex((item) => item._id === form._id)
+
+    if (index !== -1) {
+      listItem[index].quantity = listItem[index].quantity + +form.quantity
+    } else {
+      listItem.push(form)
+    }
 
     localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
 
     router.push('/cart')
   }
 
+  const renderPrimaryVariant = () => {
+    return (
+      <div className="col-12">
+        <div className="row row-cols-auto gy-2">
+          {_relationProd.map((item) => {
+            return (
+              <div className={clsx(['col'])}>
+                <Button
+                  type="button"
+                  color={activeVariant._id === item._id ? 'red' : ''}
+                  appearance={activeVariant._id === item._id ? 'primary' : ''}
+                  className={clsx('btn shadow-sm rounded border', styles.skuSelect, styles.btnIcon)}
+                  onClick={() => {
+                    setActiveVariant(item)
+                    setForm({
+                      sku: null,
+                      skuPrice: null,
+                      quantity: 1,
+                      img: '',
+                    })
+                  }}
+                >
+                  {item._id}
+                </Button>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
+  const renderSubVariant = () => {
+    return (
+      <div className="col-12">
+        <div className="row gy-2">
+          {activeVariant?.item?.map((item) => {
+            return (
+              <div
+                className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}
+                onClick={() =>
+                  setForm({
+                    ...form,
+                    sku: item._id,
+                    skuPrice: item.price,
+                  })
+                }
+              >
+                <div
+                  className={clsx('shadow-sm rounded border', styles.skuSelect, {
+                    [styles.active]: form.sku === item._id,
+                  })}
+                >
+                  {item.variant &&
+                    Object.keys(item.variant).map((key) => {
+                      return (
+                        <>
+                          <span>
+                            {key}: {item.variant[key]} <br />
+                          </span>
+                        </>
+                      )
+                    })}
+                </div>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    )
+  }
   const renderVariantProduct = useMemo(() => {
     let html = null
-
-    if (data.child?.length > 1) {
+    if (_relationProd.length > 0) {
       html = (
         <>
-          <div className={'row gx-2 gy-2 align-items-center w-100'}>
-            <div className="col-12">
-              <div className="row">
-                {data?.v?.map((item) => {
-                  return (
-                    <div
-                      className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3'])}
-                      // onClick={() =>
-                      //   setForm({
-                      //     ...form,
-                      //     sku: item.value,
-                      //     skuPrice: +JSON.parse(item.value).price,
-                      //   })
-                      // }
-                    >
-                      <div
-                        className={clsx('shadow-sm rounded border', styles.skuSelect, {
-                          // [styles.active]: form.sku === item.value,
-                        })}
-                      >
-                        {item}
-                      </div>
-                    </div>
-                  )
-                })}
-              </div>
-            </div>
+          <Divider className={styles.divider} />
 
+          <div className={'row gx-2 gy-2 align-items-center w-100'}>
+            {renderPrimaryVariant()}
             <Divider />
 
-            <div className="col-12">
-              <div className="row">
-                {[...data?.v].map((item) => {
-                  return data?.child.map((prod) => {
-                    return (
-                      <div
-                        className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4 col-xxl-3'])}
-                        onClick={() =>
-                          setForm({
-                            ...form,
-                            sku: item.value,
-                            skuPrice: +JSON.parse(item.value).price,
-                          })
-                        }
-                      >
-                        <div
-                          className={clsx('shadow-sm rounded border', styles.skuSelect, {
-                            [styles.active]: form.sku === item.value,
-                          })}
-                        >
-                          {item.label}
-                        </div>
-                      </div>
-                    )
-                  })
-                })}
-              </div>
-            </div>
+            {renderSubVariant()}
           </div>
         </>
       )
     }
 
     return html
-  }, [data, form])
+  }, [data, form, _relationProd, activeVariant])
 
   const calculatePrice = () => {
     let html = null
@@ -176,9 +199,8 @@ export default function ProductDetail({ data }) {
     skuPrice: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
 
-  const readMore = () => {}
+  console.log(activeVariant, form, data)
 
-  console.log(data, form)
   return (
     <div className="container product_detail">
       <div className="row gy-4" style={{ paddingTop: '1.5rem' }}>
@@ -206,18 +228,29 @@ export default function ProductDetail({ data }) {
               <CardBlock>
                 <Form ref={formRef} model={model}>
                   <Panel className="py-4">
-                    <TabsList data={data} />
-
-                    <Divider />
                     <div
                       className={clsx('d-inline-flex align-items-center w-100', styles.groupVariant)}
                       style={{ gap: 4 }}
                     >
-                      <p className={styles.productPricing}>{calculatePrice()}</p>
-                      <Divider vertical className={styles.divider} />
+                      {/* <p
+                        className={clsx(styles.productPricing, {
+                          [styles.variantPricing]: _relationProd.length > 0,
+                        })}
+                      >
+                        {calculatePrice()}
+                      </p>
 
-                      {renderVariantProduct}
+                      {renderVariantProduct} */}
+
+                      <div className="row">
+                        <div className="col-12">
+                          <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
+                        </div>
+
+                        <div className="col-12">{renderVariantProduct}</div>
+                      </div>
                     </div>
+
                     <Divider />
 
                     <div className={clsx('d-inline-flex align-items-center', styles.groupVariant)} style={{ gap: 4 }}>
@@ -241,6 +274,9 @@ export default function ProductDetail({ data }) {
                         Mua ngay
                       </Button>
                     </div>
+                    <Divider />
+
+                    <TabsList data={data} />
                   </Panel>
                 </Form>
               </CardBlock>
@@ -342,10 +378,11 @@ export const getServerSideProps = async (ctx) => {
   const { slug } = ctx.query
 
   const resp = await axios.get('/admin/product' + '/' + slug)
-
+  const { data, _relationProd } = resp.data
   return {
     props: {
-      data: resp.data.data,
+      data,
+      _relationProd,
     },
   }
 }

@@ -1,26 +1,14 @@
-import VariableModal from "component/Modal/Variable/create";
-import AdminLayout from "component/UI/AdminLayout";
-import CardBlock from "component/UI/Content/CardBlock";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import {
-  Avatar,
-  Content,
-  Table,
-  Button,
-  Message,
-  useToaster,
-  Modal,
-  Panel,
-  List,
-  Stack,
-  ButtonGroup,
-} from "rsuite";
-import ProductService from "service/admin/Product.service";
-import { TEXT } from "src/constant/text.constant";
-import { useCommonStore } from "src/store/commonStore";
-import styles from "./styles.module.scss";
-const { Column, HeaderCell, Cell } = Table;
+import VariableModal from 'component/Modal/Variable/create'
+import AdminLayout from 'component/UI/AdminLayout'
+import CardBlock from 'component/UI/Content/CardBlock'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import { Avatar, Content, Table, Button, Message, useToaster, Modal, Panel, List, Stack, ButtonGroup } from 'rsuite'
+import ProductService from 'service/admin/Product.service'
+import { TEXT } from 'src/constant/text.constant'
+import { useCommonStore } from 'src/store/commonStore'
+import styles from './styles.module.scss'
+const { Column, HeaderCell, Cell } = Table
 
 const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
   return (
@@ -29,84 +17,96 @@ const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
         style={{
           borderRadius: 6,
           marginTop: 2,
-          overflow: "hidden",
-          display: "flex",
-          justifyContent: "center",
+          overflow: 'hidden',
+          display: 'flex',
+          justifyContent: 'center',
         }}
       >
         <Avatar src={`/public/${rowData[dataKey]}`} />
       </div>
     </Cell>
-  );
-};
+  )
+}
 
 const ProductVariable = () => {
-  const changeTitle = useCommonStore((state) => state.changeTitle);
+  const changeTitle = useCommonStore((state) => state.changeTitle)
 
-  const [variable, setVariable] = useState([]);
+  const [variable, setVariable] = useState([])
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
   const [modal, setModal] = useState({
     open: false,
     component: null,
-  });
+  })
 
-  const router = useRouter();
+  const router = useRouter()
 
-  const toaster = useToaster();
+  const toaster = useToaster()
   useEffect(() => {
-    changeTitle("Page Danh mục");
-    getVariables();
-  }, []);
+    changeTitle('Page Danh mục')
+    getVariables()
+  }, [])
 
   const getVariables = async () => {
     try {
-      setLoading(true);
-      let _variables = await ProductService.getVariables();
+      setLoading(true)
+      let _variables = await ProductService.getVariables()
 
-      setVariable(_variables.data.data);
+      setVariable(_variables.data.data)
 
-      toaster.push(<Message>{_variables.data.message}</Message>);
+      toaster.push(<Message>{_variables.data.message}</Message>)
     } catch (error) {
-      console.log("getVariables error", error);
+      console.log('getVariables error', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  const handleClose = () =>
-    setModal({ ...modal, open: false, component: null });
+  const handleClose = () => setModal({ ...modal, open: false, component: null })
 
   const handleSubmit = async (formValue) => {
-    const listPromise = formValue.groupVariable?.map((item) => {
-      createVariable(item);
-    });
+    console.log(formValue)
+    
+    await createVariable(formValue)
 
-    await Promise.all(listPromise);
+    // const listPromise = formValue.groupVariable?.map((item) => {
+    //   createVariable(item)
+    // })
 
-    toaster.push(<Message>{"Created Bulk successfully "}</Message>);
-  };
+    // await Promise.all(listPromise)
+
+    toaster.push(<Message>{'Created Bulk successfully '}</Message>)
+  }
 
   const createVariable = async (item) => {
     try {
-      const resp = await ProductService.createVariable(item);
-      return resp;
+      const resp = await ProductService.createVariable(item)
+      return resp
     } catch (error) {
-      toaster.push(
-        <Message>
-          {error?.response?.data.message ||
-            error?.message ||
-            "something was wrong"}
-        </Message>
-      );
+      toaster.push(<Message>{error?.response?.data.message || error?.message || 'something was wrong'}</Message>)
     }
-  };
+  }
 
   return (
     <>
       <Content>
         <div className="row gy-4">
+          <div className="col-12">
+            <CardBlock>
+              <Button
+                appearance="primary"
+                onClick={() =>
+                  setModal({
+                    open: true,
+                    component: <VariableModal onSubmit={(value) => handleSubmit(value)} />,
+                  })
+                }
+              >
+                Add
+              </Button>
+            </CardBlock>
+          </div>
           {variable &&
             Object.keys(variable).map((key, index) => {
               console.log(key)
@@ -125,10 +125,7 @@ const ProductVariable = () => {
                                 setModal({
                                   open: true,
                                   component: (
-                                    <VariableModal
-                                      onSubmit={(value) => handleSubmit(value)}
-                                      variableKey={key}
-                                    />
+                                    <VariableModal onSubmit={(value) => handleSubmit(value)} variableKey={key} />
                                   ),
                                 })
                               }
@@ -149,13 +146,13 @@ const ProductVariable = () => {
                     </Panel>
                   </CardBlock>
                 </div>
-              );
+              )
             })}
         </div>
       </Content>
 
       {modal.open && (
-        <Modal size={"md"} open={modal.open} onClose={handleClose}>
+        <Modal size={'md'} open={modal.open} onClose={handleClose}>
           <Modal.Header>
             <Modal.Title>Create</Modal.Title>
           </Modal.Header>
@@ -163,8 +160,8 @@ const ProductVariable = () => {
         </Modal>
       )}
     </>
-  );
-};
-ProductVariable.Admin = AdminLayout;
+  )
+}
+ProductVariable.Admin = AdminLayout
 
-export default ProductVariable;
+export default ProductVariable

@@ -1,127 +1,97 @@
-import FilmIcon from "@rsuite/icons/legacy/Film";
-import ImageIcon from "@rsuite/icons/legacy/Image";
-import UserCircleIcon from "@rsuite/icons/legacy/UserCircleO";
-import CardBlock from "component/UI/Content/CardBlock";
-import Divider from "component/UI/Content/Divider";
-import Heading from "component/UI/Content/Heading";
-import CommonLayout from "component/UI/Layout";
-import React, { useEffect, useState } from "react";
-import {
-  FlexboxGrid,
-  List,
-  Panel,
-  InputGroup,
-  InputNumber,
-  Table,
-  Button,
-} from "rsuite";
-import { formatCurrency } from "src/helper";
-import styles from "./styles.module.scss";
-const { HeaderCell, Cell, Column } = Table;
-
-// const createRowData = (rowIndex) => {
-//   const randomKey = Math.floor(Math.random() * 5);
-//   const names = [
-//     "Iphone 14 Promax",
-//     "Iphone 13 Promax",
-//     "Iphone 12 Promax",
-//     "Iphone 11 Promax",
-//     "Iphone 10 Promax",
-//   ];
-//   const price = ["21000000", "21000000", "21000000", "21000000", "21000000"];
-//   const quantity = ["1", "2", "3", "4", "5"];
-//   const total = ["21000000", "21000000", "21000000", "21000000", "21000000"];
-
-//   return {
-//     id: rowIndex + 1,
-//     name: names[randomKey],
-//     price: price[randomKey],
-//     quantity: quantity[randomKey],
-//     total: total[randomKey],
-//   };
-// };
-
-// const data = Array.from({ length: 5 }).map((_, index) => createRowData(index));
+import FilmIcon from '@rsuite/icons/legacy/Film'
+import ImageIcon from '@rsuite/icons/legacy/Image'
+import UserCircleIcon from '@rsuite/icons/legacy/UserCircleO'
+import CardBlock from 'component/UI/Content/CardBlock'
+import Divider from 'component/UI/Content/Divider'
+import Heading from 'component/UI/Content/Heading'
+import CommonLayout from 'component/UI/Layout'
+import React, { useEffect, useState } from 'react'
+import { FlexboxGrid, List, Panel, InputGroup, InputNumber, Table, Button } from 'rsuite'
+import { formatCurrency } from 'src/helper'
+import styles from './styles.module.scss'
+const { HeaderCell, Cell, Column } = Table
 
 export default function Cart(props) {
-  const [data, setData] = useState([]);
+  const [data, setData] = useState([])
 
   const [price, setPrice] = useState({
     total: 0,
     subTotal: 0,
-  });
+  })
 
   useEffect(() => {
-    let item = JSON.parse(localStorage.getItem("khaMobileCart"));
-    console.log(item)
+    let item = JSON.parse(localStorage.getItem('khaMobileCart'))
+
     if (item) {
-      const totalPrice = item.reduce((prev, current) => {
-        if (current.variable?.length > 0) {
-          prev += +current.skuPrice * +current.quantity;
-        } else {
-          prev += +current.price * +current.quantity;
-        }
-        return prev;
-      }, 0);
-
-      setData(item);
-      setPrice({
-        total: totalPrice,
-        subTotal: totalPrice,
-      });
+      setData(item)
     }
-  }, []);
+  }, [])
 
-  const handleMinus = () => {
-    setValue(parseInt(value, 10) - 1);
-  };
-  const handlePlus = () => {
-    setValue(parseInt(value, 10) + 1);
-  };
+  useEffect(() => {
+    const totalPrice = data.reduce((prev, current) => {
+      prev += +current.skuPrice * +current.quantity
+      return prev
+    }, 0)
 
-  const QuantityCell = ({ rowData, dataKey, ...props }) => (
-    <Cell {...props}>
+    setPrice({
+      total: totalPrice,
+      subTotal: totalPrice,
+    })
+  }, [data])
+
+  const handleMinus = (row, key, rest) => {
+    let newData = [...data]
+
+    newData[rest.rowIndex].quantity = --newData[rest.rowIndex].quantity
+
+    setData(newData)
+  }
+  const handlePlus = (row, key, rest) => {
+    let newData = [...data]
+
+    newData[rest.rowIndex].quantity = ++newData[rest.rowIndex].quantity
+
+    setData(newData)
+  }
+
+  const QuantityCell = ({ rowData, dataKey, ...keyProps }) => (
+    <Cell {...keyProps}>
       <InputGroup>
-        <InputGroup.Button onClick={handleMinus}>-</InputGroup.Button>
-        <InputNumber
-          size="sm"
-          className={styles.customInputNumber}
-          value={rowData[dataKey]}
-        />
-        <InputGroup.Button onClick={handlePlus}>+</InputGroup.Button>
+        <InputGroup.Button onClick={() => handleMinus(rowData, dataKey, { ...keyProps })}>-</InputGroup.Button>
+        <InputNumber size="sm" className={styles.customInputNumber} value={rowData[dataKey]} />
+        <InputGroup.Button onClick={() => handlePlus(rowData, dataKey, { ...keyProps })}>+</InputGroup.Button>
       </InputGroup>
     </Cell>
-  );
-  console.log(data);
+  )
 
-  const TotalCell = ({ rowData, dataKey, ...props }) => (
-    <Cell {...props}>
+  const TotalCell = ({ rowData, dataKey, ...keyProps }) => (
+    <Cell {...keyProps}>
       <InputNumber
         size="sm"
         className={styles.customInputNumber}
         value={
-          rowData["skuPrice"]
-            ? formatCurrency(rowData["skuPrice"] * rowData["quantity"])
-            : formatCurrency(rowData["price"] * rowData["quantity"])
+          rowData['skuPrice']
+            ? formatCurrency(rowData['skuPrice'] * rowData['quantity'])
+            : formatCurrency(rowData['price'] * rowData['quantity'])
         }
         plaintext
       />
     </Cell>
-  );
-  const Pricing = ({ rowData, dataKey, ...props }) => (
-    <Cell {...props}>
+  )
+  const Pricing = ({ rowData, dataKey, ...keyProps }) => (
+    <Cell {...keyProps}>
       <InputNumber
         size="sm"
         className={styles.customInputNumber}
         value={
-          rowData["skuPrice"]
-            ? formatCurrency(rowData["skuPrice"] * rowData["quantity"])
-            : formatCurrency(rowData["price"] * rowData["quantity"])
+          rowData['skuPrice']
+            ? formatCurrency(rowData['skuPrice'] * rowData['quantity'])
+            : formatCurrency(rowData['price'] * rowData['quantity'])
         }
         plaintext
       />
     </Cell>
-  );
+  )
 
   return (
     <div className="container">
@@ -136,12 +106,7 @@ export default function Cart(props) {
           <CardBlock>
             <Panel bordered bodyFill>
               <Table height={400} data={data} rowHeight={58}>
-                <Column
-                  width={200}
-                  align="center"
-                  flexGrow={1}
-                  verticalAlign="middle"
-                >
+                <Column width={200} align="center" flexGrow={1} verticalAlign="middle">
                   <HeaderCell>Tên sản phẩm</HeaderCell>
                   <Cell dataKey="title" />
                 </Column>
@@ -187,7 +152,7 @@ export default function Cart(props) {
         </div>
       </div>
     </div>
-  );
+  )
 }
 
-Cart.Layout = CommonLayout;
+Cart.Layout = CommonLayout

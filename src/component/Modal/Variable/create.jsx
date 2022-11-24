@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 
-import MinusIcon from "@rsuite/icons/Minus";
-import PlusIcon from "@rsuite/icons/Plus";
-import CardBlock from "component/UI/Content/CardBlock";
-import Select from "component/UI/Content/MutiSelect";
-import CustomUpload from "component/UI/CustomUpload";
-import Textarea from "component/UI/Editor";
-import JsonViewer from "component/UI/JsonViewer";
+import MinusIcon from '@rsuite/icons/Minus'
+import PlusIcon from '@rsuite/icons/Plus'
+import CardBlock from 'component/UI/Content/CardBlock'
+import Select from 'component/UI/Content/MutiSelect'
+import CustomUpload from 'component/UI/CustomUpload'
+import Textarea from 'component/UI/Editor'
+import JsonViewer from 'component/UI/JsonViewer'
 import {
   Button,
   ButtonGroup,
@@ -18,55 +18,48 @@ import {
   Input,
   InputNumber,
   InputPicker,
-} from "rsuite";
-import { TEXT } from "src/constant/text.constant";
-import ProductService from "service/admin/Product.service";
+} from 'rsuite'
+import ProductService from 'service/admin/Product.service'
 
 const Cell = ({ children, style, ...rest }) => (
-  <td
-    style={{ padding: "2px 4px 2px 0", verticalAlign: "top", ...style }}
-    {...rest}
-  >
+  <td style={{ padding: '2px 4px 2px 0', verticalAlign: 'top', ...style }} {...rest}>
     {children}
   </td>
-);
+)
 
-const VariableItem = ({ rowValue = {}, onChange, rowIndex }) => {
-  const handleChange = (value, name) =>
-    onChange(rowIndex, { ...rowValue, [name]: value });
+const VariableItem = ({ rowValue = '', onChange, rowIndex }) => {
+  const handleChange = (value) => onChange(rowIndex, value)
 
   return (
     <FlexboxGrid.Item>
       <Cell>
-        <Input
-          value={rowValue.color}
-          onChange={(value) => handleChange(value, "color")}
-        />
+        <Input value={rowValue} onChange={(value) => handleChange(value)} />
       </Cell>
     </FlexboxGrid.Item>
-  );
-};
+  )
+}
 
 const OptionsControlInput = ({ value, onChange, ...props }) => {
-  const [products, setProducts] = React.useState(value);
+  const [products, setProducts] = React.useState(value)
 
   const handleChangeProducts = (nextProducts) => {
-    setProducts(nextProducts);
-    onChange(nextProducts);
-  };
-  const handleInputChange = (rowIndex, value) => {
-    const nextProducts = [...products];
-    nextProducts[rowIndex] = value;
-    handleChangeProducts(nextProducts);
-  };
+    setProducts(nextProducts)
+    onChange(nextProducts)
+  }
 
   const handleMinus = () => {
-    handleChangeProducts(products.slice(0, -1));
-  };
+    handleChangeProducts(products.slice(0, -1))
+  }
 
   const handleAdd = () => {
-    handleChangeProducts(products.concat([{ color: "" }]));
-  };
+    handleChangeProducts([...products, ''])
+  }
+
+  const handleInputChange = (rowIndex, value) => {
+    const nextProducts = [...products]
+    nextProducts[rowIndex] = value
+    handleChangeProducts(nextProducts)
+  }
 
   return (
     <>
@@ -78,96 +71,82 @@ const OptionsControlInput = ({ value, onChange, ...props }) => {
 
       <FlexboxGrid>
         {products?.map((rowValue, index) => {
-          return (
-            <VariableItem
-              key={index}
-              rowIndex={index}
-              rowValue={rowValue}
-              onChange={handleInputChange}
-            />
-          );
+          return <VariableItem key={index} rowIndex={index} rowValue={rowValue} onChange={handleInputChange} />
         })}
       </FlexboxGrid>
 
       <Cell colSpan={2} style={{ paddingTop: 10 }}>
         <ButtonGroup size="xs">
-          <IconButton onClick={handleAdd} icon={<PlusIcon />} />
           <IconButton onClick={handleMinus} icon={<MinusIcon />} />
+
+          <IconButton onClick={handleAdd} icon={<PlusIcon />} />
         </ButtonGroup>
       </Cell>
     </>
-  );
-};
+  )
+}
 
 const VariableModal = (props) => {
   const [form, setForm] = useState({
-    groupVariable: [],
+    value: [],
     key: props.variableKey,
-  });
-  const [variant, setVariant] = useState([]);
-  const [loading, setLoading] = useState(false);
+  })
+  const [variant, setVariant] = useState([])
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
-    getVariables();
-  }, []);
+    getVariables()
+  }, [])
 
   const getVariables = async () => {
     try {
-      setLoading(true);
-      let _variables = await ProductService.getVariables();
+      setLoading(true)
+      let _variables = await ProductService.getVariables()
 
       let option = Object.keys(_variables.data?.data).map((key) => ({
         label: key,
         value: key,
-      }));
-      setVariant(option);
+      }))
+      setVariant(option)
     } catch (error) {
-      console.log("getVariables error", error);
+      console.log('getVariables error', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
-  console.log(variant);
+  console.log(variant)
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
 
       <JsonViewer data={form} />
 
-      <Content className={" p-4"}>
-        <Form
-          formValue={form}
-          onChange={(formVal) => setForm(formVal)}
-          className={"row "}
-          fluid
-        >
+      <Content className={' p-4'}>
+        <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row '} fluid>
           <div className="col-12 bg-w rounded">
             <CardBlock>
               <Form.Group controlId="variable">
-                <Form.ControlLabel>
-                  Biến thể:
-                  <InputPicker
-                    value={form.key}
-                    data={variant}
-                    onChange={(value) => setForm({ ...form, key: value })}
-                  />
-                </Form.ControlLabel>
+                <Form.ControlLabel> Biến thể</Form.ControlLabel>
 
-                <Form.Control
-                  name={"groupVariable"}
-                  accepter={OptionsControlInput}
-                  label={props.variableKey}
+                <InputPicker
+                  value={form.key}
+                  data={variant}
+                  onChange={(value) => setForm({ ...form, key: value })}
+                  creatable
+                  placeholder="Biến thể"
                 />
+              </Form.Group>
+
+              <Form.Group controlId="">
+                <Form.ControlLabel>Giá trị</Form.ControlLabel>
+                <Form.Control name={'value'} accepter={OptionsControlInput} label={props.variableKey} />
               </Form.Group>
             </CardBlock>
 
             <CardBlock>
               <Form.Group>
                 <ButtonToolbar>
-                  <Button
-                    appearance="primary"
-                    onClick={() => props?.onSubmit(form)}
-                  >
+                  <Button appearance="primary" onClick={() => props?.onSubmit(form)}>
                     Tạo
                   </Button>
                 </ButtonToolbar>
@@ -177,7 +156,7 @@ const VariableModal = (props) => {
         </Form>
       </Content>
     </>
-  );
-};
+  )
+}
 
-export default VariableModal;
+export default VariableModal

@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react'
 
-import MinusIcon from "@rsuite/icons/Minus";
-import PlusIcon from "@rsuite/icons/Plus";
-import CardBlock from "component/UI/Content/CardBlock";
-import Select from "component/UI/Content/MutiSelect";
-import CustomUpload from "component/UI/CustomUpload";
-import Textarea from "component/UI/Editor";
-import JsonViewer from "component/UI/JsonViewer";
-import { useRouter } from "next/router";
+import MinusIcon from '@rsuite/icons/Minus'
+import PlusIcon from '@rsuite/icons/Plus'
+import CardBlock from 'component/UI/Content/CardBlock'
+import Select from 'component/UI/Content/MutiSelect'
+import CustomUpload from 'component/UI/CustomUpload'
+import Textarea from 'component/UI/Editor'
+import JsonViewer from 'component/UI/JsonViewer'
+import { useRouter } from 'next/router'
 import {
   Button,
   ButtonGroup,
@@ -21,21 +21,21 @@ import {
   SelectPicker,
   useToaster,
   Message,
-} from "rsuite";
-import CategoryService from "service/admin/Category.service";
-import { useCommonStore } from "src/store/commonStore";
-import ProductService from "service/admin/Product.service";
-import { TEXT, PRODUCT_TEXT } from "src/constant/text.constant";
-import { forwardRef } from "react";
-import { PRODUCT_TYPE } from "src/constant/select.constant";
-import { formatCurrency } from "src/helper";
-import { NumericFormat } from "react-number-format";
-import { KMSelect } from "component/UI/Content/KMInput";
-import { useCallback } from "react";
-
+} from 'rsuite'
+import CategoryService from 'service/admin/Category.service'
+import { useCommonStore } from 'src/store/commonStore'
+import ProductService from 'service/admin/Product.service'
+import { TEXT, PRODUCT_TEXT } from 'src/constant/text.constant'
+import { forwardRef } from 'react'
+import { PRODUCT_TYPE } from 'src/constant/select.constant'
+import { formatCurrency } from 'src/helper'
+import { NumericFormat } from 'react-number-format'
+import { KMSelect } from 'component/UI/Content/KMInput'
+import { useCallback } from 'react'
+import _ from 'lodash'
 const CustomInput = (props) => {
-  return <input name="title" class="rs-input" type="text" {...props} />;
-};
+  return <input name="title" class="rs-input" type="text" {...props} />
+}
 
 const CustomInputPrice = ({ rowValue, onChange, name, ...props }) => {
   return (
@@ -49,23 +49,16 @@ const CustomInputPrice = ({ rowValue, onChange, name, ...props }) => {
       value={rowValue[name]}
       {...props}
     />
-  );
-};
-const CustomInputNumber = forwardRef((props, ref) => {
-  return <InputNumber {...props} ref={ref} />;
-});
+  )
+}
 
 const VariableItem = ({ rowValue = {}, onChange, rowIndex, variable }) => {
-  const handleChange = (value, name) =>
-    onChange(rowIndex, { ...rowValue, [name]: value });
+  const handleChange = (value, name) => onChange(rowIndex, { ...rowValue, [name]: value })
   return (
     <>
       {Object.keys(variable).map((key, index) => {
         return (
-          <FlexboxGrid.Item
-            style={{ width: "calc(100% / 3 - 4px)" }}
-            key={[key, index]}
-          >
+          <FlexboxGrid.Item style={{ width: 'calc(100% / 3 - 4px)' }} key={[key, index]}>
             <SelectPicker
               value={rowValue[key]}
               placeholder={TEXT[key]}
@@ -74,67 +67,135 @@ const VariableItem = ({ rowValue = {}, onChange, rowIndex, variable }) => {
                 label: item,
               }))}
               onChange={(value) => handleChange(value, key)}
-              style={{ width: "100%" }}
+              style={{ width: '100%' }}
             />
           </FlexboxGrid.Item>
-        );
+        )
       })}
     </>
-  );
-};
-const OptionsControlInput = ({ value, onChange, variable, base }) => {
-  const [products, setProducts] = React.useState(value);
+  )
+}
+
+const VariantInput = ({ value, onChange, data, variable, ...rest }) => {
+  const [products, setProducts] = React.useState(value)
+
+  const [primaryKey, setPrimaryKey] = useState('')
 
   const handleChangeProducts = (nextProducts) => {
-    setProducts(nextProducts);
-    onChange(nextProducts);
-  };
+    setProducts(nextProducts)
+    onChange(nextProducts)
+  }
   const handleInputChange = (rowIndex, value) => {
-    const nextProducts = [...products];
-    nextProducts[rowIndex] = value;
-    handleChangeProducts(nextProducts);
-  };
+    const nextProducts = [...products]
+    nextProducts[rowIndex] = value
+    handleChangeProducts(nextProducts)
+  }
 
   const handleMinus = () => {
-    handleChangeProducts(products.slice(0, -1));
-  };
+    handleChangeProducts(products.slice(0, -1))
+  }
+
   const handleAdd = () => {
-    let VariantObject = { "Màu sắc": "", "Phiên bản": "", "Bộ nhớ": "", price: "" };
+    let VariantObject = {
+      k: primaryKey || '',
+      v: '',
+    }
 
-    delete VariantObject[base];
-    console.log(VariantObject)
-    handleChangeProducts(products.concat([VariantObject]));
-  };
+    handleChangeProducts(products.concat([VariantObject]))
+  }
 
- 
-  const newVariable = { ...variable };
-  delete newVariable[base];
-  console.log(newVariable);
+  const handleKeySelect = (rowIndex, field, value) => {
+    const nextProducts = [...products]
+    setPrimaryKey(value)
+    nextProducts = nextProducts.map((item) => ({ ...item, [field]: value }))
+    handleChangeProducts(nextProducts)
+  }
+
+  const getKeyOptions = (index) => {
+    let options = variable.find((item) => item.label === products[index].k) || []
+    return options?.value?.map((item) => ({ label: item, value: item }))
+  }
+
+  const handleValueSelect = (rowIndex, field, value) => {
+    const nextProducts = [...products]
+    nextProducts[rowIndex] = { ...nextProducts[rowIndex], [field]: value }
+    handleChangeProducts(nextProducts)
+  }
+
+  const handleSubOptionschange = (value, label, index) => {
+    const nextProducts = [...products]
+    nextProducts[index][label] = value
+
+    var result = _.chain(nextProducts)
+      .groupBy('v')
+      .map((value, key) => {
+        return {
+          k: primaryKey,
+          v: key,
+          items: value,
+        }
+      })
+      .value()
+
+    handleChangeProducts(nextProducts)
+  }
+  const handleChangePrice = ({ target }, index) => {
+    const nextProducts = [...products]
+    nextProducts[index].price = target.value
+    handleChangeProducts(nextProducts)
+  }
+
   return (
     <>
       <FlexboxGrid style={{ gap: 4 }} justify="space-between">
         {products?.map((rowValue, index) => (
-          <>
-            <VariableItem
-              key={index}
-              rowIndex={index}
-              rowValue={rowValue}
-              onChange={handleInputChange}
-              variable={newVariable}
-            />
-            <FlexboxGrid.Item style={{ width: "calc(100% / 3 - 4px)" }}>
-              <CustomInputPrice
-                name="price"
-                rowValue={rowValue}
-                onChange={(value) =>
-                  handleInputChange(index, { ...rowValue, price: value })
-                }
-              />
-            </FlexboxGrid.Item>
-          </>
+          <FlexboxGrid.Item style={{ width: 'calc(100% )' }}>
+            <FlexboxGrid style={{ gap: 4 }}>
+              <FlexboxGrid.Item style={{ width: 'calc(100% - 4px)' }}>
+                {index == 0 && ( //only primary Key
+                  <SelectPicker
+                    data={data}
+                    onChange={(value) => handleKeySelect(index, 'k', value)}
+                    value={rowValue[index]?.k}
+                    style={{ width: '100%' }}
+                  />
+                )}
+              </FlexboxGrid.Item>
+
+              <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
+                <SelectPicker
+                  data={getKeyOptions(index)}
+                  onChange={(value) => handleValueSelect(index, 'v', value)}
+                  value={rowValue[index]?.k}
+                  style={{ width: '100%' }}
+                  placeholder={primaryKey}
+                />
+              </FlexboxGrid.Item>
+
+              {variable
+                .filter((item) => item.label !== primaryKey)
+                ?.map((varItem, i) => {
+                  return (
+                    <>
+                      <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
+                        <SelectPicker
+                          data={varItem.value.map((opt) => ({ label: opt, value: opt }))}
+                          style={{ width: '100%' }}
+                          placeholder={varItem.label}
+                          onChange={(value) => handleSubOptionschange(value, varItem.label, index)}
+                        />
+                      </FlexboxGrid.Item>
+                    </>
+                  )
+                })}
+              <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
+                <CustomInput value={rowValue['price']} onChange={(e) => handleChangePrice(e, index)} />
+              </FlexboxGrid.Item>
+            </FlexboxGrid>
+          </FlexboxGrid.Item>
         ))}
 
-        <div style={{ width: "100%" }}>
+        <div style={{ width: '100%' }}>
           <ButtonGroup size="xs">
             <IconButton onClick={handleAdd} icon={<PlusIcon />} />
             <IconButton onClick={handleMinus} icon={<MinusIcon />} />
@@ -142,113 +203,192 @@ const OptionsControlInput = ({ value, onChange, variable, base }) => {
         </div>
       </FlexboxGrid>
     </>
-  );
-};
-
-const CustomSelect = forwardRef((props, ref) => {
-  return (
-    <SelectPicker
-      {...props}
-      ref={ref}
-      data={PRODUCT_TYPE}
-      value={props.value}
-    />
-  );
-});
+  )
+}
 
 const ProductCreateModal = (props) => {
-  const changeTitle = useCommonStore((state) => state.changeTitle);
-  const router = useRouter();
+  const changeTitle = useCommonStore((state) => state.changeTitle)
+  const router = useRouter()
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(false)
 
-  const [variable, setVariable] = useState([]);
+  const [variable, setVariable] = useState([])
+
   const [form, setForm] = useState({
-    title: "",
-    slug: "",
-    description: "",
-    price: null,
+
+    title: 'IPhone 17 Promax',
+    description: '17 promax',
+    content: '',
     img: [],
-    category: "",
-    type: "simple",
-    variable: [],
-  });
+    variant: [
+      {
+        k: 'Dung lượng',
+        v: '256Gb',
+        items: [
+          {
+            'Màu sắc': 'Xanh',
+            'Phiên bản': 'CN',
+            price: 38000000,
+          },
+          {
+            'Màu sắc': 'Đỏ',
+            version: 'CN',
+            price: 37500000,
+          },
+          {
+            'Màu sắc': 'Tím',
+            version: 'VN',
+            price: 38500000,
+          },
+        ],
+      },
+      {
+        k: 'Dung lượng',
+        v: '512Gb',
+        items: [
+          {
+            'Màu sắc': 'Xanh',
+            'Phiên bản': 'CN',
+            price: 49500000,
+          },
+          {
+            'Màu sắc': 'Đỏ',
+            'Phiên bản': 'CN',
+            price: 41000000,
+          },
+        ],
+      },
+    ],
+    keyVariant: ['Dung lượng', 'Màu sắc', 'Phiên bản'],
+  })
 
-  const [data, setData] = useState();
+  const [data, setData] = useState()
 
-  const toaster = useToaster();
+  const toaster = useToaster()
 
   useEffect(() => {
-    changeTitle("Create Post");
-    getCateData();
-    getVariables();
+    changeTitle('Create Post')
+    getCateData()
+    getVariables()
     if (props.data) {
-      const newData = { ...props.data };
-      setForm(newData);
+      const newData = { ...props.data }
+      setForm(newData)
     }
-  }, []);
+
+    let abc = [
+      {
+        k: 'Dung lượng',
+        v: '256Gb',
+        items: [
+          {
+            'Màu sắc': 'Xanh',
+            'Phiên bản': 'CN',
+            price: 38000000,
+          },
+          {
+            'Màu sắc': 'Đỏ',
+            version: 'CN',
+            price: 37500000,
+          },
+          {
+            'Màu sắc': 'Tím',
+            version: 'VN',
+            price: 38500000,
+          },
+        ],
+      },
+      {
+        k: 'Dung lượng',
+        v: '512Gb',
+        items: [
+          {
+            'Màu sắc': 'Xanh',
+            'Phiên bản': 'CN',
+            price: 49500000,
+          },
+          {
+            'Màu sắc': 'Đỏ',
+            'Phiên bản': 'CN',
+            price: 41000000,
+          },
+        ],
+      },
+    ]
+
+    let result = []
+    for (let item of abc) {
+      if (item.items?.length > 0) {
+        for (let vars of item.items) {
+          let obj = {
+            k: item.k,
+            v: item.v,
+          }
+          for (let key in vars) {
+            obj[key] = vars[key]
+          }
+          result.push(obj)
+        }
+      }
+    }
+  }, [])
 
   const getCateData = async () => {
     try {
-      setLoading(true);
-      const res = await CategoryService.getCate({ type: "post" });
-      let { data } = res.data;
-      setData(data);
+      setLoading(true)
+      const res = await CategoryService.getCate({ type: 'post' })
+      let { data } = res.data
+      setData(data)
     } catch (error) {
-      console.log("error", error, error?.response?.data?.message);
+      console.log('error', error, error?.response?.data?.message)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const getVariables = async () => {
     try {
-      setLoading(true);
-      let _variables = await ProductService.getVariables();
+      setLoading(true)
+      let _variables = await ProductService.getVariables()
 
-      setVariable(_variables.data.data);
+      let _var = Object.keys(_variables.data.data).map((key) => ({
+        label: key,
+        value: _variables.data.data[key],
+      }))
 
-      toaster.push(<Message>{_variables.data.message}</Message>);
+      setVariable(_var)
+
+      toaster.push(<Message>{_variables.data.message}</Message>)
     } catch (error) {
-      console.log("getVariables error", error);
+      console.log('getVariables error', error)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const onSubmit = async () => {
     try {
-      setLoading(true);
+      setLoading(true)
 
       if (props.onSubmit) {
-        props.onSubmit(form);
+        props.onSubmit(form)
       }
     } catch (error) {
-      console.log("error", error, error?.response?.data?.message);
+      console.log('error', error, error?.response?.data?.message)
     } finally {
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      setLoading(false);
+      await new Promise((resolve) => setTimeout(resolve, 500))
+      setLoading(false)
     }
-  };
+  }
 
-  console.log(variable[form.primary_variable], form);
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
 
       <JsonViewer data={form} />
 
-      <Content className={" p-4"}>
-        <Form
-          formValue={form}
-          onChange={(formVal) => setForm(formVal)}
-          className={"row "}
-          fluid
-        >
-          <div
-            className="col-9 bg-w rounded"
-            style={{ display: "flex", flexDirection: "column", gap: "12px" }}
-          >
+      <Content className={' p-4'}>
+        <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row '} fluid>
+          <div className="col-9 bg-w rounded" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <CardBlock>
               <Form.Group controlId="title">
                 <Form.ControlLabel>Tên sản phẩm</Form.ControlLabel>
@@ -272,100 +412,30 @@ const ProductCreateModal = (props) => {
             </CardBlock>
 
             <CardBlock>
-              <FlexboxGrid justify="flex-start">
-                <FlexboxGrid.Item colspan={4}>
-                  <Form.Group controlId="type">
-                    <Form.ControlLabel>Loại sản phẩm</Form.ControlLabel>
-                    <Form.Control name="type" accepter={CustomSelect} />
-                  </Form.Group>
-                </FlexboxGrid.Item>
-
-                {form.type === PRODUCT_TEXT.SIMPLE && (
-                  <FlexboxGrid.Item colspan={4}>
-                    <Form.Group controlId="price">
-                      <Form.ControlLabel>Giá tiền</Form.ControlLabel>
-                      <NumericFormat
-                        name="price"
-                        customInput={CustomInput}
-                        thousandSeparator=","
-                        onValueChange={({ value }, sourceInfo) =>
-                          setForm({ ...form, price: value })
-                        }
-                        placeholder="Giá tiền"
-                        suffix=" VNĐ"
-                      />
-                    </Form.Group>
-                  </FlexboxGrid.Item>
-                )}
-
-                {form.type === PRODUCT_TEXT.VARIANT && (
-                  <>
-                    <FlexboxGrid.Item colspan={4}>
-                      <Form.Group controlId="primary_variant">
-                        <Form.ControlLabel>Tên biến thể</Form.ControlLabel>
-
-                        <Form.Control
-                          name={"primary_variant"}
-                          accepter={KMSelect}
-                          data={Object.keys(variable).map((key) => ({
-                            label: key,
-                            value: key,
-                          }))}
-                        />
-                      </Form.Group>
-                    </FlexboxGrid.Item>
-                    <FlexboxGrid.Item colspan={4}>
-                      <Form.Group controlId="primary_value">
-                        <Form.ControlLabel>Biến thể chính</Form.ControlLabel>
-
-                        <Form.Control
-                          name="primary_value"
-                          accepter={KMSelect}
-                          data={variable[form.primary_variant]?.map((item) => ({
-                            label: item,
-                            value: item,
-                          }))}
-                        />
-                      </Form.Group>
-                    </FlexboxGrid.Item>
-                  </>
-                )}
-
-                {form?.primary_variant && (
-                  <FlexboxGrid.Item colspan={12}>
-                    <Form.Group controlId="variable">
-                      <Form.ControlLabel>Biến thể phụ</Form.ControlLabel>
-                      <Form.Control
-                        name={"variable"}
-                        accepter={OptionsControlInput}
-                        variable={variable}
-                        base={form?.primary_variant}
-                      />
-                    </Form.Group>
-                  </FlexboxGrid.Item>
-                )}
-              </FlexboxGrid>
+              <Form.Group controlId="">
+                <Form.ControlLabel>Biến thể</Form.ControlLabel>
+                <Form.Control
+                  name="variant"
+                  accepter={VariantInput}
+                  data={variable.map((item) => ({ label: item.label, value: item.label }))}
+                  variable={variable}
+                />
+              </Form.Group>
             </CardBlock>
           </div>
           <div
             className="col-3 position-sticky"
             style={{
-              display: "flex",
-              flexDirection: "column",
-              gap: "12px",
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
               top: 0,
             }}
           >
             <CardBlock>
               <Form.Group controlId="img">
                 <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
-                <Form.Control
-                  rows={5}
-                  name="img"
-                  accepter={CustomUpload}
-                  action="#"
-                  group
-                />
+                <Form.Control rows={5} name="img" accepter={CustomUpload} action="#" group />
               </Form.Group>
             </CardBlock>
 
@@ -376,8 +446,8 @@ const ProductCreateModal = (props) => {
                   name="category"
                   accepter={Select}
                   data={data || []}
-                  labelKey={"name"}
-                  valueKey={"_id"}
+                  labelKey={'name'}
+                  valueKey={'_id'}
                   preventOverflow
                   cascade
                 />
@@ -397,7 +467,7 @@ const ProductCreateModal = (props) => {
         </Form>
       </Content>
     </>
-  );
-};
+  )
+}
 
-export default ProductCreateModal;
+export default ProductCreateModal

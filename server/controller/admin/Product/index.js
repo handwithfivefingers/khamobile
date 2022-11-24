@@ -123,62 +123,55 @@ export default class ProductController {
           $unwind: '$child',
         },
         {
-          $project: {
-            title: '$child.title',
-            child: '$child',
-            primaryKey: '$primaryKey',
-            spec: '$child.spec',
-            price: '$price',
-            variant: '$variant',
-          },
-        },
-        {
           $group: {
             _id: '$primaryKey',
             item: {
               $push: {
-                title: '$title',
-                value: '$primaryKey',
+                _id: '$_id',
+                title: '$child.title',
+                primaryKey: '$primaryKey',
                 price: '$price',
                 variant: '$variant',
               },
             },
           },
         },
+
+        {
+          $project: {
+            _id: '$_id',
+            item: {
+              $cond: {
+                if: { $gt: [{ $size: '$item' }, 1] }, // length > 1
+                then: {
+                  $filter: {
+                    input: '$item',
+                    as: 'prod',
+                    cond: {},
+                  },
+                },
+                else: {
+                  $filter: {
+                    input: '$item',
+                    as: 'prod',
+                    cond: {
+                      $ne: ['$$prod._id', _product._id],
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        { $sort: { _id: 1 } },
       ])
 
-      // let _product = await Product.aggregate([
-      //   {
-      //     $match: {
-      //       slug: req.params.slug,
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: 'products',
-      //       localField: 'parentId',
-      //       foreignField: '_id',
-      //       as: 'child',
-      //     },
-      //   },
-      //   {
-      //     $unwind: '$child',
-      //   },
-      //   {
-      //     $project: {
-      //       title: '$title',
-      //       slug: '$slug',
-      //       content: '$content',
-      //       description: '$description',
-      //       child: '$child',
-      //     },
-      //   },
-      // ])
+      let isValidRelation = _relationProd.some((item) => item.item?.length > 0) && _relationProd.length > 1
 
       return res.status(200).json({
         message: MESSAGE.FETCHED(),
         data: _product,
-        _relationProd,
+        _relationProd: isValidRelation ? _relationProd : [],
       })
     } catch (error) {
       console.log(error)
