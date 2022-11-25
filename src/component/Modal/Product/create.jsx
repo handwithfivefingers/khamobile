@@ -7,88 +7,26 @@ import Select from 'component/UI/Content/MutiSelect'
 import CustomUpload from 'component/UI/CustomUpload'
 import Textarea from 'component/UI/Editor'
 import JsonViewer from 'component/UI/JsonViewer'
-import { useRouter } from 'next/router'
-import {
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Content,
-  FlexboxGrid,
-  Form,
-  IconButton,
-  Input,
-  InputNumber,
-  SelectPicker,
-  useToaster,
-  Message,
-} from 'rsuite'
-import CategoryService from 'service/admin/Category.service'
-import { useCommonStore } from 'src/store/commonStore'
-import ProductService from 'service/admin/Product.service'
-import { TEXT, PRODUCT_TEXT } from 'src/constant/text.constant'
-import { forwardRef } from 'react'
-import { PRODUCT_TYPE } from 'src/constant/select.constant'
-import { formatCurrency } from 'src/helper'
-import { NumericFormat } from 'react-number-format'
-import { KMSelect } from 'component/UI/Content/KMInput'
-import { useCallback } from 'react'
 import _ from 'lodash'
+import { useRouter } from 'next/router'
+import { Button, ButtonGroup, ButtonToolbar, Content, FlexboxGrid, Form, IconButton, SelectPicker } from 'rsuite'
+import CategoryService from 'service/admin/Category.service'
+import ProductService from 'service/admin/Product.service'
+import { useCommonStore } from 'src/store/commonStore'
+import { KMEditor, KMInput, KMSelect } from 'component/UI/Content/KMInput'
+
 const CustomInput = (props) => {
   return <input name="title" class="rs-input" type="text" {...props} />
 }
 
-const CustomInputPrice = ({ rowValue, onChange, name, ...props }) => {
-  return (
-    <NumericFormat
-      name={name}
-      customInput={CustomInput}
-      thousandSeparator=","
-      onValueChange={({ value }, sourceInfo) => onChange(value)}
-      placeholder="Giá tiền"
-      suffix=" VNĐ"
-      value={rowValue[name]}
-      {...props}
-    />
-  )
-}
-
-const VariableItem = ({ rowValue = {}, onChange, rowIndex, variable }) => {
-  const handleChange = (value, name) => onChange(rowIndex, { ...rowValue, [name]: value })
-  return (
-    <>
-      {Object.keys(variable).map((key, index) => {
-        return (
-          <FlexboxGrid.Item style={{ width: 'calc(100% / 3 - 4px)' }} key={[key, index]}>
-            <SelectPicker
-              value={rowValue[key]}
-              placeholder={TEXT[key]}
-              data={variable[key]?.map((item) => ({
-                value: item,
-                label: item,
-              }))}
-              onChange={(value) => handleChange(value, key)}
-              style={{ width: '100%' }}
-            />
-          </FlexboxGrid.Item>
-        )
-      })}
-    </>
-  )
-}
-
-const VariantInput = ({ value, onChange, data, variable, ...rest }) => {
+const VariantInput = ({ value, onChange, data, variable, keyAttribute, ...rest }) => {
   const [products, setProducts] = React.useState(value)
 
-  const [primaryKey, setPrimaryKey] = useState('')
+  const [primaryKey, setPrimaryKey] = useState(keyAttribute)
 
   const handleChangeProducts = (nextProducts) => {
     setProducts(nextProducts)
     onChange(nextProducts)
-  }
-  const handleInputChange = (rowIndex, value) => {
-    const nextProducts = [...products]
-    nextProducts[rowIndex] = value
-    handleChangeProducts(nextProducts)
   }
 
   const handleMinus = () => {
@@ -144,7 +82,6 @@ const VariantInput = ({ value, onChange, data, variable, ...rest }) => {
     nextProducts[index].price = target.value
     handleChangeProducts(nextProducts)
   }
-
   return (
     <>
       <FlexboxGrid style={{ gap: 4 }} justify="space-between">
@@ -166,7 +103,7 @@ const VariantInput = ({ value, onChange, data, variable, ...rest }) => {
                 <SelectPicker
                   data={getKeyOptions(index)}
                   onChange={(value) => handleValueSelect(index, 'v', value)}
-                  value={rowValue[index]?.k}
+                  value={primaryKey}
                   style={{ width: '100%' }}
                   placeholder={primaryKey}
                 />
@@ -212,59 +149,73 @@ const ProductCreateModal = (props) => {
 
   const [loading, setLoading] = useState(false)
 
-  const [variable, setVariable] = useState([])
+  const [variable, setVariable] = useState(new Map())
 
-  const [form, setForm] = useState({
-
-    title: 'IPhone 17 Promax',
-    description: '17 promax',
-    content: '',
-    img: [],
-    variant: [
-      {
-        k: 'Dung lượng',
-        v: '256Gb',
-        items: [
-          {
-            'Màu sắc': 'Xanh',
-            'Phiên bản': 'CN',
-            price: 38000000,
-          },
-          {
-            'Màu sắc': 'Đỏ',
-            version: 'CN',
-            price: 37500000,
-          },
-          {
-            'Màu sắc': 'Tím',
-            version: 'VN',
-            price: 38500000,
-          },
-        ],
-      },
-      {
-        k: 'Dung lượng',
-        v: '512Gb',
-        items: [
-          {
-            'Màu sắc': 'Xanh',
-            'Phiên bản': 'CN',
-            price: 49500000,
-          },
-          {
-            'Màu sắc': 'Đỏ',
-            'Phiên bản': 'CN',
-            price: 41000000,
-          },
-        ],
-      },
-    ],
-    keyVariant: ['Dung lượng', 'Màu sắc', 'Phiên bản'],
-  })
+  const [form, setForm] = useState(
+    props?.data,
+    //   {
+    //   title: 'IPhone 17 Promax',
+    //   description: '17 promax',
+    //   content: '',
+    //   img: [],
+    //   variant: [
+    //     {
+    //       _id: '637e2ed026ba8d9aca5b56f4',
+    //       k: 'Dung lượng',
+    //       v: '256Gb',
+    //       price: 38000000,
+    //       slug: 'iphone-17-promax-256Gb-FJQVe45N1',
+    //     },
+    //     {
+    //       _id: '637e2ed026ba8d9aca5b56f6',
+    //       k: 'Dung lượng',
+    //       v: '256Gb',
+    //       price: 37500000,
+    //       slug: 'iphone-17-promax-256Gb-H1llaZ5eq',
+    //     },
+    //     // {
+    //     //   k: 'Dung lượng',
+    //     //   v: '256Gb',
+    //     //   items: [
+    //     //     {
+    //     //       'Màu sắc': 'Xanh',
+    //     //       'Phiên bản': 'CN',
+    //     //       price: 38000000,
+    //     //     },
+    //     //     {
+    //     //       'Màu sắc': 'Đỏ',
+    //     //       version: 'CN',
+    //     //       price: 37500000,
+    //     //     },
+    //     //     {
+    //     //       'Màu sắc': 'Tím',
+    //     //       version: 'VN',
+    //     //       price: 38500000,
+    //     //     },
+    //     //   ],
+    //     // },
+    //     // {
+    //     //   k: 'Dung lượng',
+    //     //   v: '512Gb',
+    //     //   items: [
+    //     //     {
+    //     //       'Màu sắc': 'Xanh',
+    //     //       'Phiên bản': 'CN',
+    //     //       price: 49500000,
+    //     //     },
+    //     //     {
+    //     //       'Màu sắc': 'Đỏ',
+    //     //       'Phiên bản': 'CN',
+    //     //       price: 41000000,
+    //     //     },
+    //     //   ],
+    //     // },
+    //   ],
+    //   keyVariant: ['Dung lượng', 'Màu sắc', 'Phiên bản'],
+    // }
+  )
 
   const [data, setData] = useState()
-
-  const toaster = useToaster()
 
   useEffect(() => {
     changeTitle('Create Post')
@@ -350,14 +301,23 @@ const ProductCreateModal = (props) => {
       setLoading(true)
       let _variables = await ProductService.getVariables()
 
-      let _var = Object.keys(_variables.data.data).map((key) => ({
-        label: key,
-        value: _variables.data.data[key],
-      }))
+      // let _var = Object.keys(_variables.data.data).map((key) => ({
+      //   label: key,
+      //   value: _variables.data.data[key],
+      // }))
 
-      setVariable(_var)
+      let result = new Map()
 
-      toaster.push(<Message>{_variables.data.message}</Message>)
+      // .map((key) => ({
+      //   label: key,
+      //   value: _variables.data.data[key],
+      // }))
+
+      for (let key in _variables.data.data) {
+        result.set(key, _variables.data.data[key])
+      }
+
+      setVariable(result)
     } catch (error) {
       console.log('getVariables error', error)
     } finally {
@@ -380,6 +340,7 @@ const ProductCreateModal = (props) => {
     }
   }
 
+  console.log(variable)
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
@@ -390,37 +351,45 @@ const ProductCreateModal = (props) => {
         <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row '} fluid>
           <div className="col-9 bg-w rounded" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             <CardBlock>
-              <Form.Group controlId="title">
-                <Form.ControlLabel>Tên sản phẩm</Form.ControlLabel>
-                <Form.Control name="title" />
-              </Form.Group>
+              <KMInput name="title" label="Tên sản phẩm" />
 
-              <Form.Group controlId="slug">
-                <Form.ControlLabel>Đường dẫn</Form.ControlLabel>
-                <Form.Control name="slug" />
-              </Form.Group>
+              <KMInput name="slug" label="Đường dẫn" />
 
-              <Form.Group controlId="content">
-                <Form.ControlLabel>Nội dung</Form.ControlLabel>
-                <Form.Control name="content" accepter={Textarea} />
-              </Form.Group>
+              <KMEditor name="content" label="Nội dung" />
 
-              <Form.Group controlId="description">
-                <Form.ControlLabel>Mô tả</Form.ControlLabel>
-                <Form.Control name="description" accepter={Textarea} />
-              </Form.Group>
+              <KMEditor name="description" label="Mô tả" />
             </CardBlock>
 
             <CardBlock>
-              <Form.Group controlId="">
-                <Form.ControlLabel>Biến thể</Form.ControlLabel>
-                <Form.Control
-                  name="variant"
-                  accepter={VariantInput}
-                  data={variable.map((item) => ({ label: item.label, value: item.label }))}
-                  variable={variable}
-                />
-              </Form.Group>
+              {form?.variant?.map((item) => {
+                return (
+                  <FlexboxGrid style={{ gap: '4px' }}>
+                    {Object.keys(item).map((key) => {
+                      if (key === '_id' || key === 'slug') return ''
+                      else if (key === 'price')
+                        return (
+                          <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
+                            <KMInput name={key} label={key} value={item[key]} />
+                          </FlexboxGrid.Item>
+                        )
+                      else {
+                        let listSelect = variable.get(key)?.map((item) => ({ label: item, value: item }))
+                        return (
+                          <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
+                            <KMSelect
+                              name={key}
+                              label={key}
+                              data={listSelect}
+                              value={item[key]}
+                              style={{ width: '100%' }}
+                            />
+                          </FlexboxGrid.Item>
+                        )
+                      }
+                    })}
+                  </FlexboxGrid>
+                )
+              })}
             </CardBlock>
           </div>
           <div

@@ -5,14 +5,14 @@ const path = {
   variable: '/admin/product/variable',
 }
 
-const ProductService = {
+const GlobalProductService = {
   getProduct: async () => await axios.get(path.product),
+  
+  getProductById: async () => await axios.get(path.product + '/' + id),
 
-  getProductById: async (id) => await axios.get(path.product + '/' + id),
+  updateProduct: async (id, form) => await axios.post(path.product + '/' + id, form),
 
-  updateProduct: async (id, form) => await axios.post(path.product + '/update/' + id, form),
-
-  createProduct: async (form) => await axios.post(path.product + '/create', form),
+  createProduct: async (form) => await axios.post(path.product, form),
 
   getVariables: async () => await axios.get(path.variable),
 
@@ -21,4 +21,4 @@ const ProductService = {
   createVariable: async (form) => await axios.post(path.variable, form),
 }
 
-export default ProductService
+export default GlobalProductService

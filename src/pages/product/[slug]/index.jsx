@@ -123,6 +123,7 @@ export default function ProductDetail({ data, _relationProd }) {
       </div>
     )
   }
+
   const renderSubVariant = () => {
     return (
       <div className="col-12">
@@ -162,23 +163,21 @@ export default function ProductDetail({ data, _relationProd }) {
       </div>
     )
   }
+
   const renderVariantProduct = useMemo(() => {
     let html = null
     if (_relationProd.length > 0) {
       html = (
         <>
           <Divider className={styles.divider} />
-
           <div className={'row gx-2 gy-2 align-items-center w-100'}>
             {renderPrimaryVariant()}
             <Divider />
-
             {renderSubVariant()}
           </div>
         </>
       )
     }
-
     return html
   }, [data, form, _relationProd, activeVariant])
 
@@ -198,8 +197,6 @@ export default function ProductDetail({ data, _relationProd }) {
     quantity: Schema.Types.StringType().isRequired('Số lượng không chính xác, vui lòng thử lại').minLength(0),
     skuPrice: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
-
-  console.log(activeVariant, form, data)
 
   return (
     <div className="container product_detail">
@@ -377,7 +374,7 @@ const TabsList = (props) => {
 export const getServerSideProps = async (ctx) => {
   const { slug } = ctx.query
 
-  const resp = await axios.get('/admin/product' + '/' + slug)
+  const resp = await axios.get('/product' + '/' + slug)
   const { data, _relationProd } = resp.data
   return {
     props: {

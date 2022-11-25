@@ -18,7 +18,7 @@ const CustomUpload = forwardRef((props, ref) => {
   useEffect(() => {
     if (props.group) {
       setFileList(
-        props.value.map((item) => ({ ...item, url: item.src, name: item._id }))
+        props?.value?.map((item) => ({ ...item, url: item.src, name: item._id }))
       );
     } else if (props.file) {
       if (props.file[0]) {

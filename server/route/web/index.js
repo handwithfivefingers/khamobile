@@ -1,13 +1,13 @@
-import express from 'express';
+import ProductController from '#controller/v2/Product'
+import { upload } from '#middleware'
+import express from 'express'
 
-import { upload } from '#middleware';
+const router = express.Router()
 
-const router = express.Router();
-// Router Upload
-// router.post('/test', upload.array('teaser'), (req, res) => {
-// 	res.status(200).json({
-// 		img: req.files.map((file) => file.filename),
-// 	});
-// });
+const { getProductBySlug } = new ProductController()
 
-export default router;
+router.get('/product', upload.none(), getProductBySlug)
+
+router.get('/product/:slug', upload.none(), getProductBySlug)
+
+export default router

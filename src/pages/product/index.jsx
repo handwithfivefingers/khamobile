@@ -11,6 +11,7 @@ import { useEffect } from 'react'
 import { useState } from 'react'
 import { Dropdown, Pagination, SelectPicker } from 'rsuite'
 import ProductService from 'service/admin/Product.service'
+import GlobalProductService from 'service/global/Product.service'
 import styles from './styles.module.scss'
 
 const pricingFilter = [
@@ -40,7 +41,7 @@ export default function Product(props) {
 
   const getProducts = async () => {
     try {
-      const resp = await ProductService.getProduct()
+      const resp = await GlobalProductService.getProduct()
       setProduct(resp.data.data)
 
       console.log(resp.data.data)
@@ -68,7 +69,7 @@ export default function Product(props) {
               <div className="col-12">
                 <p>
                   The category description can be positioned anywhere on the page via the layout page builder inside the
-                  Blocks module with full typography control and advanced container styling options. The category image
+                  {/* Blocks module with full typography control and advanced container styling options. The category image
                   can also be added to the Category layouts automatically via the Blocks module. This allows for more
                   creative placements on the page. It can also be enabled/disabled on any device and comes with custom
                   image dimensions, including fit or fill (crop) options for all system images such as products,
@@ -77,7 +78,7 @@ export default function Product(props) {
                   price, availability, category, brands, options, attributes, tags, all included in the same Journal 3
                   package. Ajax Infinite Scroll with Load More / Load Previous and browser back button support. Load
                   products in category pages as you scroll down or by clicking the Load More button, or disable this
-                  feature entirely and display the default pagination.
+                  feature entirely and display the default pagination. */}
                 </p>
               </div>
               <Divider />
