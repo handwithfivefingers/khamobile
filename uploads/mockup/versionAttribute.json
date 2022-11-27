@@ -1,0 +1,102 @@
+[
+    {
+        "id": 123,
+        "name": "GPS",
+        "slug": "gps",
+        "description": "",
+        "menu_order": 0,
+        "count": 2,
+        "_links": {
+            "self": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms/123"
+                }
+            ],
+            "collection": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms"
+                }
+            ]
+        }
+    },
+    {
+        "id": 144,
+        "name": "LLA",
+        "slug": "lla",
+        "description": "",
+        "menu_order": 0,
+        "count": 3,
+        "_links": {
+            "self": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms/144"
+                }
+            ],
+            "collection": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms"
+                }
+            ]
+        }
+    },
+    {
+        "id": 124,
+        "name": "LTE",
+        "slug": "lte",
+        "description": "",
+        "menu_order": 0,
+        "count": 2,
+        "_links": {
+            "self": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms/124"
+                }
+            ],
+            "collection": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms"
+                }
+            ]
+        }
+    },
+    {
+        "id": 146,
+        "name": "ZA",
+        "slug": "za",
+        "description": "",
+        "menu_order": 0,
+        "count": 3,
+        "_links": {
+            "self": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms/146"
+                }
+            ],
+            "collection": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms"
+                }
+            ]
+        }
+    },
+    {
+        "id": 145,
+        "name": "ZP",
+        "slug": "zp",
+        "description": "",
+        "menu_order": 0,
+        "count": 3,
+        "_links": {
+            "self": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms/145"
+                }
+            ],
+            "collection": [
+                {
+                    "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/4/terms"
+                }
+            ]
+        }
+    }
+]

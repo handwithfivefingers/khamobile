@@ -1,0 +1,102 @@
+[
+  {
+      "id": 45,
+      "name": "128GB",
+      "slug": "128gb",
+      "description": "",
+      "menu_order": 0,
+      "count": 21,
+      "_links": {
+          "self": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms/45"
+              }
+          ],
+          "collection": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms"
+              }
+          ]
+      }
+  },
+  {
+      "id": 42,
+      "name": "1TB",
+      "slug": "1tb",
+      "description": "",
+      "menu_order": 0,
+      "count": 11,
+      "_links": {
+          "self": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms/42"
+              }
+          ],
+          "collection": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms"
+              }
+          ]
+      }
+  },
+  {
+      "id": 44,
+      "name": "256GB",
+      "slug": "256gb",
+      "description": "",
+      "menu_order": 0,
+      "count": 43,
+      "_links": {
+          "self": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms/44"
+              }
+          ],
+          "collection": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms"
+              }
+          ]
+      }
+  },
+  {
+      "id": 43,
+      "name": "512GB",
+      "slug": "512gb",
+      "description": "",
+      "menu_order": 0,
+      "count": 26,
+      "_links": {
+          "self": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms/43"
+              }
+          ],
+          "collection": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms"
+              }
+          ]
+      }
+  },
+  {
+      "id": 46,
+      "name": "64GB",
+      "slug": "64gb",
+      "description": "",
+      "menu_order": 0,
+      "count": 16,
+      "_links": {
+          "self": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms/46"
+              }
+          ],
+          "collection": [
+              {
+                  "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/2/terms"
+              }
+          ]
+      }
+  }
+]

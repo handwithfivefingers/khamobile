@@ -1,0 +1,502 @@
+[
+  {
+    "id": 118,
+    "name": "Black",
+    "slug": "black",
+    "description": "",
+    "menu_order": 0,
+    "count": 5,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/118"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 51,
+    "name": "Blue",
+    "slug": "blue",
+    "description": "",
+    "menu_order": 0,
+    "count": 13,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/51"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 121,
+    "name": "Cam",
+    "slug": "cam",
+    "description": "",
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/121"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 133,
+    "name": "Deep Purble",
+    "slug": "deep-purble",
+    "description": "",
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/133"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 134,
+    "name": "Deep Purple",
+    "slug": "deep-purple",
+    "description": "",
+    "menu_order": 0,
+    "count": 11,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/134"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 21,
+    "name": "Gold",
+    "slug": "gold",
+    "description": "",
+    "menu_order": 0,
+    "count": 37,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/21"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 18,
+    "name": "Graphite",
+    "slug": "graphite",
+    "description": "",
+    "menu_order": 0,
+    "count": 12,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/18"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 53,
+    "name": "Gray",
+    "slug": "gray",
+    "description": "",
+    "menu_order": 0,
+    "count": 36,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/53"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 52,
+    "name": "Green",
+    "slug": "green",
+    "description": "",
+    "menu_order": 0,
+    "count": 25,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/52"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 47,
+    "name": "Midnight",
+    "slug": "midnight",
+    "description": "",
+    "menu_order": 0,
+    "count": 18,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/47"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 19,
+    "name": "Pacific Blue",
+    "slug": "pacific-blue",
+    "description": "",
+    "menu_order": 0,
+    "count": 12,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/19"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 50,
+    "name": "Pink",
+    "slug": "pink",
+    "description": "",
+    "menu_order": 0,
+    "count": 10,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/50"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 57,
+    "name": "Purple",
+    "slug": "purple",
+    "description": "",
+    "menu_order": 0,
+    "count": 6,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/57"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 48,
+    "name": "Red",
+    "slug": "red",
+    "description": "",
+    "menu_order": 0,
+    "count": 20,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/48"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 56,
+    "name": "RoseGold",
+    "slug": "rosegold",
+    "description": "",
+    "menu_order": 0,
+    "count": 4,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/56"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 139,
+    "name": "Sierra Blue",
+    "slug": "sierra-blue",
+    "description": "",
+    "menu_order": 0,
+    "count": 6,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/139"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 20,
+    "name": "Silver",
+    "slug": "silver",
+    "description": "",
+    "menu_order": 0,
+    "count": 57,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/20"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 122,
+    "name": "Size",
+    "slug": "size",
+    "description": "",
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/122"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 54,
+    "name": "SkyBlue",
+    "slug": "skyblue",
+    "description": "",
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/54"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 135,
+    "name": "Space Black",
+    "slug": "space-black",
+    "description": "",
+    "menu_order": 0,
+    "count": 11,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/135"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 55,
+    "name": "SpaceGray",
+    "slug": "spacegray",
+    "description": "",
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/55"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 49,
+    "name": "Starlight",
+    "slug": "starlight",
+    "description": "",
+    "menu_order": 0,
+    "count": 16,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/49"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 116,
+    "name": "Tím",
+    "slug": "tim",
+    "description": "",
+    "menu_order": 0,
+    "count": 8,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/116"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 119,
+    "name": "White",
+    "slug": "white",
+    "description": "",
+    "menu_order": 0,
+    "count": 7,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/119"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  },
+  {
+    "id": 117,
+    "name": "Yellow",
+    "slug": "yellow",
+    "description": "",
+    "menu_order": 0,
+    "count": 3,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms/117"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/attributes/1/terms"
+        }
+      ]
+    }
+  }
+]

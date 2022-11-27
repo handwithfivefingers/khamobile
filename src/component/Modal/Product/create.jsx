@@ -9,7 +9,18 @@ import Textarea from 'component/UI/Editor'
 import JsonViewer from 'component/UI/JsonViewer'
 import _ from 'lodash'
 import { useRouter } from 'next/router'
-import { Button, ButtonGroup, ButtonToolbar, Content, FlexboxGrid, Form, IconButton, SelectPicker } from 'rsuite'
+import {
+  Button,
+  ButtonGroup,
+  ButtonToolbar,
+  Content,
+  FlexboxGrid,
+  Form,
+  IconButton,
+  SelectPicker,
+  InputNumber,
+  Input,
+} from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import ProductService from 'service/admin/Product.service'
 import { useCommonStore } from 'src/store/commonStore'
@@ -19,127 +30,91 @@ const CustomInput = (props) => {
   return <input name="title" class="rs-input" type="text" {...props} />
 }
 
-const VariantInput = ({ value, onChange, data, variable, keyAttribute, ...rest }) => {
-  const [products, setProducts] = React.useState(value)
+const VariantControl = (props) => {
+  console.log(props)
+  let { value, variable, onChange } = props
 
-  const [primaryKey, setPrimaryKey] = useState(keyAttribute)
+  const [list, setList] = useState(value)
 
-  const handleChangeProducts = (nextProducts) => {
-    setProducts(nextProducts)
-    onChange(nextProducts)
+  const add = () => {
+    let next = [...list]
+    next.push({
+      attributes: {
+        'Dung lượng': '1TB',
+        'Màu sắc': 'Black',
+        'Phiên bản': 'LNE',
+      },
+      price: 0,
+      regular_price: 0,
+    })
+    setList(next)
   }
 
   const handleMinus = () => {
-    handleChangeProducts(products.slice(0, -1))
+    setList(list.slice(0, -1))
   }
 
-  const handleAdd = () => {
-    let VariantObject = {
-      k: primaryKey || '',
-      v: '',
-    }
+  const handleSelect = (value, index, field) => {
+    console.log(value, index)
+    let next = [...list]
+    next[index].attributes[field] = value
+    setList(next)
 
-    handleChangeProducts(products.concat([VariantObject]))
+    onChange(next)
   }
 
-  const handleKeySelect = (rowIndex, field, value) => {
-    const nextProducts = [...products]
-    setPrimaryKey(value)
-    nextProducts = nextProducts.map((item) => ({ ...item, [field]: value }))
-    handleChangeProducts(nextProducts)
+  const handeInput = (value, index, field) => {
+    let next = [...list]
+    next[index][field] = value
+    setList(next)
+    onChange(next)
   }
 
-  const getKeyOptions = (index) => {
-    let options = variable.find((item) => item.label === products[index].k) || []
-    return options?.value?.map((item) => ({ label: item, value: item }))
-  }
-
-  const handleValueSelect = (rowIndex, field, value) => {
-    const nextProducts = [...products]
-    nextProducts[rowIndex] = { ...nextProducts[rowIndex], [field]: value }
-    handleChangeProducts(nextProducts)
-  }
-
-  const handleSubOptionschange = (value, label, index) => {
-    const nextProducts = [...products]
-    nextProducts[index][label] = value
-
-    var result = _.chain(nextProducts)
-      .groupBy('v')
-      .map((value, key) => {
-        return {
-          k: primaryKey,
-          v: key,
-          items: value,
-        }
-      })
-      .value()
-
-    handleChangeProducts(nextProducts)
-  }
-  const handleChangePrice = ({ target }, index) => {
-    const nextProducts = [...products]
-    nextProducts[index].price = target.value
-    handleChangeProducts(nextProducts)
-  }
   return (
-    <>
-      <FlexboxGrid style={{ gap: 4 }} justify="space-between">
-        {products?.map((rowValue, index) => (
-          <FlexboxGrid.Item style={{ width: 'calc(100% )' }}>
-            <FlexboxGrid style={{ gap: 4 }}>
-              <FlexboxGrid.Item style={{ width: 'calc(100% - 4px)' }}>
-                {index == 0 && ( //only primary Key
-                  <SelectPicker
-                    data={data}
-                    onChange={(value) => handleKeySelect(index, 'k', value)}
-                    value={rowValue[index]?.k}
-                    style={{ width: '100%' }}
-                  />
-                )}
-              </FlexboxGrid.Item>
-
-              <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
-                <SelectPicker
-                  data={getKeyOptions(index)}
-                  onChange={(value) => handleValueSelect(index, 'v', value)}
-                  value={primaryKey}
-                  style={{ width: '100%' }}
-                  placeholder={primaryKey}
-                />
-              </FlexboxGrid.Item>
-
-              {variable
-                .filter((item) => item.label !== primaryKey)
-                ?.map((varItem, i) => {
-                  return (
-                    <>
-                      <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
-                        <SelectPicker
-                          data={varItem.value.map((opt) => ({ label: opt, value: opt }))}
+    <FlexboxGrid>
+      <FlexboxGrid.Item style={{ width: '100%' }}>
+        <FlexboxGrid>
+          {list.map((item, index) => {
+            return (
+              <>
+                {Object.keys(item).map((key) => {
+                  if (key === 'attributes') {
+                    return variable.map((vars) => {
+                      return (
+                        <FlexboxGrid.Item style={{ width: '20%' }}>
+                          <SelectPicker
+                            data={vars.item.map((v) => ({ label: v.name, value: v.name }))}
+                            onChange={(value) => handleSelect(value, index, vars._id)}
+                            placeholder={vars._id}
+                            style={{ width: '100%' }}
+                          />
+                        </FlexboxGrid.Item>
+                      )
+                    })
+                  } else {
+                    return (
+                      <FlexboxGrid.Item style={{ width: '20%' }}>
+                        <Input
+                          placeholder={key}
+                          onChange={(value) => handeInput(value, index, key)}
+                          value={list[index][key]}
                           style={{ width: '100%' }}
-                          placeholder={varItem.label}
-                          onChange={(value) => handleSubOptionschange(value, varItem.label, index)}
                         />
                       </FlexboxGrid.Item>
-                    </>
-                  )
+                    )
+                  }
                 })}
-              <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
-                <CustomInput value={rowValue['price']} onChange={(e) => handleChangePrice(e, index)} />
-              </FlexboxGrid.Item>
-            </FlexboxGrid>
-          </FlexboxGrid.Item>
-        ))}
+              </>
+            )
+          })}
+        </FlexboxGrid>
+      </FlexboxGrid.Item>
 
-        <div style={{ width: '100%' }}>
-          <ButtonGroup size="xs">
-            <IconButton onClick={handleAdd} icon={<PlusIcon />} />
-            <IconButton onClick={handleMinus} icon={<MinusIcon />} />
-          </ButtonGroup>
-        </div>
-      </FlexboxGrid>
-    </>
+      <FlexboxGrid.Item style={{ width: '100%' }}>
+        <Button onClick={add}>Add</Button>
+        <Button onClick={handleMinus}>Remove</Button>
+      </FlexboxGrid.Item>
+    </FlexboxGrid>
   )
 }
 
@@ -151,173 +126,42 @@ const ProductCreateModal = (props) => {
 
   const [variable, setVariable] = useState(new Map())
 
-  const [form, setForm] = useState(
-    props?.data,
-    //   {
-    //   title: 'IPhone 17 Promax',
-    //   description: '17 promax',
-    //   content: '',
-    //   img: [],
-    //   variant: [
-    //     {
-    //       _id: '637e2ed026ba8d9aca5b56f4',
-    //       k: 'Dung lượng',
-    //       v: '256Gb',
-    //       price: 38000000,
-    //       slug: 'iphone-17-promax-256Gb-FJQVe45N1',
-    //     },
-    //     {
-    //       _id: '637e2ed026ba8d9aca5b56f6',
-    //       k: 'Dung lượng',
-    //       v: '256Gb',
-    //       price: 37500000,
-    //       slug: 'iphone-17-promax-256Gb-H1llaZ5eq',
-    //     },
-    //     // {
-    //     //   k: 'Dung lượng',
-    //     //   v: '256Gb',
-    //     //   items: [
-    //     //     {
-    //     //       'Màu sắc': 'Xanh',
-    //     //       'Phiên bản': 'CN',
-    //     //       price: 38000000,
-    //     //     },
-    //     //     {
-    //     //       'Màu sắc': 'Đỏ',
-    //     //       version: 'CN',
-    //     //       price: 37500000,
-    //     //     },
-    //     //     {
-    //     //       'Màu sắc': 'Tím',
-    //     //       version: 'VN',
-    //     //       price: 38500000,
-    //     //     },
-    //     //   ],
-    //     // },
-    //     // {
-    //     //   k: 'Dung lượng',
-    //     //   v: '512Gb',
-    //     //   items: [
-    //     //     {
-    //     //       'Màu sắc': 'Xanh',
-    //     //       'Phiên bản': 'CN',
-    //     //       price: 49500000,
-    //     //     },
-    //     //     {
-    //     //       'Màu sắc': 'Đỏ',
-    //     //       'Phiên bản': 'CN',
-    //     //       price: 41000000,
-    //     //     },
-    //     //   ],
-    //     // },
-    //   ],
-    //   keyVariant: ['Dung lượng', 'Màu sắc', 'Phiên bản'],
-    // }
-  )
+  const [form, setForm] = useState({
+    price: 0,
+    regular_price: 0,
+    image: [],
+    purchasable: true,
+    stock_status: true,
+    parentId: '',
+    variations: [
+      {
+        attributes: {
+          'Dung lượng': '1TB',
+          'Màu sắc': 'Black',
+          'Phiên bản': 'LNE',
+        },
+        price: 0,
+        regular_price: 0,
+      },
+    ],
+  })
 
   const [data, setData] = useState()
 
   useEffect(() => {
     changeTitle('Create Post')
-    getCateData()
     getVariables()
-    if (props.data) {
-      const newData = { ...props.data }
-      setForm(newData)
-    }
-
-    let abc = [
-      {
-        k: 'Dung lượng',
-        v: '256Gb',
-        items: [
-          {
-            'Màu sắc': 'Xanh',
-            'Phiên bản': 'CN',
-            price: 38000000,
-          },
-          {
-            'Màu sắc': 'Đỏ',
-            version: 'CN',
-            price: 37500000,
-          },
-          {
-            'Màu sắc': 'Tím',
-            version: 'VN',
-            price: 38500000,
-          },
-        ],
-      },
-      {
-        k: 'Dung lượng',
-        v: '512Gb',
-        items: [
-          {
-            'Màu sắc': 'Xanh',
-            'Phiên bản': 'CN',
-            price: 49500000,
-          },
-          {
-            'Màu sắc': 'Đỏ',
-            'Phiên bản': 'CN',
-            price: 41000000,
-          },
-        ],
-      },
-    ]
-
-    let result = []
-    for (let item of abc) {
-      if (item.items?.length > 0) {
-        for (let vars of item.items) {
-          let obj = {
-            k: item.k,
-            v: item.v,
-          }
-          for (let key in vars) {
-            obj[key] = vars[key]
-          }
-          result.push(obj)
-        }
-      }
-    }
   }, [])
-
-  const getCateData = async () => {
-    try {
-      setLoading(true)
-      const res = await CategoryService.getCate({ type: 'post' })
-      let { data } = res.data
-      setData(data)
-    } catch (error) {
-      console.log('error', error, error?.response?.data?.message)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   const getVariables = async () => {
     try {
       setLoading(true)
-      let _variables = await ProductService.getVariables()
 
-      // let _var = Object.keys(_variables.data.data).map((key) => ({
-      //   label: key,
-      //   value: _variables.data.data[key],
-      // }))
+      let resp = await ProductService.getAttribute()
 
-      let result = new Map()
+      let _variables = resp.data.data
 
-      // .map((key) => ({
-      //   label: key,
-      //   value: _variables.data.data[key],
-      // }))
-
-      for (let key in _variables.data.data) {
-        result.set(key, _variables.data.data[key])
-      }
-
-      setVariable(result)
+      setVariable(_variables)
     } catch (error) {
       console.log('getVariables error', error)
     } finally {
@@ -340,7 +184,6 @@ const ProductCreateModal = (props) => {
     }
   }
 
-  console.log(variable)
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
@@ -361,35 +204,32 @@ const ProductCreateModal = (props) => {
             </CardBlock>
 
             <CardBlock>
-              {form?.variant?.map((item) => {
-                return (
-                  <FlexboxGrid style={{ gap: '4px' }}>
-                    {Object.keys(item).map((key) => {
-                      if (key === '_id' || key === 'slug') return ''
-                      else if (key === 'price')
-                        return (
-                          <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
-                            <KMInput name={key} label={key} value={item[key]} />
-                          </FlexboxGrid.Item>
-                        )
-                      else {
-                        let listSelect = variable.get(key)?.map((item) => ({ label: item, value: item }))
-                        return (
-                          <FlexboxGrid.Item style={{ width: 'calc(25% - 4px)' }}>
-                            <KMSelect
-                              name={key}
-                              label={key}
-                              data={listSelect}
-                              value={item[key]}
-                              style={{ width: '100%' }}
-                            />
-                          </FlexboxGrid.Item>
-                        )
-                      }
-                    })}
-                  </FlexboxGrid>
-                )
-              })}
+              <SelectPicker
+                name="type"
+                onChange={(value) => setForm({ ...form, type: value })}
+                data={[
+                  { label: 'simple', value: 'simple' },
+                  { label: 'variant', value: 'variant' },
+                ]}
+              />
+
+              {form?.type === 'simple' && <InputNumber />}
+              {form?.type === 'variant' && (
+                <>
+                  <Form.Group controlId="primary">
+                    <Form.Control
+                      name="primary"
+                      accepter={KMSelect}
+                      data={variable.map((item) => ({ label: item._id, value: item._id }))}
+                      style={{ width: '100%' }}
+                      placeholder="Khóa chính"
+                    />
+                  </Form.Group>
+                  <Form.Group controlId="variations">
+                    <Form.Control name="variations" accepter={VariantControl} variable={variable} />
+                  </Form.Group>
+                </>
+              )}
             </CardBlock>
           </div>
           <div

@@ -1,4 +1,5 @@
 import mongoose from 'mongoose'
+import { TYPE_VARIANT } from '#constant/type'
 export default {
   title: {
     type: String,
@@ -10,11 +11,8 @@ export default {
 
   content: String,
 
-  keyVariant: [],
-  spec: {
-    k: String,
-    v: [],
-  },
+  price: Number,
+  primary: String,
   slug: {
     type: String,
     required: true,
@@ -32,6 +30,18 @@ export default {
       src: String,
     },
   ],
+
+  stock_status: {
+    type: String,
+    enum: ['outofstock', 'instock'],
+    default: 'instock',
+  },
+
+  type: {
+    type: String,
+    enum: [TYPE_VARIANT.SIMPLE, TYPE_VARIANT.VARIANT],
+    default: TYPE_VARIANT.SIMPLE,
+  },
 
   reviews: [
     {

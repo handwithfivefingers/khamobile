@@ -1,8 +1,8 @@
-import React from "react";
-import demoImg from "assets/img/demo-phone.png";
-import styles from "./styles.module.scss";
-import clsx from "clsx";
-import { formatCurrency } from "src/helper";
+import React from 'react'
+import demoImg from 'assets/img/demo-phone.png'
+import styles from './styles.module.scss'
+import clsx from 'clsx'
+import { formatCurrency } from 'src/helper'
 
 export default function Card({
   imgSrc,
@@ -17,7 +17,7 @@ export default function Card({
   variable,
 }) {
   const classCard = clsx([
-    "card",
+    'card',
     styles.card,
     {
       [styles.shadow]: shadow,
@@ -25,32 +25,17 @@ export default function Card({
       [styles.hover]: hover,
       [styles.cover]: cover,
     },
-  ]);
+  ])
 
   const getPrice = (amount) => {
-    if (type === "simple") return formatCurrency(amount, { symbol: "" });
-    else if (type === "variant") {
-      let rangePrice = variable.reduce(
-        (prev, current) => {
-          if (prev[0] > current.price) {
-            prev[0] = current.price;
-          }
-          if (prev[1] < current.price) {
-            prev[1] = current.price;
-          }
-          return prev;
-        },
-        [999999999999, 0]
-      );
-      console.log("rangePrice", rangePrice);
-      return rangePrice
-        .map((item) => formatCurrency(item, { symbol: "" }))
-        .join(" - ");
+    if (type === 'simple') return formatCurrency(amount, { symbol: '' })
+    else if (type === 'variant') {
+      return `Chỉ từ ${formatCurrency(amount, { symbol: '' })}`
     }
-  };
+  }
   return (
     <div className={classCard}>
-      <div className={clsx("card-img-top", styles.cardImg)}>
+      <div className={clsx('card-img-top', styles.cardImg)}>
         <img src={imgSrc || demoImg.src} className={styles.img} alt="..." />
       </div>
       <div className="card-body">
@@ -63,5 +48,5 @@ export default function Card({
         </p>
       </div>
     </div>
-  );
+  )
 }

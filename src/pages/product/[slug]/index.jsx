@@ -101,8 +101,8 @@ export default function ProductDetail({ data, _relationProd }) {
               <div className={clsx(['col'])}>
                 <Button
                   type="button"
-                  color={activeVariant._id === item._id ? 'red' : ''}
-                  appearance={activeVariant._id === item._id ? 'primary' : ''}
+                  color={activeVariant.value === item.value ? 'red' : ''}
+                  appearance={activeVariant.value === item.value ? 'primary' : ''}
                   className={clsx('btn shadow-sm rounded border', styles.skuSelect, styles.btnIcon)}
                   onClick={() => {
                     setActiveVariant(item)
@@ -114,7 +114,7 @@ export default function ProductDetail({ data, _relationProd }) {
                     })
                   }}
                 >
-                  {item._id}
+                  {item.value}
                 </Button>
               </div>
             )
@@ -145,7 +145,7 @@ export default function ProductDetail({ data, _relationProd }) {
                     [styles.active]: form.sku === item._id,
                   })}
                 >
-                  {item.variant &&
+                  {/* {item.variant &&
                     Object.keys(item.variant).map((key) => {
                       return (
                         <>
@@ -154,6 +154,17 @@ export default function ProductDetail({ data, _relationProd }) {
                           </span>
                         </>
                       )
+                    })} */}
+                  {item.attribute &&
+                    Object.keys(item.attribute).map((key) => {
+                      if (key !== item.primary)
+                        return (
+                          <>
+                            <span>
+                              {key}:{item[key]} <br />
+                            </span>
+                          </>
+                        )
                     })}
                 </div>
               </div>
@@ -198,6 +209,7 @@ export default function ProductDetail({ data, _relationProd }) {
     skuPrice: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
 
+  console.log(_relationProd)
   return (
     <div className="container product_detail">
       <div className="row gy-4" style={{ paddingTop: '1.5rem' }}>

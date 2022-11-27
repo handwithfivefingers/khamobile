@@ -2,6 +2,7 @@ import express from 'express'
 import { upload } from '#server/middleware'
 import AdminRouter from './admin'
 import WebRouter from './web'
+import ServiceRouter from './service'
 
 const AppRouter = express()
 
@@ -23,12 +24,14 @@ const UploadRouter = (req, res, next) => {
 
 AppRouter.use('/', WebRouter)
 
+AppRouter.use('/service', ServiceRouter)
+
 AppRouter.use(
   '/admin',
   AdminRouter.UserRouter,
   AdminRouter.CateRouter,
   AdminRouter.PostRouter,
-  AdminRouter.ProductVariableRouter,
+  AdminRouter.ProductAttributeRoute,
   AdminRouter.ProductRouter,
 )
 

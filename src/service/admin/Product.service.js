@@ -3,6 +3,7 @@ import axios from 'configs/axiosInstance'
 const path = {
   product: '/admin/product',
   variable: '/admin/product/variable',
+  attribute: '/admin/product_attribute',
 }
 
 const ProductService = {
@@ -19,6 +20,8 @@ const ProductService = {
   updateVariable: async (id, form) => await axios.post(path.variable + '/' + id, form),
 
   createVariable: async (form) => await axios.post(path.variable, form),
+  
+  getAttribute: async () => await axios.get(path.attribute),
 }
 
 export default ProductService

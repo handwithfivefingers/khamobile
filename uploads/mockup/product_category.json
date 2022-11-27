@@ -1,0 +1,1592 @@
+[
+  {
+    "id": 82,
+    "name": "Accessories",
+    "slug": "accessories",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 4,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/82"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 85,
+    "name": "Aipod Pro",
+    "slug": "aipod-pro",
+    "parent": 82,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/85"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/82"
+        }
+      ]
+    }
+  },
+  {
+    "id": 84,
+    "name": "Airpod 2",
+    "slug": "airpod-2",
+    "parent": 82,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/84"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/82"
+        }
+      ]
+    }
+  },
+  {
+    "id": 83,
+    "name": "Airpod 3",
+    "slug": "airpod-3",
+    "parent": 82,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/83"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/82"
+        }
+      ]
+    }
+  },
+  {
+    "id": 143,
+    "name": "Airpod Pro Gen 2",
+    "slug": "airpod-pro-gen-2",
+    "parent": 82,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/143"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/82"
+        }
+      ]
+    }
+  },
+  {
+    "id": 87,
+    "name": "Apple Pencil",
+    "slug": "apple-pencil",
+    "parent": 82,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/87"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/82"
+        }
+      ]
+    }
+  },
+  {
+    "id": 88,
+    "name": "Apple Watch",
+    "slug": "apple-watch",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 4,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/88"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 89,
+    "name": "Apple Watch SE - 40mm-44mm GPS Sport Band",
+    "slug": "apple-watch-se-40mm-44mm-gps-sport-band",
+    "parent": 88,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/89"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/88"
+        }
+      ]
+    }
+  },
+  {
+    "id": 90,
+    "name": "Apple Watch Series 6 - 40mm-44mm GPS + LTE Sport Band",
+    "slug": "apple-watch-series-6-40mm-44mm-gps-lte-sport-band",
+    "parent": 88,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/90"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/88"
+        }
+      ]
+    }
+  },
+  {
+    "id": 91,
+    "name": "Apple Watch Series 7 - 41mm-44mm GPS + LTE Sport Band",
+    "slug": "apple-watch-series-7-41mm-44mm-gps-lte-sport-band",
+    "parent": 88,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/91"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/88"
+        }
+      ]
+    }
+  },
+  {
+    "id": 95,
+    "name": "Ipad",
+    "slug": "ipad",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 12,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/95"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 40,
+    "name": "Ipad Air 4",
+    "slug": "ipad-air-2020",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/40"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 128,
+    "name": "Ipad Air 5",
+    "slug": "ipad-air-5",
+    "parent": 95,
+    "description": "",
+    "display": "subcategories",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/128"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/95"
+        }
+      ]
+    }
+  },
+  {
+    "id": 98,
+    "name": "Ipad Gen 9",
+    "slug": "ipad-gen-9-nguyen-seal-chua-active",
+    "parent": 95,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/98"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/95"
+        }
+      ]
+    }
+  },
+  {
+    "id": 129,
+    "name": "Ipad Mini 6",
+    "slug": "ipad-mini-6",
+    "parent": 95,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/129"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/95"
+        }
+      ]
+    }
+  },
+  {
+    "id": 99,
+    "name": "Ipad Mini 64 -256 Wifi - 5G",
+    "slug": "ipad-mini-64-256-wifi-5g",
+    "parent": 95,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/99"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/95"
+        }
+      ]
+    }
+  },
+  {
+    "id": 97,
+    "name": "IPad Pro 11\" 2021 128 - 256 - 512 - 1TB - 2Tb Wifi - 5G",
+    "slug": "ipad-pro-11-2021-128-256-512-1tb-2tb-wifi-5g",
+    "parent": 95,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/97"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/95"
+        }
+      ]
+    }
+  },
+  {
+    "id": 96,
+    "name": "IPad Pro 12''9 2021 128 - 256 - 512 - 1TB - 2Tb Wifi - 5G",
+    "slug": "ipad-pro-129-2021-128-256-512-1tb-2tb-wifi-5g",
+    "parent": 95,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/96"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/95"
+        }
+      ]
+    }
+  },
+  {
+    "id": 36,
+    "name": "Ipad Pro 2020",
+    "slug": "ipad-pro-2020",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 4,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/36"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 58,
+    "name": "IPHONE",
+    "slug": "iphone",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 31,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 74,
+    "name": "iPhone 11 Pro Max 99%",
+    "slug": "iphone-11-pro-max-99",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/74"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 104,
+    "name": "Iphone 11 Pro Quốc Tế - 99%",
+    "slug": "iphone-11-pro-64-256gb",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/104"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 103,
+    "name": "Iphone 11 Promax Quốc Tế - 99%",
+    "slug": "iphone-11-promax-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/103"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 111,
+    "name": "Iphone 11 Quốc Tế - 99%",
+    "slug": "iphone-11-64-128gb-iphone",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/111"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 105,
+    "name": "Iphone 11 Quốc Tế - 99%",
+    "slug": "iphone-11-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/105"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 76,
+    "name": "Iphone 12 Promax",
+    "slug": "iphone-12-promax",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/76"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 101,
+    "name": "IPhone 12 Promax - Pro Quốc Tế - 99%",
+    "slug": "iphone-12-promax-pro-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/101"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 102,
+    "name": "Iphone 12 Quốc Tế - 99%",
+    "slug": "iphone-12-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/102"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 115,
+    "name": "IPhone 13 128gb",
+    "slug": "iphone-13-128gb",
+    "parent": 77,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/115"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/77"
+        }
+      ]
+    }
+  },
+  {
+    "id": 32,
+    "name": "Iphone 13 Mini",
+    "slug": "iphone-13-mini",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/32"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 114,
+    "name": "Iphone 13 Pro 128gb",
+    "slug": "iphone-13-pro-128gb",
+    "parent": 77,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/114"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/77"
+        }
+      ]
+    }
+  },
+  {
+    "id": 22,
+    "name": "iPhone 13 Pro Max Quốc tế - Nguyên Seal - Chưa Active",
+    "slug": "iphone-13-pro-13-pro-max-chinh-hang-vn-a",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 4,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/22"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 141,
+    "name": "Iphone 13 Pro Quốc Tế - 99%",
+    "slug": "iphone-13-pro-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/141"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 24,
+    "name": "iPhone 13 Pro Quốc Tế - Nguyên Seal - Chưa Active",
+    "slug": "iphone-13-pro-13-pro-max-quoc-te",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 4,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/24"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 112,
+    "name": "Iphone 13 Promax 128gb",
+    "slug": "iphone-13-promax-128gb",
+    "parent": 77,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/112"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/77"
+        }
+      ]
+    }
+  },
+  {
+    "id": 113,
+    "name": "Iphone 13 Promax 256gb",
+    "slug": "iphone-13-promax-256gb",
+    "parent": 77,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/113"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/77"
+        }
+      ]
+    }
+  },
+  {
+    "id": 140,
+    "name": "Iphone 13 Promax Quốc Tế - 99%",
+    "slug": "iphone-13-promax-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/140"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 28,
+    "name": "iPhone 13 Quốc Tế",
+    "slug": "iphone-13-quoc-te",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 4,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/28"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 142,
+    "name": "Iphone 13 Quốc Tế - 99%",
+    "slug": "iphone-13-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/142"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 120,
+    "name": "IPHONE 13 SERIES",
+    "slug": "iphone-13-series",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/120"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 138,
+    "name": "iPhone 14",
+    "slug": "iphone-14",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 3,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/138"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 137,
+    "name": "iPhone 14 Plus",
+    "slug": "iphone-14-plus",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 3,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/137"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 136,
+    "name": "iPhone 14 Pro",
+    "slug": "iphone-14-pro",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 4,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/136"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 132,
+    "name": "iPhone 14 Promax",
+    "slug": "iphone-14-series",
+    "parent": 58,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 7,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/132"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/58"
+        }
+      ]
+    }
+  },
+  {
+    "id": 110,
+    "name": "Iphone 8 Plus Quốc Tế - 99%",
+    "slug": "iphone-8-plus-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/110"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 100,
+    "name": "Iphone 99%",
+    "slug": "iphone-99",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 17,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 109,
+    "name": "Iphone X Quốc Tế - 99%",
+    "slug": "iphone-x-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/109"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 108,
+    "name": "Iphone Xr Quốc Tế - 99%",
+    "slug": "iphone-xr-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/108"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 107,
+    "name": "Iphone Xs Quốc Tế - 99%",
+    "slug": "iphone-xs-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/107"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 106,
+    "name": "Iphone Xsm Quốc Tế - 99%",
+    "slug": "iphone-xsm-quoc-te-99",
+    "parent": 100,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/106"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/100"
+        }
+      ]
+    }
+  },
+  {
+    "id": 92,
+    "name": "Macbook",
+    "slug": "macbook",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 12,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/92"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 127,
+    "name": "Macbook Air 2020 13-inch | chip Apple M1 | Ram 8Gb",
+    "slug": "macbook-air-2020-13-inch-chip-apple-m1-ram-8gb",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/127"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 131,
+    "name": "Macbook M2",
+    "slug": "macbook-m2",
+    "parent": 92,
+    "description": "",
+    "display": "subcategories",
+    "image": null,
+    "menu_order": 0,
+    "count": 8,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/131"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/92"
+        }
+      ]
+    }
+  },
+  {
+    "id": 68,
+    "name": "Macbook Pro 14\" M1 Pro",
+    "slug": "macbook-pro-14-m1-pro",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/68"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 65,
+    "name": "Macbook Pro 16\" M1 Max",
+    "slug": "macbook-pro-16-m1-max",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/65"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 72,
+    "name": "Macbook Pro 2019 16in",
+    "slug": "macbook-pro-2019-16in",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 1,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/72"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 70,
+    "name": "Macbook Pro 2020 13-inch | chip Apple M1",
+    "slug": "macbook-pro-2020-13-inch-chip-apple-m1",
+    "parent": 92,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 2,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/70"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ],
+      "up": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/92"
+        }
+      ]
+    }
+  },
+  {
+    "id": 86,
+    "name": "Sạc chính hãng",
+    "slug": "sac-chinh-hang",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/86"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 77,
+    "name": "Sản Phẩm Nổi Bật",
+    "slug": "san-pham-noi-bat",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 22,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/77"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  },
+  {
+    "id": 15,
+    "name": "Uncategorized",
+    "slug": "uncategorized",
+    "parent": 0,
+    "description": "",
+    "display": "default",
+    "image": null,
+    "menu_order": 0,
+    "count": 0,
+    "_links": {
+      "self": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories/15"
+        }
+      ],
+      "collection": [
+        {
+          "href": "https://khamobile.vn/wp-json/wc/v3/products/categories"
+        }
+      ]
+    }
+  }
+]
