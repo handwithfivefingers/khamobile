@@ -145,16 +145,6 @@ export default function ProductDetail({ data, _relationProd }) {
                     [styles.active]: form.sku === item._id,
                   })}
                 >
-                  {/* {item.variant &&
-                    Object.keys(item.variant).map((key) => {
-                      return (
-                        <>
-                          <span>
-                            {key}: {item.variant[key]} <br />
-                          </span>
-                        </>
-                      )
-                    })} */}
                   {item.attribute &&
                     Object.keys(item.attribute).map((key) => {
                       if (key !== item.primary)

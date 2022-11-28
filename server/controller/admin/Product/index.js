@@ -1,5 +1,5 @@
 import { MESSAGE } from '#server/constant/message'
-import { Product, ProductVariant } from '#server/model'
+import { Product, ProductVariant } from '#model'
 import mongoose, { startSession } from 'mongoose'
 import shortid from 'shortid'
 import slugify from 'slugify'
@@ -417,7 +417,7 @@ export default class ProductController {
 
   getProduct = async (req, res) => {
     try {
-      let _prod = await Product.find()
+      let _prod = await Product.find({})
       return res.status(200).json({
         data: _prod,
       })
@@ -431,35 +431,107 @@ export default class ProductController {
   getProductById = async (req, res) => {
     try {
       let { _id } = req.params
-      let _prod = await ProductVariant.find({
-        parentId: _id,
-      })
-        .populate({
-          path: 'attributes',
-          populate: {
-            path: 'parentId',
-          },
+      let { type } = req.query
+
+      let _prod
+
+      if (type === 'simple') {
+        _prod = await Product.findOne({
+          _id: mongoose.Types.ObjectId(_id),
         })
-        .select('-createdAt -updatedAt  -__v')
+      } else if (type === 'variable') {
+        let [_prodAggregate] = await Product.aggregate([
+          {
+            $match: {
+              _id: mongoose.Types.ObjectId(_id),
+            },
+          },
+          {
+            $lookup: {
+              from: 'productvariants',
+              localField: '_id',
+              foreignField: 'parentId',
+              as: 'variations',
+            },
+          },
+          {
+            $unwind: '$variations',
+          },
+          {
+            $project: {
+              _id: '$_id',
+              title: '$title',
+              description: '$description',
+              content: '$content',
+              category: '$category',
+              type: '$type',
+              primary: '$primary',
+              'attr._id': '$variations._id',
+              'attr.price': '$variations.price',
+              'attr.regular_price': '$variations.regular_price',
+              'attr.purchasable': '$variations.purchasable',
+              'attr.stock_status': '$variations.stock_status',
+              'attr.attributes': '$variations.attributes',
+              'attr.parentId': '$variations.parentId',
+            },
+          },
+          {
+            $group: {
+              _id: {
+                _id: '$_id',
+                title: '$title',
+                description: '$description',
+                content: '$content',
+                category: '$category',
+                type: '$type',
+                primary: '$primary',
+              },
+              variations: {
+                $push: {
+                  _id: '$attr._id',
+                  price: '$attr.price',
+                  regular_price: '$attr.regular_price',
+                  purchasable: '$attr.purchasable',
+                  stock_status: '$attr.stock_status',
+                  attributes: '$attr.attributes',
+                },
+              },
+            },
+          },
+          {
+            $project: {
+              _id: '$_id._id',
+              title: '$_id.title',
+              description: '$_id.description',
+              content: '$_id.content',
+              category: '$_id.category',
+              type: '$_id.type',
+              primary: '$_id.primary',
+              variations: '$variations',
+            },
+          },
+        ])
 
-      let data = []
-
-      for (let prod of _prod) {
-        if (prod._doc.attributes.length) {
-          prod._doc.attributes = prod._doc.attributes.map((item) => {
-            return {
-              key: item?.parentId?.key,
-              value: item?.name,
-            }
-          })
-        }
-        data.push(prod)
+        _prod = _prodAggregate
       }
 
+      // for (let prod of _prod) {
+      //   if (prod._doc.attributes.length) {
+      //     prod._doc.attributes = prod._doc.attributes.map((item) => {
+      //       return {
+      //         key: item?.parentId?.key,
+      //         value: item?.name,
+      //       }
+      //     })
+      //   }
+      //   data.push(prod)
+      // }
+
       return res.status(200).json({
-        data,
+        data: _prod,
       })
     } catch (error) {
+      console.log(error)
       return res.status(400).json({
         error,
       })

@@ -9,7 +9,7 @@ const path = {
 const ProductService = {
   getProduct: async () => await axios.get(path.product),
 
-  getProductById: async (id) => await axios.get(path.product + '/' + id),
+  getProductById: async ({ _id, type }) => await axios.get(path.product + '/' + _id, { params: { type } }),
 
   updateProduct: async (id, form) => await axios.post(path.product + '/update/' + id, form),
 
@@ -20,7 +20,7 @@ const ProductService = {
   updateVariable: async (id, form) => await axios.post(path.variable + '/' + id, form),
 
   createVariable: async (form) => await axios.post(path.variable, form),
-  
+
   getAttribute: async () => await axios.get(path.attribute),
 }
 

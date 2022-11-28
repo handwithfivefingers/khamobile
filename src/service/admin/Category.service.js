@@ -1,13 +1,15 @@
-import axios from 'configs/axiosInstance';
+import axios from 'configs/axiosInstance'
 
 const path = {
-	category: '/admin/category',
-};
+  category: '/admin/category',
+  prodCategory: '/admin/product_category'
+}
 
 const CategoryService = {
-	getCate: async (params) => await axios.get(path.category, { params }),
-	getCateById: async (id) => await axios.get(path.category + '/' + id),
-	createCate: async (form) => await axios.post(path.category, form),
-};
+  getCate: async (params) => await axios.get(path.category, { params }),
+  getCateById: async (id) => await axios.get(path.category + '/' + id),
+  createCate: async (form) => await axios.post(path.category, form),
+  getProdCate: async () => await axios.get(path.prodCategory),
+}
 
-export default CategoryService;
+export default CategoryService

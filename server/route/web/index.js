@@ -1,16 +1,6 @@
-import ProductController from '#controller/v2/Product'
-import { upload } from '#middleware'
-import express from 'express'
+import productRouter from './product'
+import productCategoryRouter from './product_category'
 
-const router = express.Router()
-
-// const { getProductBySlug } = new ProductController()
-
-// router.get('/product', upload.none(), getProductBySlug)
-
-// router.get('/product/:slug', upload.none(), getProductBySlug)
-
-
-router.get('/product/:slug', new ProductController().getProductSlug)
+const router = { productRouter, productCategoryRouter }
 
 export default router

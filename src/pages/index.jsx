@@ -1,7 +1,5 @@
 import CommonLayout from 'component/UI/Layout'
 import Head from 'next/head'
-import { useState } from 'react'
-
 import Homebanner_1 from 'assets/img/dai-hoi-thu-cu-doi-moi5.webp'
 import Homebanner_2 from 'assets/img/iphone-13-pro-max.webp'
 import Homebanner_3 from 'assets/img/iphone-14-san-hang.webp'
@@ -14,8 +12,24 @@ import { Panel, Carousel } from 'rsuite'
 import Catalog from 'component/UI/Content/Catalog'
 import ImageBlock from 'component/UI/Content/ImageBlock'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
+import GlobalHomeService from 'service/global/Home.service'
+import { useEffect, useState } from 'react'
 
 const Home = () => {
+  const [data, setData] = useState([])
+  useEffect(() => {
+    getHomeProd()
+  }, [])
+  const getHomeProd = async () => {
+    try {
+      let resp = await GlobalHomeService.getHomeProd()
+      setData(resp.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  console.log('data', data)
   return (
     <>
       <Head>
@@ -50,18 +64,25 @@ const Home = () => {
               <div className="row">
                 <div className="col-12">
                   <Heading type="h3" center>
-                    IPHONE 14 SERIES - SẴN HÀNG GIAO NGAY!
+                    {data?.[6]?.name}
                   </Heading>
                 </div>
 
                 <div className="col-12">
                   <CustomSlider type={TYPE_CAROUSEL.MUTI}>
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
-                    <Card />
+                    {data?.[6]?.child?.map((item) => {
+                      return (
+                        <Card
+                          imgSrc={
+                            'https://www.journal-theme.com/1/image/cache/catalog/journal3/products/fashion/f1-250x250.jpg.webp'
+                          }
+                          cover
+                          title={item.title}
+                          price={item.price}
+                          type={item.type}
+                        />
+                      )
+                    })}
                   </CustomSlider>
                 </div>
               </div>
@@ -87,51 +108,13 @@ const Home = () => {
       <section className="container">
         <div className="row">
           <div className="col-12">
-            <Heading>THÁNG TRI ÂN (Áp dụng từ ngày 01-20/11)</Heading>
+            <Heading type="h3" center>
+              {data?.[1]?.name}
+            </Heading>
           </div>
 
           <div className="col-12">
-            <div className="row gx-2 gy-2">
-              <div className="col-3">
-                <Card />
-              </div>
-              <div className="col-3">
-                <Card />
-              </div>
-              <div className="col-3">
-                <Card />
-              </div>
-              <div className="col-3">
-                <Card />
-              </div>
-              <div className="col-3">
-                <Card />
-              </div>
-              <div className="col-3">
-                <Card />
-              </div>
-              <div className="col-3">
-                <Card />
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="container-fluid">
-        <div className="row">
-          <div className="col-12">
-            <div className="row gx-2 gy-2">
-              <div className="col-4">
-                <Panel bordered>Baner 1</Panel>
-              </div>
-              <div className="col-4">
-                <Panel bordered>Baner 2</Panel>
-              </div>
-              <div className="col-4">
-                <Panel bordered>Baner 3</Panel>
-              </div>
-            </div>
+            <Catalog data={data?.[0]} />
           </div>
         </div>
       </section>
@@ -140,12 +123,26 @@ const Home = () => {
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
-              SẢN PHẨM NỔI BẬT
+              {data?.[0]?.name}
             </Heading>
           </div>
 
           <div className="col-12">
-            <Catalog />
+            <Catalog data={data?.[0]} direction="rtl" />
+          </div>
+        </div>
+      </section>
+      
+      <section className="container">
+        <div className="row">
+          <div className="col-12">
+            <Heading type="h3" center>
+              {data?.[5]?.name}
+            </Heading>
+          </div>
+
+          <div className="col-12">
+            <Catalog data={data?.[5]} />
           </div>
         </div>
       </section>
@@ -154,12 +151,12 @@ const Home = () => {
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
-              IPHONE 13 SERIES
+              {data?.[2]?.name}
             </Heading>
           </div>
 
           <div className="col-12">
-            <Catalog direction="rtl" />
+            <Catalog data={data?.[2]} direction="rtl" />
           </div>
         </div>
       </section>
@@ -168,38 +165,12 @@ const Home = () => {
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
-              IPHONE 99%
+              {data?.[3]?.name}
             </Heading>
           </div>
 
           <div className="col-12">
-            <Catalog />
-          </div>
-        </div>
-      </section>
-      <section className="container">
-        <div className="row">
-          <div className="col-12">
-            <Heading type="h3" center>
-              IPAD
-            </Heading>
-          </div>
-
-          <div className="col-12">
-            <Catalog direction="rtl" />
-          </div>
-        </div>
-      </section>
-      <section className="container">
-        <div className="row">
-          <div className="col-12">
-            <Heading type="h3" center>
-              MACBOOK
-            </Heading>
-          </div>
-
-          <div className="col-12">
-            <Catalog />
+            <Catalog data={data?.[3]} />
           </div>
         </div>
       </section>

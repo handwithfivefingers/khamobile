@@ -2,7 +2,7 @@
 // const { successHandler, errHandler } = require('@response')
 // const slugify = require('slugify')
 import { MESSAGE } from '#server/constant/message'
-import { ProductVariant, Product } from '#server/model'
+import { ProductVariant, Product, ProductCategory } from '#server/model'
 import _ from 'lodash'
 export default class ProductController {
   // getProducts = async (req, res) => {
@@ -213,191 +213,12 @@ export default class ProductController {
             // b: { $getField: { $literal: '$child.attributes.v' } },
           },
         },
-        // {
-        //   $group: {
-        //     _id: '$_id',
-        //     items: {
-        //       $push: {
-        //         _id: '$_id',
-        //         title: '$title',
-        //         description: '$description',
-        //         content: '$content',
-        //         slug: '$slug',
-        //         type: '$type',
-        //         attribute: '$attribute',
-        //       },
-        //     },
-        //   },
-        // },
-        // {
-        //   $unwind: '$attribute',
-        // },
-        // {
-        //   $group: {
-        //     _id: '$attribute.v',
-        //     items: {
-        //       $push: {
-        //         _id: '$_id',
-        //         title: '$title',
-        //         description: '$description',
-        //         content: '$content',
-        //         slug: '$slug',
-        //         type: '$type',
-        //         attribute: '$attributes',
-        //       },
-        //     },
-        //   },
-        // },
-        // {
-        //   $project: {
-        //     _id: '$_id',
-        //     title: '$title',
-        //     description: '$description',
-        //     content: '$content',
-        //     slug: '$slug',
-        //     type: '$type',
-        //     k: '$attribute.k',
-        //     v: '$attribute.v',
-        //   },
-        // },
-
-        // {
-        //   $project: {
-        //     _id: '$_id',
-        //     title: '$title',
-        //     description: '$description',
-        //     content: '$content',
-        //     slug: '$slug',
-        //     type: '$type',
-        //     a: '$attribute.k',
-        //     v: '$attribute.v',
-        //   },
-        // },
-        // {
-        //   $unwind: '$attribute',
-        // },
-        // {
-        //   $lookup: {
-        //     from: 'productattributeterms',
-        //     let: { attrId: '$attribute.v' },
-        //     pipeline: [
-        //       {
-        //         $match: {
-        //           _id: '$$attrId',
-        //         },
-        //       },
-        //     ],
-        //     as: 'attr',
-        //   },
-        // },
-        // {
-        //   $group: {
-        //     _id: '$attribute.v',
-        //     items: {
-        //       $push: {
-        //         _id: '$_id',
-        //         title: '$title',
-        //         description: '$description',
-        //         content: '$content',
-        //         slug: '$slug',
-        //         type: '$type',
-        //         attribute: '$attribute',
-        //       },
-        //     },
-        //   },
-        // },
-        // {
-        //   $lookup: {
-        //     from: 'productattributeterms',
-        //     localField: '_id',
-        //     foreignField: '_id',
-        //     as: 'child',
-        //   },
-        // },
-        // {
-        //   $group: `$child.attributes.${'$primary'}`,
-        // },
       ])
 
-      // let _prod = await ProductVariant.find({
-      //   parentId: parentId,
-      // })
-      //   .populate({
-      //     path: 'attributes',
-      //   })
-      //   .select('-createdAt -updatedAt  -__v')
+      console.log(data)
 
-      // let data = []
-
-      // for (let prod of _prod) {
-      //   if (prod._doc.attributes.length) {
-      //     prod._doc.attributes = prod._doc.attributes.map((item) => {
-      //       return {
-      //         key: item?.parentId?.key,
-      //         value: item?.name,
-      //       }
-      //     })
-      //   }
-      //   data.push(prod)
-      // }
-
-      // let newQuery
-      // if (query) {
-      //   newQuery = Object.keys(query).map((item) => ({ key: item, value: query[item] }))
-      // }
-      // for (let item of data) {
-      //   let { attributes } = item
-      //   if (attributes.length && newQuery.length) {
-      //     let isExist = newQuery.every((q) => attributes.some((attr) => attr.key === q.key && q.value === attr.value))
-      //     if (isExist) result.push(item)
-      //   }
-      // }
-
-      // let newData = _.chain(data._doc).groupBy('attribute')
-
-      //       for (const doc of data) {
-      //         let primary = doc.primary
-
-      //         if (!result.get(primary)) result.set(primary, {})
-      //         else {
-      //           let groupItems = result.get(primary) // [ { value, items}, ...]
-      //           let done = false
-      //           let val = []
-      //           for (let groupItem of groupItems) {
-      //             if (groupItem.value.includes(doc.attribute[primary])) {
-      //               groupItem.items.push(doc)
-      //               done = true
-      //             }
-      //             val.push(groupItem)
-      //             if (done) break
-      //           }
-
-      //           if (!done) {
-      //             let newVal = { value: doc.attribute[primary], items: [doc] }
-      //             val.push(newVal)
-      //           }
-
-      //           console.log(val)
-      //           // if (value === doc.attribute[primary]) {
-      //           //   result.set(primary, [{ value, items: [...items, doc] }])
-      //           // } else {
-      //           // }
-      //         }
-      //         /**
-      // result:
-      // [
-      //   {
-      //     primary: xxx,
-      //     item: []
-      //   },
-      //   {
-      //     primary: yyy,
-      //     item: []
-      //   }
-      // ]
-      //  */
-      //       }
       let primaryKey = parentItem.primary
+
       data = data.map((item) => {
         let obj = { ...item }
 
@@ -423,7 +244,61 @@ export default class ProductController {
     }
   }
 
-  findOneArray = (haystack, arr) => {
-    return arr.some((v) => haystack.includes(v))
+  getHomeProduct = async (req, res) => {
+    try {
+      let _prod
+      let _cate = await ProductCategory.aggregate([
+        {
+          $project: {
+            _id: '$_id',
+            name: '$name',
+            slug: '$slug',
+            parent: '$parent',
+          },
+        },
+        {
+          $lookup: {
+            from: 'productcategories',
+            localField: '_id',
+            foreignField: 'parent',
+            as: 'child',
+          },
+        },
+        {
+          $match: {
+            'child.1': { $exists: true },
+          },
+        },
+        {
+          $project: {
+            _id: '$_id',
+            name: '$name',
+            slug: '$slug',
+          },
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: '_id',
+            foreignField: 'category',
+            pipeline: [
+              {
+                $limit: 6,
+              },
+            ],
+            as: 'child',
+          },
+        },
+      ])
+
+      return res.status(200).json({
+        data: _cate,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(400).json({
+        error,
+      })
+    }
   }
 }

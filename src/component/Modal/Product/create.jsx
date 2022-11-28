@@ -25,6 +25,7 @@ import CategoryService from 'service/admin/Category.service'
 import ProductService from 'service/admin/Product.service'
 import { useCommonStore } from 'src/store/commonStore'
 import { KMEditor, KMInput, KMSelect } from 'component/UI/Content/KMInput'
+import { COMMON_TEXT } from 'src/constant/text.constant'
 
 const CustomInput = (props) => {
   return <input name="title" class="rs-input" type="text" {...props} />
@@ -74,26 +75,29 @@ const VariantControl = (props) => {
     <FlexboxGrid>
       <FlexboxGrid.Item style={{ width: '100%' }}>
         <FlexboxGrid>
-          {list.map((item, index) => {
+          {list.map(({ _id, purchasable, stock_status, ...item }, index) => {
             return (
               <>
                 {Object.keys(item).map((key) => {
                   if (key === 'attributes') {
                     return variable.map((vars) => {
                       return (
-                        <FlexboxGrid.Item style={{ width: '20%' }}>
+                        <FlexboxGrid.Item className="p-1" style={{ width: '20%' }}>
+                          <Form.ControlLabel>{vars._id}</Form.ControlLabel>
                           <SelectPicker
                             data={vars.item.map((v) => ({ label: v.name, value: v.name }))}
                             onChange={(value) => handleSelect(value, index, vars._id)}
                             placeholder={vars._id}
                             style={{ width: '100%' }}
+                            value={item[key][vars._id]}
                           />
                         </FlexboxGrid.Item>
                       )
                     })
                   } else {
                     return (
-                      <FlexboxGrid.Item style={{ width: '20%' }}>
+                      <FlexboxGrid.Item className="p-1" style={{ width: '20%' }}>
+                        <Form.ControlLabel>{COMMON_TEXT[key]} </Form.ControlLabel>
                         <Input
                           placeholder={key}
                           onChange={(value) => handeInput(value, index, key)}
@@ -124,7 +128,7 @@ const ProductCreateModal = (props) => {
 
   const [loading, setLoading] = useState(false)
 
-  const [variable, setVariable] = useState(new Map())
+  const [variable, setVariable] = useState([])
 
   const [form, setForm] = useState({
     price: 0,
@@ -133,24 +137,16 @@ const ProductCreateModal = (props) => {
     purchasable: true,
     stock_status: true,
     parentId: '',
-    variations: [
-      {
-        attributes: {
-          'Dung lượng': '1TB',
-          'Màu sắc': 'Black',
-          'Phiên bản': 'LNE',
-        },
-        price: 0,
-        regular_price: 0,
-      },
-    ],
+    variations: [],
+    ...props?.data,
   })
 
-  const [data, setData] = useState()
+  const [cate, setCate] = useState()
 
   useEffect(() => {
-    changeTitle('Create Post')
     getVariables()
+    getCategory()
+    changeTitle('Create Post')
   }, [])
 
   const getVariables = async () => {
@@ -162,6 +158,22 @@ const ProductCreateModal = (props) => {
       let _variables = resp.data.data
 
       setVariable(_variables)
+    } catch (error) {
+      console.log('getVariables error', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getCategory = async () => {
+    try {
+      setLoading(true)
+
+      let resp = await CategoryService.getProdCate()
+
+      let category = resp.data.data
+
+      setCate(category)
     } catch (error) {
       console.log('getVariables error', error)
     } finally {
@@ -184,6 +196,7 @@ const ProductCreateModal = (props) => {
     }
   }
 
+  console.log('cate', cate)
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
@@ -204,32 +217,49 @@ const ProductCreateModal = (props) => {
             </CardBlock>
 
             <CardBlock>
-              <SelectPicker
-                name="type"
-                onChange={(value) => setForm({ ...form, type: value })}
-                data={[
-                  { label: 'simple', value: 'simple' },
-                  { label: 'variant', value: 'variant' },
-                ]}
-              />
+              <FlexboxGrid>
+                <Form.Group controlId="type" className="p-1">
+                  <Form.ControlLabel>Loại biến thể</Form.ControlLabel>
+                  <SelectPicker
+                    name="type"
+                    onChange={(value) => setForm({ ...form, type: value })}
+                    data={[
+                      { label: 'Đơn giản', value: 'simple' },
+                      { label: 'Nhiều biến thể', value: 'variable' },
+                    ]}
+                    value={form['type']}
+                  />
+                </Form.Group>
 
-              {form?.type === 'simple' && <InputNumber />}
-              {form?.type === 'variant' && (
-                <>
-                  <Form.Group controlId="primary">
-                    <Form.Control
-                      name="primary"
-                      accepter={KMSelect}
-                      data={variable.map((item) => ({ label: item._id, value: item._id }))}
-                      style={{ width: '100%' }}
-                      placeholder="Khóa chính"
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="variations">
-                    <Form.Control name="variations" accepter={VariantControl} variable={variable} />
-                  </Form.Group>
-                </>
-              )}
+                {form?.type === 'simple' && (
+                  <>
+                    <Form.Group controlId="price" className="p-1">
+                      <Form.ControlLabel>Giá tiền</Form.ControlLabel>
+                      <Form.Control accepter={InputNumber} name="price" />
+                    </Form.Group>
+                  </>
+                )}
+                {form?.type === 'variable' && (
+                  <>
+                    <Form.Group controlId="primary" className="p-1">
+                      <Form.ControlLabel>Thuộc tính chính</Form.ControlLabel>
+                      <Form.Control
+                        name="primary"
+                        accepter={KMSelect}
+                        data={variable?.map((item) => ({ label: item._id, value: item._id }))}
+                        style={{ width: '100%' }}
+                        placeholder="Khóa chính"
+                        value={form['primary']}
+                      />
+                    </Form.Group>
+                    <FlexboxGrid.Item style={{ width: '100%' }}>
+                      <Form.Group controlId="variations">
+                        <Form.Control name="variations" accepter={VariantControl} variable={variable} />
+                      </Form.Group>
+                    </FlexboxGrid.Item>
+                  </>
+                )}
+              </FlexboxGrid>
             </CardBlock>
           </div>
           <div
@@ -253,9 +283,9 @@ const ProductCreateModal = (props) => {
                 <Form.ControlLabel>Danh mục cha</Form.ControlLabel>
                 <Form.Control
                   name="category"
-                  accepter={Select}
-                  data={data || []}
+                  data={cate || []}
                   labelKey={'name'}
+                  accepter={Select}
                   valueKey={'_id'}
                   preventOverflow
                   cascade

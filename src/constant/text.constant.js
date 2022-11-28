@@ -1,12 +1,17 @@
 const TEXT = {
-  color: "Màu sắc",
-  memory: "Dung lượng",
-  version: "Phiên bản",
-};
+  color: 'Màu sắc',
+  memory: 'Dung lượng',
+  version: 'Phiên bản',
+}
 
 const PRODUCT_TEXT = {
-  SIMPLE: "simple",
-  VARIANT: "variant",
-};
+  SIMPLE: 'simple',
+  VARIANT: 'variant',
+}
 
-export { TEXT, PRODUCT_TEXT };
+const COMMON_TEXT = {
+  price: 'Giá tiền',
+  regular_price: 'Giá tiền mặc định',
+}
+
+export { TEXT, PRODUCT_TEXT, COMMON_TEXT }

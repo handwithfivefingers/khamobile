@@ -1,6 +1,6 @@
 const TYPE_VARIANT = {
   SIMPLE: 'simple',
-  VARIANT: 'variant',
+  VARIANT: 'variable',
 }
 
 export { TYPE_VARIANT }

@@ -1,8 +1,8 @@
 import ProductCreateModal from 'component/Modal/Product/create'
 import AdminLayout from 'component/UI/AdminLayout'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { Content, Table, Button, Modal } from 'rsuite'
+import { useEffect, useState, useRef } from 'react'
+import { Content, Table, Button, Modal, DOMHelper } from 'rsuite'
 import ProductService from 'service/admin/Product.service'
 import { useCommonStore } from 'src/store/commonStore'
 
@@ -11,16 +11,18 @@ const { Column, HeaderCell, Cell } = Table
 const Products = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
 
-  const [open, setOpen] = useState(false)
+  const [height, setHeight] = useState(false)
   const router = useRouter()
   const [product, setProduct] = useState([])
   const [modal, setModal] = useState({
     open: false,
     component: null,
   })
+  const nodeRef = useRef()
   useEffect(() => {
     changeTitle('Page Products')
     getProducts()
+    setHeight(DOMHelper.getHeight(nodeRef.current))
   }, [])
 
   const handleClose = () => setModal({ open: false, component: null })
@@ -80,18 +82,17 @@ const Products = () => {
     }
   }
 
-  const getProductById = async (id) => {
+  const getProductById = async ({ _id, type }) => {
     try {
-      let resp = await ProductService.getProductById(id)
-      let { data, variable } = resp.data
-
-      return { ...data, variant: [...variable] }
+      console.log(_id, type)
+      let resp = await ProductService.getProductById({ _id, type })
+      return resp.data.data
     } catch (error) {
       console.log('getProductById', error, error?.response?.data)
     }
   }
-  const handleOpenProduct = async (rowData) => {
-    let data = await getProductById(rowData._id)
+  const handleOpenProduct = async ({ _id, type }) => {
+    let data = await getProductById({ _id, type })
     setModal({
       open: true,
       component: <ProductCreateModal data={data} onSubmit={onUpdate} />,
@@ -99,24 +100,14 @@ const Products = () => {
   }
   return (
     <>
-      <Content className={'bg-w'}>
-        <Button
-          onClick={() =>
-            setModal({
-              open: true,
-              component: <ProductCreateModal onSubmit={onCreate} />,
-            })
-          }
-        >
-          Add
-        </Button>
-        <Table height={400} data={product} onRowClick={handleOpenProduct}>
+      <Content className={'bg-w h-100'} ref={nodeRef}>
+        <Table height={height} data={product} onRowClick={handleOpenProduct}>
           <Column width={60} align="center" fixed>
             <HeaderCell>Id</HeaderCell>
             <Cell dataKey="_id" />
           </Column>
 
-          <Column width={150}>
+          <Column width={150} flexGrow={1}>
             <HeaderCell>Title</HeaderCell>
             <Cell dataKey="title" />
           </Column>
@@ -129,6 +120,23 @@ const Products = () => {
           <Column width={100}>
             <HeaderCell>Price</HeaderCell>
             <Cell dataKey="price" />
+          </Column>
+          <Column width={100}>
+            <HeaderCell>
+              <Button
+                color="blue"
+                appearance="primary"
+                onClick={() =>
+                  setModal({
+                    open: true,
+                    component: <ProductCreateModal onSubmit={onCreate} />,
+                  })
+                }
+              >
+                Add
+              </Button>
+            </HeaderCell>
+            <Cell />
           </Column>
         </Table>
       </Content>

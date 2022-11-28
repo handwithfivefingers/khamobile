@@ -7,7 +7,7 @@ const router = express.Router()
 
 router.get('/sku', upload.none(), new ConvertController().getSKU)
 
-router.get('/sku/:_id', upload.none(), new ConvertController().getSKUById)
+// router.get('/sku/:_id', upload.none(), new ConvertController().getSKUById)
 
 router.post('/variant', upload.none(), new ConvertController().getVariantOfSKU)
 

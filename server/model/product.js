@@ -13,6 +13,7 @@ export default {
 
   price: Number,
   primary: String,
+  
   slug: {
     type: String,
     required: true,

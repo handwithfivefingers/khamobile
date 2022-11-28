@@ -95,7 +95,7 @@ export default function Product(props) {
                     <div className="col-3">
                       <Card
                         imgSrc={prod.img?.[0]?.filename}
-                        title={prod.title?.join?.(' ')}
+                        title={prod.title}
                         price={prod.price}
                         underlinePrice={prod?.underlinePrice || null}
                         type={prod.type}

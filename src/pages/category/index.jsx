@@ -1,71 +1,84 @@
-import clsx from 'clsx';
-import Card from 'component/UI/Content/Card';
-import CardBlock from 'component/UI/Content/CardBlock';
-import Divider from 'component/UI/Content/Divider';
-import Heading from 'component/UI/Content/Heading';
-import SideFilter from 'component/UI/Content/SideFilter';
-import CommonLayout from 'component/UI/Layout';
-import React, { useEffect } from 'react';
-import { useState } from 'react';
-import { Dropdown, Pagination, SelectPicker } from 'rsuite';
-import CategoryService from 'service/admin/Category.service';
-import TOAST_STATUS from 'src/constant/message.constant';
-import { useMessageStore } from 'src/store/messageStore';
-import styles from './styles.module.scss';
+import clsx from 'clsx'
+import Heading from 'component/UI/Content/Heading'
+import CommonLayout from 'component/UI/Layout'
+import { useEffect, useState } from 'react'
+import { Col, Row, Panel, Placeholder, Grid } from 'rsuite'
+import GlobalCategoryService from 'service/global/Category.service'
+import { useMessageStore } from 'src/store/messageStore'
+import styles from './styles.module.scss'
 
+const Card = (props) => (
+  <Panel {...props} bordered header={props.title}>
+    <Placeholder.Paragraph />
+  </Panel>
+)
 export default function Category(props) {
-	const [data, setData] = useState([]);
+  const [data, setData] = useState([])
 
-	const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    getCateData()
+  }, [])
 
-	const pushMessage = useMessageStore((state) => state.pushMessage);
+  const getCateData = async () => {
+    try {
+      let resp = await GlobalCategoryService.getProdCate()
 
-	useEffect(() => {
-		getCateData();
-	}, []);
-	const getCateData = async () => {
-		try {
-			setLoading(true);
-			const res = await CategoryService.getCate({ type: 'product' });
-			setData(res.data.data);
-			pushMessage({ message: res.data.message, type: 'success', status: TOAST_STATUS.PUSHED });
-		} catch (error) {
-			console.log('error', error?.response?.data?.message);
-			pushMessage({ message: error?.response?.data?.message || error?.message || 'Something was wrong', type: 'error', status: TOAST_STATUS.PUSHED });
-		} finally {
-			setLoading(false);
-		}
-	};
+      setData(resp.data.data)
+    } catch (error) {
+      console.log('error', error?.response?.data?.message)
+    }
+  }
 
-	console.log('data', data);
-	return (
-		<div className='container'>
-			<div className='row'>
-				<div className='col-12'>
-					<Heading type='h3' left divideClass={styles.divideLeft}>
-						Danh mục
-					</Heading>
-				</div>
+  console.log('data', data)
 
-				<div className={styles.categories}>
-					<div className={styles.listCate}>
-						{data?.map((item, index) => {
-							return (
-								<div
-									className={clsx(styles.cateItem)}
-									style={{
-										backgroundImage: `url(https://cdn2.cellphones.com.vn/180x/https://cdn2.cellphones.com.vn/x/media/catalog/product/a/p/apple_care_1.png)`,
-									}}
-								>
-									{item.name}
-								</div>
-							);
-						})}
-					</div>
-				</div>
-			</div>
-		</div>
-	);
+  return (
+    <div className="container">
+      <div className="row">
+        <div className="col-12">
+          <Heading type="h3" left divideClass={styles.divideLeft}>
+            Danh mục
+          </Heading>
+        </div>
+
+        {/* <div className={styles.categories}>
+          <div className={styles.listCate}>
+            {data?.map((item, index) => {
+              return (
+                <div
+                  className={clsx(styles.cateItem)}
+                  style={{
+                    backgroundImage: `url(https://cdn2.cellphones.com.vn/180x/https://cdn2.cellphones.com.vn/x/media/catalog/product/a/p/apple_care_1.png)`,
+                  }}
+                >
+                  {item.name}
+                </div>
+              )
+            })}
+          </div>
+        </div> */}
+      </div>
+      <Grid fluid>
+        <Row gutter={12}>
+          {data?.map((item, index) => {
+            return (
+              <Col md={6} sm={12} style={{margin:'6px 0'}}>
+                <Card title={item.name} />
+              </Col>
+
+              // <div
+              //   className={clsx('col-3 card')}
+              //   style={{
+              //     backgroundImage: `url(https://cdn2.cellphones.com.vn/180x/https://cdn2.cellphones.com.vn/x/media/catalog/product/a/p/apple_care_1.png)`,
+              //   }}
+              // >
+              //   {item.name}
+              // </div>
+            )
+          })}
+        </Row>
+      </Grid>
+    </div>
+  )
 }
 
-Category.Layout = CommonLayout;
+Category.Layout = CommonLayout
