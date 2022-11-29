@@ -4,6 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js\"",
+    "start": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js\"",
     "dev-only": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js\"",
     "dev-next": "next dev",
     "dev-start": "node --experimental-specifier-resolution=node app.js",
