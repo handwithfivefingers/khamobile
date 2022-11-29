@@ -21,24 +21,52 @@
   z-index: 99;
 }
 
-.ham {
+.ham,
+.hamLeft {
   opacity: 0;
   visibility: hidden;
   display: none;
 }
 
 @media (max-width: 990px) {
-  .navLinkHL {
+  .navLinkHL,
+  .navLeft {
     opacity: 0;
     visibility: hidden;
+    display: none;
   }
-  .ham {
+  .ham,
+  .hamLeft {
     opacity: 1;
     visibility: visible;
     display: inline-block;
     position: absolute;
-    right: 0;
     top: 50%;
     transform: translateY(-50%);
+  }
+  .ham {
+    right: 0;
+  }
+  .hamLeft {
+    left: 200;
+  }
+  .nav {
+    display: flex;
+    justify-content: space-between;
+    .brand {
+      order: 1;
+      flex:1;
+      margin:0 auto;
+    }
+  }
+}
+
+.sideMenu {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  border: none;
+  li {
+    border: none;
   }
 }

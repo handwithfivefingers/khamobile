@@ -16,7 +16,7 @@ import ListIcon from '@rsuite/icons/List'
 import TextImageIcon from '@rsuite/icons/TextImage'
 import PeoplesIcon from '@rsuite/icons/Peoples'
 import HomeIcon from '@rsuite/icons/legacy/Home'
-import { FaShoppingBasket } from 'react-icons/Fa'
+import { FaShoppingBasket } from 'react-icons/fa'
 import { useRef } from 'react'
 import AlignRightIcon from '@rsuite/icons/legacy/AlignRight'
 const NavLink = forwardRef((props, ref) => {
@@ -63,35 +63,18 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
     }
   }
 
-  const renderDropdownMenu = (cateList, trigger = 'hover') => {
+  const renderDropdownMenu = (cateList, trigger) => {
     let html = null
-
+    console.log(trigger)
     html = cateList?.map((item) => {
       return item.child?.length ? (
-        <Dropdown.Menu title={item.name} trigger={trigger} icon={<ListIcon />}>
+        <Dropdown.Menu title={item.name} trigger={trigger || 'hover'} icon={<ListIcon />}>
           {renderDropdownMenu(item.child, trigger)}
         </Dropdown.Menu>
       ) : (
         <Dropdown.Item as={NavLink} href={`/category/${item.slug}`} icon={<GridIcon />}>
           {item.name}
         </Dropdown.Item>
-      )
-    })
-
-    return html
-  }
-  const renderAsNavMenu = (cateList) => {
-    let html = null
-
-    html = cateList?.map((item) => {
-      return item.child?.length ? (
-        <Nav.Menu title={item.name} icon={<ListIcon />}>
-          {renderDropdownMenu(item.child)}
-        </Nav.Menu>
-      ) : (
-        <Nav.Item as={NavLink} href={`/category/${item.slug}`} icon={<GridIcon />}>
-          {item.name}
-        </Nav.Item>
       )
     })
 
@@ -152,7 +135,7 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
               Danh mục
             </Dropdown.Item>
 
-            {renderDropdownMenu(cateMenu)}
+            {renderDropdownMenu(cateMenu, 'click')}
           </Dropdown>
 
           <Nav.Item as={NavLink} href="/tin-tuc" icon={<TextImageIcon />}>
@@ -178,54 +161,35 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
           <Drawer.Title>
             <Image src={LOGO} alt="Kha mobile" priority />
           </Drawer.Title>
-
-          {/* <Drawer.Actions>
-            <Button onClick={() => setDrawer(false)}>Cancel</Button>
-            <Button onClick={() => setDrawer(false)} appearance="primary">
-              Confirm
-            </Button>
-          </Drawer.Actions> */}
         </Drawer.Header>
         <Drawer.Body style={{ padding: 0 }}>
-          {/* <Placeholder.Paragraph /> */}
-          {/* <Dropdown.Menu
-            style={{
-              width: 200,
-              border: '1px solid #ddd',
-            }}
-          >
-            <Dropdown.Item as={NavLink} href="/" icon={<HomeIcon />}>
-              Trang chủ
-            </Dropdown.Item>
-            <Dropdown.Item as={NavLink} href="/about-us" icon={<PeoplesIcon />}>
-              Về chúng tôi
-            </Dropdown.Item>
+          <Sidenav>
+            <Sidenav.Body>
+              <Nav className={styles.sideMenu}>
+                <Nav.Item as={NavLink} href="/" icon={<HomeIcon />}>
+                  Trang chủ
+                </Nav.Item>
+                <Nav.Item as={NavLink} href="/about-us" icon={<PeoplesIcon />}>
+                  Về chúng tôi
+                </Nav.Item>
 
-            {renderDropdownMenu(cateMenu)}
-          </Dropdown.Menu> */}
+                <Dropdown title="Sản phẩm" trigger="click" icon={<PcIcon />}>
+                  <Dropdown.Item as={NavLink} href="/product" icon={<DeviceOtherIcon />}>
+                    Tất cả sản phẩm
+                  </Dropdown.Item>
+                  <Dropdown.Item as={NavLink} href="/category" icon={<MobileIcon />}>
+                    Danh mục
+                  </Dropdown.Item>
 
-          <Nav activeKey={activeKey} vertical appearance="tabs">
-            <Nav.Item as={NavLink} href="/" icon={<HomeIcon />}>
-              Trang chủ
-            </Nav.Item>
-            <Nav.Item as={NavLink} href="/about-us" icon={<PeoplesIcon />}>
-              Về chúng tôi
-            </Nav.Item>
+                  {renderDropdownMenu(cateMenu)}
+                </Dropdown>
 
-            <Nav.Menu title="Sản phẩm">
-              <Nav.Item as={NavLink} href="/product" icon={<DeviceOtherIcon />}>
-                Tất cả sản phẩm
-              </Nav.Item>
-              <Nav.Item as={NavLink} href="/category" icon={<MobileIcon />}>
-                Danh mục
-              </Nav.Item>
-              {renderAsNavMenu(cateMenu)}
-            </Nav.Menu>
-
-            <Nav.Item as={NavLink} href="/tin-tuc" icon={<TextImageIcon />}>
-              Tin tức
-            </Nav.Item>
-          </Nav>
+                <Nav.Item as={NavLink} href="/tin-tuc" icon={<TextImageIcon />}>
+                  Tin tức
+                </Nav.Item>
+              </Nav>
+            </Sidenav.Body>
+          </Sidenav>
         </Drawer.Body>
       </Drawer>
     </Navbar>
