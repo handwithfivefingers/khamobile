@@ -7,6 +7,7 @@ import { useMessageStore } from "src/store/messageStore";
 import { useEffect } from "react";
 import TOAST_STATUS from "../constant/message.constant";
 import { CustomProvider, Message, useToaster } from "rsuite";
+import Script from "next/script";
 
 
 export default function MyApp({ Component, pageProps }) {
@@ -35,6 +36,8 @@ export default function MyApp({ Component, pageProps }) {
     <>
       <Head>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" />
+        <script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
+        {/* <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" /> */}
       </Head>
       <CustomProvider>
         {Component.Admin ? (

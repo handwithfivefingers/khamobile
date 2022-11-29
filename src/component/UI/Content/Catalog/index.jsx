@@ -1,13 +1,14 @@
 import clsx from 'clsx'
 import Link from 'next/link'
+import { Button } from 'rsuite'
+import { useRouter } from 'next/router'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import Card from '../Card'
 import ImageBlock from '../ImageBlock'
 import CustomSlider from '../Slider'
 import styles from './styles.module.scss'
 const Catalog = (props) => {
-  console.log(props.data)
-
+  const router = useRouter()
   const IMG = [
     'https://www.journal-theme.com/1/image/cache/catalog/journal3/products/fashion/f1-250x250.jpg.webp',
     'https://www.journal-theme.com/1/image/cache/catalog/journal3/products/fashion/additional/8549539065_78e985be0c_o-250x250.jpg.webp',
@@ -20,6 +21,11 @@ const Catalog = (props) => {
       [styles.rtl]: props?.direction === 'rtl',
     },
   ])
+
+  const handleRedirect = (group) => {
+    console.log(group)
+    return router.push('/category/' + group.slug)
+  }
 
   return (
     <div className={className}>
@@ -47,13 +53,20 @@ const Catalog = (props) => {
               </li>
             </ul>
           </div>
-          <button className={'btn btn-primary'}>See All</button>
+
+          <Button
+            appearance="primary"
+            onClick={() => handleRedirect(props.data)}
+            style={{ background: 'var(--rs-blue-800)' }}
+          >
+            Xem tất cả
+          </Button>
         </div>
       </div>
 
       <div className={clsx(styles.lastCol, styles.col)}>
         <div className={styles.title}>
-          <h5>New in Fashion</h5>
+          <h5>Nổi bật</h5>
           <div className="title__divider" />
         </div>
 

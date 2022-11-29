@@ -77,7 +77,9 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
           About us
         </Nav.Item>
 
-        <Dropdown title="Sản phẩm">{renderDropdownMenu(cateMenu)}</Dropdown>
+        <Dropdown title="Sản phẩm" trigger={['hover']}>
+          {renderDropdownMenu(cateMenu)}
+        </Dropdown>
 
         <Nav.Item as={NavLink} href="/category">
           Danh mục

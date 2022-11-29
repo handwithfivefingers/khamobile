@@ -8,6 +8,7 @@ import axios from 'configs/axiosInstance'
 import parser from 'html-react-parser'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import Script from 'next/script'
 import { useRef } from 'react'
 import { useEffect } from 'react'
 import { useMemo, useState } from 'react'
@@ -34,6 +35,8 @@ export default function ProductDetail({ data, _relationProd }) {
 
   const router = useRouter()
 
+  const [status, setStatus] = useState(false)
+
   useEffect(() => {
     if (data) {
       if (_relationProd.length > 0) {
@@ -48,6 +51,8 @@ export default function ProductDetail({ data, _relationProd }) {
         })
       }
     }
+    setStatus(true)
+    // <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
   }, [])
 
   const handleAddToCart = () => {
@@ -124,6 +129,11 @@ export default function ProductDetail({ data, _relationProd }) {
     )
   }
 
+  useEffect(() => {
+    setStatus(false)
+    setTimeout(() => setStatus(true), 2000)
+  }, [form])
+
   const renderSubVariant = () => {
     return (
       <div className="col-12">
@@ -132,13 +142,13 @@ export default function ProductDetail({ data, _relationProd }) {
             return (
               <div
                 className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}
-                onClick={() =>
+                onClick={() => {
                   setForm({
                     ...form,
                     sku: item._id,
                     skuPrice: item.price,
                   })
-                }
+                }}
               >
                 <div
                   className={clsx('shadow-sm rounded border', styles.skuSelect, {
@@ -199,11 +209,12 @@ export default function ProductDetail({ data, _relationProd }) {
     skuPrice: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
 
-  console.log(_relationProd)
+  // console.log(_relationProd)
+
   return (
     <div className="container product_detail">
       <div className="row gy-4" style={{ paddingTop: '1.5rem' }}>
-        <Heading type="h1" left divideClass={styles.divideLeft}>
+        <Heading type="h1" left divideClass={styles.divideLeft} className={'bk-product-name'}>
           {data.title}
         </Heading>
 
@@ -215,10 +226,29 @@ export default function ProductDetail({ data, _relationProd }) {
                   {data?.img?.map((item) => {
                     return (
                       <div style={{ position: 'relative' }}>
-                        <Image src={`${process.env.host}${item.src}`} layout="fill" objectFit="contain" />
+                        <Image
+                          src={
+                            `${process.env.host}${item.src}` ||
+                            'https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp'
+                          }
+                          layout="fill"
+                          objectFit="contain"
+                          className="bk-product-image"
+                        />
                       </div>
                     )
                   })}
+                  {/* <Image
+                    src={
+                    }
+                    layout="fill"
+                    objectFit="contain"
+                    className="bk-product-image"
+                  /> */}
+                  <img
+                    className="bk-product-image"
+                    src="https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp"
+                  />
                 </Carousel>
               </CardBlock>
             </div>
@@ -231,19 +261,14 @@ export default function ProductDetail({ data, _relationProd }) {
                       className={clsx('d-inline-flex align-items-center w-100', styles.groupVariant)}
                       style={{ gap: 4 }}
                     >
-                      {/* <p
-                        className={clsx(styles.productPricing, {
-                          [styles.variantPricing]: _relationProd.length > 0,
-                        })}
-                      >
-                        {calculatePrice()}
-                      </p>
-
-                      {renderVariantProduct} */}
-
                       <div className="row">
                         <div className="col-12">
                           <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
+                          <input
+                            type="hidden"
+                            value={form?.skuPrice * form?.quantity || 999999}
+                            className="bk-product-price"
+                          />
                         </div>
 
                         <div className="col-12">{renderVariantProduct}</div>
@@ -261,17 +286,30 @@ export default function ProductDetail({ data, _relationProd }) {
                         onChange={(value) => setForm({ ...form, quantity: value })}
                         min={1}
                       />
-
+                      <input type="hidden" value={form.quantity} className="bk-product-qty" />
                       <Divider vertical />
 
-                      <Button color="red" appearance="primary" className={styles.btnIcon} onClick={handleAddToCart}>
+                      <Button
+                        color="red"
+                        appearance="primary"
+                        className={styles.btnIcon}
+                        onClick={handleAddToCart}
+                        style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                      >
                         <BiCart />
                         Thêm vào giỏ hàng
                       </Button>
-                      <Button color="blue" appearance="primary" className={styles.btnIcon} onClick={handleBuyNow}>
+                      <Button
+                        appearance="primary"
+                        className={styles.btnIcon}
+                        onClick={handleBuyNow}
+                        style={{ background: 'var(--rs-blue-800)' }}
+                      >
                         <BiDollarCircle />
                         Mua ngay
                       </Button>
+
+                      <div className="bk-btn"></div>
                     </div>
                     <Divider />
 
@@ -299,6 +337,7 @@ export default function ProductDetail({ data, _relationProd }) {
                   color="red"
                   onClick={() => setToggleContent(true)}
                   className={styles.btnToggle}
+                  style={{ background: 'var(--rs-red-800)', color: '#fff' }}
                 >
                   Xem thêm
                 </Button>
@@ -310,6 +349,10 @@ export default function ProductDetail({ data, _relationProd }) {
           <SideFilter />
         </div>
       </div>
+
+      <div id="bk-modal"></div>
+      {/* <BaoKim status={status} /> */}
+      {/* <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" /> */}
     </div>
   )
 }
@@ -322,18 +365,21 @@ const TabsList = (props) => {
       active: 'red',
       name: 'Mô tả',
       appearance: 'primary',
+      // style: { background: 'var(--rs-red-800)', color: '#fff' },
     },
     {
       key: 'information',
       active: 'red',
       appearance: 'primary',
       name: 'Thông tin sản phẩm',
+      // style: { background: 'var(--rs-red-800)', color: '#fff' },
     },
     {
       key: 'preview',
       name: 'Review',
       active: 'red',
       appearance: 'primary',
+      // style: { background: 'var(--rs-red-800)', color: '#fff' },
     },
   ]
 
@@ -363,6 +409,11 @@ const TabsList = (props) => {
             onClick={() => setTabs(item.key)}
             color={tabs === item.key ? item.active : ''}
             appearance={tabs === item.key ? item.appearance : 'ghost'}
+            style={{
+              background: item.key === tabs ? 'var(--rs-red-800)' : 'transparent',
+              borderColor: ' var(--rs-red-800)',
+              color: item.key === tabs ? '#fff' : 'var(--rs-red-800)',
+            }}
           >
             {item.name}
           </Button>
@@ -372,6 +423,31 @@ const TabsList = (props) => {
     </>
   )
 }
+
+// const BaoKim = (props) => {
+//   const BAOKIM_SCRIPT = 'https://pc.baokim.vn/js/bk_plus_v2.popup.js'
+
+//   useEffect(() => {
+//     include(BAOKIM_SCRIPT, props.status)
+//     console.log('load baokimscript', props.status)
+//   }, [props])
+
+//   const include = (filename, status) => {
+//     var head = document.getElementsByTagName('head')[0]
+//     if (status) {
+//       var script = document.createElement('script')
+//       script.src = filename
+//       script.type = 'text/javascript'
+//       head.appendChild(script)
+//     } else {
+//       var scripts = head.getElementsByTagName('script')
+//       if (scripts.length > 0) {
+//         head.removeChild(scripts[0])
+//       }
+//     }
+//   }
+//   return <></>
+// }
 
 export const getServerSideProps = async (ctx) => {
   const { slug } = ctx.query
