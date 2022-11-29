@@ -1,10 +1,9 @@
 import dotenv from 'dotenv'
 import next from 'next'
 import express from 'express'
-import ConfigDatabase from './server/configs/db'
+import ConfigDatabase from './server/configs/db.js'
 import { envInit } from '#server/configs/environment'
 import appConfigs from '#server/configs/defaultConfig'
-import axios from 'axios'
 process.setMaxListeners(0)
 dotenv.config()
 
