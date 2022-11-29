@@ -1,7 +1,7 @@
 import dotenv from 'dotenv'
 import next from 'next'
 import express from 'express'
-import ConfigDatabase from './server/configs/db.js'
+import ConfigDatabase from './server/configs/db'
 import { envInit } from '#server/configs/environment'
 import appConfigs from '#server/configs/defaultConfig'
 process.setMaxListeners(0)

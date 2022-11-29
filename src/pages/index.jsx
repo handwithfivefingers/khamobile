@@ -14,7 +14,7 @@ import ImageBlock from 'component/UI/Content/ImageBlock'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import GlobalHomeService from 'service/global/Home.service'
 import { useEffect, useState } from 'react'
-
+import styles from './styles.module.scss'
 const Home = () => {
   const [data, setData] = useState([])
   useEffect(() => {
@@ -40,16 +40,35 @@ const Home = () => {
         <div className="row gx-2 gy-2">
           <div className="col-12">
             <div className="container" style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
-              <div className="row p-2">
-                <div className="col-8 rounded" style={{ paddingLeft: 0 }}>
+              {/* <div className="row p-2 gy-2" style={{ gap: 4 }}>
+                <div className="col-md-12 col-lg-8 rounded p-0">
                   <SelfCarousel />
                 </div>
 
-                <div className="col-4 rounded">
+                <div className="col-md-12 col-lg-4 rounded" style={{ width: 'calc(33% - 4px)' }}>
                   <div className="row gy-2 h-100">
-                    <ImageBlock src={Homebanner_2.src} className="col-12" alt="..." height={'calc(50% - 12px)'} />
-                    <ImageBlock src={Homebanner_2.src} className="col-12" alt="..." height={'calc(50% - 12px)'} />
+                    <ImageBlock
+                      src={Homebanner_2.src}
+                      className="col-md-6 col-lg-12"
+                      alt="..."
+                      height={'calc(50% - 12px)'}
+                    />
+                    <ImageBlock
+                      src={Homebanner_2.src}
+                      className="col-md-6 col-lg-12"
+                      alt="..."
+                      height={'calc(50% - 12px)'}
+                    />
                   </div>
+                </div>
+              </div> */}
+              <div className={styles.grid}>
+                <div className={styles.mainCarousel}>
+                  <SelfCarousel />
+                </div>
+                <div className={styles.mainBanner}>
+                  <ImageBlock src={Homebanner_2.src} className={styles.banner} alt="..." height={'calc(50% - 12px)'} />
+                  <ImageBlock src={Homebanner_2.src} className={styles.banner} alt="..." height={'calc(50% - 12px)'} />
                 </div>
               </div>
             </div>
@@ -65,6 +84,7 @@ const Home = () => {
                 <div className="col-12">
                   <Heading type="h3" center>
                     {data?.[6]?.name}
+                    {/* Sản Phẩm Nổi Bật */}
                   </Heading>
                 </div>
 
@@ -110,6 +130,7 @@ const Home = () => {
           <div className="col-12">
             <Heading type="h3" center>
               {data?.[1]?.name}
+              {/* Apple Watch */}
             </Heading>
           </div>
 
@@ -124,6 +145,7 @@ const Home = () => {
           <div className="col-12">
             <Heading type="h3" center>
               {data?.[0]?.name}
+              {/* Accessories */}
             </Heading>
           </div>
 
@@ -132,12 +154,13 @@ const Home = () => {
           </div>
         </div>
       </section>
-      
+
       <section className="container">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
               {data?.[5]?.name}
+              {/* Macbook */}
             </Heading>
           </div>
 
@@ -152,6 +175,7 @@ const Home = () => {
           <div className="col-12">
             <Heading type="h3" center>
               {data?.[2]?.name}
+              {/* Ipad */}
             </Heading>
           </div>
 
@@ -166,6 +190,7 @@ const Home = () => {
           <div className="col-12">
             <Heading type="h3" center>
               {data?.[3]?.name}
+              {/* IPHONE */}
             </Heading>
           </div>
 

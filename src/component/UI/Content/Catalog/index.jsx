@@ -35,7 +35,10 @@ const Catalog = (props) => {
           <div className="title__divider" />
         </div>
         <div className={styles.content}>
-          <ImageBlock src="https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp" />
+          <ImageBlock
+            src="https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp"
+            height={'200px'}
+          />
 
           <div className={styles.listLink}>
             <ul>
@@ -66,7 +69,7 @@ const Catalog = (props) => {
 
       <div className={clsx(styles.lastCol, styles.col)}>
         <div className={styles.title}>
-          <h5>Nổi bật</h5>
+          <h5>{props.data?.name} Nổi bật </h5>
           <div className="title__divider" />
         </div>
 

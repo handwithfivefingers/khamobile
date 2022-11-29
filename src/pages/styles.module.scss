@@ -1,0 +1,36 @@
+.grid {
+  display: grid;
+  grid-template-columns: 70% calc(30% - 12px);
+  row-gap: 12px;
+  column-gap: 12px;
+  padding: 12px 0;
+  .mainCarousel {
+  }
+  .mainBanner {
+    display: grid;
+    gap: 12px;
+  }
+  @media (min-width: 1140px) {
+    .mainBanner {
+      grid-template-rows: 1fr 1fr;
+    }
+  }
+
+  @media (max-width: 1140px) {
+    grid-template-columns: 60% calc(40% - 12px);
+  }
+
+  @media (max-width: 990px) {
+    grid-template-columns: 100%;
+    .mainBanner {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+  @media (max-width: 550px) {
+    grid-template-columns: 100%;
+    .mainBanner {
+      grid-template-rows: 1fr 1fr;
+      grid-template-columns: unset;
+    }
+  }
+}
