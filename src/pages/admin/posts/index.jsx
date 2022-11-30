@@ -2,7 +2,7 @@ import AdminLayout from 'component/UI/AdminLayout';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';
 import { Button, Content, Header, Table, Tree, Avatar } from 'rsuite';
-import PostService from 'service/global/post.service';
+import PostService from 'service/global/Post.service';
 import { useCommonStore } from 'src/store/commonStore';
 import { useLoaderStore } from 'src/store/loaderStore';
 
