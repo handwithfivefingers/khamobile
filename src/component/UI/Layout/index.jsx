@@ -22,18 +22,18 @@ const CommonLayout = ({ children }) => {
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <meta httpEquiv="X-UA-Compatible" content="ie=edge" />
         <link rel="apple-touch-icon-precomposed" sizes="57x57" href="/favicon.ico" />
-        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/favicon.ico"  />
+        <link rel="apple-touch-icon-precomposed" sizes="114x114" href="/favicon.ico" />
         <link rel="apple-touch-icon-precomposed" sizes="72x72" href="/favicon.ico" />
-        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/favicon.ico"  />
-        <link rel="apple-touch-icon-precomposed" sizes="60x60" href="/favicon.ico"  />
-        <link rel="apple-touch-icon-precomposed" sizes="120x120" href="/favicon.ico"  />
+        <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" sizes="60x60" href="/favicon.ico" />
+        <link rel="apple-touch-icon-precomposed" sizes="120x120" href="/favicon.ico" />
         <link rel="apple-touch-icon-precomposed" sizes="76x76" href="/favicon.ico" />
-        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/favicon.ico"  />
-        <link rel="icon" type="image/png" href="/favicon.ico"  sizes="196x196" />
-        <link rel="icon" type="image/png" href="/favicon.ico"  sizes="96x96" />
-        <link rel="icon" type="image/png" href="/favicon.ico"  sizes="32x32" />
-        <link rel="icon" type="image/png" href="/favicon.ico"  sizes="16x16" />
-        <link rel="icon" type="image/png" href="/favicon.ico"  sizes="128x128" />
+        <link rel="apple-touch-icon-precomposed" sizes="152x152" href="/favicon.ico" />
+        <link rel="icon" type="image/png" href="/favicon.ico" sizes="196x196" />
+        <link rel="icon" type="image/png" href="/favicon.ico" sizes="96x96" />
+        <link rel="icon" type="image/png" href="/favicon.ico" sizes="32x32" />
+        <link rel="icon" type="image/png" href="/favicon.ico" sizes="16x16" />
+        <link rel="icon" type="image/png" href="/favicon.ico" sizes="128x128" />
 
         <meta name="msapplication-TileColor" content="#FFFFFF" />
         <meta name="msapplication-TileImage" content="/favicon.ico" />
@@ -47,7 +47,9 @@ const CommonLayout = ({ children }) => {
       <div className={styles.wrapper} style={{ minHeight: '100vh' }}>
         <Container>
           <CustomNavbar activeKey={activeKey} onSelect={handleSelect} />
-          <Content>{children}</Content>
+          <Content>
+            <div className="container-fluid">{children}</div>
+          </Content>
           <Footer>
             <PageFooter />
           </Footer>

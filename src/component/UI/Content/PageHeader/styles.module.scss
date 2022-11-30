@@ -1,0 +1,19 @@
+.heading {
+  position: relative;
+  &:before {
+    position: absolute;
+    border-bottom: 2px solid red;
+    content: '';
+    width: 50px;
+    bottom: 0;
+    left: 12px;
+  }
+}
+.header {
+  font-weight: 700;
+  font-size: 30px;
+}
+
+.center {
+  text-align: center;
+}

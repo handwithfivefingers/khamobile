@@ -15,6 +15,7 @@ import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import GlobalHomeService from 'service/global/Home.service'
 import { useEffect, useState } from 'react'
 import styles from './styles.module.scss'
+import CardBlock from 'component/UI/Content/CardBlock'
 const Home = () => {
   const [data, setData] = useState([])
   useEffect(() => {
@@ -40,28 +41,6 @@ const Home = () => {
         <div className="row gx-2 gy-2">
           <div className="col-12">
             <div className="container" style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
-              {/* <div className="row p-2 gy-2" style={{ gap: 4 }}>
-                <div className="col-md-12 col-lg-8 rounded p-0">
-                  <SelfCarousel />
-                </div>
-
-                <div className="col-md-12 col-lg-4 rounded" style={{ width: 'calc(33% - 4px)' }}>
-                  <div className="row gy-2 h-100">
-                    <ImageBlock
-                      src={Homebanner_2.src}
-                      className="col-md-6 col-lg-12"
-                      alt="..."
-                      height={'calc(50% - 12px)'}
-                    />
-                    <ImageBlock
-                      src={Homebanner_2.src}
-                      className="col-md-6 col-lg-12"
-                      alt="..."
-                      height={'calc(50% - 12px)'}
-                    />
-                  </div>
-                </div>
-              </div> */}
               <div className={styles.grid}>
                 <div className={styles.mainCarousel}>
                   <SelfCarousel />
@@ -120,7 +99,68 @@ const Home = () => {
           </div>
 
           <div className="col-12">
-            <CustomSlider type={TYPE_CAROUSEL.MUTI} />
+            <CustomSlider type={TYPE_CAROUSEL.MUTI}>
+              <CardBlock>
+                <figure className="text-center">
+                  <blockquote className="blockquote">
+                    <p>A well-known quote, contained in a blockquote element.</p>
+                  </blockquote>
+                  <figcaption className="blockquote-footer">
+                    Someone famous in <cite title="Source Title">Source Title</cite>
+                  </figcaption>
+                </figure>
+              </CardBlock>
+              <CardBlock>
+                <figure className="text-center">
+                  <blockquote className="blockquote">
+                    <p>A well-known quote, contained in a blockquote element.</p>
+                  </blockquote>
+                  <figcaption className="blockquote-footer">
+                    Someone famous in <cite title="Source Title">Source Title</cite>
+                  </figcaption>
+                </figure>
+              </CardBlock>
+              <CardBlock>
+                <figure className="text-center">
+                  <blockquote className="blockquote">
+                    <p>A well-known quote, contained in a blockquote element.</p>
+                  </blockquote>
+                  <figcaption className="blockquote-footer">
+                    Someone famous in <cite title="Source Title">Source Title</cite>
+                  </figcaption>
+                </figure>
+              </CardBlock>
+              <CardBlock>
+                <figure className="text-center">
+                  <blockquote className="blockquote">
+                    <p>A well-known quote, contained in a blockquote element.</p>
+                  </blockquote>
+                  <figcaption className="blockquote-footer">
+                    Someone famous in <cite title="Source Title">Source Title</cite>
+                  </figcaption>
+                </figure>
+              </CardBlock>
+              <CardBlock>
+                <figure className="text-center">
+                  <blockquote className="blockquote">
+                    <p>A well-known quote, contained in a blockquote element.</p>
+                  </blockquote>
+                  <figcaption className="blockquote-footer">
+                    Someone famous in <cite title="Source Title">Source Title</cite>
+                  </figcaption>
+                </figure>
+              </CardBlock>
+              <CardBlock>
+                <figure className="text-center">
+                  <blockquote className="blockquote">
+                    <p>A well-known quote, contained in a blockquote element.</p>
+                  </blockquote>
+                  <figcaption className="blockquote-footer">
+                    Someone famous in <cite title="Source Title">Source Title</cite>
+                  </figcaption>
+                </figure>
+              </CardBlock>
+            </CustomSlider>
           </div>
         </div>
       </section>
@@ -135,7 +175,7 @@ const Home = () => {
           </div>
 
           <div className="col-12">
-            <Catalog data={data?.[0]} />
+            <Catalog data={data?.[1]} />
           </div>
         </div>
       </section>

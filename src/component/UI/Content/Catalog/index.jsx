@@ -38,6 +38,7 @@ const Catalog = (props) => {
           <ImageBlock
             src="https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp"
             height={'200px'}
+            className={styles.imgCatalog}
           />
 
           <div className={styles.listLink}>

@@ -1,37 +1,38 @@
 .slick-prev:before,
 .slick-next:before {
-	color: #333;
+  color: #333;
 }
 .slick-list {
-	width: calc(100% - 12px);
-	margin: 0 6px;
+  //   width: calc(100% - 12px);
+  // margin: 0 6px;
+  margin: 0;
 }
 .slick-track {
-	&:before {
-		padding: 10px;
-	}
-	&::after {
-		padding: 10px;
-	}
-	.slick-slide {
-		padding: 0 5px;
-	}
+  &:before {
+    padding: 10px;
+  }
+  &::after {
+    padding: 10px;
+  }
+  .slick-slide {
+    padding: 0 5px;
+  }
 }
 
 .slick-slider {
-	padding: 0 !important;
-	.slick-prev {
-		&:before {
-			font-size: 24px;
-		}
-	}
-	.slick-next {
-		&:before {
-			font-size: 24px;
-		}
-	}
+  padding: 0 !important;
+  .slick-prev {
+    &:before {
+      font-size: 24px;
+    }
+  }
+  .slick-next {
+    &:before {
+      font-size: 24px;
+    }
+  }
 
-	.slick-dots {
-		bottom: 0;
-	}
+  .slick-dots {
+    bottom: 0;
+  }
 }

@@ -1,6 +1,8 @@
 import clsx from 'clsx'
 import Heading from 'component/UI/Content/Heading'
+import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Col, Row, Panel, Placeholder, Grid } from 'rsuite'
 import GlobalCategoryService from 'service/global/Category.service'
@@ -14,7 +16,7 @@ const Card = (props) => (
 )
 export default function Category(props) {
   const [data, setData] = useState([])
-
+  const router = useRouter()
   useEffect(() => {
     getCateData()
   }, [])
@@ -29,54 +31,28 @@ export default function Category(props) {
     }
   }
 
-  console.log('data', data)
-
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-12">
-          <Heading type="h3" left divideClass={styles.divideLeft}>
-            Danh mục
-          </Heading>
-        </div>
-
-        {/* <div className={styles.categories}>
-          <div className={styles.listCate}>
-            {data?.map((item, index) => {
-              return (
-                <div
-                  className={clsx(styles.cateItem)}
-                  style={{
-                    backgroundImage: `url(https://cdn2.cellphones.com.vn/180x/https://cdn2.cellphones.com.vn/x/media/catalog/product/a/p/apple_care_1.png)`,
-                  }}
-                >
-                  {item.name}
-                </div>
-              )
-            })}
-          </div>
-        </div> */}
+    <div className="row p-0">
+      <div className="col-12 p-0">
+        <PageHeader type="h3" left divideClass={styles.divideLeft}>
+          Danh mục
+        </PageHeader>
       </div>
-      <Grid fluid>
-        <Row gutter={12}>
-          {data?.map((item, index) => {
-            return (
-              <Col md={6} sm={12} style={{margin:'6px 0'}}>
-                <Card title={item.name} />
-              </Col>
-
-              // <div
-              //   className={clsx('col-3 card')}
-              //   style={{
-              //     backgroundImage: `url(https://cdn2.cellphones.com.vn/180x/https://cdn2.cellphones.com.vn/x/media/catalog/product/a/p/apple_care_1.png)`,
-              //   }}
-              // >
-              //   {item.name}
-              // </div>
-            )
-          })}
-        </Row>
-      </Grid>
+      <div className="col-12 p-0 py-2 border-top">
+        <div className="container p-0">
+          <Grid fluid>
+            <Row>
+              {data?.map((item, index) => {
+                return (
+                  <Col md={6} sm={12} style={{ margin: '6px 0' }} onClick={() => router.push(`/category/${item.slug}`)}>
+                    <Card title={item.name} />
+                  </Col>
+                )
+              })}
+            </Row>
+          </Grid>
+        </div>
+      </div>
     </div>
   )
 }

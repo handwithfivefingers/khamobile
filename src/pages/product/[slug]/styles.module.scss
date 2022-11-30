@@ -41,6 +41,12 @@
   border-radius: 4px;
   cursor: pointer;
   height: 100%;
+  transition: all 0.2s;
+  &:hover {
+    --bs-border-color: var(--rs-blue-800);
+    background-color: var(--rs-blue-800);
+    color: #fff;
+  }
 }
 
 .active {
@@ -48,7 +54,18 @@
   background-color: var(--rs-blue-800);
   color: #fff;
 }
-
+.disabled {
+  display: none !important;
+  --bs-border-color: var(--rs-gray-300);
+  background-color: var(--rs-gray-300);
+  color: #333;
+  cursor: not-allowed;
+  &:hover {
+    --bs-border-color: var(--rs-gray-300);
+    background-color: var(--rs-gray-300);
+    color: #333;
+  }
+}
 .groupVariant {
   @media (max-width: 1200px) {
     flex-wrap: wrap;

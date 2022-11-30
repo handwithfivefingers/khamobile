@@ -4,6 +4,7 @@
 import { MESSAGE } from '#server/constant/message'
 import { ProductVariant, Product, ProductCategory } from '#server/model'
 import _ from 'lodash'
+import mongoose from 'mongoose'
 export default class ProductController {
   // getProducts = async (req, res) => {
   //   try {
@@ -171,14 +172,12 @@ export default class ProductController {
   getProductSlug = async (req, res) => {
     try {
       let { slug } = req.params
-      let query = req.query
-      let result = new Map()
 
       let parentItem = await Product.findOne({
         slug,
       })
 
-      let parentId = parentItem._id
+      // let parentId = parentItem._id
 
       let data = await Product.aggregate([
         {
@@ -202,30 +201,23 @@ export default class ProductController {
             _id: '$child._id',
             parentId: '$_id',
             title: '$title',
-            description: '$description',
-            content: '$content',
             slug: '$slug',
             type: '$type',
             price: '$child.price',
             regular_price: '$child.regular_price',
             attribute: '$child.attributes',
             primary: '$primary',
-            // b: { $getField: { $literal: '$child.attributes.v' } },
           },
         },
       ])
-
-      console.log(data)
 
       let primaryKey = parentItem.primary
 
       data = data.map((item) => {
         let obj = { ...item }
-
         for (let key in item.attribute) {
           obj[key] = item.attribute[key]
         }
-
         return obj
       })
 
@@ -233,7 +225,12 @@ export default class ProductController {
         data: parentItem,
         _relationProd: _.chain(data)
           .groupBy(primaryKey)
-          .map((value, key) => ({ value: key, primary: primaryKey, item: value }))
+          .map((value, key) => {
+            if (primaryKey) {
+              return { value: key, primary: primaryKey, item: value }
+            }
+            return { item: value }
+          })
           .value(),
       })
     } catch (error) {
@@ -296,6 +293,75 @@ export default class ProductController {
       })
     } catch (error) {
       console.log(error)
+      return res.status(400).json({
+        error,
+      })
+    }
+  }
+
+  getProductById = async (req, res) => {
+    try {
+      let { _id } = req.params
+      console.log(_id)
+      // let _prod = await ProductVariant.findOne({ _id: mongoose.Types.ObjectId(_id) }).popula
+
+      let [_prod] = await ProductVariant.aggregate([
+        {
+          $match: {
+            _id: mongoose.Types.ObjectId(_id),
+          },
+        },
+        {
+          $lookup: {
+            from: 'products',
+            localField: 'parentId',
+            foreignField: '_id',
+            as: 'sub',
+          },
+        },
+        {
+          $unwind: '$sub',
+        },
+        {
+          $project: {
+            _id: '$_id',
+            title: '$sub.title',
+            price: '$price',
+            regular_price: '$regular_price',
+            attributes: '$attributes',
+          },
+        },
+      ])
+
+      return res.status(200).json({
+        data: _prod,
+      })
+    } catch (error) {
+      console.log('getProduct', error)
+      return res.status(400).json({
+        error,
+      })
+    }
+  }
+
+  getProduct = async (req, res) => {
+    try {
+      let { price, createdAt, feature } = req.query
+      let _prod
+      if (price || createdAt) {
+        _prod = await Product.find({}).sort([
+          ['price', price || 1],
+          ['createdAt', createdAt || 1],
+        ])
+      } else {
+        _prod = await Product.find({})
+      }
+
+      return res.status(200).json({
+        data: _prod,
+      })
+    } catch (error) {
+      console.log('getProduct', error)
       return res.status(400).json({
         error,
       })

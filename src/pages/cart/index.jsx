@@ -4,12 +4,34 @@ import UserCircleIcon from '@rsuite/icons/legacy/UserCircleO'
 import CardBlock from 'component/UI/Content/CardBlock'
 import Divider from 'component/UI/Content/Divider'
 import Heading from 'component/UI/Content/Heading'
+import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-import { FlexboxGrid, List, Panel, InputGroup, InputNumber, Table, Button } from 'rsuite'
+import { FlexboxGrid, List, Panel, InputGroup, InputNumber, Table, Button, Form } from 'rsuite'
+import GlobalProductService from 'service/global/Product.service'
 import { formatCurrency } from 'src/helper'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
+
+const EditableCell = ({ rowData, dataKey, onChange, ...props }) => {
+  const editing = rowData.status === 'EDIT'
+  return (
+    <Cell {...props} className={editing ? 'table-content-editing' : ''}>
+      {editing ? (
+        <input
+          className="rs-input"
+          defaultValue={rowData[dataKey]}
+          onChange={(event) => {
+            onChange && onChange(rowData.id, dataKey, event.target.value)
+          }}
+        />
+      ) : (
+        <span className="table-content-edit-span">{rowData[dataKey]}</span>
+      )}
+    </Cell>
+  )
+}
 
 export default function Cart(props) {
   const [data, setData] = useState([])
@@ -19,17 +41,17 @@ export default function Cart(props) {
     subTotal: 0,
   })
 
+  const router = useRouter()
+
   useEffect(() => {
     let item = JSON.parse(localStorage.getItem('khaMobileCart'))
-
     if (item) {
-      setData(item)
+      handleGetListItemPrice(item)
     }
   }, [])
-
   useEffect(() => {
     const totalPrice = data.reduce((prev, current) => {
-      prev += +current.skuPrice * +current.quantity
+      prev += +current.price * +current.quantity
       return prev
     }, 0)
 
@@ -37,20 +59,39 @@ export default function Cart(props) {
       total: totalPrice,
       subTotal: totalPrice,
     })
+
+    let itemOnLocal = data.map(({ _id, quantity, price }) => ({ sku: _id, quantity, skuPrice: price }))
+
+    localStorage.setItem('khaMobileCart', JSON.stringify(itemOnLocal))
   }, [data])
+
+  const handleGetListItemPrice = async (item) => {
+    try {
+      let groupItem = item.map(({ sku, quantity }) => getScreenData(sku, quantity))
+      let resp = await Promise.all(groupItem)
+      setData(resp)
+    } catch (error) {
+      console.log('handleGetListItemPrice', error)
+    }
+  }
+
+  const getScreenData = async (_id, quantity) => {
+    try {
+      let resp = await GlobalProductService.getProductById(_id)
+      return { ...resp.data.data, quantity }
+    } catch (error) {
+      console.log('getScreenData ', error)
+    }
+  }
 
   const handleMinus = (row, key, rest) => {
     let newData = [...data]
-
-    newData[rest.rowIndex].quantity = --newData[rest.rowIndex].quantity
-
+    newData[rest.rowIndex].quantity = --newData[rest.rowIndex].quantity || 1
     setData(newData)
   }
   const handlePlus = (row, key, rest) => {
     let newData = [...data]
-
-    newData[rest.rowIndex].quantity = ++newData[rest.rowIndex].quantity
-
+    newData[rest.rowIndex].quantity = ++newData[rest.rowIndex].quantity || 1
     setData(newData)
   }
 
@@ -58,7 +99,12 @@ export default function Cart(props) {
     <Cell {...keyProps}>
       <InputGroup>
         <InputGroup.Button onClick={() => handleMinus(rowData, dataKey, { ...keyProps })}>-</InputGroup.Button>
-        <InputNumber size="sm" className={styles.customInputNumber} value={rowData[dataKey]} />
+        <InputNumber
+          size="sm"
+          className={styles.customInputNumber}
+          value={rowData[dataKey]}
+          onChange={(value) => handleChange(value, rowData, dataKey, { ...keyProps })}
+        />
         <InputGroup.Button onClick={() => handlePlus(rowData, dataKey, { ...keyProps })}>+</InputGroup.Button>
       </InputGroup>
     </Cell>
@@ -92,63 +138,77 @@ export default function Cart(props) {
       />
     </Cell>
   )
-
+  const handleChange = (val, rowData, dataKey, { ...keyProps }) => {
+    let newData = [...data]
+    newData[keyProps.rowIndex][dataKey] = val
+    setData(newData)
+  }
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-12">
-          <Heading type="h3" left divideClass={styles.divideLeft}>
-            Giỏ hàng
-          </Heading>
-        </div>
+    <div className="row p-0">
+      <div className="col-12 p-0">
+        <PageHeader type="h3" left divideClass={styles.divideLeft}>
+          Giỏ hàng
+        </PageHeader>
+      </div>
+      <div className="col-12 p-0 py-2 border-top">
+        <div className="container">
+          <div className="row">
+            <div className="col-8">
+              <CardBlock>
+                <Panel bordered bodyFill>
+                  <Form formValue={data}>
+                    <Table height={400} data={data} rowHeight={58}>
+                      <Column width={200} align="center" flexGrow={1} verticalAlign="middle">
+                        <HeaderCell>Tên sản phẩm</HeaderCell>
+                        <Cell dataKey="title" />
+                      </Column>
 
-        <div className="col-8">
-          <CardBlock>
-            <Panel bordered bodyFill>
-              <Table height={400} data={data} rowHeight={58}>
-                <Column width={200} align="center" flexGrow={1} verticalAlign="middle">
-                  <HeaderCell>Tên sản phẩm</HeaderCell>
-                  <Cell dataKey="title" />
-                </Column>
+                      <Column align="center" verticalAlign="middle" flexGrow={1}>
+                        <HeaderCell>Đơn giá</HeaderCell>
+                        <Pricing dataKey="sku" />
+                      </Column>
 
-                <Column align="center" verticalAlign="middle" flexGrow={1}>
-                  <HeaderCell>Đơn giá</HeaderCell>
-                  <Pricing dataKey="sku" />
-                </Column>
+                      <Column width={150} verticalAlign="middle" align="center">
+                        <HeaderCell>Số lượng</HeaderCell>
+                        <QuantityCell dataKey="quantity" />
+                      </Column>
 
-                <Column width={150} verticalAlign="middle" align="center">
-                  <HeaderCell>Số lượng</HeaderCell>
-                  <QuantityCell dataKey="quantity" />
-                </Column>
+                      <Column verticalAlign="middle" align="center" flexGrow={1}>
+                        <HeaderCell>Tạm tính</HeaderCell>
+                        <TotalCell dataKey="total" />
+                      </Column>
+                    </Table>
+                  </Form>
+                </Panel>
+              </CardBlock>
+            </div>
+            <div className="col-4">
+              <CardBlock>
+                <Panel header="Tổng cộng" bordered>
+                  {/* <Divider /> */}
+                  <List>
+                    <List.Item>
+                      Tạm tính:
+                      {formatCurrency(price.subTotal)}
+                    </List.Item>
+                    <List.Item>
+                      Tổng cộng:
+                      {formatCurrency(price.total)}
+                    </List.Item>
 
-                <Column verticalAlign="middle" align="center" flexGrow={1}>
-                  <HeaderCell>Tạm tính</HeaderCell>
-                  <TotalCell dataKey="total" />
-                </Column>
-              </Table>
-            </Panel>
-          </CardBlock>
-        </div>
-        <div className="col-4">
-          <CardBlock>
-            <Panel header="Tổng cộng" bordered>
-              {/* <Divider /> */}
-              <List>
-                <List.Item>
-                  Tạm tính:
-                  {formatCurrency(price.subTotal)}
-                </List.Item>
-                <List.Item>
-                  Tổng cộng:
-                  {formatCurrency(price.total)}
-                </List.Item>
-
-                <List.Item>
-                  <Button>Tiến hành Thanh toán</Button>
-                </List.Item>
-              </List>
-            </Panel>
-          </CardBlock>
+                    <List.Item>
+                      <Button
+                        style={{ background: 'var(--rs-blue-800)', color: '#fff' }}
+                        onClick={() => router.push('/checkout')}
+                      >
+                        Tiến hành Thanh toán
+                      </Button>
+                    </List.Item>
+                  </List>
+                </Panel>
+              </CardBlock>
+            </div>
+          </div>
         </div>
       </div>
     </div>

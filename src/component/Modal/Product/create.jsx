@@ -28,7 +28,7 @@ import { KMEditor, KMInput, KMSelect } from 'component/UI/Content/KMInput'
 import { COMMON_TEXT } from 'src/constant/text.constant'
 
 const CustomInput = (props) => {
-  return <input name="title" class="rs-input" type="text" {...props} />
+  return <input name="title" className="rs-input" type="text" {...props} />
 }
 
 const VariantControl = (props) => {

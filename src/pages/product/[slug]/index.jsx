@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import CardBlock from 'component/UI/Content/CardBlock'
 import Heading from 'component/UI/Content/Heading'
+import PageHeader from 'component/UI/Content/PageHeader'
 import SideFilter from 'component/UI/Content/SideFilter'
 import JsonViewer from 'component/UI/JsonViewer'
 import CommonLayout from 'component/UI/Layout'
@@ -13,7 +14,7 @@ import { useRef } from 'react'
 import { useEffect } from 'react'
 import { useMemo, useState } from 'react'
 import { BiCart, BiDollarCircle } from 'react-icons/bi'
-import { Button, ButtonGroup, Carousel, Divider, Form, InputNumber, Panel, Rate, Schema } from 'rsuite'
+import { Button, ButtonGroup, Carousel, Divider, Form, InputNumber, Panel, Rate, Schema, Table } from 'rsuite'
 import { formatCurrency } from 'src/helper'
 import styles from './styles.module.scss'
 
@@ -35,8 +36,6 @@ export default function ProductDetail({ data, _relationProd }) {
 
   const router = useRouter()
 
-  const [status, setStatus] = useState(false)
-
   useEffect(() => {
     if (data) {
       if (_relationProd.length > 0) {
@@ -51,7 +50,6 @@ export default function ProductDetail({ data, _relationProd }) {
         })
       }
     }
-    setStatus(true)
     // <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
   }, [])
 
@@ -64,7 +62,7 @@ export default function ProductDetail({ data, _relationProd }) {
       listItem = [...cartItem]
     }
 
-    let index = listItem.findIndex((item) => item._id === form._id)
+    let index = listItem.findIndex((item) => item.sku === form.sku)
 
     if (index !== -1) {
       listItem[index].quantity = listItem[index].quantity + +form.quantity
@@ -84,7 +82,7 @@ export default function ProductDetail({ data, _relationProd }) {
       listItem = [...cartItem]
     }
 
-    let index = listItem.findIndex((item) => item._id === form._id)
+    let index = listItem.findIndex((item) => item.sku === form.sku)
 
     if (index !== -1) {
       listItem[index].quantity = listItem[index].quantity + +form.quantity
@@ -98,62 +96,67 @@ export default function ProductDetail({ data, _relationProd }) {
   }
 
   const renderPrimaryVariant = () => {
-    return (
-      <div className="col-12">
-        <div className="row row-cols-auto gy-2">
-          {_relationProd.map((item) => {
-            return (
-              <div className={clsx(['col'])}>
-                <Button
-                  type="button"
-                  color={activeVariant.value === item.value ? 'red' : ''}
-                  appearance={activeVariant.value === item.value ? 'primary' : ''}
-                  className={clsx('btn shadow-sm rounded border', styles.skuSelect, styles.btnIcon)}
+    let html = null
+    let havePrimaryVariant = _relationProd.some((item) => item.value && item.primary)
+    if (havePrimaryVariant) {
+      html = (
+        <div className="col-12">
+          <div className="row row-cols-auto gy-2">
+            {_relationProd.map((item) => {
+              let isDisabled = item?.item?.some((child) => !child.price)
+
+              return (
+                <div
+                  className={clsx('col btn shadow-sm rounded border ml-2', styles.skuSelect, styles.btnIcon, {
+                    [styles.active]: activeVariant.value === item.value,
+                    [styles.disabled]: isDisabled,
+                  })}
                   onClick={() => {
-                    setActiveVariant(item)
-                    setForm({
-                      sku: null,
-                      skuPrice: null,
-                      quantity: 1,
-                      img: '',
-                    })
+                    if (!isDisabled) {
+                      setActiveVariant(item)
+                      setForm({
+                        sku: null,
+                        skuPrice: null,
+                        quantity: 1,
+                        img: '',
+                      })
+                    }
                   }}
                 >
-                  {item.value}
-                </Button>
-              </div>
-            )
-          })}
+                  <span>
+                    {item.primary} : {item.value}
+                  </span>
+                </div>
+              )
+            })}
+          </div>
+          <Divider />
         </div>
-      </div>
-    )
+      )
+    }
+    return html
   }
-
-  useEffect(() => {
-    setStatus(false)
-    setTimeout(() => setStatus(true), 2000)
-  }, [form])
 
   const renderSubVariant = () => {
     return (
       <div className="col-12">
-        <div className="row gy-2">
+        <div className="row gy-2 gx-2">
           {activeVariant?.item?.map((item) => {
+            let isDisabled = !item?.price
             return (
-              <div
-                className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}
-                onClick={() => {
-                  setForm({
-                    ...form,
-                    sku: item._id,
-                    skuPrice: item.price,
-                  })
-                }}
-              >
+              <div className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}>
                 <div
-                  className={clsx('shadow-sm rounded border', styles.skuSelect, {
+                  className={clsx(' shadow-sm rounded border', styles.skuSelect, {
                     [styles.active]: form.sku === item._id,
+                    [styles.disabled]: isDisabled,
                   })}
+                  onClick={() => {
+                    setForm({
+                      ...form,
+                      sku: item._id,
+                      skuPrice: item.price,
+                    })
+                  }}
                 >
                   {item.attribute &&
                     Object.keys(item.attribute).map((key) => {
@@ -183,7 +186,6 @@ export default function ProductDetail({ data, _relationProd }) {
           <Divider className={styles.divider} />
           <div className={'row gx-2 gy-2 align-items-center w-100'}>
             {renderPrimaryVariant()}
-            <Divider />
             {renderSubVariant()}
           </div>
         </>
@@ -209,150 +211,154 @@ export default function ProductDetail({ data, _relationProd }) {
     skuPrice: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
 
-  // console.log(_relationProd)
-
   return (
-    <div className="container product_detail">
-      <div className="row gy-4" style={{ paddingTop: '1.5rem' }}>
-        <Heading type="h1" left divideClass={styles.divideLeft} className={'bk-product-name'}>
+    <div className="row p-0">
+      <div className="col-12 p-0">
+        <PageHeader type="h1" left divideClass={styles.divideLeft}>
           {data.title}
-        </Heading>
-
-        <div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
+        </PageHeader>
+      </div>
+      <div className="col-12 p-0 py-2 border-top">
+        <div className="container product_detail">
           <div className="row gy-4">
-            <div className="col-6">
-              <CardBlock>
-                <Carousel placement={'left'} shape={'bar'} className="custom-slider" autoplay>
-                  {data?.img?.map((item) => {
-                    return (
-                      <div style={{ position: 'relative' }}>
-                        <Image
-                          src={
-                            `${process.env.host}${item.src}` ||
-                            'https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp'
-                          }
-                          layout="fill"
-                          objectFit="contain"
-                          className="bk-product-image"
-                        />
-                      </div>
-                    )
-                  })}
-                  {/* <Image
+            <div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
+              <div className="row gy-4">
+                <div className="col-6">
+                  <CardBlock>
+                    <Carousel placement={'left'} shape={'bar'} className="custom-slider" autoplay>
+                      {data?.img?.map((item) => {
+                        return (
+                          <div style={{ position: 'relative' }}>
+                            <Image
+                              src={
+                                `${process.env.host}${item.src}` ||
+                                'https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp'
+                              }
+                              layout="fill"
+                              objectFit="contain"
+                              className="bk-product-image"
+                            />
+                          </div>
+                        )
+                      })}
+                      {/* <Image
                     src={
                     }
                     layout="fill"
                     objectFit="contain"
                     className="bk-product-image"
                   /> */}
-                  <img
-                    className="bk-product-image"
-                    src="https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp"
-                  />
-                </Carousel>
-              </CardBlock>
-            </div>
+                      <img
+                        className="bk-product-image"
+                        src="https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp"
+                      />
+                    </Carousel>
+                  </CardBlock>
+                </div>
 
-            <div className="col-6">
-              <CardBlock>
-                <Form ref={formRef} model={model}>
-                  <Panel className="py-4">
-                    <div
-                      className={clsx('d-inline-flex align-items-center w-100', styles.groupVariant)}
-                      style={{ gap: 4 }}
-                    >
-                      <div className="row">
-                        <div className="col-12">
-                          <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
-                          <input
-                            type="hidden"
-                            value={form?.skuPrice * form?.quantity || 999999}
-                            className="bk-product-price"
-                          />
+                <div className="col-6">
+                  <CardBlock>
+                    <Form ref={formRef} model={model}>
+                      <Panel className="py-4">
+                        <div
+                          className={clsx('d-inline-flex align-items-center w-100', styles.groupVariant)}
+                          style={{ gap: 4 }}
+                        >
+                          <div className="row">
+                            <div className="col-12">
+                              <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
+                              <input
+                                type="hidden"
+                                value={form?.skuPrice * form?.quantity || 999999}
+                                className="bk-product-price"
+                              />
+                            </div>
+
+                            <div className="col-12">{renderVariantProduct}</div>
+                          </div>
                         </div>
 
-                        <div className="col-12">{renderVariantProduct}</div>
-                      </div>
-                    </div>
+                        <Divider />
 
-                    <Divider />
+                        <div
+                          className={clsx('d-inline-flex align-items-center', styles.groupVariant)}
+                          style={{ gap: 4 }}
+                        >
+                          <Form.Control
+                            name="quantity"
+                            accepter={CustomInputNumber}
+                            style={{ width: 60 }}
+                            defaultValue={form.quantity}
+                            onChange={(value) => setForm({ ...form, quantity: value })}
+                            min={1}
+                          />
+                          <input type="hidden" value={form.quantity} className="bk-product-qty" />
+                          <Divider vertical />
 
-                    <div className={clsx('d-inline-flex align-items-center', styles.groupVariant)} style={{ gap: 4 }}>
-                      <Form.Control
-                        name="quantity"
-                        accepter={CustomInputNumber}
-                        style={{ width: 60 }}
-                        defaultValue={form.quantity}
-                        onChange={(value) => setForm({ ...form, quantity: value })}
-                        min={1}
-                      />
-                      <input type="hidden" value={form.quantity} className="bk-product-qty" />
-                      <Divider vertical />
+                          <Button
+                            color="red"
+                            appearance="primary"
+                            className={styles.btnIcon}
+                            onClick={handleAddToCart}
+                            style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                          >
+                            <BiCart />
+                            Thêm vào giỏ hàng
+                          </Button>
+                          <Button
+                            appearance="primary"
+                            className={styles.btnIcon}
+                            onClick={handleBuyNow}
+                            style={{ background: 'var(--rs-blue-800)' }}
+                          >
+                            <BiDollarCircle />
+                            Mua ngay
+                          </Button>
 
-                      <Button
-                        color="red"
-                        appearance="primary"
-                        className={styles.btnIcon}
-                        onClick={handleAddToCart}
-                        style={{ background: 'var(--rs-red-800)', color: '#fff' }}
-                      >
-                        <BiCart />
-                        Thêm vào giỏ hàng
-                      </Button>
-                      <Button
-                        appearance="primary"
-                        className={styles.btnIcon}
-                        onClick={handleBuyNow}
-                        style={{ background: 'var(--rs-blue-800)' }}
-                      >
-                        <BiDollarCircle />
-                        Mua ngay
-                      </Button>
+                          <div className="bk-btn"></div>
+                        </div>
+                        <Divider />
 
-                      <div className="bk-btn"></div>
-                    </div>
-                    <Divider />
+                        <TabsList data={data} />
+                      </Panel>
+                    </Form>
+                  </CardBlock>
 
-                    <TabsList data={data} />
-                  </Panel>
-                </Form>
+                  {/* <JsonViewer data={form} /> */}
+                </div>
+              </div>
+            </div>
+
+            <div className="col-lg-9 col-md-12">
+              <CardBlock>
+                <div
+                  className={clsx(styles.productContent, {
+                    [styles.open]: toggleContent,
+                  })}
+                >
+                  {data?.content && parser(data?.content)}
+                  {!toggleContent && (
+                    <Button
+                      appearance="ghost"
+                      color="red"
+                      onClick={() => setToggleContent(true)}
+                      className={styles.btnToggle}
+                      style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                    >
+                      Xem thêm
+                    </Button>
+                  )}
+                </div>
               </CardBlock>
-
-              {/* <JsonViewer data={form} /> */}
+            </div>
+            <div className="col-lg-3 col-md-12">
+              <SideFilter />
             </div>
           </div>
-        </div>
 
-        <div className="col-lg-9 col-md-12">
-          <CardBlock>
-            <div
-              className={clsx(styles.productContent, {
-                [styles.open]: toggleContent,
-              })}
-            >
-              {data?.content && parser(data?.content)}
-              {!toggleContent && (
-                <Button
-                  appearance="ghost"
-                  color="red"
-                  onClick={() => setToggleContent(true)}
-                  className={styles.btnToggle}
-                  style={{ background: 'var(--rs-red-800)', color: '#fff' }}
-                >
-                  Xem thêm
-                </Button>
-              )}
-            </div>
-          </CardBlock>
-        </div>
-        <div className="col-lg-3 col-md-12">
-          <SideFilter />
+          <div id="bk-modal"></div>
         </div>
       </div>
-
-      <div id="bk-modal"></div>
-      {/* <BaoKim status={status} /> */}
-      {/* <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" /> */}
     </div>
   )
 }
@@ -424,33 +430,9 @@ const TabsList = (props) => {
   )
 }
 
-// const BaoKim = (props) => {
-//   const BAOKIM_SCRIPT = 'https://pc.baokim.vn/js/bk_plus_v2.popup.js'
-
-//   useEffect(() => {
-//     include(BAOKIM_SCRIPT, props.status)
-//     console.log('load baokimscript', props.status)
-//   }, [props])
-
-//   const include = (filename, status) => {
-//     var head = document.getElementsByTagName('head')[0]
-//     if (status) {
-//       var script = document.createElement('script')
-//       script.src = filename
-//       script.type = 'text/javascript'
-//       head.appendChild(script)
-//     } else {
-//       var scripts = head.getElementsByTagName('script')
-//       if (scripts.length > 0) {
-//         head.removeChild(scripts[0])
-//       }
-//     }
-//   }
-//   return <></>
-// }
-
 export const getServerSideProps = async (ctx) => {
   const { slug } = ctx.query
+  ctx.res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
 
   const resp = await axios.get('/product' + '/' + slug)
   const { data, _relationProd } = resp.data

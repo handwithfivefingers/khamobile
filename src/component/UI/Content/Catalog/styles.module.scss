@@ -46,9 +46,18 @@
     }
   }
 
+  @media (max-width: 990px) {
+    grid-template-columns: 25% 75%;
+    // ,imgCatalog
+    .imgCatalog {
+      height: 150px;
+    }
+  }
+
   @media (max-width: 767px) {
     grid-template-columns: 40% 60%;
   }
+
   @media (max-width: 625px) {
     grid-template-columns: 100%;
     .firstCol {

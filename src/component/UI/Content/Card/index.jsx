@@ -31,9 +31,13 @@ export default function Card({
   ])
 
   const getPrice = (amount) => {
-    if (type === 'simple') return formatCurrency(amount, { symbol: '' })
+    if (type === 'simple') return <b className={styles.price}>{formatCurrency(amount, { symbol: 'đ' })}</b>
     else if (type === 'variable') {
-      return `Chỉ từ ${formatCurrency(amount, { symbol: '' })}`
+      return (
+        <>
+          Chỉ từ <b className={styles.price}>{formatCurrency(amount, { symbol: 'đ' })}</b>
+        </>
+      )
     }
   }
   const handleRouting = (sl) => router.push(sl)
@@ -43,14 +47,16 @@ export default function Card({
         <div className={clsx('card-img-top', styles.cardImg)}>
           <img src={imgSrc || demoImg.src} className={styles.img} alt="..." />
         </div>
-        <div className="card-body">
-          <h5 className="card-title">{title}</h5>
-          <p className="card-text">
-            <b className="price">{getPrice(price)} VNĐ</b>
-          </p>
-          <p className="card-text">
-            <s>{formatCurrency(underlinePrice)}</s>
-          </p>
+        <div className={styles.cardBody}>
+          <div className={styles.cardTitle}>
+            <h5>{title}</h5>
+          </div>
+          <p className={styles.cardText}>{getPrice(price)}</p>
+          {underlinePrice && (
+            <p className={styles.cardText}>
+              <s>{formatCurrency(underlinePrice)}</s>
+            </p>
+          )}
         </div>
       </div>
     )
@@ -60,14 +66,16 @@ export default function Card({
       <div className={clsx('card-img-top', styles.cardImg)}>
         <img src={imgSrc || demoImg.src} className={styles.img} alt="..." />
       </div>
-      <div className="card-body">
-        <h5 className="card-title">{title}</h5>
-        <p className="card-text">
-          <b className="price">{getPrice(price)} VNĐ</b>
-        </p>
-        <p className="card-text">
-          <s>{formatCurrency(underlinePrice)}</s>
-        </p>
+      <div className={styles.cardBody}>
+        <div className={styles.cardTitle}>
+          <h5>{title}</h5>
+        </div>
+        <p className={styles.cardText}>{getPrice(price)}</p>
+        {underlinePrice && (
+          <p className={styles.cardText}>
+            <s>{formatCurrency(underlinePrice)}</s>
+          </p>
+        )}
       </div>
     </div>
   )
