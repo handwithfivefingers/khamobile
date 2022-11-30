@@ -9,7 +9,7 @@
     "dev-next": "next dev",
     "dev-start": "node --experimental-specifier-resolution=node app.js",
     "build": "next build",
-    "start": "next start"
+    "next-start": "next start"
   },
   "imports": {
     "#server/*": "./server/*",
