@@ -11,7 +11,7 @@ const ProductService = {
 
   getProductById: async ({ _id, type }) => await axios.get(path.product + '/' + _id, { params: { type } }),
 
-  updateProduct: async (id, form) => await axios.post(path.product + '/update/' + id, form),
+  updateProduct: async (form) => await axios.post(path.product + '/update', form),
 
   createProduct: async (form) => await axios.post(path.product + '/create', form),
 

@@ -14,7 +14,20 @@ import { useRef } from 'react'
 import { useEffect } from 'react'
 import { useMemo, useState } from 'react'
 import { BiCart, BiDollarCircle } from 'react-icons/bi'
-import { Button, ButtonGroup, Carousel, Divider, Form, InputNumber, Panel, Rate, Schema, Table } from 'rsuite'
+import {
+  Affix,
+  Button,
+  ButtonGroup,
+  Carousel,
+  Divider,
+  Form,
+  InputNumber,
+  Panel,
+  Rate,
+  Schema,
+  Table,
+  DOMHelper,
+} from 'rsuite'
 import { formatCurrency } from 'src/helper'
 import styles from './styles.module.scss'
 
@@ -24,7 +37,8 @@ const CustomInputNumber = ({ rowKey, value, ...props }) => {
 
 export default function ProductDetail({ data, _relationProd }) {
   const formRef = useRef()
-
+  const pricingRef = useRef()
+  const btnBarRef = useRef()
   const [toggleContent, setToggleContent] = useState(false)
 
   const [activeVariant, setActiveVariant] = useState([])
@@ -50,6 +64,32 @@ export default function ProductDetail({ data, _relationProd }) {
         })
       }
     }
+
+    let scrollEvent = document.addEventListener('scroll', (e) => {
+      let groupBtn = document.querySelectorAll(`.${styles.groupVariant}`)[1]
+
+      let { top } = DOMHelper.getOffset(pricingRef.current)
+
+      let offsetTop = groupBtn.scrollHeight + groupBtn.offsetTop
+
+      let pageYOffset = window.pageYOffset
+
+      if (pageYOffset - top > offsetTop) {
+
+        if(btnBarRef.current) {
+          btnBarRef.current.style.opacity = 1
+          btnBarRef.current.style.visibility = 'visible'
+        }
+
+      } else {
+        if(btnBarRef.current) {
+          btnBarRef.current.style.opacity = 0
+          btnBarRef.current.style.visibility = 'hidden'
+        }
+      }
+    })
+
+    return () => document.removeEventListener('scroll', scrollEvent)
     // <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
   }, [])
 
@@ -223,7 +263,7 @@ export default function ProductDetail({ data, _relationProd }) {
           <div className="row gy-4">
             <div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
               <div className="row gy-4">
-                <div className="col-6">
+                <div className="col-12 col-md-6 col-lg-6">
                   <CardBlock>
                     <Carousel placement={'left'} shape={'bar'} className="custom-slider" autoplay>
                       {data?.img?.map((item) => {
@@ -256,15 +296,15 @@ export default function ProductDetail({ data, _relationProd }) {
                   </CardBlock>
                 </div>
 
-                <div className="col-6">
+                <div className="col-12 col-md-6 col-lg-6">
                   <CardBlock>
                     <Form ref={formRef} model={model}>
-                      <Panel className="py-4">
+                      <Panel className={clsx('py-4')}>
                         <div
                           className={clsx('d-inline-flex align-items-center w-100', styles.groupVariant)}
                           style={{ gap: 4 }}
                         >
-                          <div className="row">
+                          <div className={clsx('row')} ref={pricingRef}>
                             <div className="col-12">
                               <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
                               <input
@@ -319,12 +359,42 @@ export default function ProductDetail({ data, _relationProd }) {
                         </div>
                         <Divider />
 
+                        <div className={clsx(styles.groudpVariantForMobile, 'border rounded shadow')} ref={btnBarRef}>
+                          <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
+                          <input
+                            type="hidden"
+                            value={form?.skuPrice * form?.quantity || 999999}
+                            className="bk-product-price"
+                          />
+
+                          {/* {renderVariantProduct} */}
+                          <div className={styles.action}>
+                            <Button
+                              color="red"
+                              appearance="primary"
+                              className={styles.btnIcon}
+                              onClick={handleAddToCart}
+                              style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                            >
+                              <BiCart />
+                              Thêm vào giỏ hàng
+                            </Button>
+                            <Button
+                              appearance="primary"
+                              className={styles.btnIcon}
+                              onClick={handleBuyNow}
+                              style={{ background: 'var(--rs-blue-800)' }}
+                            >
+                              <BiDollarCircle />
+                              Mua ngay
+                            </Button>
+                          </div>
+                        </div>
+
                         <TabsList data={data} />
                       </Panel>
                     </Form>
                   </CardBlock>
-
-                  {/* <JsonViewer data={form} /> */}
                 </div>
               </div>
             </div>

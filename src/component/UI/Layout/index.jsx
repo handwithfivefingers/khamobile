@@ -44,7 +44,7 @@ const CommonLayout = ({ children }) => {
         <link rel="stylesheet" href="https://pc.baokim.vn/css/bk.css" />
       </Head>
 
-      <div className={styles.wrapper} style={{ minHeight: '100vh' }}>
+      <div className={styles.wrapper} style={{ minHeight: '100vh', overflow: 'hidden overlay' }}>
         <Container>
           <CustomNavbar activeKey={activeKey} onSelect={handleSelect} />
           <Content>

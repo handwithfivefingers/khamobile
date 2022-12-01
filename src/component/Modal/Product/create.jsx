@@ -5,6 +5,7 @@ import PlusIcon from '@rsuite/icons/Plus'
 import CardBlock from 'component/UI/Content/CardBlock'
 import Select from 'component/UI/Content/MutiSelect'
 import CustomUpload from 'component/UI/CustomUpload'
+import UploadLink from 'component/UI/LinkUpload'
 import Textarea from 'component/UI/Editor'
 import JsonViewer from 'component/UI/JsonViewer'
 import _ from 'lodash'
@@ -20,6 +21,8 @@ import {
   SelectPicker,
   InputNumber,
   Input,
+  Toggle,
+  TagInput,
 } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import ProductService from 'service/admin/Product.service'
@@ -127,17 +130,18 @@ const ProductCreateModal = (props) => {
   const router = useRouter()
 
   const [loading, setLoading] = useState(false)
+  const [toggleUpload, setToggleUpload] = useState(true)
 
   const [variable, setVariable] = useState([])
 
   const [form, setForm] = useState({
     price: 0,
     regular_price: 0,
-    image: [],
     purchasable: true,
     stock_status: true,
     parentId: '',
     variations: [],
+    category: [],
     ...props?.data,
   })
 
@@ -184,7 +188,6 @@ const ProductCreateModal = (props) => {
   const onSubmit = async () => {
     try {
       setLoading(true)
-
       if (props.onSubmit) {
         props.onSubmit(form)
       }
@@ -195,17 +198,18 @@ const ProductCreateModal = (props) => {
       setLoading(false)
     }
   }
+  
+  console.log(toggleUpload)
 
-  console.log('cate', cate)
   return (
     <>
       <Button onClick={() => router.back()}>Back</Button>
 
       <JsonViewer data={form} />
 
-      <Content className={' p-4'}>
-        <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row '} fluid>
-          <div className="col-9 bg-w rounded" style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+      <Content className={'p-4'}>
+        <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row gx-2 '} fluid>
+          <div className="col-9 bg-w rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <CardBlock>
               <KMInput name="title" label="Tên sản phẩm" />
 
@@ -263,7 +267,7 @@ const ProductCreateModal = (props) => {
             </CardBlock>
           </div>
           <div
-            className="col-3 position-sticky"
+            className="col-3 position-sticky "
             style={{
               display: 'flex',
               flexDirection: 'column',
@@ -273,8 +277,26 @@ const ProductCreateModal = (props) => {
           >
             <CardBlock>
               <Form.Group controlId="img">
-                <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
-                <Form.Control rows={5} name="img" accepter={CustomUpload} action="#" group />
+                <Form.ControlLabel>
+                  Ảnh bài post
+                  <Toggle
+                    className="px-2"
+                    checkedChildren="Uploader"
+                    unCheckedChildren="URL Link"
+                    checked={toggleUpload}
+                    onChange={(val) => {
+                      setToggleUpload(val)
+                      setForm({ ...form, img: [] })
+                    }}
+                  />
+                </Form.ControlLabel>
+
+                {toggleUpload ? (
+                  <Form.Control rows={5} name="img" accepter={CustomUpload} action="#" group />
+                ) : (
+                  // <Form.Control rows={5} name="img" accepter={UploadByLink} action="#" group />
+                  <UploadLink onChange={(value, item) => setForm({ ...form, img: value })} />
+                )}
               </Form.Group>
             </CardBlock>
 

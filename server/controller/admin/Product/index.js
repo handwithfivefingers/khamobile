@@ -1,11 +1,12 @@
 import { MESSAGE } from '#server/constant/message'
 import { Product, ProductVariant } from '#model'
-import mongoose, { startSession } from 'mongoose'
+import mongoose, { mongo, startSession } from 'mongoose'
 import shortid from 'shortid'
 import slugify from 'slugify'
 import ProductModel from './Model'
 import _ from 'lodash'
 import { TYPE_VARIANT } from '#constant/type'
+import { handleDownloadFile } from '#middleware'
 export default class ProductController {
   getProduct = async (req, res) => {
     try {
@@ -135,13 +136,40 @@ export default class ProductController {
 
   createProduct = async (req, res) => {
     try {
-      let { type } = req.body
+      let { ...formData } = req.body
+
+      formData = {
+        ...formData,
+      }
+
+      if (formData?.variations?.length) {
+        formData.variations = JSON.parse(formData?.variations) || []
+      }
+      if (formData?.category?.length) {
+        formData.category = JSON.parse(formData?.category) || []
+      }
+
+      if (req.files.img?.length) {
+        formData.img = req.files.img.map(({ filename }) => ({
+          src: `/public/${filename}`,
+        }))
+      } else if (formData.img?.length) {
+        // handleDownloadFile
+        let listPromise = formData.img.map((url) => handleDownloadFile(url))
+
+        const respImgDownload = await Promise.all(listPromise)
+
+        formData.img = respImgDownload.map(({ filename }) => ({
+          src: `/public/${filename}`,
+        }))
+      }
+
       let result
-      switch (type) {
-        case TYPE_VARIANT.SIMPLE:
-          result = await this.createSimpleProduct(req)
-        case TYPE_VARIANT.VARIANT:
-          result = await this.createVariantProduct(req)
+
+      if (TYPE_VARIANT.VARIANT === req.body.type) {
+        result = await this.createSimpleProduct(formData)
+      } else if (TYPE_VARIANT.SIMPLE === req.body.type) {
+        result = await this.createVariantProduct(formData)
       }
 
       if (!result) throw result.error
@@ -149,16 +177,17 @@ export default class ProductController {
         message: 'ok',
       })
     } catch (error) {
+      console.log('create error', error)
       return res.status(400).json({ error })
     }
   }
 
-  createSimpleProduct = async (req) => {
+  createSimpleProduct = async (formData) => {
     let session = await startSession()
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, content, price } = req.body
+      let { type, title, slug, description, content, price, img } = formData
 
       const parentId = new mongoose.Types.ObjectId()
 
@@ -170,6 +199,7 @@ export default class ProductController {
         content,
         type,
         price,
+        img,
       })
 
       await Product.create([baseProd], { session })
@@ -187,12 +217,12 @@ export default class ProductController {
     }
   }
 
-  createVariantProduct = async (req) => {
+  createVariantProduct = async (formData) => {
     let session = await startSession()
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, content, primary, variations } = req.body
+      let { type, title, slug, description, content, primary, variations, img } = formData
 
       const parentId = new mongoose.Types.ObjectId()
 
@@ -207,6 +237,7 @@ export default class ProductController {
         type,
         price: minPrice.price,
         primary,
+        img,
       })
 
       await Product.create([baseProd], { session })
@@ -226,6 +257,158 @@ export default class ProductController {
     } catch (error) {
       console.log('coming createVariantProduct error ', error)
 
+      await session.abortTransaction()
+      return { status: false, error }
+    } finally {
+      session.endSession()
+    }
+  }
+
+  updateProduct = async (req, res) => {
+    try {
+      if (!req.body._id) throw { message: 'Product doesnt exists' }
+
+      let { ...formData } = req.body
+
+      if (formData?.variations?.length) {
+        formData.variations = JSON.parse(formData?.variations) || []
+      }
+      if (formData?.category?.length) {
+        formData.category = JSON.parse(formData?.category) || []
+      }
+
+      if (req.files.img?.length) {
+        formData.img = req.files.img.map(({ filename }) => ({
+          src: `/public/${filename}`,
+        }))
+      } else if (formData.img?.length) {
+        // handleDownloadFile
+        let listPromise = formData.img.map((url) => handleDownloadFile(url))
+
+        const respImgDownload = await Promise.all(listPromise)
+
+        formData.img = respImgDownload.map(({ filename }) => ({
+          src: `/public/${filename}`,
+        }))
+      }
+
+      let result
+
+      if (TYPE_VARIANT.VARIANT === req.body.type) {
+        result = await this.updateVariantProduct(formData)
+      } else if (TYPE_VARIANT.SIMPLE === req.body.type) {
+        result = await this.updateSimpleProduct(formData)
+      }
+
+      if (!result) throw result.error
+      return res.status(200).json({
+        message: 'Updated thành công',
+      })
+    } catch (error) {
+      return res.status(400).json({ error })
+    }
+  }
+
+  updateSimpleProduct = async (formData) => {
+    let session = await startSession()
+    try {
+      session.startTransaction()
+      if (formData.type !== TYPE_VARIANT.SIMPLE) throw { message: 'Type didtn match' }
+
+      let { _id, type, title, slug, description, content, price, category, img } = formData
+
+      const objUpdate = {
+        type,
+        title,
+        slug,
+        description,
+        content,
+        price,
+        category,
+      }
+
+      await Product.updateOne(
+        { _id: mongoose.Types.ObjectId(_id) },
+        {
+          ...objUpdate,
+        },
+        {
+          upsert: true,
+          new: true,
+          session,
+        },
+      )
+
+      await session.commitTransaction()
+
+      return { status: true }
+    } catch (error) {
+      console.log('coming updateSimpleProduct error ', error)
+
+      await session.abortTransaction()
+      return { status: false, error }
+    } finally {
+      session.endSession()
+    }
+  }
+
+  updateVariantProduct = async (formData) => {
+    let session = await startSession()
+    try {
+      if (formData.type !== TYPE_VARIANT.VARIANT) throw { message: 'Type didtn match' }
+
+      session.startTransaction()
+
+      const { _id, type, title, slug, description, content, primary, variations, category, img } = formData
+
+      const minPrice = variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
+
+      const prodUpdate = {
+        title,
+        slug,
+        description,
+        content,
+        type,
+        price: minPrice.price,
+        primary,
+        category,
+      }
+
+      await Product.updateOne(
+        {
+          _id: mongoose.Types.ObjectId(_id),
+        },
+        {
+          ...prodUpdate,
+        },
+        {
+          upsert: true,
+          new: true,
+          session,
+        },
+      )
+
+      for (let { _id: varsId, ...variant } of variations) {
+        await ProductVariant.updateOne(
+          {
+            _id: mongoose.Types.ObjectId(varsId),
+          },
+          {
+            ...variant,
+          },
+          {
+            upsert: true,
+            new: true,
+            session,
+          },
+        )
+      }
+
+      await session.commitTransaction()
+
+      return { status: true }
+    } catch (error) {
+      console.log('coming updateVariantProduct error ', error)
       await session.abortTransaction()
       return { status: false, error }
     } finally {

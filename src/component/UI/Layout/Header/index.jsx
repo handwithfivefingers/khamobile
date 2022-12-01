@@ -86,7 +86,7 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
     html = (
       <>
         <Nav pullRight className={styles.ham}>
-          <Dropdown renderToggle={renderIconButton} placement="bottomRight">
+          <Dropdown renderToggle={renderIconButton} placement="bottomEnd">
             <Dropdown.Item as={NavLink} href="/cart" icon={<FaShoppingBasket />}>
               <Badge content={cartLength}>Giỏ hàng</Badge>
             </Dropdown.Item>

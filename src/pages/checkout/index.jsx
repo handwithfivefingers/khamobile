@@ -12,8 +12,8 @@ export default function Checkout() {
       </div>
       <div className="col-12 p-0 py-2 border-top">
         <div className="container">
-          <Form className="row gx-4">
-            <div className="col-4 ">
+          <Form className="row gx-4  gy-4">
+            <div className="col-12 col-md-6 col-lg-4">
               <div className="row gy-4">
                 <div className="col-12">
                   <Panel header={<h5>Thông tin cá nhân</h5>} bordered>
@@ -65,7 +65,7 @@ export default function Checkout() {
                 </div>
               </div>
             </div>
-            <div className="col-8  ">
+            <div className="col-12 col-md-6 col-lg-8">
               <div className="row gx-4 gy-4">
                 <div className="col-12">
                   <Panel header={<h5>Phương thức vận chuyển</h5>} className="shadow  bg-white">

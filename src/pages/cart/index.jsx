@@ -152,28 +152,28 @@ export default function Cart(props) {
       </div>
       <div className="col-12 p-0 py-2 border-top">
         <div className="container">
-          <div className="row">
-            <div className="col-8">
+          <div className="row gy-2">
+            <div className="col-12 col-md-12 col-lg-8">
               <CardBlock>
                 <Panel bordered bodyFill>
                   <Form formValue={data}>
                     <Table height={400} data={data} rowHeight={58}>
-                      <Column width={200} align="center" flexGrow={1} verticalAlign="middle">
+                      <Column align="center" verticalAlign="middle" resizable flexGrow={1}>
                         <HeaderCell>Tên sản phẩm</HeaderCell>
                         <Cell dataKey="title" />
                       </Column>
 
-                      <Column align="center" verticalAlign="middle" flexGrow={1}>
+                      <Column align="center" verticalAlign="middle" resizable width={200}>
                         <HeaderCell>Đơn giá</HeaderCell>
                         <Pricing dataKey="sku" />
                       </Column>
 
-                      <Column width={150} verticalAlign="middle" align="center">
+                      <Column width={120} verticalAlign="middle" align="center" resizable>
                         <HeaderCell>Số lượng</HeaderCell>
                         <QuantityCell dataKey="quantity" />
                       </Column>
 
-                      <Column verticalAlign="middle" align="center" flexGrow={1}>
+                      <Column verticalAlign="middle" align="center" resizable width={200}>
                         <HeaderCell>Tạm tính</HeaderCell>
                         <TotalCell dataKey="total" />
                       </Column>
@@ -182,7 +182,7 @@ export default function Cart(props) {
                 </Panel>
               </CardBlock>
             </div>
-            <div className="col-4">
+            <div className="col-12 col-md-12 col-lg-4">
               <CardBlock>
                 <Panel header="Tổng cộng" bordered>
                   {/* <Divider /> */}
