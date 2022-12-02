@@ -1,8 +1,10 @@
 import clsx from 'clsx'
+import { CardSkeletonCategory } from 'component/UI/Content/CardSkeleton'
 import Heading from 'component/UI/Content/Heading'
 import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
 import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 import { useEffect, useState } from 'react'
 import { Col, Row, Panel, Placeholder, Grid } from 'rsuite'
 import GlobalCategoryService from 'service/global/Category.service'
@@ -16,6 +18,7 @@ const Card = (props) => (
 )
 export default function Category(props) {
   const [data, setData] = useState([])
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
   useEffect(() => {
     getCateData()
@@ -23,13 +26,26 @@ export default function Category(props) {
 
   const getCateData = async () => {
     try {
+      setLoading(true)
       let resp = await GlobalCategoryService.getProdCate()
 
       setData(resp.data.data)
     } catch (error) {
       console.log('error', error?.response?.data?.message)
+    } finally {
+      setLoading(false)
     }
   }
+
+  const renderSkeleton = useMemo(() => {
+    return [...Array(8).keys()].map((item) => {
+      return (
+        <Col md={6} sm={12} style={{ margin: '6px 0' }}>
+          <CardSkeletonCategory />
+        </Col>
+      )
+    })
+  }, [])
 
   return (
     <div className="row p-0">
@@ -42,6 +58,8 @@ export default function Category(props) {
         <div className="container p-0">
           <Grid fluid>
             <Row>
+              {loading && renderSkeleton}
+
               {data?.map((item, index) => {
                 return (
                   <Col md={6} sm={12} style={{ margin: '6px 0' }} onClick={() => router.push(`/category/${item.slug}`)}>

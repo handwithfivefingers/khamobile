@@ -301,37 +301,56 @@ export default class ProductController {
 
   getProductById = async (req, res) => {
     try {
-      let { _id } = req.params
-      console.log(_id)
-      // let _prod = await ProductVariant.findOne({ _id: mongoose.Types.ObjectId(_id) }).popula
+      let { _id, variantId } = req.body
 
-      let [_prod] = await ProductVariant.aggregate([
+      const pipe = [
         {
           $match: {
             _id: mongoose.Types.ObjectId(_id),
           },
         },
-        {
-          $lookup: {
-            from: 'products',
-            localField: 'parentId',
-            foreignField: '_id',
-            as: 'sub',
+      ]
+
+      if (variantId) {
+        pipe.push(
+          {
+            $lookup: {
+              from: 'productvariants',
+              localField: '_id',
+              foreignField: 'parentId',
+              as: 'variants',
+            },
           },
-        },
-        {
-          $unwind: '$sub',
-        },
-        {
+          {
+            $unwind: '$variants',
+          },
+          {
+            $match: {
+              'variants._id': mongoose.Types.ObjectId(variantId),
+            },
+          },
+          {
+            $project: {
+              _id: '$_id',
+              title: '$title',
+              variantId: '$variants._id',
+              price: '$variants.price',
+              img: '$img',
+            },
+          },
+        )
+      } else {
+        pipe.push({
           $project: {
             _id: '$_id',
-            title: '$sub.title',
+            title: '$title',
             price: '$price',
-            regular_price: '$regular_price',
-            attributes: '$attributes',
+            img: '$img',
           },
-        },
-      ])
+        })
+      }
+
+      let [_prod] = await Product.aggregate(pipe)
 
       return res.status(200).json({
         data: _prod,

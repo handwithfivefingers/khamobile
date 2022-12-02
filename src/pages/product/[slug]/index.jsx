@@ -46,6 +46,7 @@ export default function ProductDetail({ data, _relationProd }) {
   const [form, setForm] = useState({
     quantity: 1,
     img: data?.img,
+    _id: data?._id,
   })
 
   const router = useRouter()
@@ -59,38 +60,41 @@ export default function ProductDetail({ data, _relationProd }) {
       } else {
         setForm({
           ...form,
-          skuPrice: data.price,
+          price: data.price,
           _id: data?._id,
         })
       }
     }
 
-    let scrollEvent = document.addEventListener('scroll', (e) => {
-      let groupBtn = document.querySelectorAll(`.${styles.groupVariant}`)[1]
+    const scrollEvent = (e) => {
+      try {
+        let groupBtn = document.querySelectorAll(`.${styles.groupVariant}`)[1]
 
-      let { top } = DOMHelper.getOffset(pricingRef.current)
+        let { top } = DOMHelper.getOffset(pricingRef.current)
 
-      let offsetTop = groupBtn.scrollHeight + groupBtn.offsetTop
+        let offsetTop = groupBtn.scrollHeight + groupBtn.offsetTop
 
-      let pageYOffset = window.pageYOffset
+        let pageYOffset = window.pageYOffset
 
-      if (pageYOffset - top > offsetTop) {
-
-        if(btnBarRef.current) {
-          btnBarRef.current.style.opacity = 1
-          btnBarRef.current.style.visibility = 'visible'
+        if (pageYOffset - top > offsetTop) {
+          if (btnBarRef.current) {
+            btnBarRef.current.style.opacity = 1
+            btnBarRef.current.style.visibility = 'visible'
+          }
+        } else {
+          if (btnBarRef.current) {
+            btnBarRef.current.style.opacity = 0
+            btnBarRef.current.style.visibility = 'hidden'
+          }
         }
-
-      } else {
-        if(btnBarRef.current) {
-          btnBarRef.current.style.opacity = 0
-          btnBarRef.current.style.visibility = 'hidden'
-        }
+      } catch (error) {
+        console.log('scroll', error)
       }
-    })
+    }
 
-    return () => document.removeEventListener('scroll', scrollEvent)
-    // <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
+    window.addEventListener('scroll', scrollEvent, true)
+
+    return () => window.removeEventListener('scroll', scrollEvent, true)
   }, [])
 
   const handleAddToCart = () => {
@@ -102,7 +106,7 @@ export default function ProductDetail({ data, _relationProd }) {
       listItem = [...cartItem]
     }
 
-    let index = listItem.findIndex((item) => item.sku === form.sku)
+    let index = listItem.findIndex((item) => item._id === form._id && item?.variantId === form?.variantId)
 
     if (index !== -1) {
       listItem[index].quantity = listItem[index].quantity + +form.quantity
@@ -122,7 +126,7 @@ export default function ProductDetail({ data, _relationProd }) {
       listItem = [...cartItem]
     }
 
-    let index = listItem.findIndex((item) => item.sku === form.sku)
+    let index = listItem.findIndex((item) => item._id === form._id)
 
     if (index !== -1) {
       listItem[index].quantity = listItem[index].quantity + +form.quantity
@@ -131,6 +135,9 @@ export default function ProductDetail({ data, _relationProd }) {
     }
 
     localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
+
+    console.log(listItem)
+    // return
 
     router.push('/cart')
   }
@@ -155,8 +162,9 @@ export default function ProductDetail({ data, _relationProd }) {
                     if (!isDisabled) {
                       setActiveVariant(item)
                       setForm({
-                        sku: null,
-                        skuPrice: null,
+                        ...form,
+                        variantId: null,
+                        price: null,
                         quantity: 1,
                         img: '',
                       })
@@ -187,14 +195,14 @@ export default function ProductDetail({ data, _relationProd }) {
               <div className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}>
                 <div
                   className={clsx(' shadow-sm rounded border', styles.skuSelect, {
-                    [styles.active]: form.sku === item._id,
+                    [styles.active]: form._id === item._id,
                     [styles.disabled]: isDisabled,
                   })}
                   onClick={() => {
                     setForm({
                       ...form,
-                      sku: item._id,
-                      skuPrice: item.price,
+                      variantId: item._id,
+                      price: item.price,
                     })
                   }}
                 >
@@ -237,18 +245,18 @@ export default function ProductDetail({ data, _relationProd }) {
   const calculatePrice = () => {
     let html = null
 
-    if (data.variable?.length > 0) {
-      html = formatCurrency(form?.skuPrice * form?.quantity || 0)
-    } else {
-      html = formatCurrency(form?.skuPrice * form?.quantity || 0)
-    }
-
+    // if (data.variable?.length > 0) {
+    //   html = formatCurrency(form?.price * form?.quantity || 0)
+    // } else {
+    //   html = formatCurrency(form?.price * form?.quantity || 0)
+    // }
+    html = formatCurrency(form?.price * form?.quantity || 0)
     return html
   }
 
   const model = Schema.Model({
-    quantity: Schema.Types.StringType().isRequired('Số lượng không chính xác, vui lòng thử lại').minLength(0),
-    skuPrice: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
+    quantity: Schema.Types.StringType().isRequired('Số lượng không chính xác, vui lòng thử lại').minLength(1),
+    price: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
 
   return (
@@ -309,7 +317,7 @@ export default function ProductDetail({ data, _relationProd }) {
                               <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
                               <input
                                 type="hidden"
-                                value={form?.skuPrice * form?.quantity || 999999}
+                                value={form?.price * form?.quantity || 999999}
                                 className="bk-product-price"
                               />
                             </div>
@@ -363,7 +371,7 @@ export default function ProductDetail({ data, _relationProd }) {
                           <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
                           <input
                             type="hidden"
-                            value={form?.skuPrice * form?.quantity || 999999}
+                            value={form?.price * form?.quantity || 999999}
                             className="bk-product-price"
                           />
 

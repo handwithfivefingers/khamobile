@@ -1,37 +1,14 @@
+import FunnelIcon from '@rsuite/icons/Funnel'
 import clsx from 'clsx'
 import Card from 'component/UI/Content/Card'
 import CardBlock from 'component/UI/Content/CardBlock'
-import Heading from 'component/UI/Content/Heading'
 import PageHeader from 'component/UI/Content/PageHeader'
 import SideFilter from 'component/UI/Content/SideFilter'
-import JsonViewer from 'component/UI/JsonViewer'
 import CommonLayout from 'component/UI/Layout'
 import axios from 'configs/axiosInstance'
-import parser from 'html-react-parser'
-import Image from 'next/image'
-import { useRouter } from 'next/router'
-import { useRef } from 'react'
-import { useEffect } from 'react'
-import { useMemo, useState } from 'react'
-import { BiCart, BiDollarCircle } from 'react-icons/bi'
-import {
-  Button,
-  ButtonGroup,
-  Carousel,
-  Divider,
-  Drawer,
-  Form,
-  IconButton,
-  InputNumber,
-  Panel,
-  Rate,
-  Schema,
-  SelectPicker,
-} from 'rsuite'
-import { formatCurrency } from 'src/helper'
+import { useState } from 'react'
+import { Button, Divider, Drawer, IconButton, InputNumber, SelectPicker } from 'rsuite'
 import styles from './styles.module.scss'
-import AngleRightIcon from '@rsuite/icons/legacy/AngleRight'
-import FunnelIcon from '@rsuite/icons/Funnel'
 const CustomInputNumber = ({ rowKey, value, ...props }) => {
   return <InputNumber value={value} {...props} />
 }
@@ -54,14 +31,13 @@ const pricingFilter = [
   },
 ]
 export default function SingleCategory({ data }) {
-  console.log(data)
-
   const [drawer, setDrawer] = useState({
     open: false,
     placement: '',
   })
 
   const openFilter = (placement) => setDrawer({ open: true, placement })
+
   return (
     <div className="row p-0">
       <div className="col-12 p-0">

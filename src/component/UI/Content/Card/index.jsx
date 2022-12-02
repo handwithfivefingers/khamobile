@@ -4,11 +4,13 @@ import styles from './styles.module.scss'
 import clsx from 'clsx'
 import { formatCurrency } from 'src/helper'
 import { useRouter } from 'next/router'
-
+import { Placeholder } from 'rsuite'
+import { Image } from '@rsuite/icons'
+import * as NextImage from 'next/image'
 export default function Card({
   imgSrc,
   shadow = true,
-  border = true,
+  border = false,
   hover,
   cover,
   title,
@@ -17,8 +19,10 @@ export default function Card({
   type,
   variable,
   slug,
+  loading,
 }) {
   const router = useRouter()
+
   const classCard = clsx([
     'card',
     styles.card,
@@ -40,12 +44,22 @@ export default function Card({
       )
     }
   }
+
   const handleRouting = (sl) => router.push(sl)
+
+  if (loading) {
+    return <CardSkeleton classCard={classCard} />
+  }
+
   if (slug) {
     return (
       <div className={classCard} onClick={() => handleRouting(slug)}>
         <div className={clsx('card-img-top', styles.cardImg)}>
-          <img src={imgSrc || demoImg.src} className={styles.img} alt="..." />
+          {imgSrc ? (
+            <NextImage src={imgSrc} className={styles.img} alt="..." layout="fill" />
+          ) : (
+            <Image className={styles.img} />
+          )}
         </div>
         <div className={styles.cardBody}>
           <div className={styles.cardTitle}>
@@ -64,7 +78,11 @@ export default function Card({
   return (
     <div className={classCard}>
       <div className={clsx('card-img-top', styles.cardImg)}>
-        <img src={imgSrc || demoImg.src} className={styles.img} alt="..." />
+        {imgSrc ? (
+          <NextImage src={imgSrc} className={styles.img} alt="..." layout="fill" />
+        ) : (
+          <Image className={styles.img} />
+        )}
       </div>
       <div className={styles.cardBody}>
         <div className={styles.cardTitle}>
@@ -76,6 +94,22 @@ export default function Card({
             <s>{formatCurrency(underlinePrice)}</s>
           </p>
         )}
+      </div>
+    </div>
+  )
+}
+
+function CardSkeleton({ classCard }) {
+  return (
+    <div className={classCard}>
+      <Placeholder.Graph active />
+      <div className={styles.cardBody}>
+        <div className={styles.cardTitle}>
+          <Placeholder.Paragraph rows={2} active />
+        </div>
+        <p className={styles.cardText}>
+          <Placeholder.Paragraph rows={1} active />
+        </p>
       </div>
     </div>
   )

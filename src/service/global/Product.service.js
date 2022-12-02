@@ -9,7 +9,7 @@ const path = {
 const GlobalProductService = {
   getProduct: async (params) => await axios.get(path.product + 's', { params }),
 
-  getProductById: async (id) => await axios.get(path.product_id + '/' + id),
+  getProductById: async (_id, variantId) => await axios.post(path.product_id, { _id, variantId }),
 
   updateProduct: async (id, form) => await axios.post(path.product + '/' + id, form),
 

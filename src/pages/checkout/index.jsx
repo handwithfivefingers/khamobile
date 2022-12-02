@@ -1,8 +1,38 @@
 import PageHeader from 'component/UI/Content/PageHeader'
-import React from 'react'
-import { Form, Panel, Placeholder, Radio, RadioGroup } from 'rsuite'
+import React, { useState, useEffect } from 'react'
+import { Button, ButtonGroup, Form, List, Panel, Placeholder, Radio, RadioGroup, Table } from 'rsuite'
+import { formatCurrency } from 'src/helper'
+import styles from './styles.module.scss'
+const { HeaderCell, Cell, Column } = Table
 
 export default function Checkout() {
+  const [form, setForm] = useState({})
+
+  const [price, setPrice] = useState({
+    total: 0,
+    subTotal: 0,
+  })
+  useEffect(() => {
+    let item = JSON.parse(localStorage.getItem('khaMobileCart'))
+    if (item) {
+      setForm({
+        ...form,
+        product: item,
+      })
+
+      const totalPrice = item.reduce((prev, current) => {
+        prev += +current?.price * +current?.quantity
+        return prev
+      }, 0)
+
+      setPrice({
+        total: totalPrice,
+        subTotal: totalPrice,
+      })
+    }
+  }, [])
+
+  console.log(form)
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -79,7 +109,34 @@ export default function Checkout() {
                 </div>
                 <div className="col-12">
                   <Panel header={<h5>Thông tin đơn hàng</h5>} className="shadow  bg-white">
-                    <Placeholder.Paragraph rows={12} />
+                    {/* <Placeholder.Paragraph rows={12} /> */}
+
+                    <Table autoHeight data={form?.product} rowHeight={58}>
+                      <Column align="center" verticalAlign="middle" resizable flexGrow={1}>
+                        <HeaderCell>Tên sản phẩm</HeaderCell>
+                        <Cell dataKey="title" />
+                      </Column>
+
+                      <Column align="center" verticalAlign="middle" resizable width={200}>
+                        <HeaderCell>Đơn giá</HeaderCell>
+                        <Cell dataKey="price" />
+                      </Column>
+
+                      <Column width={120} verticalAlign="middle" align="center" resizable>
+                        <HeaderCell>Số lượng</HeaderCell>
+                        <Cell dataKey="quantity" />
+                      </Column>
+                    </Table>
+
+                    <List>
+                      <List.Item style={{ textAlign: 'right' }}>
+                        Tổng cộng:
+                        <span>
+                          {' '}
+                          <b>{formatCurrency(price.total)}</b>
+                        </span>
+                      </List.Item>
+                    </List>
                   </Panel>
                 </div>
                 <div className="col-12">
@@ -92,6 +149,28 @@ export default function Checkout() {
                       </RadioGroup>
                     </Form.Group>
                   </Panel>
+                </div>
+
+                <div className="col-12">
+                  <div className={styles.action}>
+                    <ButtonGroup>
+                      <Button
+                        appearance="primary"
+                        className={styles.btnIcon}
+                        style={{ background: 'var(--rs-blue-800)' }}
+                      >
+                        Xem lại
+                      </Button>
+                      <Button
+                        color="red"
+                        appearance="primary"
+                        className={styles.btnIcon}
+                        style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                      >
+                        Thanh toán
+                      </Button>
+                    </ButtonGroup>
+                  </div>
                 </div>
               </div>
             </div>

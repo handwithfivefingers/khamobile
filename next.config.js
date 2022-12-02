@@ -1,6 +1,5 @@
 // const webpack = require('webpack');
 // import webpack from 'webpack';
-import path from 'path'
 const nextConfig = {
   /* config options here */
   reactStrictMode: true,
@@ -11,8 +10,20 @@ const nextConfig = {
       'scontent-atl3-2.xx.fbcdn.net', //facebook
       'pbs.twimg.com', //twitter
       'localhost',
+      'journal-theme.com',
     ],
-
+    remotePatterns: [
+      {
+        protocol: 'http',
+        hostname: process.env.API,
+        pathname: '/public/**',
+      },
+      {
+        protocol: 'https',
+        hostname: '**.journal-theme.com',
+        pathname: '/**',
+      },
+    ],
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   env: {

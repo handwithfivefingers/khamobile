@@ -1,81 +1,47 @@
-const mongoose = require('mongoose')
+import mongoose from 'mongoose'
 
-module.exports = {
-  name: {
+export default {
+  userId: String,
+
+  deliveryInformation: {
+    company: String,
+    address_1: String,
+    address_2: String,
+    city: String,
+    postCode: String,
+  },
+
+  deliveryType: {
     type: String,
-    required: true,
   },
-  price: {
-    type: Number,
-    required: true,
-  },
-  orderOwner: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User',
-  },
-  track: {
-    step: {
-      type: Number,
-      required: true,
-    },
-    status: {
-      type: String,
-      required: true,
-    },
-  },
-  payment: {
-    type: Number,
-    enum: [0, 1],
-    default: 0,
-    required: true,
-  },
-  products: [
-    {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Product',
-    },
-  ],
 
-  data: {
-    create_company: {
-      type: Object,
-    },
-    change_info: {
-      type: Object,
-    },
-    pending: {
-      type: Object,
-    },
-    dissolution: {
-      type: Object,
-    },
-    uy_quyen: {
-      type: Object,
-    },
+  paymentType: {
+    type: String,
+    enum: ['transfer', 'vnpay', 'baokim'],
+    default: 'transfer',
   },
-  orderId: {
+
+  amount: {
     type: Number,
+    require: true,
   },
-  orderCreated: {
-    type: Number,
+
+  status: {
+    type: String,
+    default: 'pending',
+    require: true,
   },
-  category: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'Category',
-  },
-  files: [
+
+  product: [
     {
-      type: Object,
+      productId: {
+        type: String,
+        require: true,
+      },
+      quantity: {
+        type: Number,
+        default: 1,
+      },
     },
   ],
-  send: {
-    type: Number,
-    default: 0,
-    enum: [0, 1],
-  },
-  delete_flag: {
-    type: Number,
-    enum: [0, 1],
-    default: 0,
-  },
 }

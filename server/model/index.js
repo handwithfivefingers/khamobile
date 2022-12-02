@@ -7,6 +7,7 @@ import productVariant from './product_variant'
 
 import productCategory from './product_category'
 import post from './post'
+import order from './order'
 import mongoose from 'mongoose'
 
 const { Schema, model } = mongoose
@@ -27,6 +28,8 @@ const productCategorySchema = new Schema({ ...productCategory }, { timestamps: t
 
 const postSchema = new Schema({ ...post }, { timestamps: true })
 
+const orderSchema = new Schema({ ...order }, { timestamps: true })
+
 // Add method, Virtual
 
 userSchema.method({
@@ -41,8 +44,6 @@ productVariantSchema.virtual('attr', {
   localField: 'attributes',
   foreignField: '_id',
 })
-
-
 
 productVariantSchema.set('toObject', { virtuals: true })
 productVariantSchema.set('toJSON', { virtuals: true })
@@ -63,4 +64,6 @@ const ProductCategory = model('ProductCategory', productCategorySchema)
 
 const Post = model('Post', postSchema)
 
-export { Category, Product, User, Post, ProductAttribute, ProductVariant, ProductCategory, ProductAttributeTerm }
+const Order = model('Order', orderSchema)
+
+export { Category, Product, User, Post, ProductAttribute, ProductVariant, ProductCategory, ProductAttributeTerm, Order }

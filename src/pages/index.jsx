@@ -72,13 +72,12 @@ const Home = () => {
                     {data?.[6]?.child?.map((item) => {
                       return (
                         <Card
-                          imgSrc={
-                            'https://www.journal-theme.com/1/image/cache/catalog/journal3/products/fashion/f1-250x250.jpg.webp'
-                          }
+                          imgSrc={''}
                           cover
                           title={item.title}
                           price={item.price}
                           type={item.type}
+                          slug={`/product/${item.slug}`}
                         />
                       )
                     })}

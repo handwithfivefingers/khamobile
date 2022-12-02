@@ -11,14 +11,16 @@ import CommonLayout from 'component/UI/Layout'
 
 import Link from 'next/link'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useMemo } from 'react'
 
 import { Pagination, SelectPicker } from 'rsuite'
 
 import GlobalProductService from 'service/global/Product.service'
 
 import styles from './styles.module.scss'
+
 import PageHeader from 'component/UI/Content/PageHeader'
+import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
 
 const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
 
@@ -42,13 +44,18 @@ const pricingFilter = [
 ]
 export default function Product(props) {
   const [activePage, setActivePage] = useState(1)
+
   const [product, setProduct] = useState([])
+
+  const [loading, setLoading] = useState(false)
+
   useEffect(() => {
     getProducts()
   }, [])
 
   const getProducts = async (query = null) => {
     try {
+      setLoading(true)
       let params = {}
       if (query) {
         let [type, value] = query
@@ -63,8 +70,20 @@ export default function Product(props) {
       console.log(resp.data.data)
     } catch (error) {
       console.log('getProducts error: ' + error)
+    } finally {
+      setLoading(false)
     }
   }
+
+  const renderSkeleton = useMemo(() => {
+    return [...Array(8).keys()].map((item) => {
+      return (
+        <div className="col-12 col-md-6 col-lg-4 col-xl-3">
+          <CardSkeletonProduct />
+        </div>
+      )
+    })
+  }, [])
 
   return (
     <div className="row p-0">
@@ -96,6 +115,7 @@ export default function Product(props) {
                       <SelectPicker data={pricingFilter} style={{ width: 224 }} onChange={getProducts} />
                     </div>
                   </div>
+                  {loading && renderSkeleton}
 
                   {product?.map((prod) => {
                     return (

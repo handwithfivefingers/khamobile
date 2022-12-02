@@ -1,32 +1,23 @@
 export default {
-  username: {
-    type: String,
-    required: true,
-    trim: true,
-    min: 3,
-  },
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-    unique: true,
-    lowercase: true,
-  },
-  hash_password: {
-    type: String,
-    required: true,
-  },
+  username: String,
+  firstName: String,
+  lastName: String,
+  email: String,
+  phone: String,
+  hash_password: String,
+
   role: {
     type: String,
-    enum: ['user', 'admin'],
-    default: 'user',
+    enum: ['user', 'admin', 'anonymous'],
+    default: 'anonymous',
   },
-  phone: String,
+
   delete_flag: {
     type: Number,
     enum: [0, 1],
     default: 0,
   },
+
   google: {
     sub: String,
     hd: String,

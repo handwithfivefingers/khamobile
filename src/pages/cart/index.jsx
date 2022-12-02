@@ -44,30 +44,53 @@ export default function Cart(props) {
   const router = useRouter()
 
   useEffect(() => {
-    let item = JSON.parse(localStorage.getItem('khaMobileCart'))
-    if (item) {
-      handleGetListItemPrice(item)
+    try {
+      let item = JSON.parse(localStorage.getItem('khaMobileCart'))
+
+      let isValidData = item?.some((attr) => !attr.quantity || !attr.price || !attr._id)
+
+      if (!isValidData) handleGetListItemPrice(item)
+      else {
+        if (!localStorage.getItem('khaMobileCart') === null) {
+          alert('Có lỗi xảy ra khi thêm vào giỏ hàng, vui lòng thử lại sau')
+        }
+        localStorage.setItem('khaMobileCart', null)
+      }
+    } catch (error) {
+      console.log('get cart error', error)
     }
   }, [])
+
   useEffect(() => {
-    const totalPrice = data.reduce((prev, current) => {
-      prev += +current.price * +current.quantity
-      return prev
-    }, 0)
+    if (data.length > 0) {
+      try {
+        const totalPrice = data.reduce((prev, current) => {
+          prev += +current?.price * +current?.quantity
+          return prev
+        }, 0)
 
-    setPrice({
-      total: totalPrice,
-      subTotal: totalPrice,
-    })
+        setPrice({
+          total: totalPrice,
+          subTotal: totalPrice,
+        })
 
-    let itemOnLocal = data.map(({ _id, quantity, price }) => ({ sku: _id, quantity, skuPrice: price }))
+        let itemOnLocal = data?.map((item) => ({
+          _id: item?._id,
+          quantity: item?.quantity,
+          price: item.price,
+          variantId: item?.variantId,
+        }))
 
-    localStorage.setItem('khaMobileCart', JSON.stringify(itemOnLocal))
+        localStorage.setItem('khaMobileCart', JSON.stringify(itemOnLocal))
+      } catch (error) {
+        console.log('setCart error', error)
+      }
+    }
   }, [data])
 
   const handleGetListItemPrice = async (item) => {
     try {
-      let groupItem = item.map(({ sku, quantity }) => getScreenData(sku, quantity))
+      let groupItem = item.map((item) => getScreenData(item?._id, item?.variantId, item?.quantity))
       let resp = await Promise.all(groupItem)
       setData(resp)
     } catch (error) {
@@ -75,9 +98,9 @@ export default function Cart(props) {
     }
   }
 
-  const getScreenData = async (_id, quantity) => {
+  const getScreenData = async (_id, variantId, quantity) => {
     try {
-      let resp = await GlobalProductService.getProductById(_id)
+      let resp = await GlobalProductService.getProductById(_id, variantId)
       return { ...resp.data.data, quantity }
     } catch (error) {
       console.log('getScreenData ', error)
@@ -89,6 +112,7 @@ export default function Cart(props) {
     newData[rest.rowIndex].quantity = --newData[rest.rowIndex].quantity || 1
     setData(newData)
   }
+
   const handlePlus = (row, key, rest) => {
     let newData = [...data]
     newData[rest.rowIndex].quantity = ++newData[rest.rowIndex].quantity || 1
@@ -115,34 +139,24 @@ export default function Cart(props) {
       <InputNumber
         size="sm"
         className={styles.customInputNumber}
-        value={
-          rowData['skuPrice']
-            ? formatCurrency(rowData['skuPrice'] * rowData['quantity'])
-            : formatCurrency(rowData['price'] * rowData['quantity'])
-        }
+        value={formatCurrency(rowData['price'] * rowData['quantity'])}
         plaintext
       />
     </Cell>
   )
+
   const Pricing = ({ rowData, dataKey, ...keyProps }) => (
     <Cell {...keyProps}>
-      <InputNumber
-        size="sm"
-        className={styles.customInputNumber}
-        value={
-          rowData['skuPrice']
-            ? formatCurrency(rowData['skuPrice'] * rowData['quantity'])
-            : formatCurrency(rowData['price'] * rowData['quantity'])
-        }
-        plaintext
-      />
+      <InputNumber size="sm" className={styles.customInputNumber} value={formatCurrency(rowData['price'])} plaintext />
     </Cell>
   )
+
   const handleChange = (val, rowData, dataKey, { ...keyProps }) => {
     let newData = [...data]
     newData[keyProps.rowIndex][dataKey] = val
     setData(newData)
   }
+
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -165,7 +179,7 @@ export default function Cart(props) {
 
                       <Column align="center" verticalAlign="middle" resizable width={200}>
                         <HeaderCell>Đơn giá</HeaderCell>
-                        <Pricing dataKey="sku" />
+                        <Pricing dataKey="price" />
                       </Column>
 
                       <Column width={120} verticalAlign="middle" align="center" resizable>
