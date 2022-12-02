@@ -22,7 +22,7 @@ const UploadRouter = (req, res, next) => {
   }
 }
 
-AppRouter.use('/', WebRouter.productRouter, WebRouter.productCategoryRouter)
+AppRouter.use('/', WebRouter.productRouter, WebRouter.productCategoryRouter, WebRouter.orderRouter)
 
 AppRouter.use('/service', ServiceRouter)
 

@@ -1,5 +1,5 @@
 import CogIcon from '@rsuite/icons/legacy/Cog'
-import { Badge, DOMHelper, Dropdown, Nav, Navbar, IconButton, Button, Drawer, Sidenav } from 'rsuite'
+import { Badge, DOMHelper, Dropdown, Nav, Navbar, IconButton, Button, Drawer, Sidenav, Affix } from 'rsuite'
 
 import LOGO from 'assets/img/logo.png'
 import Image from 'next/image'

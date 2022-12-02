@@ -46,8 +46,12 @@ const CommonLayout = ({ children }) => {
 
       <div className={styles.wrapper} style={{ minHeight: '100vh', overflow: 'hidden overlay' }}>
         <Container>
-          <CustomNavbar activeKey={activeKey} onSelect={handleSelect} />
-          <Content>
+          <CustomNavbar
+            activeKey={activeKey}
+            onSelect={handleSelect}
+            style={{ position: 'fixed', top: 0, left: 0, width: '100%' }}
+          />
+          <Content style={{ marginTop: '56px' }}>
             <div className="container-fluid">{children}</div>
           </Content>
           <Footer>

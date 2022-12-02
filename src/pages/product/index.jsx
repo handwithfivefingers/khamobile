@@ -13,7 +13,7 @@ import Link from 'next/link'
 
 import { useEffect, useState, useMemo } from 'react'
 
-import { Pagination, SelectPicker } from 'rsuite'
+import { Button, Drawer, IconButton, Pagination, SelectPicker } from 'rsuite'
 
 import GlobalProductService from 'service/global/Product.service'
 
@@ -21,6 +21,7 @@ import styles from './styles.module.scss'
 
 import PageHeader from 'component/UI/Content/PageHeader'
 import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
+import FunnelIcon from '@rsuite/icons/Funnel'
 
 const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
 
@@ -43,6 +44,11 @@ const pricingFilter = [
   },
 ]
 export default function Product(props) {
+  const [drawer, setDrawer] = useState({
+    open: false,
+    placement: '',
+  })
+
   const [activePage, setActivePage] = useState(1)
 
   const [product, setProduct] = useState([])
@@ -85,6 +91,8 @@ export default function Product(props) {
     })
   }, [])
 
+  const openFilter = (placement) => setDrawer({ open: true, placement })
+
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -95,11 +103,11 @@ export default function Product(props) {
       <div className="col-12 p-0 py-2 border-top">
         <div className="container">
           <div className="row">
-            <div className="col-lg-2 col-md-12">
+            <div className={clsx('col-12 col-md-4 col-lg-2', styles.hideOnMD)}>
               <SideFilter />
             </div>
 
-            <div className={clsx([styles.vr, 'col-lg-10 col-md-12'])}>
+            <div className={clsx([styles.vr, 'col-12 col-md-8 col-lg-10'])}>
               <CardBlock>
                 <div className="row gy-4">
                   <div className="col-12">
@@ -109,12 +117,19 @@ export default function Product(props) {
                     </p>
                   </div>
                   <Divider />
-                  <div className="col-12">
-                    <div className={styles.filter}>
+                  <div className="col-6">
+                    <div className={clsx(styles.filter, styles.showOnMD)}>
+                      <label>Filter: </label>
+                      <IconButton icon={<FunnelIcon />} onClick={() => openFilter('left')} />
+                    </div>
+                  </div>
+                  <div className="col-6">
+                    <div className={styles.sort}>
                       <label>Pricing: </label>
                       <SelectPicker data={pricingFilter} style={{ width: 224 }} onChange={getProducts} />
                     </div>
                   </div>
+
                   {loading && renderSkeleton}
 
                   {product?.map((prod) => {
@@ -153,6 +168,26 @@ export default function Product(props) {
           </div>
         </div>
       </div>
+
+      <Drawer
+        placement={drawer.placement}
+        open={drawer.open}
+        onClose={() => setDrawer({ ...drawer, open: false })}
+        size="xs"
+      >
+        <Drawer.Header>
+          <Drawer.Title>Lọc sản phẩm</Drawer.Title>
+          <Drawer.Actions>
+            <Button onClick={() => setDrawer({ ...drawer, open: false })}>Cancel</Button>
+            <Button onClick={() => setDrawer({ ...drawer, open: false })} appearance="primary">
+              Confirm
+            </Button>
+          </Drawer.Actions>
+        </Drawer.Header>
+        <Drawer.Body>
+          <SideFilter />
+        </Drawer.Body>
+      </Drawer>
     </div>
   )
 }

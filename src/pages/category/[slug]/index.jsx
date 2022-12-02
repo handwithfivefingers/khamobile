@@ -96,7 +96,12 @@ export default function SingleCategory({ data }) {
           </div>
         </div>
       </div>
-      <Drawer placement={drawer.placement} open={drawer.open} onClose={() => setDrawer({ ...drawer, open: false })}>
+      <Drawer
+        placement={drawer.placement}
+        open={drawer.open}
+        onClose={() => setDrawer({ ...drawer, open: false })}
+        size="xs"
+      >
         <Drawer.Header>
           <Drawer.Title>Drawer Title</Drawer.Title>
           <Drawer.Actions>

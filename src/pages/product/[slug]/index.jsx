@@ -92,9 +92,8 @@ export default function ProductDetail({ data, _relationProd }) {
       }
     }
 
-    window.addEventListener('scroll', scrollEvent, true)
-
-    return () => window.removeEventListener('scroll', scrollEvent, true)
+    typeof window !== 'undefined' && document.addEventListener('scroll', scrollEvent, true)
+    return () => document.removeEventListener('scroll', scrollEvent, true)
   }, [])
 
   const handleAddToCart = () => {
@@ -244,12 +243,6 @@ export default function ProductDetail({ data, _relationProd }) {
 
   const calculatePrice = () => {
     let html = null
-
-    // if (data.variable?.length > 0) {
-    //   html = formatCurrency(form?.price * form?.quantity || 0)
-    // } else {
-    //   html = formatCurrency(form?.price * form?.quantity || 0)
-    // }
     html = formatCurrency(form?.price * form?.quantity || 0)
     return html
   }

@@ -1,7 +1,10 @@
 import mongoose from 'mongoose'
 
 export default {
-  userId: String,
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+  },
 
   deliveryInformation: {
     company: String,
