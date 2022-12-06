@@ -31,6 +31,5 @@ onInit(handle)
 app.listen(port, async (err) => {
   if (err) throw err
   await ConfigDatabase.connectDB()
-
   console.log(`> Ready on http://localhost:${port}`)
 })

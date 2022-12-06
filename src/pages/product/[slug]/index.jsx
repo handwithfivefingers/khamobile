@@ -194,7 +194,7 @@ export default function ProductDetail({ data, _relationProd }) {
               <div className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}>
                 <div
                   className={clsx(' shadow-sm rounded border', styles.skuSelect, {
-                    [styles.active]: form._id === item._id,
+                    [styles.active]: form._id === item._id || form.variantId === item._id,
                     [styles.disabled]: isDisabled,
                   })}
                   onClick={() => {

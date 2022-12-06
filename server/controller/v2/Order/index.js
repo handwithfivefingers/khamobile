@@ -5,7 +5,7 @@ import { MESSAGE } from '#server/constant/message'
 import { ProductVariant, Product, ProductCategory, Order, User } from '#server/model'
 import _ from 'lodash'
 import mongoose from 'mongoose'
-
+import mailchimp from '@mailchimp/mailchimp_marketing'
 export default class OrderController {
   createOrder = async (req, res) => {
     try {
@@ -24,9 +24,11 @@ export default class OrderController {
       } = req.body
 
       let userId
+
       const orderId = new mongoose.Types.ObjectId()
 
       if (!userType) throw { message: 'Something went wrong' }
+
       if (userType === 'anonymous') {
         userId = new mongoose.Types.ObjectId()
         const { lastName, firstName, email, phone } = req.body
