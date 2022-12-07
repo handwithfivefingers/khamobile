@@ -10,9 +10,12 @@ export async function middleware(request) {
 
   if (request.nextUrl.pathname.includes('/admin')) {
     // const resp = await axios.post('/authenticate')
+    
     const requestHeaders = new Headers(request.headers)
 
-    const resp = await fetch(`${process.env.API}/authenticate`, {
+    const path = `${process.env.API}/api/authenticate`
+
+    const resp = await fetch(path, {
       method: 'POST',
       credentials: 'include',
       withCredentials: true,
