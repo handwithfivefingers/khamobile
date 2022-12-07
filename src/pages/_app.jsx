@@ -35,8 +35,8 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
-        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" />
-        <script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
+        <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" />
+        <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
         {/* <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" /> */}
       </Head>
       <CustomProvider>

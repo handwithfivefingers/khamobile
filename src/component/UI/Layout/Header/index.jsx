@@ -28,7 +28,7 @@ const NavLink = forwardRef((props, ref) => {
   )
 })
 
-const renderIconButton = (props, ref) => {
+const renderIconButton = ({ placement, ...props }, ref) => {
   return <IconButton {...props} ref={ref} icon={<AlignRightIcon />} />
 }
 
