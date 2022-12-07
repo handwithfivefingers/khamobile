@@ -12,7 +12,7 @@ export async function middleware(request) {
     // const resp = await axios.post('/authenticate')
     const requestHeaders = new Headers(request.headers)
 
-    const resp = await fetch('http://localhost:3002/api/authenticate', {
+    const resp = await fetch(`${process.env.API}/authenticate`, {
       method: 'POST',
       credentials: 'include',
       withCredentials: true,
