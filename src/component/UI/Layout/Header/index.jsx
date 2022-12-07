@@ -65,7 +65,7 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
 
   const renderDropdownMenu = (cateList, trigger) => {
     let html = null
-    console.log(trigger)
+    // console.log(trigger)
     html = cateList?.map((item) => {
       return item.child?.length ? (
         <Dropdown.Menu title={item.name} trigger={trigger || 'hover'} icon={<ListIcon />}>

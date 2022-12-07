@@ -73,7 +73,7 @@ export default function Product(props) {
       const resp = await GlobalProductService.getProduct(params)
       setProduct(resp.data.data)
 
-      console.log(resp.data.data)
+      // console.log(resp.data.data)
     } catch (error) {
       console.log('getProducts error: ' + error)
     } finally {

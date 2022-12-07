@@ -74,7 +74,7 @@ const USER_SERVICE = {
 }
 
 export default function OrderReceived({ data }) {
-  console.log(data)
+  // console.log(data)
   const [form, setForm] = useState(data)
 
   return (

@@ -22,8 +22,6 @@ const UploadRouter = (req, res, next) => {
   }
 }
 
-AppRouter.use('/', WebRouter.productRouter, WebRouter.productCategoryRouter, WebRouter.orderRouter)
-
 AppRouter.use('/service', ServiceRouter)
 
 AppRouter.use(
@@ -34,7 +32,14 @@ AppRouter.use(
   AdminRouter.ProductAttributeRoute,
   AdminRouter.ProductRouter,
 )
-
 AppRouter.post('/upload', upload.fields([{ name: 'upload', maxCount: 1 }]), UploadRouter)
+
+AppRouter.use(
+  '/',
+  WebRouter.productRouter,
+  WebRouter.productCategoryRouter,
+  WebRouter.orderRouter,
+  WebRouter.userRouter,
+)
 
 export default AppRouter

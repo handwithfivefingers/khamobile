@@ -13,6 +13,6 @@ router.post('/variant', upload.none(), new ConvertController().getVariantOfSKU)
 
 router.post('/attribute', upload.none(), new ConvertController().getAttribute)
 
-router.post('/mail', upload.none(), new MailServer().run)
+router.post('/mail', upload.none(), new MailServer().sendMail)
 
 export default router

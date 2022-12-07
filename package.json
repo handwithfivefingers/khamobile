@@ -38,6 +38,7 @@
     "lodash": "^4.17.21",
     "moment": "^2.29.1",
     "next": "latest",
+    "node-mailjet": "^5.1.1",
     "puppeteer": "^19.2.2",
     "react": "17.0.2",
     "react-apexcharts": "^1.4.0",

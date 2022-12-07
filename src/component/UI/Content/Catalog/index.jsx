@@ -23,7 +23,7 @@ const Catalog = (props) => {
   ])
 
   const handleRedirect = (group) => {
-    console.log(group)
+    // console.log(group)
     return router.push('/category/' + group.slug)
   }
 

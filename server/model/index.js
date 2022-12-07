@@ -9,6 +9,7 @@ import productCategory from './product_category'
 import post from './post'
 import order from './order'
 import mongoose from 'mongoose'
+import bcrypt from 'bcryptjs'
 
 const { Schema, model } = mongoose
 

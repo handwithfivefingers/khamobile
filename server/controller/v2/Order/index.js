@@ -5,7 +5,6 @@ import { MESSAGE } from '#server/constant/message'
 import { ProductVariant, Product, ProductCategory, Order, User } from '#server/model'
 import _ from 'lodash'
 import mongoose from 'mongoose'
-import mailchimp from '@mailchimp/mailchimp_marketing'
 export default class OrderController {
   createOrder = async (req, res) => {
     try {

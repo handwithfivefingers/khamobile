@@ -12,7 +12,7 @@ import multer from 'multer'
 import fs from 'fs'
 import axios from 'axios'
 import moment from 'moment'
-import http from 'http'
+import { User } from '#model'
 const storage = multer.diskStorage({
   limits: { fileSize: 1 * Math.pow(1024, 2 /* MBs*/) },
   fileFilter(req, file, cb) {
@@ -67,6 +67,45 @@ export const handleDownloadFile = async (url) => {
   }
 }
 
+export const authenticating = async (req, res, next) => {
+  try {
+    let token = req.cookies['sessionId']
+
+    if (!token) throw { message: 'Authorization required' }
+
+    const decoded = await jwt.verify(token, process.env.SECRET)
+
+    if (decoded) {
+      let { _id, role, updatedAt } = decoded
+
+      let _user = await User.findOne({ _id })
+
+      if (new Date(_user.updatedAt).getTime() !== new Date(updatedAt).getTime()) throw { message: 'Token Expired' }
+
+      const newToken = jwt.sign({ _id, role, updatedAt }, process.env.SECRET, {
+        expiresIn: process.env.EXPIRE_TIME,
+      })
+
+      req.role = decoded.role
+
+      req.id = decoded._id
+
+      var hour = 3600000
+
+      res.cookie('sessionId', newToken, {
+        maxAge: 2 * 24 * hour,
+        httpOnly: true,
+      })
+      next()
+    }
+  } catch (err) {
+    res.clearCookie()
+    return res.status(401).json({
+      message: 'Permission Denied',
+      error: err,
+    })
+  }
+}
 // export default {
 // 	upload,
 // 	TrackingApi,

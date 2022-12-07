@@ -1,5 +1,5 @@
 import ProductController from '#controller/v2/Product'
-import { upload } from '#middleware'
+import { upload, authenticating } from '#middleware'
 import express from 'express'
 
 const router = express.Router()
