@@ -3,10 +3,10 @@
   "author": "Truyen Mai",
   "type": "module",
   "scripts": {
-    "dev": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js\"",
+    "dev": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js \" \"npm run dev-next\" ",
     "start": "concurrently  \"node --experimental-specifier-resolution=node --trace-deprecation app.js\"",
     "dev-only": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js\"",
-    "dev-next": "next dev",
+    "dev-next": "next dev --port=3002",
     "dev-start": "node --experimental-specifier-resolution=node app.js",
     "build": "next build",
     "next-start": "next start"

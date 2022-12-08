@@ -42,8 +42,8 @@ class ConfigApp {
     console.log('Routed Loaded')
   }
 
-  onInit = (handler) => {
-    this.onLoadConfig().onLoadUploadConfigs().onLoadRouter(handler).onHandlerError()
+  onInit = () => {
+    this.onLoadConfig().onLoadUploadConfigs().onLoadRouter().onHandlerError()
   }
 
   onLoadConfig = () => {
@@ -58,14 +58,14 @@ class ConfigApp {
     return this
   }
 
-  onLoadRouter = (handler) => {
-    console.log('WebRouter', handler)
+  onLoadRouter = () => {
+    // console.log('WebRouter', handler)
 
     this.app.use('/api', cors(corsOptions), TrackingApi, AppRouter)
 
-    this.app.get('/a', (req, res) => this.app.render(req, res, '/a', req.query))
+    // this.app.get('/a', (req, res) => this.app.render(req, res, '/a', req.query))
 
-    this.app.all('*', (req, res) => handler(req, res))
+    // this.app.all('*', (req, res) => handler(req, res))
 
     return this
   }

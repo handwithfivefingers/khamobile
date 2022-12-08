@@ -33,7 +33,7 @@ const pricingFilter = [
 export default function SingleCategory({ data }) {
   const [drawer, setDrawer] = useState({
     open: false,
-    placement: '',
+    placement: 'left',
   })
 
   const openFilter = (placement) => setDrawer({ open: true, placement })

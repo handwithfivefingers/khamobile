@@ -46,7 +46,7 @@ const pricingFilter = [
 export default function Product(props) {
   const [drawer, setDrawer] = useState({
     open: false,
-    placement: '',
+    placement: 'left',
   })
 
   const [activePage, setActivePage] = useState(1)

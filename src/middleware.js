@@ -5,21 +5,22 @@ export const config = {
   matcher: ['/admin/:path*', '/admin'],
 }
 export async function middleware(request) {
-  console.log('incoming middleware')
-  const response = NextResponse.next()
+  console.log('incoming middleware', request.nextUrl.pathname.includes('/admin'))
 
   if (request.nextUrl.pathname.includes('/admin')) {
-    // const resp = await axios.post('/authenticate')
     const requestHeaders = new Headers(request.headers)
 
-    const resp = await fetch('http://localhost:3002/api/authenticate', {
+    const path = `${process.env.API}/api/authenticate`
+
+    const resp = await fetch(path, {
       method: 'POST',
       credentials: 'include',
       withCredentials: true,
       headers: requestHeaders,
     })
+    
     if (resp.status !== 401) {
-      return response
+      return NextResponse.next()
     } else return NextResponse.redirect(new URL('/login', request.url))
   }
 }
