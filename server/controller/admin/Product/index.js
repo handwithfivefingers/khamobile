@@ -59,6 +59,7 @@ export default class ProductController {
               content: '$content',
               category: '$category',
               type: '$type',
+              image: '$image',
               primary: '$primary',
               'attr._id': '$variations._id',
               'attr.price': '$variations.price',
@@ -80,6 +81,7 @@ export default class ProductController {
                 category: '$category',
                 type: '$type',
                 primary: '$primary',
+                image: '$image',
               },
               variations: {
                 $push: {
@@ -104,6 +106,7 @@ export default class ProductController {
               type: '$_id.type',
               primary: '$_id.primary',
               variations: '$variations',
+              image: '$_id.image',
             },
           },
         ])
@@ -266,31 +269,14 @@ export default class ProductController {
 
   updateProduct = async (req, res) => {
     try {
+      
+      console.log(req.body)
+
       if (!req.body._id) throw { message: 'Product doesnt exists' }
 
       let { ...formData } = req.body
 
-      if (formData?.variations?.length) {
-        formData.variations = JSON.parse(formData?.variations) || []
-      }
-      if (formData?.category?.length) {
-        formData.category = JSON.parse(formData?.category) || []
-      }
-
-      if (req.files.img?.length) {
-        formData.img = req.files.img.map(({ filename }) => ({
-          src: `/public/${filename}`,
-        }))
-      } else if (formData.img?.length) {
-        // handleDownloadFile
-        let listPromise = formData.img.map((url) => handleDownloadFile(url))
-
-        const respImgDownload = await Promise.all(listPromise)
-
-        formData.img = respImgDownload.map(({ filename }) => ({
-          src: `/public/${filename}`,
-        }))
-      }
+      console.log('formData', formData)
 
       let result
 
@@ -305,6 +291,7 @@ export default class ProductController {
         message: 'Updated thành công',
       })
     } catch (error) {
+      console.log('update Product error: ', error)
       return res.status(400).json({ error })
     }
   }
@@ -359,10 +346,11 @@ export default class ProductController {
 
       session.startTransaction()
 
-      const { _id, type, title, slug, description, content, primary, variations, category, img } = formData
+      const { _id, type, title, slug, description, content, primary, variations, category, image } = formData
 
       const minPrice = variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
 
+      console.log('updateVariantProduct', image)
       const prodUpdate = {
         title,
         slug,
@@ -372,6 +360,7 @@ export default class ProductController {
         price: minPrice.price,
         primary,
         category,
+        image,
       }
 
       await Product.updateOne(

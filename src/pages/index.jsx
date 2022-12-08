@@ -72,7 +72,7 @@ const Home = () => {
                     {data?.[6]?.child?.map((item) => {
                       return (
                         <Card
-                          imgSrc={''}
+                          imgSrc={(item.image?.[0]?.src && item.image?.[0]?.src) || ''}
                           cover
                           title={item.title}
                           price={item.price}

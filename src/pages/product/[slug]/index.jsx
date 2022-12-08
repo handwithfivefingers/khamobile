@@ -252,6 +252,7 @@ export default function ProductDetail({ data, _relationProd }) {
     price: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
 
+  console.log(data)
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -267,32 +268,14 @@ export default function ProductDetail({ data, _relationProd }) {
                 <div className="col-12 col-md-6 col-lg-6">
                   <CardBlock>
                     <Carousel placement={'left'} shape={'bar'} className="custom-slider" autoplay>
-                      {data?.img?.map((item) => {
+                      {data?.image?.map((item) => {
+                        let imgSrc = process.env.API + item?.src
                         return (
                           <div style={{ position: 'relative' }}>
-                            <Image
-                              src={
-                                `${process.env.host}${item.src}` ||
-                                'https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp'
-                              }
-                              layout="fill"
-                              objectFit="contain"
-                              className="bk-product-image"
-                            />
+                            <Image src={imgSrc} layout="fill" objectFit="contain" className="bk-product-image" />
                           </div>
                         )
                       })}
-                      {/* <Image
-                    src={
-                    }
-                    layout="fill"
-                    objectFit="contain"
-                    className="bk-product-image"
-                  /> */}
-                      <img
-                        className="bk-product-image"
-                        src="https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp"
-                      />
                     </Carousel>
                   </CardBlock>
                 </div>

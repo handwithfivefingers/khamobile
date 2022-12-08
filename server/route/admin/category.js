@@ -1,6 +1,7 @@
 import express from 'express'
 import { upload } from '#middleware'
 import CategoryController from '#controller/admin/Category'
+import ProductCategoryController from '#controller/admin/ProductCategory'
 import { isRequiresValidated, validateCreateCategory } from '#server/validator/category'
 
 const router = express.Router()
@@ -27,6 +28,14 @@ router.post(
   createCategory,
 )
 
-router.get('/product_category', upload.none(), getProductCategory)
+router.get('/product_category', upload.none(), new ProductCategoryController().getCategory)
+
+router.get('/product_category/:_id', upload.none(), new ProductCategoryController().getCategoryById)
+
+router.post(
+  '/product_category/:_id',
+  upload.fields([{ name: 'image', maxCount: 1 }]),
+  new ProductCategoryController().updateCategory,
+)
 
 export default router

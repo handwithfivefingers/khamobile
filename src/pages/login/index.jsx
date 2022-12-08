@@ -10,8 +10,11 @@ import { Button, Form, Pagination, Schema } from 'rsuite'
 import AuthenticateService from 'service/authenticate/Authenticate.service'
 import styles from './styles.module.scss'
 export default function LoginPage() {
+  
   const router = useRouter()
+
   const formRef = useRef()
+
   const [form, setForm] = useState({
     username: '',
     password: '',

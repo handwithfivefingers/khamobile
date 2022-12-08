@@ -10,7 +10,7 @@ router.get('/product', new ProductController().getProduct)
 
 router.get('/product/:_id', new ProductController().getProductById)
 
-router.post('/product/create', upload.fields([{ name: 'img', maxCount: 10 }]), new ProductController().createProduct)
+router.post('/product/create', new ProductController().createProduct)
 
-router.post('/product/update', upload.fields([{ name: 'img', maxCount: 10 }]), new ProductController().updateProduct)
+router.post('/product/update', new ProductController().updateProduct)
 export default router

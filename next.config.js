@@ -5,6 +5,7 @@ const nextConfig = {
   reactStrictMode: true,
   swcMinify: true,
   images: {
+    formats: ['image/webp', 'image/gif'],
     domains: [
       'via.placeholder.com', //facebook
       'placeholder.com',

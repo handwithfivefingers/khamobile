@@ -4,7 +4,7 @@ import MinusIcon from '@rsuite/icons/Minus'
 import PlusIcon from '@rsuite/icons/Plus'
 import CardBlock from 'component/UI/Content/CardBlock'
 import Select from 'component/UI/Content/MutiSelect'
-import CustomUpload from 'component/UI/CustomUpload'
+import CustomUpload from 'component/UI/Upload/CustomUpload'
 import Textarea from 'component/UI/Editor'
 import JsonViewer from 'component/UI/JsonViewer'
 import {

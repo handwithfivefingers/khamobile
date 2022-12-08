@@ -79,7 +79,7 @@ export default function SingleCategory({ data }) {
                     return (
                       <div className="col-12 col-sm-6 col-md-6 col-lg-4 col-xl-3" key={item._id}>
                         <Card
-                          imgSrc={item.img?.[0]?.filename}
+                          imgSrc={item.image?.[0]?.src || ''}
                           title={item.title}
                           price={item.price}
                           underlinePrice={item?.underlinePrice || null}

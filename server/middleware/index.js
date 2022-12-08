@@ -44,24 +44,32 @@ export const TrackingApi = async (req, res, next) => {
   }
 }
 
+/**
+ *
+ * @param { string } url
+ * @returns { object } { filename, name }
+ */
 export const handleDownloadFile = async (url) => {
   try {
-    const name = url.split('/')?.reverse()?.[0]
+    console.log(url)
+
+    const file = url.substring(url.lastIndexOf('/') + 1)
+
+    const [name, fileType] = file.split('.')
 
     if (!name) throw new Error({ message: 'URL invalid' })
 
-    if (url.includes(`${process.env.API}/public`)) {
-      return { filename: name }
-    }
-    const filename = moment().format('YYYYMMDDHHmm') + '-' + name
+    const fileNameGenerate = moment().format('YYYYMMDDHHmmss') + '-' + name + '.' + fileType
 
-    const filePath = path.join(path.resolve(''), 'uploads', filename)
+    const filePath = path.join(path.resolve(''), 'uploads', fileNameGenerate)
+
+    // if (url.includes(`${process.env.API}/public`)) return { filename: name, name }
 
     const { data } = await axios.get(url, { responseType: 'stream' })
 
     data.pipe(fs.createWriteStream(filePath))
 
-    return { filename }
+    return { filename: fileNameGenerate, name }
   } catch (error) {
     throw error
   }
@@ -106,6 +114,7 @@ export const authenticating = async (req, res, next) => {
     })
   }
 }
+
 // export default {
 // 	upload,
 // 	TrackingApi,

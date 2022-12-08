@@ -11,11 +11,14 @@ import GlobalCategoryService from 'service/global/Category.service'
 import { useMessageStore } from 'src/store/messageStore'
 import styles from './styles.module.scss'
 
-const Card = (props) => (
-  <Panel {...props} bordered header={props.title}>
-    <Placeholder.Paragraph />
-  </Panel>
-)
+const Card = (props) => {
+  console.log(props.imgSrc)
+  return (
+    <Panel {...props} bordered header={props.title} style={{ backgroundImage: `url(${props.imgSrc})` }}>
+      <Placeholder.Paragraph />
+    </Panel>
+  )
+}
 export default function Category(props) {
   const [data, setData] = useState([])
   const [loading, setLoading] = useState(false)
@@ -62,8 +65,18 @@ export default function Category(props) {
 
               {data?.map((item, index) => {
                 return (
-                  <Col md={6} sm={12} style={{ margin: '6px 0' }} onClick={() => router.push(`/category/${item.slug}`)}>
-                    <Card title={item.name} />
+                  <Col
+                    key={[index, item._id]}
+                    md={6}
+                    sm={12}
+                    // style={{ margin: '6px 0' }}
+                    onClick={() => router.push(`/category/${item.slug}`)}
+                  >
+                    <Card
+                      title={item.name}
+                      className={styles.imageBg}
+                      imgSrc={item.image && `${process.env.API}${item.image?.src}`}
+                    />
                   </Col>
                 )
               })}

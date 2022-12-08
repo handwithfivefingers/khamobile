@@ -356,7 +356,7 @@ export default class ProductController {
         data: _prod,
       })
     } catch (error) {
-      console.log('getProduct', error)
+      console.log('getProductById', error)
       return res.status(400).json({
         error,
       })
@@ -365,18 +365,30 @@ export default class ProductController {
 
   getProduct = async (req, res) => {
     try {
-      let { price, createdAt, feature } = req.query
+      let { price, createdAt, feature, activePage, pageSize } = req.query
+
+      let pageS = pageSize || 10
+      let activeP = (activePage > 0 && activePage) || 1
       let _prod
+
       if (price || createdAt) {
-        _prod = await Product.find({}).sort([
-          ['price', price || 1],
-          ['createdAt', createdAt || 1],
-        ])
+        _prod = await Product.find({})
+          .sort([
+            ['price', price || 1],
+            ['createdAt', createdAt || 1],
+          ])
+          .skip(activeP * pageS - pageS)
+          .limit(pageS)
       } else {
         _prod = await Product.find({})
+          .skip(activeP * pageS - pageS)
+          .limit(pageS)
       }
+      const count = await Product.find({}).count()
 
       return res.status(200).json({
+        length: _prod.length,
+        total: count,
         data: _prod,
       })
     } catch (error) {

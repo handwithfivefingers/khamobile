@@ -55,25 +55,28 @@ export default function Product(props) {
 
   const [loading, setLoading] = useState(false)
 
+  const [filter, setFilter] = useState({})
+
   useEffect(() => {
     getProducts()
-  }, [])
+  }, [filter, activePage])
 
-  const getProducts = async (query = null) => {
+  const getProducts = async () => {
     try {
       setLoading(true)
+
       let params = {}
-      if (query) {
-        let [type, value] = query
-        params = {
-          [type]: value,
-        }
+      params = {
+        activePage,
+        pageSize: 16,
+        ...filter,
       }
 
       const resp = await GlobalProductService.getProduct(params)
-      setProduct(resp.data.data)
 
-      // console.log(resp.data.data)
+      // console.log(resp.data)
+
+      setProduct(resp.data)
     } catch (error) {
       console.log('getProducts error: ' + error)
     } finally {
@@ -126,29 +129,42 @@ export default function Product(props) {
                   <div className="col-6">
                     <div className={styles.sort}>
                       <label>Pricing: </label>
-                      <SelectPicker data={pricingFilter} style={{ width: 224 }} onChange={getProducts} />
+                      <SelectPicker
+                        data={pricingFilter}
+                        style={{ width: 224 }}
+                        onChange={(value) => {
+                          console.log(value)
+                          if (value) {
+                            let [type, val] = value
+                            setFilter({ ...filter, [type]: val })
+                          } else {
+                            setFilter(null)
+                          }
+                        }}
+                      />
                     </div>
                   </div>
 
                   {loading && renderSkeleton}
 
-                  {product?.map((prod) => {
-                    return (
-                      <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
-                        <div className="col-12 col-md-6 col-lg-4 col-xl-3">
-                          <Card
-                            imgSrc={prod.img?.[0]?.filename}
-                            title={prod.title}
-                            price={prod.price}
-                            underlinePrice={prod?.underlinePrice || null}
-                            type={prod.type}
-                            variable={prod.variable}
-                            hover
-                          />
-                        </div>
-                      </Link>
-                    )
-                  })}
+                  {!loading &&
+                    product?.data?.map((prod) => {
+                      return (
+                        <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
+                          <div className="col-12 col-md-6 col-lg-4 col-xl-3">
+                            <Card
+                              imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
+                              title={prod.title}
+                              price={prod.price}
+                              underlinePrice={prod?.underlinePrice || null}
+                              type={prod.type}
+                              variable={prod.variable}
+                              hover
+                            />
+                          </div>
+                        </Link>
+                      )
+                    })}
                 </div>
               </CardBlock>
               <div className={styles.pagi}>
@@ -158,8 +174,8 @@ export default function Product(props) {
                   next
                   first
                   size="sm"
-                  total={100}
-                  limit={10}
+                  total={product?.total}
+                  limit={16}
                   activePage={activePage}
                   onChangePage={(page) => setActivePage(page)}
                 />

@@ -18,11 +18,9 @@ const Products = () => {
     open: false,
     component: null,
   })
-  const nodeRef = useRef()
   useEffect(() => {
     changeTitle('Page Products')
     getProducts()
-    setHeight(DOMHelper.getHeight(nodeRef.current))
   }, [])
 
   const handleClose = () => setModal({ open: false, component: null })
@@ -38,60 +36,9 @@ const Products = () => {
 
   const onUpdate = async (formValue) => {
     try {
-      const form = new FormData()
-      // for (let key in formValue) {
-      //   if (key === 'img') {
-      //     for (let img of formValue[key]) {
-      //       if (img.src && typeof img.src === 'string') {
-      //         form.append(key, img.src)
-      //       } else if (img?.blobFile && img?.blobFile instanceof Blob) {
-      //         form.append(key, img?.blobFile)
-      //       }
-      //     }
-      //   } else if (key === 'variable') {
-      //     form.append(key, JSON.stringify(formValue?.[key]))
-      //   } else form.append(key, formValue?.[key])
-      // }
+     
+      await ProductService.updateProduct(formValue)
 
-      if (formValue.type === 'simple') {
-        form.append('_id', formValue._id)
-        form.append('title', formValue.title)
-        form.append('slug', formValue.slug)
-        form.append('description', formValue.description)
-        form.append('content', formValue.content)
-        form.append('price', formValue.price)
-        form.append('category', JSON.stringify(formValue.category))
-        form.append('type', formValue.type)
-
-        if (formValue.img?.length) {
-          for (let image of img) {
-            form.append('img', image)
-          }
-        }
-      } else if (formValue.type === 'variable') {
-        form.append('_id', formValue._id)
-        form.append('title', formValue.title)
-        form.append('slug', formValue.slug)
-        form.append('description', formValue.description)
-        form.append('content', formValue.content)
-        form.append('price', formValue.price)
-        form.append('category', JSON.stringify(formValue.category))
-        form.append('type', formValue.type)
-        form.append('primary', formValue.primary)
-
-        if (formValue.img?.length) {
-          for (let image of img) {
-            form.append('img', image)
-          }
-        }
-        if (formValue.variations?.length) {
-          form.append('variations', JSON.stringify(formValue.variations))
-        }
-      }
-
-      console.log(formValue)
-
-      await ProductService.updateProduct(form)
     } catch (error) {
       console.log('onUpdate error', error)
     }
@@ -158,6 +105,7 @@ const Products = () => {
       console.log('getProductById', error, error?.response?.data)
     }
   }
+
   const handleOpenProduct = async ({ _id, type }) => {
     let data = await getProductById({ _id, type })
     setModal({
@@ -165,10 +113,11 @@ const Products = () => {
       component: <ProductCreateModal data={data} onSubmit={onUpdate} />,
     })
   }
+
   return (
     <>
-      <Content className={'bg-w h-100'} ref={nodeRef}>
-        <Table height={height} data={product} onRowClick={handleOpenProduct}>
+      <Content className={'bg-w h-100'}>
+        <Table fillHeight data={product} onRowClick={handleOpenProduct}>
           <Column width={60} align="center" fixed>
             <HeaderCell>Id</HeaderCell>
             <Cell dataKey="_id" />

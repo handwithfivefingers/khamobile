@@ -13,7 +13,7 @@ export default {
 
   price: Number,
   primary: String,
-  
+
   slug: {
     type: String,
     required: true,
@@ -26,9 +26,10 @@ export default {
     },
   ],
 
-  img: [
+  image: [
     {
       src: String,
+      name: String,
     },
   ],
 

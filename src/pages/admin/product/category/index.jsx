@@ -1,10 +1,15 @@
+import ProductCategory from 'component/Modal/ProductCategory'
 import AdminLayout from 'component/UI/AdminLayout'
 import { useEffect, useState, useRef } from 'react'
-import { Avatar, Content, Table, DOMHelper } from 'rsuite'
+import { Avatar, Content, Table, DOMHelper, Modal } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import TOAST_STATUS from 'src/constant/message.constant'
 import { useCommonStore } from 'src/store/commonStore'
 import { useMessageStore } from 'src/store/messageStore'
+
+import { storage } from 'src/firebase'
+import { ref, getDownloadURL, uploadBytes } from 'firebase/storage'
+
 const { Column, HeaderCell, Cell } = Table
 
 const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
@@ -19,7 +24,7 @@ const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
           justifyContent: 'center',
         }}
       >
-        <Avatar src={`/public/${rowData[dataKey]}`} />
+        <Avatar src={`${process.env.API}${rowData[dataKey]?.src}`} />
       </div>
     </Cell>
   )
@@ -30,6 +35,11 @@ const Products = () => {
   const [data, setData] = useState()
 
   const [loading, setLoading] = useState(false)
+
+  const [modal, setModal] = useState({
+    open: false,
+    component: null,
+  })
 
   const nodeRef = useRef()
 
@@ -47,20 +57,57 @@ const Products = () => {
     }
   }
 
+  const getCategoryById = async (_id) => {
+    try {
+      let resp = await CategoryService.getProdCateById(_id)
+      return resp.data.data
+    } catch (error) {
+      console.log('getProductById', error)
+    }
+  }
+
+  const handleOpenCategory = async (rowData) => {
+    let data = await getCategoryById(rowData._id)
+    setModal({
+      open: true,
+      component: <ProductCategory data={data} onSubmit={onUpdate} />,
+    })
+  }
+  const handleClose = () => setModal({ ...modal, open: false })
+
+  const onUpdate = async (val) => {
+    try {
+      console.log('onUpdate', val)
+      let { name, slug, _id, image, description } = val
+
+      const formData = new FormData()
+      formData.append('name', name)
+      formData.append('slug', slug)
+      formData.append('description', description)
+
+      if (image && typeof image === 'string') {
+        formData.append('image', image)
+      } else if (image.blobFile instanceof Blob) {
+        formData.append('image', image.blobFile)
+      }
+
+      const resp = await CategoryService.updateProdCateById(_id, formData)
+
+      if (resp.status === 200) {
+        console.log('update success')
+      }
+    } catch (error) {
+      console.log('error updating category', error)
+    }
+  }
+
   return (
     <>
       <Content className={'bg-w h-100'} ref={nodeRef}>
-        <Table
-          data={data}
-          onRowClick={(rowData) => {
-            console.log(rowData)
-          }}
-          loading={loading}
-          height={DOMHelper.getHeight(nodeRef.current)}
-        >
+        <Table data={data} onRowClick={handleOpenCategory} loading={loading} fillHeight>
           <Column width={150}>
             <HeaderCell></HeaderCell>
-            <CustomRenderCell dataKey="img" />
+            <CustomRenderCell dataKey="image" />
           </Column>
 
           <Column width={150} flexGrow={1}>
@@ -90,6 +137,13 @@ const Products = () => {
           </Column>
         </Table>
       </Content>
+
+      <Modal size={'full'} open={modal.open} onClose={handleClose} keyboard={false} backdrop={'static'}>
+        <Modal.Header>
+          <Modal.Title>Create</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{modal?.component}</Modal.Body>
+      </Modal>
     </>
   )
 }

@@ -29,6 +29,7 @@ export default class ProductCategoryController {
             name: '$name',
             slug: '$slug',
             parent: '$parent',
+            image: '$image'
           },
         },
         {
@@ -66,7 +67,11 @@ export default class ProductCategoryController {
       ])
 
       _category = _category.filter((item) => item.child.length)
+
       console.log(_category)
+
+
+      
       return res.status(200).json({
         data: _category,
       })

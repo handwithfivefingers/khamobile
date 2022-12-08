@@ -2,7 +2,7 @@ import clsx from 'clsx';
 import AdminLayout from 'component/UI/AdminLayout';
 import Heading from 'component/UI/Content/Heading';
 import Select from 'component/UI/Content/MutiSelect';
-import CustomUpload from 'component/UI/CustomUpload';
+import CustomUpload from 'component/UI/Upload/CustomUpload';
 import Textarea from 'component/UI/Editor';
 import React, { useEffect, useState, useRef, forwardRef } from 'react';
 import { Avatar, Button, Content, Table, Modal, Placeholder, MultiCascader, Form, ButtonToolbar, Tree, Panel, Header } from 'rsuite';

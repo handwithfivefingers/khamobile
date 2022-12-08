@@ -2,7 +2,7 @@ import axios from 'configs/axiosInstance'
 
 const path = {
   category: '/admin/category',
-  prodCategory: '/admin/product_category'
+  prodCategory: '/admin/product_category',
 }
 
 const CategoryService = {
@@ -10,6 +10,8 @@ const CategoryService = {
   getCateById: async (id) => await axios.get(path.category + '/' + id),
   createCate: async (form) => await axios.post(path.category, form),
   getProdCate: async () => await axios.get(path.prodCategory),
+  getProdCateById: async (_id) => await axios.get(path.prodCategory + '/' + _id),
+  updateProdCateById: async (_id, params) => await axios.post(path.prodCategory + '/' + _id, params),
 }
 
 export default CategoryService

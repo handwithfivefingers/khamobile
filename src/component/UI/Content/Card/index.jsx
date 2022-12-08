@@ -7,6 +7,8 @@ import { useRouter } from 'next/router'
 import { Placeholder } from 'rsuite'
 import { Image } from '@rsuite/icons'
 import * as NextImage from 'next/image'
+import LOADER from 'assets/img/loader2.gif'
+
 export default function Card({
   imgSrc,
   shadow = true,
@@ -51,12 +53,29 @@ export default function Card({
     return <CardSkeleton classCard={classCard} />
   }
 
+  const myLoader = ({ src, width, quality }) => {
+    // return `https://example.com/${src}?w=${width}&q=${quality || 75}`
+    return LOADER.src
+  }
+
+  let img = imgSrc ? process.env.API + imgSrc : ''
+
   if (slug) {
     return (
       <div className={classCard} onClick={() => handleRouting(slug)}>
         <div className={clsx('card-img-top', styles.cardImg)}>
-          {imgSrc ? (
-            <NextImage src={imgSrc} className={styles.img} alt="..." layout="fill" />
+          {img ? (
+            <NextImage
+              src={img}
+              className={styles.img}
+              alt="..."
+              layout="fill"
+              blurDataURL={
+                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
+              }
+              placeholder="blur"
+              loading={'lazy'}
+            />
           ) : (
             <Image className={styles.img} />
           )}
@@ -78,8 +97,18 @@ export default function Card({
   return (
     <div className={classCard}>
       <div className={clsx('card-img-top', styles.cardImg)}>
-        {imgSrc ? (
-          <NextImage src={imgSrc} className={styles.img} alt="..." layout="fill" />
+        {img ? (
+          <NextImage
+            src={img}
+            className={styles.img}
+            alt="..."
+            layout="fill"
+            blurDataURL={
+              'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
+            }
+            placeholder="blur"
+            loading={'lazy'}
+          />
         ) : (
           <Image className={styles.img} />
         )}

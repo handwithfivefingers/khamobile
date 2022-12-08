@@ -82,17 +82,17 @@ const Catalog = (props) => {
               autoplay: true,
             }}
           >
-            {props.data?.child?.map((item) => {
+            {props.data?.child?.map((item, index) => {
               return (
                 <Card
-                  imgSrc={item.img?.[0]?.filename}
+                  imgSrc={item.image?.[0]?.src ? item.image?.[0]?.src : ''}
                   title={item.title}
                   price={item.price}
                   underlinePrice={item?.underlinePrice || null}
                   type={item.type}
                   variable={item.variable}
                   slug={`/product/${item.slug}`}
-                  key={item._id}
+                  key={[index, item._id]}
                 />
               )
             })}

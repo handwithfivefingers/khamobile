@@ -170,16 +170,6 @@ class CategoryController {
 
   getProductCategory = async (req, res) => {
     try {
-      //   let _cate = await ProductCategory.aggregate([
-      //     {
-      //       $lookup: {
-      //         from: 'products',
-      //         localField: '_id',
-      //         foreignField: 'category',
-      //         as: 'child',
-      //       },
-      //     },
-      //   ])
       let _cate = await ProductCategory.find()
 
       return res.status(200).json({

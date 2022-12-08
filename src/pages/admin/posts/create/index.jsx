@@ -1,6 +1,6 @@
 import AdminLayout from 'component/UI/AdminLayout';
 import Select from 'component/UI/Content/MutiSelect';
-import CustomUpload from 'component/UI/CustomUpload';
+import CustomUpload from 'component/UI/Upload/CustomUpload';
 import Textarea from 'component/UI/Editor';
 import { useRouter } from 'next/router';
 import React, { useEffect, useState } from 'react';

@@ -2,12 +2,13 @@ import axios from 'configs/axiosInstance'
 
 const path = {
   product: '/product',
+  products: '/products',
   product_id: '/product_id',
   variable: '/admin/product/variable',
 }
 
 const GlobalProductService = {
-  getProduct: async (params) => await axios.get(path.product + 's', { params }),
+  getProduct: async (params) => await axios.get(path.products, { params }),
 
   getProductById: async (_id, variantId) => await axios.post(path.product_id, { _id, variantId }),
 

@@ -7,10 +7,11 @@ import verAttr from '#uploads/mockup/versionAttribute' assert { type: 'json' }
 import { ProductAttribute, ProductAttributeTerm, Category, ProductCategory, Product, ProductVariant } from '#model'
 import { TYPE_VARIANT } from '#constant/type'
 import mongoose, { startSession } from 'mongoose'
+import { handleDownloadFile } from '#middleware'
 
 export default class ConvertController {
-  BASE_PATH = 'https://khamobile.vn/wp-json/wc/v3/products/1640/variations'
-  BASE_PATH = 'https://khamobile.vn/wp-json/wc/v3/products'
+  // BASE_PATH = 'https://khamobile.vn/wp-json/wc/v3/products/1640/variations'
+  // BASE_PATH = 'https://khamobile.vn/wp-json/wc/v3/products'
 
   getSKU = async (req, res) => {
     try {
@@ -185,6 +186,7 @@ export default class ConvertController {
       session.endSession()
     }
   }
+
   getVariantOfSKU = async (req, res) => {
     try {
       let data = SKU.map((item) => ({
@@ -280,6 +282,37 @@ export default class ConvertController {
         message: 'ok',
       })
     } catch (error) {
+      return res.status(400).json({ error })
+    }
+  }
+
+  getImageFromProduct = async (req, res) => {
+    try {
+      // let jsonFile = SKU
+      const data = SKU.map(({ name, slug, images }) => ({ image: images?.map(({ src }) => src), title: name, slug }))
+
+      for (let { image, slug, title } of data) {
+        let listImagesPromise = image.map(async (item) => await handleDownloadFile(item))
+        const result = await Promise.all(listImagesPromise)
+
+        const imagesDownload = result.map((item) => ({ src: `/public/${item.filename}`, name: item.name }))
+
+        await Product.updateOne(
+          { title, slug },
+          {
+            image: imagesDownload,
+          },
+          {
+            new: true,
+          },
+        )
+      }
+      return res.status(200).json({
+        data,
+        message: 'ok',
+      })
+    } catch (error) {
+      console.log('error', error)
       return res.status(400).json({ error })
     }
   }

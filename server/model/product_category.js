@@ -12,5 +12,8 @@ export default {
     ref: 'ProductCategory',
   },
   description: String,
-  image: String,
+  image: {
+    src: String,
+    name: String,
+  },
 }

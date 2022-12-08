@@ -4,8 +4,8 @@ import MinusIcon from '@rsuite/icons/Minus'
 import PlusIcon from '@rsuite/icons/Plus'
 import CardBlock from 'component/UI/Content/CardBlock'
 import Select from 'component/UI/Content/MutiSelect'
-import CustomUpload from 'component/UI/CustomUpload'
-import UploadLink from 'component/UI/LinkUpload'
+import CustomUpload from 'component/UI/Upload/CustomUpload'
+import UploadLink from 'component/UI/Upload/LinkUpload'
 import Textarea from 'component/UI/Editor'
 import JsonViewer from 'component/UI/JsonViewer'
 import _ from 'lodash'
@@ -130,7 +130,6 @@ const ProductCreateModal = (props) => {
   const router = useRouter()
 
   const [loading, setLoading] = useState(false)
-  const [toggleUpload, setToggleUpload] = useState(true)
 
   const [variable, setVariable] = useState([])
 
@@ -198,8 +197,6 @@ const ProductCreateModal = (props) => {
       setLoading(false)
     }
   }
-
-  console.log(toggleUpload)
 
   return (
     <>
@@ -277,26 +274,24 @@ const ProductCreateModal = (props) => {
           >
             <CardBlock>
               <Form.Group controlId="img">
-                <Form.ControlLabel>
-                  Ảnh bài post
-                  <Toggle
-                    className="px-2"
-                    checkedChildren="Uploader"
-                    unCheckedChildren="URL Link"
-                    checked={toggleUpload}
-                    onChange={(val) => {
-                      setToggleUpload(val)
-                      setForm({ ...form, img: [] })
-                    }}
-                  />
-                </Form.ControlLabel>
+                <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
 
-                {toggleUpload ? (
-                  <Form.Control rows={5} name="img" accepter={CustomUpload} action="#" group />
-                ) : (
-                  // <Form.Control rows={5} name="img" accepter={UploadByLink} action="#" group />
-                  <UploadLink onChange={(value, item) => setForm({ ...form, img: value })} />
-                )}
+                <Form.Control
+                  rows={5}
+                  name="upload"
+                  accepter={CustomUpload}
+                  group
+                  action={process.env.API + '/api/upload'}
+                  onSuccess={(resp, file) => {
+                    setForm({
+                      ...form,
+                      image: form.image
+                        ? [...form.image, { src: resp.url, name: file.name }]
+                        : [{ src: resp.url, name: file.name }],
+                    })
+                  }}
+                  value={form.image}
+                />
               </Form.Group>
             </CardBlock>
 
