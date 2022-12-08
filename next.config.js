@@ -3,6 +3,7 @@
 const nextConfig = {
   /* config options here */
   reactStrictMode: true,
+  swcMinify: true,
   images: {
     domains: [
       'via.placeholder.com', //facebook
@@ -32,8 +33,6 @@ const nextConfig = {
     API: process.env.API,
     GG_CLIENT_ID: process.env.GG_CLIENT_ID,
     GG_CLIENT_SECRET: process.env.GG_CLIENT_SECRET,
-    // GG_CLIENT_ID='499784443670-mtsk6fbmrhfu32oed349tvtduqj4snpl.apps.googleusercontent.com'
-    // GG_CLIENT_SECRET='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'
   },
 }
 

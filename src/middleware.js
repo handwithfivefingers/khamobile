@@ -5,9 +5,10 @@ export const config = {
   matcher: ['/admin/:path*', '/admin'],
 }
 export async function middleware(request) {
-  console.log('incoming middleware', request.nextUrl.pathname.includes('/admin'))
 
   if (request.nextUrl.pathname.includes('/admin')) {
+    // const resp = await axios.post('/authenticate')
+
     const requestHeaders = new Headers(request.headers)
 
     const path = `${process.env.API}/api/authenticate`
@@ -18,7 +19,7 @@ export async function middleware(request) {
       withCredentials: true,
       headers: requestHeaders,
     })
-    
+
     if (resp.status !== 401) {
       return NextResponse.next()
     } else return NextResponse.redirect(new URL('/login', request.url))

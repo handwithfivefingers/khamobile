@@ -198,7 +198,7 @@ const ProductCreateModal = (props) => {
       setLoading(false)
     }
   }
-  
+
   console.log(toggleUpload)
 
   return (
