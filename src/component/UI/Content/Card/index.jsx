@@ -55,18 +55,17 @@ export default function Card({
 
   const myLoader = ({ src, width, quality }) => {
     // return `https://example.com/${src}?w=${width}&q=${quality || 75}`
-    return LOADER.src
+    return process.env.API + src + `?w=${width}&q=${quality || 75}`
   }
 
-  let img = imgSrc ? process.env.API + imgSrc : ''
 
   if (slug) {
     return (
       <div className={classCard} onClick={() => handleRouting(slug)}>
         <div className={clsx('card-img-top', styles.cardImg)}>
-          {img ? (
+          {imgSrc ? (
             <NextImage
-              src={img}
+              src={imgSrc}
               className={styles.img}
               alt="..."
               layout="fill"
@@ -75,6 +74,7 @@ export default function Card({
               }
               placeholder="blur"
               loading={'lazy'}
+              loader={myLoader}
             />
           ) : (
             <Image className={styles.img} />
@@ -97,9 +97,9 @@ export default function Card({
   return (
     <div className={classCard}>
       <div className={clsx('card-img-top', styles.cardImg)}>
-        {img ? (
+        {imgSrc ? (
           <NextImage
-            src={img}
+            src={imgSrc}
             className={styles.img}
             alt="..."
             layout="fill"
@@ -108,6 +108,7 @@ export default function Card({
             }
             placeholder="blur"
             loading={'lazy'}
+            loader={myLoader}
           />
         ) : (
           <Image className={styles.img} />

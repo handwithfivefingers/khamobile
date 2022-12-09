@@ -252,7 +252,10 @@ export default function ProductDetail({ data, _relationProd }) {
     price: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
 
-  console.log(data)
+  const myLoader = ({ src, width, quality }) => {
+    return process.env.API + src + `?w=${width}&q=${quality || 75}`
+  }
+
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -269,10 +272,20 @@ export default function ProductDetail({ data, _relationProd }) {
                   <CardBlock>
                     <Carousel placement={'left'} shape={'bar'} className="custom-slider" autoplay>
                       {data?.image?.map((item) => {
-                        let imgSrc = process.env.API + item?.src
                         return (
                           <div style={{ position: 'relative' }}>
-                            <Image src={imgSrc} layout="fill" objectFit="contain" className="bk-product-image" />
+                            <Image
+                              src={item?.src}
+                              layout="fill"
+                              objectFit="contain"
+                              className="bk-product-image"
+                              loader={myLoader}
+                              loading="lazy"
+                              placeholder="blur"
+                              blurDataURL={
+                                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
+                              }
+                            />
                           </div>
                         )
                       })}

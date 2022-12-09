@@ -4,12 +4,12 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js \" \"npm run dev-next\" ",
-    "start": "concurrently  \"npm run build && npm run next-start --port=3004\" \"node --experimental-specifier-resolution=node --trace-deprecation app.js\"",
+    "start": "concurrently  \"npm run next-start\" \"node --experimental-specifier-resolution=node --trace-deprecation app.js\"",
     "dev-only": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js\"",
     "dev-next": "next dev --port=3002",
     "dev-start": "node --experimental-specifier-resolution=node app.js",
     "build": "next build",
-    "next-start": "next start"
+    "next-start": "next start --port=3004"
   },
   "imports": {
     "#server/*": "./server/*",
