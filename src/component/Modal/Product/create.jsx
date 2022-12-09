@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState, memo } from 'react'
 
-import MinusIcon from '@rsuite/icons/Minus'
-import PlusIcon from '@rsuite/icons/Plus'
 import CardBlock from 'component/UI/Content/CardBlock'
+import { KMEditor, KMInput, KMSelect } from 'component/UI/Content/KMInput'
 import Select from 'component/UI/Content/MutiSelect'
 import CustomUpload from 'component/UI/Upload/CustomUpload'
-import UploadLink from 'component/UI/Upload/LinkUpload'
-import Textarea from 'component/UI/Editor'
-import JsonViewer from 'component/UI/JsonViewer'
-import _ from 'lodash'
 import { useRouter } from 'next/router'
 import {
   Button,
@@ -17,18 +12,16 @@ import {
   Content,
   FlexboxGrid,
   Form,
-  IconButton,
-  SelectPicker,
-  InputNumber,
   Input,
-  Toggle,
-  TagInput,
+  InputNumber,
+  SelectPicker,
 } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import ProductService from 'service/admin/Product.service'
-import { useCommonStore } from 'src/store/commonStore'
-import { KMEditor, KMInput, KMSelect } from 'component/UI/Content/KMInput'
 import { COMMON_TEXT } from 'src/constant/text.constant'
+import { useCommonStore } from 'src/store/commonStore'
+import { useDevStore } from 'src/store/devStore'
+import GroupVariant from './GroupVariant'
 
 const CustomInput = (props) => {
   return <input name="title" className="rs-input" type="text" {...props} />
@@ -127,12 +120,10 @@ const VariantControl = (props) => {
 
 const ProductCreateModal = (props) => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
+  const changeData = useDevStore((state) => state.changeData)
   const router = useRouter()
-
   const [loading, setLoading] = useState(false)
-
   const [variable, setVariable] = useState([])
-
   const [form, setForm] = useState({
     price: 0,
     regular_price: 0,
@@ -151,6 +142,11 @@ const ProductCreateModal = (props) => {
     getCategory()
     changeTitle('Create Post')
   }, [])
+
+  useEffect(() => {
+    const timeout = setTimeout(() => changeData(form), 1000)
+    return () => clearTimeout(timeout)
+  }, [form])
 
   const getVariables = async () => {
     try {
@@ -202,8 +198,6 @@ const ProductCreateModal = (props) => {
     <>
       <Button onClick={() => router.back()}>Back</Button>
 
-      <JsonViewer data={form} />
-
       <Content className={'p-4'}>
         <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row gx-2 '} fluid>
           <div className="col-9 bg-w rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
@@ -219,18 +213,20 @@ const ProductCreateModal = (props) => {
 
             <CardBlock>
               <FlexboxGrid>
-                <Form.Group controlId="type" className="p-1">
-                  <Form.ControlLabel>Loại biến thể</Form.ControlLabel>
-                  <SelectPicker
-                    name="type"
-                    onChange={(value) => setForm({ ...form, type: value })}
-                    data={[
-                      { label: 'Đơn giản', value: 'simple' },
-                      { label: 'Nhiều biến thể', value: 'variable' },
-                    ]}
-                    value={form['type']}
-                  />
-                </Form.Group>
+                <FlexboxGrid.Item>
+                  <Form.Group controlId="type" className="p-1">
+                    <Form.ControlLabel>Loại biến thể</Form.ControlLabel>
+                    <SelectPicker
+                      name="type"
+                      onChange={(value) => setForm({ ...form, type: value })}
+                      data={[
+                        { label: 'Đơn giản', value: 'simple' },
+                        { label: 'Nhiều biến thể', value: 'variable' },
+                      ]}
+                      value={form['type']}
+                    />
+                  </Form.Group>
+                </FlexboxGrid.Item>
 
                 {form?.type === 'simple' && (
                   <>
@@ -241,8 +237,9 @@ const ProductCreateModal = (props) => {
                   </>
                 )}
                 {form?.type === 'variable' && (
-                  <>
-                    <Form.Group controlId="primary" className="p-1">
+                  <FlexboxGrid.Item style={{ width: '100%' }}>
+                    <GroupVariant attributes={variable} />
+                    {/* <Form.Group controlId="primary" className="p-1">
                       <Form.ControlLabel>Thuộc tính chính</Form.ControlLabel>
                       <Form.Control
                         name="primary"
@@ -257,8 +254,8 @@ const ProductCreateModal = (props) => {
                       <Form.Group controlId="variations">
                         <Form.Control name="variations" accepter={VariantControl} variable={variable} />
                       </Form.Group>
-                    </FlexboxGrid.Item>
-                  </>
+                    </FlexboxGrid.Item> */}
+                  </FlexboxGrid.Item>
                 )}
               </FlexboxGrid>
             </CardBlock>
@@ -326,4 +323,4 @@ const ProductCreateModal = (props) => {
   )
 }
 
-export default ProductCreateModal
+export default memo(ProductCreateModal)

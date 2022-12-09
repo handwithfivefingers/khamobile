@@ -1,15 +1,16 @@
 import React, { useEffect, useRef, useState } from 'react'
 import MyUploadAdapter from './UploadAdapter'
-import styles from './styles.module.scss'
+
 function CKeditor({ onChange, editorLoaded, name, value }) {
   const editorRef = useRef()
+
   const { CKEditor, ClassicEditor } = editorRef.current || {}
 
   useEffect(() => {
     if (!editorRef.current?.CKEditor && !editorRef.current?.ClassicEditor) {
       try {
         editorRef.current = {
-          CKEditor: require('@ckeditor/ckeditor5-react').CKEditor,
+          CKEditor: require('@ckeditor/ckeditor5-react')?.CKEditor,
           ClassicEditor: require('@ckeditor/ckeditor5-build-classic'),
         }
       } catch (error) {
@@ -27,7 +28,7 @@ function CKeditor({ onChange, editorLoaded, name, value }) {
         <CKEditor
           type=""
           name={name}
-          editor={ClassicEditor}
+          editor={editorRef.current?.ClassicEditor}
           config={{
             extraPlugins: [MyCustomUploadAdapterPlugin],
           }}
@@ -56,11 +57,7 @@ const Textarea = React.forwardRef((props, ref) => {
   useEffect(() => {
     setEditorLoaded(true)
   }, [])
-  return (
-    <>
-      <CKeditor ref={ref} name="description" editorLoaded={editorLoaded} {...props} />
-    </>
-  )
+  return <CKeditor ref={ref} name="description" editorLoaded={editorLoaded} {...props} />
 })
 
 export default Textarea

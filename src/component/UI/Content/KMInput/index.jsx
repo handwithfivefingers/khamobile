@@ -1,8 +1,11 @@
-import Textarea from 'component/UI/Editor'
 import { Form, Input, SelectPicker, InputGroup } from 'rsuite'
 import { forwardRef, useState } from 'react'
 import EyeIcon from '@rsuite/icons/legacy/Eye'
 import EyeSlashIcon from '@rsuite/icons/legacy/EyeSlash'
+
+import dynamic from 'next/dynamic'
+
+const Textarea = dynamic(() => import('component/UI/Editor'))
 
 const CustomInput = forwardRef((props, ref) => {
   return <Input style={props?.style} onChange={props?.onChange} ref={ref} {...props} />
@@ -29,13 +32,14 @@ const InputPassword = forwardRef((props, ref) => {
   }
   return (
     <>
-      <InputGroup inside >
-        <Input type={visible ? 'text' : 'password'} ref={ref} {...props}/>
+      <InputGroup inside>
+        <Input type={visible ? 'text' : 'password'} ref={ref} {...props} />
         <InputGroup.Button onClick={handleChange}>{visible ? <EyeIcon /> : <EyeSlashIcon />}</InputGroup.Button>
       </InputGroup>
     </>
   )
 })
+
 const KMInputPassword = ({ name, label, ...props }) => {
   return (
     <Form.Group controlId={name}>
@@ -44,6 +48,7 @@ const KMInputPassword = ({ name, label, ...props }) => {
     </Form.Group>
   )
 }
+
 const KMInput = ({ name, label, ...props }) => {
   return (
     <Form.Group controlId={name}>
@@ -62,6 +67,7 @@ const KMSelect = ({ name, label, ...props }) => {
   )
 }
 
+
 const KMEditor = ({ name, label, ...props }) => {
   return (
     <Form.Group controlId={name}>
@@ -70,5 +76,9 @@ const KMEditor = ({ name, label, ...props }) => {
     </Form.Group>
   )
 }
+
+
+
+
 
 export { KMInput, KMSelect, KMEditor, KMInputPassword }

@@ -5,6 +5,6 @@ const path = {
 }
 
 const GlobalOrderService = {
-  createOrderAnonymous: async (form) => await axios.post(path.orderAnonymous, { ...form, userType: 'anonymous' }),
+  createOrder: async (form) => await axios.post(path.orderAnonymous, { ...form }),
 }
 export default GlobalOrderService

@@ -335,7 +335,7 @@ export default class ProductController {
               title: '$title',
               variantId: '$variants._id',
               price: '$variants.price',
-              img: '$img',
+              image: { $first: '$image' },
             },
           },
         )
@@ -345,7 +345,7 @@ export default class ProductController {
             _id: '$_id',
             title: '$title',
             price: '$price',
-            img: '$img',
+            image: { $first: '$image' },
           },
         })
       }

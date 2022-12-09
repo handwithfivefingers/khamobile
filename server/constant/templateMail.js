@@ -1,0 +1,5 @@
+const TEMPLATE_MAIL = {
+  CREATE_ORDER: 4412982,
+}
+
+export default TEMPLATE_MAIL

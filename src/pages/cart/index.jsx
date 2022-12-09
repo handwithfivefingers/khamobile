@@ -90,9 +90,13 @@ export default function Cart(props) {
 
   const handleGetListItemPrice = async (item) => {
     try {
-      let groupItem = item.map((item) => getScreenData(item?._id, item?.variantId, item?.quantity))
-      let resp = await Promise.all(groupItem)
-      setData(resp)
+      if (item?.length) {
+        let groupItem = item?.map((item) => getScreenData(item?._id, item?.variantId, item?.quantity))
+        if (groupItem?.length) {
+          let resp = await Promise.all(groupItem)
+          setData(resp)
+        }
+      }
     } catch (error) {
       console.log('handleGetListItemPrice', error)
     }

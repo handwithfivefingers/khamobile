@@ -54,8 +54,6 @@ const ProductVariable = () => {
       let _variables = await ProductService.getVariables()
 
       setVariable(_variables.data.data)
-
-      toaster.push(<Message>{_variables.data.message}</Message>)
     } catch (error) {
       console.log('getVariables error', error)
     } finally {
@@ -67,16 +65,8 @@ const ProductVariable = () => {
 
   const handleSubmit = async (formValue) => {
     console.log(formValue)
-    
+
     await createVariable(formValue)
-
-    // const listPromise = formValue.groupVariable?.map((item) => {
-    //   createVariable(item)
-    // })
-
-    // await Promise.all(listPromise)
-
-    toaster.push(<Message>{'Created Bulk successfully '}</Message>)
   }
 
   const createVariable = async (item) => {

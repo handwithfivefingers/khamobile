@@ -1,4 +1,6 @@
+import PageHeader from 'component/UI/Content/PageHeader'
 import React from 'react'
+import { Placeholder } from 'rsuite'
 
 export default function Tragop() {
   return (

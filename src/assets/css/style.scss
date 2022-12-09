@@ -21,3 +21,29 @@ section {
   padding: 20px 0;
 }
 
+.dev {
+  position: fixed;
+  bottom: 50%;
+  right: 5px;
+  button {
+    background: var(--rs-blue-800);
+    &:active,
+    &:hover,
+    &:focus {
+      background: var(--rs-blue-500);
+    }
+  }
+  svg {
+    fill: var(--rs-primary-100);
+    animation: rotation 3s linear 0s infinite;
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

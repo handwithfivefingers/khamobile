@@ -1,14 +1,10 @@
 import ProductCategory from 'component/Modal/ProductCategory'
 import AdminLayout from 'component/UI/AdminLayout'
-import { useEffect, useState, useRef } from 'react'
-import { Avatar, Content, Table, DOMHelper, Modal } from 'rsuite'
+import { useEffect, useRef, useState } from 'react'
+import { Avatar, Content, Modal, Table } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
-import TOAST_STATUS from 'src/constant/message.constant'
 import { useCommonStore } from 'src/store/commonStore'
-import { useMessageStore } from 'src/store/messageStore'
 
-import { storage } from 'src/firebase'
-import { ref, getDownloadURL, uploadBytes } from 'firebase/storage'
 
 const { Column, HeaderCell, Cell } = Table
 

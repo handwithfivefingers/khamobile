@@ -1,19 +1,13 @@
 import clsx from 'clsx'
-import Card from 'component/UI/Content/Card'
-import CardBlock from 'component/UI/Content/CardBlock'
 import CardPost from 'component/UI/Content/CardPost'
-import Divider from 'component/UI/Content/Divider'
-import Heading from 'component/UI/Content/Heading'
 import PageHeader from 'component/UI/Content/PageHeader'
 import SidePost from 'component/UI/Content/SidePost'
 import CommonLayout from 'component/UI/Layout'
 import Link from 'next/link'
-import React, { useEffect } from 'react'
-import { useState } from 'react'
-import { Dropdown, Pagination, SelectPicker } from 'rsuite'
+import { useEffect, useState } from 'react'
+import { Pagination } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import PostService from 'service/global/Post.service'
-import TOAST_STATUS from 'src/constant/message.constant'
 import { useMessageStore } from 'src/store/messageStore'
 import styles from './styles.module.scss'
 
@@ -23,8 +17,6 @@ export default function Category(props) {
   const [posts, setPosts] = useState([])
 
   const [loading, setLoading] = useState(false)
-
-  const pushMessage = useMessageStore((state) => state.pushMessage)
 
   useEffect(() => {
     getCateData()
@@ -36,14 +28,9 @@ export default function Category(props) {
       setLoading(true)
       const res = await CategoryService.getCate({ type: 'post' })
       setData(res.data.data)
-      pushMessage({ message: res.data.message, type: 'success', status: TOAST_STATUS.PUSHED })
     } catch (error) {
       console.log('error', error?.response?.data?.message)
-      pushMessage({
-        message: error?.response?.data?.message || error?.message || 'Something was wrong',
-        type: 'error',
-        status: TOAST_STATUS.PUSHED,
-      })
+  
     } finally {
       setLoading(false)
     }
@@ -54,14 +41,8 @@ export default function Category(props) {
       setLoading(true)
       const res = await PostService.getPosts()
       setPosts(res.data.data)
-      pushMessage({ message: res.data.message, type: 'success', status: TOAST_STATUS.PUSHED })
     } catch (error) {
       console.log('error', error?.response?.data?.message)
-      pushMessage({
-        message: error?.response?.data?.message || error?.message || 'Something was wrong',
-        type: 'error',
-        status: TOAST_STATUS.PUSHED,
-      })
     } finally {
       setLoading(false)
     }

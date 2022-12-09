@@ -8,6 +8,6 @@ router.post('/login', new UserController().LoginUser)
 
 router.post('/register', new UserController().registerUser)
 
-router.post('/authenticate', authenticating, (req, res) => res.sendStatus(200))
+router.post('/authenticate', authenticating, new UserController().authenticateUser)
 
 export default router

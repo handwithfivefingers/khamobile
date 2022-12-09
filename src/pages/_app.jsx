@@ -1,43 +1,56 @@
-import Head from "next/head";
-import React from "react";
-import "../assets/css/style.scss";
-import "rsuite/dist/rsuite.min.css";
-import CommonLayout from "../component/UI/Layout";
-import { useMessageStore } from "src/store/messageStore";
-import { useEffect } from "react";
-import TOAST_STATUS from "../constant/message.constant";
-import { CustomProvider, Message, useToaster } from "rsuite";
-import Script from "next/script";
-
+import GearIcon from '@rsuite/icons/Gear'
+import JsonViewer from 'component/UI/JsonViewer'
+import Head from 'next/head'
+import Script from 'next/script'
+import { useEffect, useState } from 'react'
+import { Button, CustomProvider, Drawer, IconButton } from 'rsuite'
+import 'rsuite/dist/rsuite.min.css'
+import { useDevStore } from 'src/store/devStore'
+import '../assets/css/style.scss'
+import CommonLayout from '../component/UI/Layout'
+import AuthenticateService from 'service/authenticate/Authenticate.service'
+import { useAuthorizationStore } from 'src/store/authenticateStore'
 
 export default function MyApp({ Component, pageProps }) {
-  const Layout = Component.Layout || CommonLayout;
+  const Layout = Component.Layout || CommonLayout
 
-  const messageStore = useMessageStore((state) => state);
-
-  const toaster = useToaster();
-
-  const message = (
-    <Message showIcon type={messageStore?.type || "success"}>
-      {messageStore?.message}
-    </Message>
-  );
+  const data = useDevStore((state) => state.data)
+  const { authenticate, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
+  const [drawer, setDrawer] = useState({
+    open: false,
+  })
 
   useEffect(() => {
-    if (messageStore.status === TOAST_STATUS.PUSHED && messageStore.message) {
-      const key = toaster.push(message, { placement: "topCenter" });
-      setTimeout(() => {
-        messageStore.clearState();
-      }, 0);
+    authenticateUser()
+  }, [])
+
+  const authenticateUser = async () => {
+    try {
+      const resp = await AuthenticateService.isAuthenticate()
+      if (resp.status === 200) {
+        changeAuthenticateStatus({
+          authenticate: resp.data.authenticate,
+          user: resp.data.data,
+        })
+      }
+    } catch (error) {
+      console.log('authenticate failed', error)
+      changeAuthenticateStatus({
+        authenticate: false,
+        user: {},
+      })
     }
-  }, [messageStore]);
+  }
+
+  const handleDev = () => {
+    setDrawer({ open: true })
+  }
 
   return (
     <>
       <Head>
         <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" />
         <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
-        {/* <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" /> */}
       </Head>
       <CustomProvider>
         {Component.Admin ? (
@@ -49,7 +62,20 @@ export default function MyApp({ Component, pageProps }) {
             <Component {...pageProps} />
           </Layout>
         )}
+
+        <div className={'dev'}>
+          <IconButton onClick={handleDev} icon={<GearIcon spin style={{ fontSize: '2em' }} />} />
+        </div>
+
+        <Drawer open={drawer.open} placement="bottom">
+          <Drawer.Actions>
+            <Button onClick={() => setDrawer({ open: false })}>Cancel</Button>
+          </Drawer.Actions>
+          <Drawer.Body>
+            <JsonViewer data={data} />
+          </Drawer.Body>
+        </Drawer>
       </CustomProvider>
     </>
-  );
+  )
 }

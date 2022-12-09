@@ -1,6 +1,7 @@
-import React, { useState, forwardRef, useEffect } from 'react'
+import React, { useState, forwardRef, useEffect, memo } from 'react'
 import { Button, Uploader } from 'rsuite'
 import AvatarIcon from '@rsuite/icons/legacy/Avatar'
+import { isEqual } from 'lodash'
 function previewFile(file, callback) {
   const reader = new FileReader()
   reader.onloadend = () => {
@@ -9,75 +10,13 @@ function previewFile(file, callback) {
   reader.readAsDataURL(file)
 }
 
-// const CustomUpload = forwardRef((props, ref) => {
-//   const [uploading, setUploading] = useState(false)
-
-//   const [fileInfo, setFileInfo] = useState(null)
-
-//   const [fileList, setFileList] = useState([])
-
-//   useEffect(() => {
-//     if (props.group) {
-//       setFileList(props?.value?.map((item) => ({ ...item, url: item.src, name: item._id })))
-//     } else if (props.file) {
-//       if (props.file[0]) {
-//         if (props.file?.[0]?.blobFile) {
-//           previewFile(props.file?.[0]?.blobFile, (value) => {
-//             setFileInfo(value)
-//           })
-//         } else {
-//           setFileInfo(props.file[0]?.filename)
-//         }
-//       }
-//     }
-//   }, [props])
-
-//   return (
-//     <>
-//       {props?.group ? (
-//         <Uploader
-//           ref={ref}
-//           name="upload"
-//           {...props}
-//           listType="picture-text"
-//           fileList={fileList}
-//           renderFileInfo={(file, fileElement) => {
-//             return (
-//               <>
-//                 <span>File Name: {file.name || ''}</span>
-//                 <p>File URL: {file.url}</p>
-//               </>
-//             )
-//           }}
-//         />
-//       ) : (
-//         <Uploader
-//           ref={ref}
-//           fileListVisible={false}
-//           name="upload"
-//           {...props}
-//           onChange={(file) => {
-//             setFileList(file)
-//             console.log(file)
-//           }}
-//         >
-//           <button style={{ width: 150, height: 150 }}>
-//             {uploading && <Loader backdrop center />}
-//             {fileInfo ? <img src={fileInfo} width="100%" height="100%" /> : <AvatarIcon style={{ fontSize: 80 }} />}
-//           </button>
-//         </Uploader>
-//       )}
-//     </>
-//   )
-// })
-
 const UploadMutiple = forwardRef((props, ref) => {
   console.log(props.value)
   return (
     <Uploader
+      {...props}
       ref={ref}
       listType="picture-text"
-      {...props}
       defaultFileList={props?.value}
       renderThumbnail={(file, fileElement) => {
         if (file.src) {
@@ -143,4 +82,11 @@ const CustomUpload = forwardRef((props, ref) => {
   return <SingleUpload ref={ref} {...props} />
 })
 
-export default CustomUpload
+const isPropsEqual = (prev, current) => {
+  if (isEqual(prev.image, current.image) || isEqual(current.upload, prev.upload)) {
+    return true
+  }
+  return false
+}
+
+export default memo(CustomUpload, isPropsEqual)

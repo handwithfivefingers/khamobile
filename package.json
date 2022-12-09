@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js \" \"npm run dev-next\" ",
-    "start": "concurrently  \"node --experimental-specifier-resolution=node --trace-deprecation app.js\"",
+    "start": "concurrently  \"npm run build && npm run next-start --port=3004\" \"node --experimental-specifier-resolution=node --trace-deprecation app.js\"",
     "dev-only": "concurrently  \"nodemon --experimental-specifier-resolution=node --trace-deprecation app.js\"",
     "dev-next": "next dev --port=3002",
     "dev-start": "node --experimental-specifier-resolution=node app.js",
@@ -18,7 +18,8 @@
     "#route/*": "./server/route/*",
     "#model": "./server/model/index.js",
     "#constant/*": "./server/constant/*",
-    "#uploads/*": "./uploads/*"
+    "#uploads/*": "./uploads/*",
+    "#common/*": "./server/common/*"
   },
   "dependencies": {
     "@ckeditor/ckeditor5-basic-styles": "^35.3.0",
@@ -45,6 +46,7 @@
     "react-slick": "^0.29.0",
     "rsuite": "^5.21.0",
     "sass": "^1.55.0",
+    "sharp": "^0.31.2",
     "slick-carousel": "^1.8.1",
     "zustand": "^4.1.4"
   },

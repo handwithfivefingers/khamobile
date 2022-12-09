@@ -2,7 +2,6 @@ import AdminLayout from 'component/UI/AdminLayout';
 import { useEffect, useState } from 'react';
 import { Content, Table } from 'rsuite';
 import UserService from 'service/admin/User.service';
-import TOAST_STATUS from 'src/constant/message.constant';
 import { useCommonStore } from 'src/store/commonStore';
 import { useMessageStore } from 'src/store/messageStore';
 const { Column, HeaderCell, Cell } = Table;
@@ -23,10 +22,8 @@ const Users = () => {
 			setLoading(true);
 			const res = await UserService.getUser();
 			setData(res.data.data);
-			pushMessage({ message: 'Fetch user success', type: 'success', status: TOAST_STATUS.PUSHED });
 		} catch (error) {
 			console.log('error', error);
-			pushMessage({ message: 'Fetch user error', type: 'error', status: TOAST_STATUS.PUSHED });
 		} finally {
 			setLoading(false);
 		}

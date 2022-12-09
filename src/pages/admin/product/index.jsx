@@ -1,23 +1,27 @@
-import ProductCreateModal from 'component/Modal/Product/create'
 import AdminLayout from 'component/UI/AdminLayout'
-import { useRouter } from 'next/router'
-import { useEffect, useState, useRef } from 'react'
-import { Content, Table, Button, Modal, DOMHelper } from 'rsuite'
+import { useEffect, useState } from 'react'
+import { Button, Content, Modal, Table, useToaster, Message } from 'rsuite'
 import ProductService from 'service/admin/Product.service'
 import { useCommonStore } from 'src/store/commonStore'
+import dynamic from 'next/dynamic'
+
+const ProductCreateModal = dynamic(() => import('component/Modal/Product/create'))
 
 const { Column, HeaderCell, Cell } = Table
 
 const Products = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
 
-  const [height, setHeight] = useState(false)
-  const router = useRouter()
   const [product, setProduct] = useState([])
+  const [loading, setLoading] = useState(false)
+
   const [modal, setModal] = useState({
     open: false,
     component: null,
   })
+
+  const toaster = useToaster()
+
   useEffect(() => {
     changeTitle('Page Products')
     getProducts()
@@ -27,73 +31,59 @@ const Products = () => {
 
   const getProducts = async () => {
     try {
+      setLoading(true)
       const resp = await ProductService.getProduct()
       setProduct(resp.data.data)
     } catch (error) {
       console.log('getProducts error: ' + error)
+    } finally {
+      setLoading(false)
     }
   }
 
   const onUpdate = async (formValue) => {
     try {
-     
-      await ProductService.updateProduct(formValue)
-
+      setLoading(true)
+      const resp = await ProductService.updateProduct(formValue)
+      if (resp.status === 200) {
+        toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
+        handleClose()
+      }
     } catch (error) {
       console.log('onUpdate error', error)
+      toaster.push(
+        message(
+          'error',
+          error.response?.data?.message || error.message || 'Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên',
+        ),
+        { placement: 'topEnd' },
+      )
+      handleClose()
+    } finally {
+      setLoading(false)
     }
   }
 
   const onCreate = async (formValue) => {
     try {
-      const form = new FormData()
-
-      if (formValue.type === 'simple') {
-        form.append('_id', formValue._id)
-        form.append('title', formValue.title)
-        form.append('slug', formValue.slug)
-        form.append('description', formValue.description)
-        form.append('content', formValue.content)
-        form.append('price', formValue.price)
-        form.append('category', JSON.stringify(formValue.category))
-        form.append('type', formValue.type)
-        if (formValue.img?.length) {
-          for (let image of formValue.img) {
-            if (image?.blobFile && image?.blobFile instanceof Blob) {
-              form.append('img', image?.blobFile)
-            } else {
-              form.append('img', image)
-            }
-          }
-        }
-      } else if (formValue.type === 'variable') {
-        form.append('_id', formValue._id)
-        form.append('title', formValue.title)
-        form.append('slug', formValue.slug)
-        form.append('description', formValue.description)
-        form.append('content', formValue.content)
-        form.append('price', formValue.price)
-        form.append('category', JSON.stringify(formValue.category))
-        form.append('type', formValue.type)
-        form.append('primary', formValue.primary)
-
-        if (formValue.img?.length) {
-          for (let image of formValue.img) {
-            if (image?.blobFile && image?.blobFile instanceof Blob) {
-              form.append('img', image.blobFile)
-            } else {
-              form.append('img', image)
-            }
-          }
-        }
-        if (formValue.variations?.length) {
-          form.append('variations', JSON.stringify(formValue.variations))
-        }
+      setLoading(true)
+      const resp = await ProductService.createProduct(formValue)
+      if (resp.status === 200) {
+        toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
+        handleClose()
       }
-
-      await ProductService.createProduct(form)
     } catch (error) {
       console.log('onCreate error', error)
+      toaster.push(
+        message(
+          'error',
+          error.response?.data?.message || error.message || 'Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên',
+        ),
+        { placement: 'topEnd' },
+      )
+      handleClose()
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -114,10 +104,12 @@ const Products = () => {
     })
   }
 
+  const message = (type, header) => <Message showIcon type={type} header={header} closable />
+
   return (
     <>
       <Content className={'bg-w h-100'}>
-        <Table fillHeight data={product} onRowClick={handleOpenProduct}>
+        <Table fillHeight data={product} onRowClick={handleOpenProduct} loading={loading}>
           <Column width={60} align="center" fixed>
             <HeaderCell>Id</HeaderCell>
             <Cell dataKey="_id" />

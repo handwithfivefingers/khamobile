@@ -44,6 +44,7 @@
 import { User } from '#model'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
+import mongoose from 'mongoose'
 export default class UserController {
   registerUser = async (req, res) => {
     try {
@@ -228,5 +229,21 @@ export default class UserController {
       maxAge: 2 * 24 * hour,
       httpOnly: true,
     })
+  }
+
+  authenticateUser = async (req, res) => {
+    try {
+      let userId = req.id
+
+      const _user = await User.findOne({ _id: mongoose.Types.ObjectId(userId), delete_flag: 0 }).select(
+        '-hash_password -role -updatedAt -createdAt -delete_flag -__v',
+      )
+
+      if (!_user) throw new Error({ message: 'User not found' })
+
+      res.status(200).json({ authenticate: true, data: _user })
+    } catch (error) {
+      res.status(400).json({ authenticate: false, message: error?.message })
+    }
   }
 }

@@ -1,0 +1,29 @@
+.groupVariant {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  row-gap: 12px;
+  column-gap: 12px;
+  padding: 4px;
+  .sideVariant {
+    padding: 12px 0;
+  }
+
+  .contentVariant {
+    display: flex;
+    flex-direction: column;
+    .group {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      .selectAttr {
+        display: flex;
+        gap: 8px;
+      }
+      .contentAttr {
+        display: flex;
+        gap: 12px;
+        flex-direction: column;
+      }
+    }
+  }
+}

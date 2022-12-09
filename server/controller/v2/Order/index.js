@@ -1,10 +1,10 @@
-// const { Product, Category } = require('@model')
-// const { successHandler, errHandler } = require('@response')
-// const slugify = require('slugify')
 import { MESSAGE } from '#server/constant/message'
-import { ProductVariant, Product, ProductCategory, Order, User } from '#server/model'
+import { Order, User } from '#server/model'
 import _ from 'lodash'
 import mongoose from 'mongoose'
+import MailServer from '#controller/Service/MailServer'
+import { formatCurrency } from '#common/helper'
+import TEMPLATE_MAIL from '#constant/templateMail'
 export default class OrderController {
   createOrder = async (req, res) => {
     try {
@@ -61,11 +61,36 @@ export default class OrderController {
 
       await order.save()
 
+      const newProd = product?.map((_prod) => ({
+        title: _prod.title,
+        price: formatCurrency(_prod.price, { symbol: '' }),
+        image: {
+          src: `${process.env.API}${_prod.image.src}`,
+        },
+      }))
+
+      const mailObject = {
+        Subject: 'Tạo đơn hàng thành công',
+        Email: req.body.email,
+        Name: req.body.username,
+        TemplateID: TEMPLATE_MAIL.CREATE_ORDER,
+        Variables: {
+          firstName: req.body.firstName,
+          order_id: orderId,
+          product: newProd,
+        },
+      }
+
+      console.log(mailObject)
+
+      await new MailServer().sendMailOnly(mailObject)
+
       return res.status(200).json({
         message: 'Tạo đơn hàng thành công',
         orderId,
       })
     } catch (error) {
+      console.log('createOrder error', error)
       return res.status(400).json({
         message: 'Tạo đơn hàng thất bại',
       })

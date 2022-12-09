@@ -18,6 +18,7 @@ export default class MailServer {
       let user = await User.findOne({ email: req.body.email })
 
       console.log('sendMail', user)
+
       if (!user) throw { message: 'User not found' }
 
       const data = {
@@ -68,6 +69,38 @@ export default class MailServer {
       res.status(400).json({
         error,
       })
+    }
+  }
+
+  sendMailOnly = async ({ Subject, Variables, Email, Name, TemplateID }) => {
+    try {
+      const data = {
+        Messages: [
+          {
+            From: {
+              Email: 'khamobile.vn@gmail.com',
+              Name: 'Kha Mobile',
+            },
+            To: [
+              {
+                Email,
+                Name,
+              },
+            ],
+            Subject,
+            TemplateID,
+            TemplateLanguage: true,
+            Variables,
+          },
+        ],
+      }
+
+      const result = await this.mailjet.request(data)
+
+      return result.body
+    } catch (error) {
+      console.log('sendMailOnly error: ', error.response)
+      throw error.response
     }
   }
 }
