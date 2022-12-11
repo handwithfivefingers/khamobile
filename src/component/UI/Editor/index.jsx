@@ -1,7 +1,8 @@
+import clsx from 'clsx'
 import React, { useEffect, useRef, useState } from 'react'
 import MyUploadAdapter from './UploadAdapter'
-
-function CKeditor({ onChange, editorLoaded, name, value }) {
+import styles from './styles.module.scss'
+function CKeditor({ onChange, editorLoaded, name, value, className }) {
   const editorRef = useRef()
 
   const { CKEditor, ClassicEditor } = editorRef.current || {}

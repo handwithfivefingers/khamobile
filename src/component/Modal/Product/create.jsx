@@ -14,6 +14,7 @@ import {
   Form,
   Input,
   InputNumber,
+  Panel,
   SelectPicker,
 } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
@@ -22,7 +23,7 @@ import { COMMON_TEXT } from 'src/constant/text.constant'
 import { useCommonStore } from 'src/store/commonStore'
 import { useDevStore } from 'src/store/devStore'
 import GroupVariant from './GroupVariant'
-
+import styles from './styles.module.scss'
 const CustomInput = (props) => {
   return <input name="title" className="rs-input" type="text" {...props} />
 }
@@ -121,9 +122,10 @@ const VariantControl = (props) => {
 const ProductCreateModal = (props) => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const changeData = useDevStore((state) => state.changeData)
-  const router = useRouter()
   const [loading, setLoading] = useState(false)
+
   const [variable, setVariable] = useState([])
+
   const [form, setForm] = useState({
     price: 0,
     regular_price: 0,
@@ -134,6 +136,8 @@ const ProductCreateModal = (props) => {
     category: [],
     ...props?.data,
   })
+
+  const [attributes, setAttributes] = useState([])
 
   const [cate, setCate] = useState()
 
@@ -147,6 +151,13 @@ const ProductCreateModal = (props) => {
     const timeout = setTimeout(() => changeData(form), 1000)
     return () => clearTimeout(timeout)
   }, [form])
+
+  useEffect(() => {
+    setForm({
+      ...form,
+      attributes,
+    })
+  }, [attributes])
 
   const getVariables = async () => {
     try {
@@ -193,21 +204,15 @@ const ProductCreateModal = (props) => {
       setLoading(false)
     }
   }
-
   return (
     <>
-      <Button onClick={() => router.back()}>Back</Button>
-
       <Content className={'p-4'}>
         <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row gx-2 '} fluid>
           <div className="col-9 bg-w rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <CardBlock>
               <KMInput name="title" label="Tên sản phẩm" />
-
               <KMInput name="slug" label="Đường dẫn" />
-
               <KMEditor name="content" label="Nội dung" />
-
               <KMEditor name="description" label="Mô tả" />
             </CardBlock>
 
@@ -238,7 +243,10 @@ const ProductCreateModal = (props) => {
                 )}
                 {form?.type === 'variable' && (
                   <FlexboxGrid.Item style={{ width: '100%' }}>
-                    <GroupVariant attributes={variable} />
+                    <GroupVariant
+                      variableData={variable}
+                      attribute={{ attributes, setAttributes: (value) => setAttributes(value) }}
+                    />
                     {/* <Form.Group controlId="primary" className="p-1">
                       <Form.ControlLabel>Thuộc tính chính</Form.ControlLabel>
                       <Form.Control

@@ -1,21 +1,14 @@
-import React, { forwardRef, useRef, useState, useMemo } from 'react'
-import {
-  Button,
-  ButtonGroup,
-  FlexboxGrid,
-  Panel,
-  Placeholder,
-  Radio,
-  RadioGroup,
-  SelectPicker,
-  Stack,
-  TagInput,
-  TagPicker,
-} from 'rsuite'
+import { useMemo, useRef, useState } from 'react'
+import { Radio, RadioGroup } from 'rsuite'
+import AttributeGroup from './AttributeGroup'
 import styles from './styles.module.scss'
+import VariantGroup from './VariantGroup'
+
 export default function GroupVariant(props) {
   const [sideActiveKey, setSideActiveKey] = useState(1)
+
   const variantRef = useRef()
+
   const renderBySideActiveKey = useMemo(() => {
     let html = null
 
@@ -24,7 +17,7 @@ export default function GroupVariant(props) {
         html = <AttributeGroup {...props} ref={variantRef} />
         break
       case 2:
-        html = <></>
+        html = <VariantGroup {...props} ref={variantRef} />
         break
       case 3:
         break
@@ -33,7 +26,7 @@ export default function GroupVariant(props) {
     }
 
     return html
-  }, [sideActiveKey])
+  }, [sideActiveKey, props?.attribute])
 
   return (
     <div className={styles.groupVariant}>
@@ -53,82 +46,3 @@ export default function GroupVariant(props) {
     </div>
   )
 }
-
-const AttributeGroup = forwardRef((props, ref) => {
-  const { attributes } = props
-
-  const [attr, setAttr] = useState()
-
-  const [listAttr, setListAttr] = useState([])
-
-  const options = useMemo(() => {
-    let opts = []
-
-    if (attributes?.length) {
-      opts = attributes.map(({ _id, item }) => ({
-        label: _id,
-        value: _id,
-      }))
-    }
-    return opts
-  }, [attributes, listAttr])
-
-  const handleAddAttribute = () => {
-    const nextListAttr = [...listAttr]
-
-    let child = attributes.find((_item) => _item._id === attr)
-
-    nextListAttr.push({ name: attr, child: child?.item || [] })
-
-    setListAttr(nextListAttr)
-  }
-
-  const renderAccordion = (item, position) => {
-    let html = null
-    console.log('renderAccordion', item)
-    html = (
-      <Panel header={item.name} collapsible bordered className={styles.contentItem}>
-        <Stack spacing={12}>
-          <span>Tên:</span>
-          <span>{item.name}</span>
-        </Stack>
-        <Stack spacing={12}>
-          <span>Giá trị:</span>
-          <Stack.Item grow={1}>
-            <TagPicker
-              creatable
-              trigger={['Enter', 'Space', 'Comma']}
-              placeholder="Enter, Space, Comma"
-                data={item.child?.map((_item) => ({ label: _item.name, value: _item.name }))}
-              style={{ width: '100%', flex: 1 }}
-              onCreate={(value, item) => {
-                console.log(value, item)
-              }}
-            />
-          </Stack.Item>
-        </Stack>
-      </Panel>
-    )
-    return html
-  }
-  return (
-    <div className={styles.group}>
-      <div className={styles.selectAttr}>
-        <SelectPicker
-          data={options}
-          onSelect={(value) => setAttr(value)}
-          disabledItemValues={listAttr?.map((item) => item.name)}
-        />
-
-        <Button
-          className="px-4 "
-          style={{ color: 'var(--rs-primary-100)', background: 'var(--rs-blue-800)' }}
-          onClick={handleAddAttribute}
-        >
-          Thêm
-        </Button>
-      </div>
-      <div className={styles.contentAttr}>{listAttr.map((_item, index) => renderAccordion(_item, index))}</div>
-    </div>
-  )
-})

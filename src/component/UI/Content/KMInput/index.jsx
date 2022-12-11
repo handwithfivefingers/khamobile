@@ -1,9 +1,10 @@
 import { Form, Input, SelectPicker, InputGroup } from 'rsuite'
-import { forwardRef, useState } from 'react'
+import { forwardRef, useRef, useState } from 'react'
 import EyeIcon from '@rsuite/icons/legacy/Eye'
 import EyeSlashIcon from '@rsuite/icons/legacy/EyeSlash'
 
 import dynamic from 'next/dynamic'
+import clsx from 'clsx'
 
 const Textarea = dynamic(() => import('component/UI/Editor'))
 
@@ -67,7 +68,6 @@ const KMSelect = ({ name, label, ...props }) => {
   )
 }
 
-
 const KMEditor = ({ name, label, ...props }) => {
   return (
     <Form.Group controlId={name}>
@@ -76,9 +76,5 @@ const KMEditor = ({ name, label, ...props }) => {
     </Form.Group>
   )
 }
-
-
-
-
 
 export { KMInput, KMSelect, KMEditor, KMInputPassword }

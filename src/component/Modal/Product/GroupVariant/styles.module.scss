@@ -11,19 +11,5 @@
   .contentVariant {
     display: flex;
     flex-direction: column;
-    .group {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      .selectAttr {
-        display: flex;
-        gap: 8px;
-      }
-      .contentAttr {
-        display: flex;
-        gap: 12px;
-        flex-direction: column;
-      }
-    }
   }
 }
