@@ -12,6 +12,7 @@ export default {
   content: String,
 
   price: Number,
+
   primary: String,
 
   slug: {
@@ -44,6 +45,13 @@ export default {
     enum: [TYPE_VARIANT.SIMPLE, TYPE_VARIANT.VARIANT],
     default: TYPE_VARIANT.SIMPLE,
   },
+
+  attributes: [
+    {
+      name: String,
+      value: Array,
+    },
+  ],
 
   reviews: [
     {

@@ -68,6 +68,7 @@ export default class ProductController {
               'attr.stock_status': '$variations.stock_status',
               'attr.attributes': '$variations.attributes',
               'attr.parentId': '$variations.parentId',
+              attributes: '$attributes',
             },
           },
           {
@@ -82,6 +83,7 @@ export default class ProductController {
                 type: '$type',
                 primary: '$primary',
                 image: '$image',
+                attributes: '$attributes',
               },
               variations: {
                 $push: {
@@ -107,6 +109,7 @@ export default class ProductController {
               primary: '$_id.primary',
               variations: '$variations',
               image: '$_id.image',
+              attributes: '$_id.attributes',
             },
           },
         ])
@@ -269,7 +272,6 @@ export default class ProductController {
 
   updateProduct = async (req, res) => {
     try {
-      
       console.log(req.body)
 
       if (!req.body._id) throw { message: 'Product doesnt exists' }

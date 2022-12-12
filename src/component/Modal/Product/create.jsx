@@ -137,8 +137,6 @@ const ProductCreateModal = (props) => {
     ...props?.data,
   })
 
-  const [attributes, setAttributes] = useState([])
-
   const [cate, setCate] = useState()
 
   useEffect(() => {
@@ -151,13 +149,6 @@ const ProductCreateModal = (props) => {
     const timeout = setTimeout(() => changeData(form), 1000)
     return () => clearTimeout(timeout)
   }, [form])
-
-  useEffect(() => {
-    setForm({
-      ...form,
-      attributes,
-    })
-  }, [attributes])
 
   const getVariables = async () => {
     try {
@@ -204,6 +195,13 @@ const ProductCreateModal = (props) => {
       setLoading(false)
     }
   }
+
+  const handleAttributes = (val) => {
+    setForm({
+      ...form,
+      attributes: val,
+    })
+  }
   return (
     <>
       <Content className={'p-4'}>
@@ -245,7 +243,11 @@ const ProductCreateModal = (props) => {
                   <FlexboxGrid.Item style={{ width: '100%' }}>
                     <GroupVariant
                       variableData={variable}
-                      attribute={{ attributes, setAttributes: (value) => setAttributes(value) }}
+                      attribute={{
+                        attributes: form?.attributes || [],
+                        setAttributes: (value) => handleAttributes(value),
+                      }}
+                      variations={form.variations || []}
                     />
                     {/* <Form.Group controlId="primary" className="p-1">
                       <Form.ControlLabel>Thuộc tính chính</Form.ControlLabel>

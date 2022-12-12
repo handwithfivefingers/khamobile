@@ -1,4 +1,4 @@
-import React, { forwardRef, useRef, useState, useMemo, useCallback } from 'react'
+import React, { forwardRef, useRef, useState, useMemo, useCallback, useEffect } from 'react'
 import {
   Button,
   ButtonGroup,
@@ -13,12 +13,13 @@ import {
   TagInput,
   TagPicker,
   Input,
+  InputNumber,
+  Checkbox,
 } from 'rsuite'
 import styles from './styles.module.scss'
 
-const VariantGroup = forwardRef(({ variableData, attribute, ...props }, ref) => {
+const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props }, ref) => {
   const { attributes, setAttributes } = attribute
-  // const [typeVariant, setTypeVariant] = useState()
 
   const [_trigger, setTrigger] = useState(false)
   const groupVariantRef = useRef([])
@@ -40,6 +41,13 @@ const VariantGroup = forwardRef(({ variableData, attribute, ...props }, ref) => 
     ]
   }, [])
 
+  useEffect(() => {
+    if (variations?.length) {
+      groupVariantRef.current = variations
+      setTrigger(!_trigger)
+    }
+  }, [variations])
+
   const handleAddVariant = () => {
     let nextState = [...groupVariantRef.current]
     switch (typeRef.current) {
@@ -49,13 +57,17 @@ const VariantGroup = forwardRef(({ variableData, attribute, ...props }, ref) => 
         for (let { name, value } of attributes) {
           obj[name] = ''
         }
-        nextState.push(obj)
+        nextState.push({ attributes: obj })
+        console.log('nextState 1 ', nextState)
+
         groupVariantRef.current = nextState
 
         break
       case 2: // MutiItem
         const res = loopToLoop(attributes)
         nextState = [...nextState, ...res]
+        console.log('nextState 2', nextState)
+
         groupVariantRef.current = nextState
         break
       case 3: // Clear all variants
@@ -83,7 +95,14 @@ const VariantGroup = forwardRef(({ variableData, attribute, ...props }, ref) => 
     // console.log('i and obj: ', i, obj)
     // // console.log('data length', i, data.length)
     if (i >= data.length) {
-      return result.push(obj)
+      return result.push({
+        attributes: obj,
+        price,
+        regular_price,
+        stock_status: 'instock',
+        purchasable: true,
+        _id: null,
+      })
     } else {
       const nextData = data[i]
       if (nextData?.value) {
@@ -121,12 +140,56 @@ const VariantGroup = forwardRef(({ variableData, attribute, ...props }, ref) => 
 
   const renderVariant = (_, position) => {
     const item = groupVariantRef.current[position]
+    if (!item) return
+
+    const { _id, attributes: attributesItem, ...restItem } = item
     let html = null
+    console.log('groupVariantRef.current', groupVariantRef.current)
     html = (
-      <Panel collapsible header={`Biến thể ${position + 1}`} bordered key={[position, item]}>
+      <Panel
+        collapsible
+        header={
+          <Stack justifyContent="space-between">
+            <span>
+              {Object.keys(attributesItem)
+                .map((key) => attributesItem[key])
+                ?.join(' - ')}
+            </span>
+            <ButtonGroup className="pe-4">
+              <Checkbox className={styles.selectItem} checked={restItem?.purchasable} value={true}>
+                Bật
+              </Checkbox>
+              <Checkbox
+                className={styles.selectItem}
+                checked={restItem?.stock_status === 'instock'}
+                defaultValue={restItem?.stock_status}
+                onChange={(value, checked) => console.log(value, checked)}
+              >
+                Còn hàng
+              </Checkbox>
+            </ButtonGroup>
+          </Stack>
+        }
+        bordered
+        key={[position, attributesItem]}
+      >
         <div className={styles.groupItem}>
-          {Object.keys(item).map((key) => (
-            <Select attribute={attribute} position={position} name={key} ref={groupVariantRef} />
+          <Form.Group controlId={['price', position]}>
+            <Form.ControlLabel>Giá tiền</Form.ControlLabel>
+            <PInput position={position} value={restItem?.price} name={'price'} ref={groupVariantRef} />
+          </Form.Group>
+
+         <Form.Group controlId={['regular_price', position]}>
+            <Form.ControlLabel>Giá gạch</Form.ControlLabel>
+            <PInput position={position} value={restItem?.regular_price} name={'regular_price'} ref={groupVariantRef} />
+          </Form.Group>
+          
+
+          {Object.keys(attributesItem).map((key) => (
+            <Form.Group controlId={[key, position]}>
+              <Form.ControlLabel>{key}</Form.ControlLabel>
+              <Select attributes={attributes} position={position} name={key} ref={groupVariantRef} />
+            </Form.Group>
           ))}
         </div>
       </Panel>
@@ -134,12 +197,12 @@ const VariantGroup = forwardRef(({ variableData, attribute, ...props }, ref) => 
     return html
   }
 
-  const getVariant = () => groupVariantRef.current?.map((_item, index) => renderVariant(_item, index))
+  const getVariant = () => groupVariantRef.current?.map((_, index) => renderVariant(_, index))
 
+  console.log(variations)
   return (
     <div className={styles.group}>
       <div className={styles.selectAttr}>
-        
         <VariantTypeSelection options={options} ref={typeRef} />
 
         <Button
@@ -166,16 +229,15 @@ const VariantTypeSelection = forwardRef(({ options }, ref) => {
   return <SelectPicker data={options} onSelect={handleSelect} />
 })
 
-const Select = forwardRef(({ attribute, name, position, ...props }, ref) => {
+const Select = forwardRef(({ attributes, name, position, ...props }, ref) => {
   const [_render, setRender] = useState(false)
-  const { attributes } = attribute
 
   const item = ref.current[position]
 
   const optiosnMemoiz = (selectOptions) => selectOptions?.value?.map((_val) => ({ label: _val, value: _val }))
 
   const handleSelect = (value) => {
-    item[name] = value
+    item.attributes[name] = value
     setRender(!_render)
   }
 
@@ -186,10 +248,24 @@ const Select = forwardRef(({ attribute, name, position, ...props }, ref) => {
       data={optiosnMemoiz(optionTarget)}
       placeholder={name}
       className={styles.selectItem}
-      value={item[name] || ''}
+      value={item.attributes[name] || ''}
       onSelect={handleSelect}
     />
   )
+})
+
+const PInput = forwardRef(({ name, position, value, ...props }, ref) => {
+  const [_render, setRender] = useState(false)
+
+  const item = ref.current[position]
+
+  const handleChange = (value) => {
+    item[name] = value
+    setRender(!_render)
+  }
+  console.log(ref.current[position])
+
+  return <InputNumber placeholder={name} className={styles.selectItem} defaultValue={value || ''} onChange={handleChange} />
 })
 
 export default VariantGroup

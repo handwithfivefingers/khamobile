@@ -17,9 +17,11 @@ import {
 import styles from './styles.module.scss'
 
 const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) => {
+
   const { attributes, setAttributes } = attribute
-  const [attr, setAttr] = useState()
   const [groupAttr, setGroupAttr] = useState([])
+
+  const attributesRef = useRef()
 
   useEffect(() => {
     if (attributes?.length) {
@@ -31,10 +33,9 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
           nextState.push({ name, child: item?.item })
         }
       }
-
       setGroupAttr(nextState)
     }
-  }, [attributes])
+  }, [attributes, variableData])
 
   const options = useMemo(() => {
     let opts = []
@@ -49,7 +50,8 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
   }, [variableData, attributes])
 
   const handleAddAttribute = () => {
-    const [attributeName, child] = attr
+    if (!attributesRef.current) return
+    const [attributeName, child] = attributesRef.current
 
     const nextState = [...groupAttr]
 
@@ -59,10 +61,13 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
       nextState[index] = { name: attributeName, child }
     } else {
       nextState.push({ name: attributeName, child })
+      const newProps = [...attributes]
+      newProps.push({ name: attributeName, value: [] })
+      setAttributes(newProps)
     }
 
+    attributesRef.current = null
     setGroupAttr(nextState)
-    // console.log('handleAddAttribute', attributeName, child)
   }
 
   const renderAccordion = ({ name, child }, position) => {
@@ -102,15 +107,10 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
     return html
   }
 
-  // console.log(groupAttr, attributes, variableData)
   return (
     <div className={styles.group}>
       <div className={styles.selectAttr}>
-        <SelectPicker
-          data={options}
-          onSelect={(value) => setAttr(value)}
-          disabledItemValues={groupAttr?.map((item) => [item.name, item.child])}
-        />
+        <AttributeSelection ref={attributesRef} options={options} groupAttr={groupAttr} />
 
         <Button
           className="px-4 "
@@ -124,5 +124,44 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
     </div>
   )
 })
+
+const AttributeSelection = forwardRef(({ options, groupAttr }, ref) => {
+  const [_render, setRender] = useState(false)
+
+  const handleSelect = (value) => {
+    ref.current = value
+    setRender(!_render)
+  }
+
+  return (
+    <SelectPicker
+      data={options}
+      onSelect={handleSelect}
+      disabledItemValues={groupAttr?.map((item) => [item.name, item.child])}
+    />
+  )
+})
+
+// const AttributeSelect = forwardRef(({ options, groupAttr }, ref) => {
+//   return (
+//     <TagPicker
+//       trigger={['Enter', 'Space', 'Comma']}
+//       placeholder="Enter, Space, Comma"
+//       style={{ width: '100%', flex: 1 }}
+//       data={child?.map((_item) => ({ label: _item.name, value: _item.name }))}
+//       onChange={(value) => {
+//         const nextState = [...attributes]
+//         let index = nextState.findIndex((item) => item.name === name)
+//         if (index !== -1) {
+//           nextState[index] = { name, value }
+//         } else {
+//           nextState.push({ name, value })
+//         }
+//         setAttributes(nextState)
+//       }}
+//       value={attributes[position]?.value}
+//     />
+//   )
+// })
 
 export default AttributeGroup
