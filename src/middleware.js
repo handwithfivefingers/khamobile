@@ -19,10 +19,14 @@ export async function middleware(request) {
     headers: requestHeaders,
   })
 
-  // const resp = await axios.post('/api/authenticate')
-  console.log('middleware ---> ', resp)
-  if (resp.status === 200) {
+  const data = await resp.json()
+
+  console.log('middleware ---> ', data)
+
+  if (data.authenticate) {
     return NextResponse.next()
-  } else return NextResponse.redirect(new URL('/login', request.url))
+  }
+
+  return NextResponse.redirect(new URL('/login', request.url))
   // }
 }
