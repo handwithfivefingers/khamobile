@@ -9,8 +9,9 @@ class ConfigDatabase {
   }
   connectDB = async () => {
     try {
-      const db = await mongoose.connect(process.env.DATABASE_URL, this.mongoseOptions)
+      mongoose.set('strictQuery', true)
 
+      const db = await mongoose.connect(process.env.DATABASE_URL, this.mongoseOptions)
       if (db.connections) {
         console.log('Database Loaded')
       }

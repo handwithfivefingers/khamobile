@@ -29,7 +29,7 @@ export default function KMSidebar() {
 					</div>
 				</Link>
 			</Sidenav.Header>
-			<Sidenav expanded={expand} defaultOpenKeys={['3']} appearance='subtle'>
+			<Sidenav expanded={expand} defaultOpenKeys={['3']} appearance='subtle' className={'position-sticky top-0'}>
 				<Sidenav.Body>
 					<Nav>
 						<Link href={'/admin'} passHref>

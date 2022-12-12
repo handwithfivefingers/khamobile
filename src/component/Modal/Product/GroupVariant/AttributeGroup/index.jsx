@@ -1,18 +1,7 @@
-import React, { forwardRef, useRef, useState, useMemo, useEffect } from 'react'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import {
-  Button,
-  ButtonGroup,
-  FlexboxGrid,
-  Form,
-  Panel,
-  Placeholder,
-  Radio,
-  RadioGroup,
-  SelectPicker,
-  Stack,
-  TagInput,
-  TagPicker,
-  Input,
+  Button, Input, Panel, SelectPicker,
+  Stack, TagPicker
 } from 'rsuite'
 import styles from './styles.module.scss'
 
@@ -142,26 +131,5 @@ const AttributeSelection = forwardRef(({ options, groupAttr }, ref) => {
   )
 })
 
-// const AttributeSelect = forwardRef(({ options, groupAttr }, ref) => {
-//   return (
-//     <TagPicker
-//       trigger={['Enter', 'Space', 'Comma']}
-//       placeholder="Enter, Space, Comma"
-//       style={{ width: '100%', flex: 1 }}
-//       data={child?.map((_item) => ({ label: _item.name, value: _item.name }))}
-//       onChange={(value) => {
-//         const nextState = [...attributes]
-//         let index = nextState.findIndex((item) => item.name === name)
-//         if (index !== -1) {
-//           nextState[index] = { name, value }
-//         } else {
-//           nextState.push({ name, value })
-//         }
-//         setAttributes(nextState)
-//       }}
-//       value={attributes[position]?.value}
-//     />
-//   )
-// })
 
 export default AttributeGroup

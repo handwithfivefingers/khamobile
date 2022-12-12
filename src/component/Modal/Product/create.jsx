@@ -1,4 +1,4 @@
-import { useEffect, useState, memo } from 'react'
+import { useEffect, useState, memo, useRef } from 'react'
 
 import CardBlock from 'component/UI/Content/CardBlock'
 import { KMEditor, KMInput, KMPrice, KMSelect } from 'component/UI/Content/KMInput'
@@ -137,6 +137,17 @@ const ProductCreateModal = (props) => {
     ...props?.data,
   })
 
+  const formDataRef = useRef({
+    price: 0,
+    regular_price: 0,
+    purchasable: true,
+    stock_status: true,
+    parentId: '',
+    variations: [],
+    category: [],
+    ...props?.data,
+  })
+
   const [cate, setCate] = useState()
 
   useEffect(() => {
@@ -201,12 +212,27 @@ const ProductCreateModal = (props) => {
       ...form,
       attributes: val,
     })
+    // formDataRef.current = {
+    //   ...formDataRef.current,
+    //   attributes: val,
+    // }
+  }
+
+  const handleVariations = (val) => {
+    setForm({
+      ...form,
+      variations: val,
+    })
+    // formDataRef.current = {
+    //   ...formDataRef.current,
+    //   variations: val,
+    // }
   }
   return (
     <>
       <Content className={'p-4'}>
         <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row gx-2 '} fluid>
-          <div className="col-9 bg-w rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+          <div className="col-10 bg-w rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <CardBlock>
               <KMInput name="title" label="Tên sản phẩm" />
               <KMInput name="slug" label="Đường dẫn" />
@@ -244,7 +270,10 @@ const ProductCreateModal = (props) => {
                         attributes: form?.attributes || [],
                         setAttributes: (value) => handleAttributes(value),
                       }}
-                      variations={form.variations || []}
+                      variation={{
+                        variations: form.variations || [],
+                        setVariations: (value) => handleVariations(value),
+                      }}
                     />
                   </FlexboxGrid.Item>
                 )}
@@ -252,7 +281,7 @@ const ProductCreateModal = (props) => {
             </CardBlock>
           </div>
           <div
-            className="col-3 position-sticky "
+            className="col-2 position-sticky "
             style={{
               display: 'flex',
               flexDirection: 'column',

@@ -5,12 +5,12 @@ import { KMInput, KMInputPassword } from 'component/UI/Content/KMInput'
 import PageHeader from 'component/UI/Content/PageHeader'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useState, useRef } from 'react'
+import React, { useState, useRef, useEffect } from 'react'
 import { Button, Form, Pagination, Schema } from 'rsuite'
 import AuthenticateService from 'service/authenticate/Authenticate.service'
+import { useAuthorizationStore } from 'src/store/authenticateStore'
 import styles from './styles.module.scss'
 export default function LoginPage() {
-  
   const router = useRouter()
 
   const formRef = useRef()
@@ -20,6 +20,14 @@ export default function LoginPage() {
     password: '',
   })
 
+  const { authenticate, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
+
+  useEffect(() => {
+    if (authenticate) {
+      router.push('/admin')
+    }
+  }, [authenticate])
+
   const handleSubmit = async () => {
     if (!formRef.current.check()) {
       console.error('Form Error')
@@ -28,8 +36,14 @@ export default function LoginPage() {
 
     try {
       const resp = await AuthenticateService.login(form)
+
+      const data = resp?.data
+
       if (resp.status === 200) {
-        router.push('/admin')
+        changeAuthenticateStatus({
+          authenticate: data.authenticate,
+          user: data.data,
+        })
       }
     } catch (error) {
       console.log('handleSubmit', error)

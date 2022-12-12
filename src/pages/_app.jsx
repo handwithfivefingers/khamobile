@@ -63,13 +63,12 @@ export default function MyApp({ Component, pageProps }) {
           </Layout>
         )}
 
-        <div className={'dev'}>
+        <div className={'dev'} style={{ zIndex: 999999999 }}>
           <IconButton onClick={handleDev} icon={<GearIcon spin style={{ fontSize: '2em' }} />} />
         </div>
 
-        <Drawer open={drawer.open} placement="bottom">
+        <Drawer open={drawer.open} placement="right" onClose={() => setDrawer({ open: false })}>
           <Drawer.Actions>
-            <Button onClick={() => setDrawer({ open: false })}>Cancel</Button>
           </Drawer.Actions>
           <Drawer.Body>
             <JsonViewer data={data} />

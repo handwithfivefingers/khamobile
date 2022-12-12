@@ -1,7 +1,10 @@
 // import { Container, Header, Content, Footer, Navbar, Nav, Sidebar, Sidenav, DOMHelper, Stack } from 'rsuite';
 
 import clsx from 'clsx'
-import { Container, Header } from 'rsuite'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import { Container, Header, Loader, Placeholder } from 'rsuite'
+import { useAuthorizationStore } from 'src/store/authenticateStore'
 import { useCommonStore } from 'src/store/commonStore'
 import { useLoaderStore } from 'src/store/loaderStore'
 import KMBreadcrumb from '../Content/Breadcrumb'
@@ -11,15 +14,35 @@ import styles from './styles.module.scss'
 
 const AdminLayout = ({ children }) => {
   const title = useCommonStore((state) => state.title)
-  const loading = useLoaderStore((state) => state.loading)
+  const { loading, setLoading } = useLoaderStore((state) => state)
+  const router = useRouter()
+  const authenticate = useAuthorizationStore((state) => state.authenticate)
+
+  const [firstRender, setFirstRender] = useState(false)
+
+  useEffect(() => {
+    if (!authenticate) {
+      router.push('/login')
+    }
+    setTimeout(() => setFirstRender(false), 1000)
+  }, [authenticate])
+  console.log(firstRender)
+
+  if (firstRender || !authenticate) {
+    return (
+      <div>
+        <Placeholder.Paragraph rows={8} />
+        <Loader backdrop content="loading..." vertical />
+      </div>
+    )
+  }
 
   return (
-    <div className={styles.admin}>
+    <div className={clsx(styles.admin)}>
       <Container>
         <KMSidebar />
-
         <Container className={styles.container}>
-          <div className="container-fluid">
+          <div className="container-fluid ">
             <div className="row">
               <div className="col-12">
                 <Header>
@@ -31,7 +54,7 @@ const AdminLayout = ({ children }) => {
                 <KMBreadcrumb />
               </div>
 
-              <div className={clsx('col-12 position-relative', styles.content)}>
+              <div className={clsx('col-12  position-relative', styles.content)}>
                 <LoaderAdmin loading={loading} />
                 {children}
               </div>

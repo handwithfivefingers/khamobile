@@ -144,31 +144,7 @@ export default class ProductController {
     try {
       let { ...formData } = req.body
 
-      formData = {
-        ...formData,
-      }
-
-      if (formData?.variations?.length) {
-        formData.variations = JSON.parse(formData?.variations) || []
-      }
-      if (formData?.category?.length) {
-        formData.category = JSON.parse(formData?.category) || []
-      }
-
-      if (req.files.img?.length) {
-        formData.img = req.files.img.map(({ filename }) => ({
-          src: `/public/${filename}`,
-        }))
-      } else if (formData.img?.length) {
-        // handleDownloadFile
-        let listPromise = formData.img.map((url) => handleDownloadFile(url))
-
-        const respImgDownload = await Promise.all(listPromise)
-
-        formData.img = respImgDownload.map(({ filename }) => ({
-          src: `/public/${filename}`,
-        }))
-      }
+      console.log('formData', formData)
 
       let result
 
@@ -193,7 +169,7 @@ export default class ProductController {
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, content, price, img } = formData
+      let { type, title, slug, description, content, price, image } = formData
 
       const parentId = new mongoose.Types.ObjectId()
 
@@ -205,7 +181,7 @@ export default class ProductController {
         content,
         type,
         price,
-        img,
+        image,
       })
 
       await Product.create([baseProd], { session })
@@ -228,7 +204,7 @@ export default class ProductController {
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, content, primary, variations, img } = formData
+      let { type, title, slug, description, content, primary, variations, image } = formData
 
       const parentId = new mongoose.Types.ObjectId()
 
@@ -243,7 +219,7 @@ export default class ProductController {
         type,
         price: minPrice.price,
         primary,
-        img,
+        image,
       })
 
       await Product.create([baseProd], { session })
@@ -304,7 +280,7 @@ export default class ProductController {
       session.startTransaction()
       if (formData.type !== TYPE_VARIANT.SIMPLE) throw { message: 'Type didtn match' }
 
-      let { _id, type, title, slug, description, content, price, category, img } = formData
+      let { _id, type, title, slug, description, content, price, category, image } = formData
 
       const objUpdate = {
         type,
@@ -314,6 +290,7 @@ export default class ProductController {
         content,
         price,
         category,
+        image,
       }
 
       await Product.updateOne(
@@ -352,7 +329,6 @@ export default class ProductController {
 
       const minPrice = variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
 
-      console.log('updateVariantProduct', image)
       const prodUpdate = {
         title,
         slug,

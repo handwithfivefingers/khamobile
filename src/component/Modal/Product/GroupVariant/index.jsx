@@ -1,10 +1,11 @@
-import { useMemo, useRef, useState } from 'react'
+import { isEqual } from 'lodash'
+import { memo, useMemo, useRef, useState } from 'react'
 import { Radio, RadioGroup } from 'rsuite'
 import AttributeGroup from './AttributeGroup'
 import styles from './styles.module.scss'
 import VariantGroup from './VariantGroup'
 
-export default function GroupVariant(props) {
+const GroupVariant = (props) => {
   const [sideActiveKey, setSideActiveKey] = useState(1)
 
   const variantRef = useRef()
@@ -46,3 +47,5 @@ export default function GroupVariant(props) {
     </div>
   )
 }
+
+export default memo(GroupVariant)

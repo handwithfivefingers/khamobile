@@ -4,23 +4,8 @@ export default class ProductCategoryController {
   getCategory = async (req, res) => {
     try {
       let { type } = req.query
-      // console.log(query)
       let _category
-      // let result = []
-      // if (type === 'all') {
-      //   _category = await ProductCategory.find().select('-createdAt -updatedAt -__v')
-      // } else {
-      //   _category = await ProductCategory.find({ parent: { $exists: false } }).select('-createdAt -updatedAt -__v')
-      // }
 
-      // if (type === 'all') {
-      //   // result = _category.
-      //   let parent = _category.filter((item) => !item.parent)
-      //   let children = _category.filter((item) => item.parent)
-      //   for (let item of _category) {
-
-      //   }
-      // }
 
       _category = await ProductCategory.aggregate([
         {
@@ -68,7 +53,7 @@ export default class ProductCategoryController {
 
       _category = _category.filter((item) => item.child.length)
 
-      console.log(_category)
+      // console.log(_category)
 
 
       

@@ -1,30 +1,17 @@
-import React, { forwardRef, useRef, useState, useMemo, useCallback, useEffect } from 'react'
-import { NumericFormat } from 'react-number-format'
-import {
-  Button,
-  ButtonGroup,
-  FlexboxGrid,
-  Form,
-  Panel,
-  Placeholder,
-  Radio,
-  RadioGroup,
-  SelectPicker,
-  Stack,
-  TagInput,
-  TagPicker,
-  Input,
-  InputNumber,
-  Checkbox,
-} from 'rsuite'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
+import { Button, ButtonGroup, Panel, SelectPicker, Stack } from 'rsuite'
 import styles from './styles.module.scss'
 
-const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props }, ref) => {
-  const { attributes, setAttributes } = attribute
-
+import VariantItem from './VariantItem'
+const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props }, ref) => {
+  const { attributes } = attribute
+  const { variations, setVariations } = variation
   const [_trigger, setTrigger] = useState(false)
+
   const groupVariantRef = useRef([])
+
   const typeRef = useRef()
+
   const options = useMemo(() => {
     return [
       {
@@ -43,11 +30,18 @@ const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props
   }, [])
 
   useEffect(() => {
+    console.log('trigger rendered variation')
     if (variations?.length) {
       groupVariantRef.current = variations
       setTrigger(!_trigger)
     }
-  }, [variations])
+  }, [])
+
+  useEffect(() => {
+    if (groupVariantRef.current?.length) {
+      setVariations(groupVariantRef.current)
+    }
+  }, [groupVariantRef.current])
 
   const handleAddVariant = () => {
     let nextState = [...groupVariantRef.current]
@@ -67,7 +61,6 @@ const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props
           purchasable: true,
           _id: '',
         })
-        console.log('nextState 1 ', nextState)
 
         groupVariantRef.current = nextState
 
@@ -153,7 +146,6 @@ const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props
 
     const { _id, attributes: attributesItem, ...restItem } = item
     let html = null
-    console.log('groupVariantRef.current', groupVariantRef.current)
     html = (
       <Panel
         collapsible
@@ -164,56 +156,26 @@ const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props
                 .map((key) => attributesItem[key])
                 ?.join(' - ')}
             </span>
-            <ButtonGroup className="pe-4">
-              <Checkbox className={styles.selectItem} checked={restItem?.purchasable} value={true}>
-                Bật
-              </Checkbox>
-              <Checkbox
-                className={styles.selectItem}
-                checked={restItem?.stock_status === 'instock'}
-                defaultValue={restItem?.stock_status}
-                onChange={(value, checked) => console.log(value, checked)}
-              >
-                Còn hàng
-              </Checkbox>
-            </ButtonGroup>
+            <ButtonGroup className="pe-4"></ButtonGroup>
           </Stack>
         }
         bordered
         key={[position, attributesItem]}
       >
-        <div className={styles.groupItem}>
-          <Form.Group controlId={['price', position]}>
-            <Form.ControlLabel>Giá tiền</Form.ControlLabel>
-            <PInput position={position} value={restItem?.price} name={'price'} ref={groupVariantRef} price />
-          </Form.Group>
-
-          <Form.Group controlId={['regular_price', position]}>
-            <Form.ControlLabel>Giá gạch</Form.ControlLabel>
-            <PInput
-              position={position}
-              value={restItem?.regular_price}
-              name={'regular_price'}
-              ref={groupVariantRef}
-              price
-            />
-          </Form.Group>
-
-          {Object.keys(attributesItem).map((key) => (
-            <Form.Group controlId={[key, position]}>
-              <Form.ControlLabel>{key}</Form.ControlLabel>
-              <Select attributes={attributes} position={position} name={key} ref={groupVariantRef} />
-            </Form.Group>
-          ))}
-        </div>
+        <VariantItem
+          data={restItem}
+          attributes={attributes}
+          attributesItem={attributesItem}
+          position={position}
+          ref={groupVariantRef}
+        />
       </Panel>
     )
     return html
   }
 
-  const getVariant = () => groupVariantRef.current?.map((_, index) => renderVariant(_, index))
+  const getVariant = groupVariantRef.current?.map((_, index) => renderVariant(_, index))
 
-  console.log(variations)
   return (
     <div className={styles.group}>
       <div className={styles.selectAttr}>
@@ -227,7 +189,7 @@ const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props
           Thêm
         </Button>
       </div>
-      <div className={styles.contentAttr}>{getVariant()}</div>
+      <div className={styles.contentAttr}>{getVariant}</div>
     </div>
   )
 })
@@ -242,64 +204,5 @@ const VariantTypeSelection = forwardRef(({ options }, ref) => {
 
   return <SelectPicker data={options} onSelect={handleSelect} />
 })
-
-const Select = forwardRef(({ attributes, name, position, ...props }, ref) => {
-  const [_render, setRender] = useState(false)
-
-  const item = ref.current[position]
-
-  const optiosnMemoiz = (selectOptions) => selectOptions?.value?.map((_val) => ({ label: _val, value: _val }))
-
-  const handleSelect = (value) => {
-    item.attributes[name] = value
-    setRender(!_render)
-  }
-
-  let optionTarget = attributes.find((item) => item.name === name)
-
-  return (
-    <SelectPicker
-      data={optiosnMemoiz(optionTarget)}
-      placeholder={name}
-      className={styles.selectItem}
-      value={item.attributes[name] || ''}
-      onSelect={handleSelect}
-    />
-  )
-})
-
-const PInput = forwardRef(({ name, position, value, price, ...props }, ref) => {
-  const [_render, setRender] = useState(false)
-
-  const item = ref.current[position]
-
-  const handleChange = ({ formattedValue, value, floatValue }) => {
-    item[name] = value
-    setRender(!_render)
-  }
-  console.log(item)
-
-  if (price) {
-    return (
-      <NumericFormat
-        defaultValue={value || ''}
-        allowLeadingZeros
-        thousandSeparator=","
-        onValueChange={handleChange}
-        ref={ref}
-        customInput={InputProxy}
-        suffix=" đ"
-      />
-    )
-  }
-
-  return (
-    <InputNumber placeholder={name} className={styles.selectItem} defaultValue={value || ''} onChange={handleChange} />
-  )
-})
-
-const InputProxy = (props) => {
-  return <input class="rs-input" type="text" id="price,0" value="" {...props} />
-}
 
 export default VariantGroup
