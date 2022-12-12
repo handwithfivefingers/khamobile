@@ -1,4 +1,5 @@
 import React, { forwardRef, useRef, useState, useMemo, useCallback, useEffect } from 'react'
+import { NumericFormat } from 'react-number-format'
 import {
   Button,
   ButtonGroup,
@@ -57,7 +58,15 @@ const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props
         for (let { name, value } of attributes) {
           obj[name] = ''
         }
-        nextState.push({ attributes: obj })
+
+        nextState.push({
+          attributes: obj,
+          price: '',
+          regular_price: '',
+          stock_status: 'instock',
+          purchasable: true,
+          _id: '',
+        })
         console.log('nextState 1 ', nextState)
 
         groupVariantRef.current = nextState
@@ -97,11 +106,11 @@ const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props
     if (i >= data.length) {
       return result.push({
         attributes: obj,
-        price,
-        regular_price,
+        price: '',
+        regular_price: '',
         stock_status: 'instock',
         purchasable: true,
-        _id: null,
+        _id: '',
       })
     } else {
       const nextData = data[i]
@@ -176,14 +185,19 @@ const VariantGroup = forwardRef(({ variableData, variations, attribute, ...props
         <div className={styles.groupItem}>
           <Form.Group controlId={['price', position]}>
             <Form.ControlLabel>Giá tiền</Form.ControlLabel>
-            <PInput position={position} value={restItem?.price} name={'price'} ref={groupVariantRef} />
+            <PInput position={position} value={restItem?.price} name={'price'} ref={groupVariantRef} price />
           </Form.Group>
 
-         <Form.Group controlId={['regular_price', position]}>
+          <Form.Group controlId={['regular_price', position]}>
             <Form.ControlLabel>Giá gạch</Form.ControlLabel>
-            <PInput position={position} value={restItem?.regular_price} name={'regular_price'} ref={groupVariantRef} />
+            <PInput
+              position={position}
+              value={restItem?.regular_price}
+              name={'regular_price'}
+              ref={groupVariantRef}
+              price
+            />
           </Form.Group>
-          
 
           {Object.keys(attributesItem).map((key) => (
             <Form.Group controlId={[key, position]}>
@@ -254,18 +268,38 @@ const Select = forwardRef(({ attributes, name, position, ...props }, ref) => {
   )
 })
 
-const PInput = forwardRef(({ name, position, value, ...props }, ref) => {
+const PInput = forwardRef(({ name, position, value, price, ...props }, ref) => {
   const [_render, setRender] = useState(false)
 
   const item = ref.current[position]
 
-  const handleChange = (value) => {
+  const handleChange = ({ formattedValue, value, floatValue }) => {
     item[name] = value
     setRender(!_render)
   }
-  console.log(ref.current[position])
+  console.log(item)
 
-  return <InputNumber placeholder={name} className={styles.selectItem} defaultValue={value || ''} onChange={handleChange} />
+  if (price) {
+    return (
+      <NumericFormat
+        defaultValue={value || ''}
+        allowLeadingZeros
+        thousandSeparator=","
+        onValueChange={handleChange}
+        ref={ref}
+        customInput={InputProxy}
+        suffix=" đ"
+      />
+    )
+  }
+
+  return (
+    <InputNumber placeholder={name} className={styles.selectItem} defaultValue={value || ''} onChange={handleChange} />
+  )
 })
+
+const InputProxy = (props) => {
+  return <input class="rs-input" type="text" id="price,0" value="" {...props} />
+}
 
 export default VariantGroup

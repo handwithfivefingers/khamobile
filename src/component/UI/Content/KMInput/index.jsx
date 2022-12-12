@@ -5,6 +5,7 @@ import EyeSlashIcon from '@rsuite/icons/legacy/EyeSlash'
 
 import dynamic from 'next/dynamic'
 import clsx from 'clsx'
+import { NumericFormat } from 'react-number-format'
 
 const Textarea = dynamic(() => import('component/UI/Editor'))
 
@@ -77,4 +78,37 @@ const KMEditor = ({ name, label, ...props }) => {
   )
 }
 
-export { KMInput, KMSelect, KMEditor, KMInputPassword }
+const KMPrice = ({ name, label, ...props }) => {
+  return (
+    <Form.Group controlId={name}>
+      {label && <Form.ControlLabel>{label}</Form.ControlLabel>}
+      <Form.Control name={name} accepter={Pricing} {...props} />
+    </Form.Group>
+  )
+}
+
+const Pricing = forwardRef(({ value, onChange, ...props }, ref) => {
+  const handleChange = ({ formattedValue, value, floatValue }) => {
+    if (onChange) {
+      return onChange(value)
+    }
+  }
+  console.log(props)
+  return (
+    <NumericFormat
+      {...props}
+      defaultValue={value}
+      allowLeadingZeros
+      thousandSeparator=","
+      onValueChange={handleChange}
+      customInput={InputProxy}
+      suffix=" đ"
+      ref={ref}
+    />
+  )
+})
+
+const InputProxy = forwardRef((props, ref) => {
+  return <input class="rs-input" type="text" {...props} ref={ref} />
+})
+export { KMInput, KMSelect, KMEditor, KMInputPassword, KMPrice }

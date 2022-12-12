@@ -1,7 +1,7 @@
 import { useEffect, useState, memo } from 'react'
 
 import CardBlock from 'component/UI/Content/CardBlock'
-import { KMEditor, KMInput, KMSelect } from 'component/UI/Content/KMInput'
+import { KMEditor, KMInput, KMPrice, KMSelect } from 'component/UI/Content/KMInput'
 import Select from 'component/UI/Content/MutiSelect'
 import CustomUpload from 'component/UI/Upload/CustomUpload'
 import { useRouter } from 'next/router'
@@ -232,12 +232,9 @@ const ProductCreateModal = (props) => {
                 </FlexboxGrid.Item>
 
                 {form?.type === 'simple' && (
-                  <>
-                    <Form.Group controlId="price" className="p-1">
-                      <Form.ControlLabel>Giá tiền</Form.ControlLabel>
-                      <Form.Control accepter={InputNumber} name="price" />
-                    </Form.Group>
-                  </>
+                  <div className="p-1">
+                    <KMPrice name="price" label="Giá tiền" onChange={(val) => console.log(val)} />
+                  </div>
                 )}
                 {form?.type === 'variable' && (
                   <FlexboxGrid.Item style={{ width: '100%' }}>
@@ -249,22 +246,6 @@ const ProductCreateModal = (props) => {
                       }}
                       variations={form.variations || []}
                     />
-                    {/* <Form.Group controlId="primary" className="p-1">
-                      <Form.ControlLabel>Thuộc tính chính</Form.ControlLabel>
-                      <Form.Control
-                        name="primary"
-                        accepter={KMSelect}
-                        data={variable?.map((item) => ({ label: item._id, value: item._id }))}
-                        style={{ width: '100%' }}
-                        placeholder="Khóa chính"
-                        value={form['primary']}
-                      />
-                    </Form.Group>
-                    <FlexboxGrid.Item style={{ width: '100%' }}>
-                      <Form.Group controlId="variations">
-                        <Form.Control name="variations" accepter={VariantControl} variable={variable} />
-                      </Form.Group>
-                    </FlexboxGrid.Item> */}
                   </FlexboxGrid.Item>
                 )}
               </FlexboxGrid>
