@@ -1,5 +1,5 @@
 import { Form, Input, SelectPicker, InputGroup } from 'rsuite'
-import { forwardRef, useRef, useState } from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
 import EyeIcon from '@rsuite/icons/legacy/Eye'
 import EyeSlashIcon from '@rsuite/icons/legacy/EyeSlash'
 
@@ -51,11 +51,17 @@ const KMInputPassword = ({ name, label, ...props }) => {
   )
 }
 
-const KMInput = ({ name, label, ...props }) => {
+const KMInput = ({ name, label, onChange, ...props }) => {
+  const handleOnChange = (v) => {
+    if (onChange) {
+      onChange(v)
+    }
+  }
+
   return (
     <Form.Group controlId={name}>
       <Form.ControlLabel>{label}</Form.ControlLabel>
-      <Form.Control name={name} accepter={CustomInput} {...props} />
+      <Form.Control name={name} accepter={CustomInput} {...props} onChange={handleOnChange} />
     </Form.Group>
   )
 }
@@ -73,16 +79,21 @@ const KMEditor = ({ name, label, ...props }) => {
   return (
     <Form.Group controlId={name}>
       {label && <Form.ControlLabel>{label}</Form.ControlLabel>}
-      <Form.Control name={name} accepter={Textarea} {...props} />
+      <Form.Control name={name} accepter={Textarea} {...props} onChange={(v) => props?.onChange(v)} />
     </Form.Group>
   )
 }
 
-const KMPrice = ({ name, label, ...props }) => {
+const KMPrice = ({ name, label, onChange, ...props }) => {
+  const handleOnChange = (v) => {
+    if (onChange) {
+      onChange(v)
+    }
+  }
   return (
     <Form.Group controlId={name}>
       {label && <Form.ControlLabel>{label}</Form.ControlLabel>}
-      <Form.Control name={name} accepter={Pricing} {...props} />
+      <Form.Control name={name} accepter={Pricing} {...props} onChange={handleOnChange} />
     </Form.Group>
   )
 }
@@ -93,7 +104,6 @@ const Pricing = forwardRef(({ value, onChange, ...props }, ref) => {
       return onChange(value)
     }
   }
-  console.log(props)
   return (
     <NumericFormat
       {...props}

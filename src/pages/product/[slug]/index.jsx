@@ -27,7 +27,12 @@ import {
   Schema,
   Table,
   DOMHelper,
+  RadioGroup,
+  Radio,
+  IconButton,
 } from 'rsuite'
+import CloseIcon from '@rsuite/icons/Close'
+import GlobalProductService from 'service/global/Product.service'
 import { formatCurrency } from 'src/helper'
 import styles from './styles.module.scss'
 
@@ -35,7 +40,7 @@ const CustomInputNumber = ({ rowKey, value, ...props }) => {
   return <InputNumber value={value} {...props} />
 }
 
-export default function ProductDetail({ data, _relationProd }) {
+export default function ProductDetail({ data, _relationProd, ...props }) {
   const formRef = useRef()
   const pricingRef = useRef()
   const btnBarRef = useRef()
@@ -43,11 +48,17 @@ export default function ProductDetail({ data, _relationProd }) {
 
   const [activeVariant, setActiveVariant] = useState([])
 
+  const [listAvailable, setListAvailable] = useState([])
+
+  const [attributes, setAttributes] = useState([])
+
   const [form, setForm] = useState({
     quantity: 1,
     img: data?.img,
     _id: data?._id,
   })
+
+  const queryRef = useRef({})
 
   const router = useRouter()
 
@@ -63,6 +74,10 @@ export default function ProductDetail({ data, _relationProd }) {
           price: data.price,
           _id: data?._id,
         })
+      }
+
+      if (data?.attributes) {
+        onResetAttributes()
       }
     }
 
@@ -225,21 +240,134 @@ export default function ProductDetail({ data, _relationProd }) {
     )
   }
 
+  const handleQueryItem = async (params) => {
+    queryRef.current = { ...queryRef.current, ...params }
+    const resp = await GlobalProductService.filterProduct({ ...queryRef.current, slug: props.slug })
+    const { data } = resp.data
+
+    setListAvailable(data)
+
+    let nextState = [...attributes]
+
+    if (Object.keys(queryRef.current).length < attributes.length) {
+      nextState = nextState.map(({ name, value }) => {
+        if (queryRef.current[name]) {
+          return {
+            name,
+            value,
+          }
+        } else {
+          let obj = []
+          for (let { v } of value) {
+            let isIncludes = data.some((item) => item.attribute[name] === v)
+            if (isIncludes) {
+              obj.push({ v, active: true })
+            } else {
+              obj.push({ v, active: false })
+            }
+          }
+          return {
+            name,
+            value: obj,
+          }
+        }
+      })
+    } else if (Object.keys(queryRef.current).length >= attributes.length) {
+      nextState = nextState.map(({ name, value }) => {
+        if (params[name]) {
+          return {
+            name,
+            value,
+          }
+        } else {
+          let newQuery = { ...queryRef.current }
+
+          let obj = []
+
+          for (let { v } of value) {
+            let isIncludes = Object.keys(newQuery).some((key) => {
+              return newQuery[key] === v
+            })
+
+            if (isIncludes) {
+              obj.push({ v, active: true })
+            } else {
+              obj.push({ v, active: false })
+            }
+          }
+          return {
+            name,
+            value: obj,
+          }
+        }
+      })
+    }
+
+    setAttributes(nextState)
+  }
+
+  const onResetAttributes = () => {
+    queryRef.current = {}
+    const attributes = data?.attributes
+    let attributeData = attributes?.map(({ name, value }) => {
+      return {
+        name,
+        value: value?.map((_val) => ({ v: _val, active: true })),
+      }
+    })
+    setAttributes(attributeData)
+  }
+
+  const renderVariant = () => {
+    let html = null
+    html = (
+      <>
+        <div className="w-100 d-flex flex-column position-relative">
+          <div>
+            <IconButton
+              icon={<CloseIcon />}
+              circle
+              size="xs"
+              onClick={onResetAttributes}
+              className="position-absolute top-0 end-0"
+              style={{ backgroundColor: 'transparent', color: 'var(--rs-blue-700)' }}
+            />
+          </div>
+          {attributes?.map((item) => {
+            return (
+              <RadioGroup
+                className="d-flex flex-row border-0"
+                appearance="picker"
+                onChange={(v) => handleQueryItem({ [item.name]: v })}
+                value={queryRef.current?.[item.name] || ''}
+              >
+                <p style={{ color: 'var(--rs-blue-800)' }}>{item.name} :</p>
+                {item.value?.map(({ v, active }) => (
+                  <Radio value={v} disabled={!active}>
+                    <span className="p-2 bg-light border"> {v}</span>
+                  </Radio>
+                ))}
+              </RadioGroup>
+            )
+          })}
+        </div>
+      </>
+    )
+    return html
+  }
+
   const renderVariantProduct = useMemo(() => {
     let html = null
     if (_relationProd.length > 0) {
       html = (
         <>
           <Divider className={styles.divider} />
-          <div className={'row gx-2 gy-2 align-items-center w-100'}>
-            {renderPrimaryVariant()}
-            {renderSubVariant()}
-          </div>
+          <div className={'row gx-2 gy-2 align-items-center w-100'}>{renderVariant()}</div>
         </>
       )
     }
     return html
-  }, [data, form, _relationProd, activeVariant])
+  }, [data, form, _relationProd, activeVariant, listAvailable, attributes])
 
   const calculatePrice = () => {
     let html = null
@@ -298,10 +426,10 @@ export default function ProductDetail({ data, _relationProd }) {
                     <Form ref={formRef} model={model}>
                       <Panel className={clsx('py-4')}>
                         <div
-                          className={clsx('d-inline-flex align-items-center w-100', styles.groupVariant)}
+                          className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)}
                           style={{ gap: 4 }}
                         >
-                          <div className={clsx('row')} ref={pricingRef}>
+                          <div className={'row w-100 '} ref={pricingRef}>
                             <div className="col-12">
                               <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
                               <input
@@ -507,6 +635,7 @@ export const getServerSideProps = async (ctx) => {
     props: {
       data,
       _relationProd,
+      slug,
     },
   }
 }

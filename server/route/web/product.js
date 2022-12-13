@@ -6,6 +6,8 @@ const router = express.Router()
 
 router.get('/products', new ProductController().getProduct)
 
+router.get('/product', new ProductController().filterProduct)
+
 router.get('/product/:slug', new ProductController().getProductSlug)
 
 router.post('/product_id', new ProductController().getProductById)

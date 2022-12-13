@@ -1,8 +1,11 @@
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, ButtonGroup, Panel, SelectPicker, Stack } from 'rsuite'
+import { forwardRef, lazy, useEffect, useMemo, useRef, useState, Suspense } from 'react'
+import { Button, ButtonGroup, Loader, Panel, SelectPicker, Stack } from 'rsuite'
 import styles from './styles.module.scss'
 
-import VariantItem from './VariantItem'
+// import VariantItem from './VariantItem'
+
+const VariantItem = lazy(() => import('./VariantItem'))
+
 const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props }, ref) => {
   const { attributes } = attribute
   const { variations, setVariations } = variation
@@ -32,16 +35,20 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props 
   useEffect(() => {
     console.log('trigger rendered variation')
     if (variations?.length) {
+      console.log('trigger rendered 1')
+
       groupVariantRef.current = variations
       setTrigger(!_trigger)
     }
   }, [])
 
-  useEffect(() => {
-    if (groupVariantRef.current?.length) {
-      setVariations(groupVariantRef.current)
-    }
-  }, [groupVariantRef.current])
+  // useEffect(() => {
+  //   if (groupVariantRef.current?.length) {
+  //   console.log('trigger rendered 2', groupVariantRef.current)
+
+  //     setVariations(groupVariantRef.current)
+  //   }
+  // }, [groupVariantRef.current])
 
   const handleAddVariant = () => {
     let nextState = [...groupVariantRef.current]
@@ -76,7 +83,8 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props 
         groupVariantRef.current = []
         break
     }
-    setTrigger(!_trigger)
+    setVariations(groupVariantRef.current)
+    // setTrigger(!_trigger)
   }
   /**
    *
@@ -162,13 +170,15 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props 
         bordered
         key={[position, attributesItem]}
       >
-        <VariantItem
-          data={restItem}
-          attributes={attributes}
-          attributesItem={attributesItem}
-          position={position}
-          ref={groupVariantRef}
-        />
+        <Suspense fallback={<Loader content="vertical Loading..." vertical />}>
+          <VariantItem
+            data={restItem}
+            attributes={attributes}
+            attributesItem={attributesItem}
+            position={position}
+            ref={groupVariantRef}
+          />
+        </Suspense>
       </Panel>
     )
     return html

@@ -3,6 +3,8 @@ import React, { useEffect, useRef, useState } from 'react'
 import MyUploadAdapter from './UploadAdapter'
 import styles from './styles.module.scss'
 function CKeditor({ onChange, editorLoaded, name, value, className }) {
+  const [editorValue, setEditorValue] = useState()
+
   const editorRef = useRef()
 
   const { CKEditor, ClassicEditor } = editorRef.current || {}
@@ -18,6 +20,11 @@ function CKeditor({ onChange, editorLoaded, name, value, className }) {
         console.log('editorRef.current error', error)
       }
     }
+
+    if (value) {
+      setEditorValue(value)
+    }
+
     return () => {
       editorRef.current = null
     }
@@ -33,7 +40,7 @@ function CKeditor({ onChange, editorLoaded, name, value, className }) {
           config={{
             extraPlugins: [MyCustomUploadAdapterPlugin],
           }}
-          data={value}
+          data={editorValue}
           onChange={(event, editor) => {
             const data = editor.getData()
             onChange(data)

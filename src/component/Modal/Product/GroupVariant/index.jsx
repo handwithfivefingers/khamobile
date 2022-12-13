@@ -1,10 +1,14 @@
 import { isEqual } from 'lodash'
 import { memo, useMemo, useRef, useState } from 'react'
-import { Radio, RadioGroup } from 'rsuite'
+import { Radio, RadioGroup, Loader } from 'rsuite'
 import AttributeGroup from './AttributeGroup'
 import styles from './styles.module.scss'
-import VariantGroup from './VariantGroup'
+// import VariantGroup from './VariantGroup'
+import dynamic from 'next/dynamic'
+import clsx from 'clsx'
 
+const VariantGroup = dynamic(() => import('./VariantGroup'))
+// const VariantGroup = lazy(() => import('./VariantGroup'))
 const GroupVariant = (props) => {
   const [sideActiveKey, setSideActiveKey] = useState(1)
 
@@ -19,6 +23,7 @@ const GroupVariant = (props) => {
         break
       case 2:
         html = <VariantGroup {...props} ref={variantRef} />
+
         break
       case 3:
         break
@@ -43,7 +48,7 @@ const GroupVariant = (props) => {
         <Radio value={3}>Các sản phẩm được kết nối</Radio>
       </RadioGroup>
 
-      <div className={styles.contentVariant}>{renderBySideActiveKey}</div>
+      <div className={clsx(styles.contentVariant, 'position-relative')}>{renderBySideActiveKey}</div>
     </div>
   )
 }

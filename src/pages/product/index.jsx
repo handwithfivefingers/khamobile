@@ -36,11 +36,11 @@ const pricingFilter = [
   },
   {
     label: 'Mới nhất',
-    value: ['feature', '1'],
+    value: ['feature', '-1'],
   },
   {
     label: 'Hot nhất',
-    value: ['createdAt', '1'],
+    value: ['createdAt', '-1'],
   },
 ]
 export default function Product(props) {

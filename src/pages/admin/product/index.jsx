@@ -67,6 +67,9 @@ const Products = () => {
   const onCreate = async (formValue) => {
     try {
       setLoading(true)
+
+      console.log('onCreate',formValue)
+      // return
       const resp = await ProductService.createProduct(formValue)
       if (resp.status === 200) {
         toaster.push(message('success', resp.data.message), { placement: 'topEnd' })

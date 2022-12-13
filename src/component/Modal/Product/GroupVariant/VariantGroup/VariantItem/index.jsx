@@ -125,7 +125,7 @@ const CheckboxVariant = forwardRef(
       }
       setRender(!_render)
     }
-    console.log(name, item?.[name], checkValue, item?.[name] === checkValue)
+
     return (
       <Toggle
         defaultChecked={item?.[name] === checkValue}

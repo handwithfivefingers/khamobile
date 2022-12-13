@@ -12,6 +12,8 @@ const GlobalProductService = {
 
   getProductById: async (_id, variantId) => await axios.post(path.product_id, { _id, variantId }),
 
+  filterProduct: async (params) => await axios.get(path.product, { params }),
+
   updateProduct: async (id, form) => await axios.post(path.product + '/' + id, form),
 
   createProduct: async (form) => await axios.post(path.product, form),

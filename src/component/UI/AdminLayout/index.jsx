@@ -26,7 +26,6 @@ const AdminLayout = ({ children }) => {
     }
     setTimeout(() => setFirstRender(false), 1000)
   }, [authenticate])
-  console.log(firstRender)
 
   if (firstRender || !authenticate) {
     return (

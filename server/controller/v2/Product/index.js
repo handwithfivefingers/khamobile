@@ -6,169 +6,6 @@ import { ProductVariant, Product, ProductCategory } from '#server/model'
 import _ from 'lodash'
 import mongoose from 'mongoose'
 export default class ProductController {
-  // getProducts = async (req, res) => {
-  //   try {
-  //     let _prod = await ProductOption.aggregate([
-  //       {
-  //         $lookup: {
-  //           from: 'products',
-  //           localField: 'parentId',
-  //           foreignField: '_id',
-  //           as: 'child',
-  //         },
-  //       },
-  //       {
-  //         $unwind: '$child',
-  //       },
-  //       {
-  //         $project: {
-  //           _id: '$_id',
-  //           title: ['$child.title', '$primaryKey'],
-  //           slug: '$slug',
-  //           price: '$price',
-  //         },
-  //       },
-  //     ])
-  //     return res.status(200).json({
-  //       message: MESSAGE.FETCHED(),
-  //       data: _prod,
-  //     })
-  //   } catch (error) {
-  //     console.log(error)
-
-  //     return res.status(400).json({
-  //       message: MESSAGE.ERROR_ADMIN('Sản phẩm'),
-  //     })
-  //   }
-  // }
-
-  // getProductBySlug = async (req, res) => {
-  //   try {
-  //     let _product = await ProductOption.findOne({ slug: req.params.slug })
-
-  //     let parentId = _product.parentId
-
-  //     let _prod = await ProductOption.find({ parentId: parentId }).populate({ path: 'parentId', select: 'spec.k' })
-
-  //     let formatProd = []
-
-  //     for (let item of _prod) {
-  //       let obj = {
-  //         _id: item._id,
-  //         k: item.parentId.spec?.k,
-  //         v: item.primaryKey,
-  //         price: item.price,
-  //         slug: item.slug,
-  //       }
-  //       if (item.variant.length > 0) {
-  //         for (let _var in item.variant) {
-  //           const value = item.variant[_var]
-  //           obj[_var] = value
-  //         }
-  //       }
-  //       formatProd.push(obj)
-  //     }
-  //     return res.status(200).json({
-  //       message: MESSAGE.FETCHED(),
-  //       data: _product,
-  //       variable: formatProd,
-  //     })
-  //   } catch (error) {
-  //     console.log(error)
-  //     return res.status(400).json({
-  //       message: MESSAGE.ERROR_ADMIN('Sản phẩm'),
-  //     })
-  //   }
-  // }
-
-  // getProductBySlug = async (req, res) => {
-  //   try {
-  //     let _product = await ProductOption.findOne({ slug: req.params.slug })
-  //       .select('-createdAt -updatedAt -__v')
-  //       .populate({
-  //         path: 'parentId',
-  //         select: '_id img',
-  //       })
-
-  //     let parentId = _product.parentId
-
-  //     let _relationProd = await ProductOption.aggregate([
-  //       {
-  //         $match: {
-  //           parentId,
-  //         },
-  //       },
-  //       {
-  //         $lookup: {
-  //           from: 'products',
-  //           localField: 'parentId',
-  //           foreignField: '_id',
-  //           as: 'child',
-  //         },
-  //       },
-  //       {
-  //         $unwind: '$child',
-  //       },
-  //       {
-  //         $group: {
-  //           _id: '$primaryKey',
-  //           item: {
-  //             $push: {
-  //               _id: '$_id',
-  //               title: '$child.title',
-  //               primaryKey: '$primaryKey',
-  //               price: '$price',
-  //               variant: '$variant',
-  //             },
-  //           },
-  //         },
-  //       },
-
-  //       {
-  //         $project: {
-  //           _id: '$_id',
-  //           item: {
-  //             $cond: {
-  //               if: { $gt: [{ $size: '$item' }, 1] }, // length > 1
-  //               then: {
-  //                 $filter: {
-  //                   input: '$item',
-  //                   as: 'prod',
-  //                   cond: {},
-  //                 },
-  //               },
-  //               else: {
-  //                 $filter: {
-  //                   input: '$item',
-  //                   as: 'prod',
-  //                   cond: {
-  //                     $ne: ['$$prod._id', _product._id],
-  //                   },
-  //                 },
-  //               },
-  //             },
-  //           },
-  //         },
-  //       },
-  //       { $sort: { _id: 1 } },
-  //     ])
-
-  //     let isValidRelation = _relationProd.some((item) => item.item?.length > 0) && _relationProd.length > 1
-
-  //     return res.status(200).json({
-  //       message: MESSAGE.FETCHED(),
-  //       data: _product,
-  //       _relationProd: isValidRelation ? _relationProd : [],
-  //     })
-  //   } catch (error) {
-  //     console.log(error)
-
-  //     return res.status(400).json({
-  //       message: MESSAGE.ERROR_ADMIN('Sản phẩm'),
-  //     })
-  //   }
-  // }
-
   getProductSlug = async (req, res) => {
     try {
       let { slug } = req.params
@@ -176,7 +13,6 @@ export default class ProductController {
       let parentItem = await Product.findOne({
         slug,
       })
-
       // let parentId = parentItem._id
 
       let data = await Product.aggregate([
@@ -395,6 +231,63 @@ export default class ProductController {
       console.log('getProduct', error)
       return res.status(400).json({
         error,
+      })
+    }
+  }
+
+  filterProduct = async (req, res) => {
+    try {
+      const { slug, ...query } = req.query
+
+      // console.log(query)
+
+      const pipeFilter = await Product.aggregate([
+        {
+          $match: {
+            slug,
+          },
+        },
+        {
+          $lookup: {
+            from: 'productvariants',
+            localField: '_id',
+            foreignField: 'parentId',
+            as: 'child',
+          },
+        },
+        {
+          $unwind: '$child',
+        },
+        {
+          $project: {
+            _id: '$child._id',
+            parentId: '$_id',
+            title: '$title',
+            slug: '$slug',
+            type: '$type',
+            price: '$child.price',
+            regular_price: '$child.regular_price',
+            attribute: '$child.attributes',
+            primary: '$primary',
+          },
+        },
+      ])
+
+      const filteredData = []
+
+      for (let i = 0; i < pipeFilter.length; i++) {
+        const item = pipeFilter[i]
+        const itemAttributes = item.attribute
+        const isMatch = Object.keys(query).every((key) => itemAttributes[key] === query[key])
+        if (isMatch) filteredData.push(item)
+      }
+
+      return res.status(200).json({
+        data: filteredData,
+      })
+    } catch (error) {
+      return res.status(200).json({
+        data: [],
       })
     }
   }

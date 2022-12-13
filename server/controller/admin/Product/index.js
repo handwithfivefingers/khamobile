@@ -149,9 +149,9 @@ export default class ProductController {
       let result
 
       if (TYPE_VARIANT.VARIANT === req.body.type) {
-        result = await this.createSimpleProduct(formData)
-      } else if (TYPE_VARIANT.SIMPLE === req.body.type) {
         result = await this.createVariantProduct(formData)
+      } else if (TYPE_VARIANT.SIMPLE === req.body.type) {
+        result = await this.createSimpleProduct(formData)
       }
 
       if (!result) throw result.error
@@ -204,7 +204,7 @@ export default class ProductController {
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, content, primary, variations, image } = formData
+      let { type, title, slug, description, content, primary, variations, image, attributes, category } = formData
 
       const parentId = new mongoose.Types.ObjectId()
 
@@ -220,11 +220,13 @@ export default class ProductController {
         price: minPrice.price,
         primary,
         image,
+        attributes,
+        category,
       })
 
       await Product.create([baseProd], { session })
 
-      for (let variant of variations) {
+      for (let { _id, ...variant } of variations) {
         let _variantItem = new ProductVariant({
           ...variant,
           parentId: parentId,

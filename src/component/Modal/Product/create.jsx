@@ -1,130 +1,23 @@
-import { useEffect, useState, memo, useRef } from 'react'
+import { memo, useEffect, useRef, useState } from 'react'
 
 import CardBlock from 'component/UI/Content/CardBlock'
-import { KMEditor, KMInput, KMPrice, KMSelect } from 'component/UI/Content/KMInput'
+import { KMEditor, KMInput, KMPrice } from 'component/UI/Content/KMInput'
 import Select from 'component/UI/Content/MutiSelect'
 import CustomUpload from 'component/UI/Upload/CustomUpload'
-import { useRouter } from 'next/router'
-import {
-  Button,
-  ButtonGroup,
-  ButtonToolbar,
-  Content,
-  FlexboxGrid,
-  Form,
-  Input,
-  InputNumber,
-  Panel,
-  SelectPicker,
-} from 'rsuite'
+import { Button, ButtonToolbar, Content, FlexboxGrid, Form, SelectPicker } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import ProductService from 'service/admin/Product.service'
-import { COMMON_TEXT } from 'src/constant/text.constant'
 import { useCommonStore } from 'src/store/commonStore'
 import { useDevStore } from 'src/store/devStore'
 import GroupVariant from './GroupVariant'
-import styles from './styles.module.scss'
-const CustomInput = (props) => {
-  return <input name="title" className="rs-input" type="text" {...props} />
-}
-
-const VariantControl = (props) => {
-  console.log(props)
-  let { value, variable, onChange } = props
-
-  const [list, setList] = useState(value)
-
-  const add = () => {
-    let next = [...list]
-    next.push({
-      attributes: {
-        'Dung lượng': '1TB',
-        'Màu sắc': 'Black',
-        'Phiên bản': 'LNE',
-      },
-      price: 0,
-      regular_price: 0,
-    })
-    setList(next)
-  }
-
-  const handleMinus = () => {
-    setList(list.slice(0, -1))
-  }
-
-  const handleSelect = (value, index, field) => {
-    console.log(value, index)
-    let next = [...list]
-    next[index].attributes[field] = value
-    setList(next)
-
-    onChange(next)
-  }
-
-  const handeInput = (value, index, field) => {
-    let next = [...list]
-    next[index][field] = value
-    setList(next)
-    onChange(next)
-  }
-
-  return (
-    <FlexboxGrid>
-      <FlexboxGrid.Item style={{ width: '100%' }}>
-        <FlexboxGrid>
-          {list.map(({ _id, purchasable, stock_status, ...item }, index) => {
-            return (
-              <>
-                {Object.keys(item).map((key) => {
-                  if (key === 'attributes') {
-                    return variable.map((vars) => {
-                      return (
-                        <FlexboxGrid.Item className="p-1" style={{ width: '20%' }}>
-                          <Form.ControlLabel>{vars._id}</Form.ControlLabel>
-                          <SelectPicker
-                            data={vars.item.map((v) => ({ label: v.name, value: v.name }))}
-                            onChange={(value) => handleSelect(value, index, vars._id)}
-                            placeholder={vars._id}
-                            style={{ width: '100%' }}
-                            value={item[key][vars._id]}
-                          />
-                        </FlexboxGrid.Item>
-                      )
-                    })
-                  } else {
-                    return (
-                      <FlexboxGrid.Item className="p-1" style={{ width: '20%' }}>
-                        <Form.ControlLabel>{COMMON_TEXT[key]} </Form.ControlLabel>
-                        <Input
-                          placeholder={key}
-                          onChange={(value) => handeInput(value, index, key)}
-                          value={list[index][key]}
-                          style={{ width: '100%' }}
-                        />
-                      </FlexboxGrid.Item>
-                    )
-                  }
-                })}
-              </>
-            )
-          })}
-        </FlexboxGrid>
-      </FlexboxGrid.Item>
-
-      <FlexboxGrid.Item style={{ width: '100%' }}>
-        <Button onClick={add}>Add</Button>
-        <Button onClick={handleMinus}>Remove</Button>
-      </FlexboxGrid.Item>
-    </FlexboxGrid>
-  )
-}
 
 const ProductCreateModal = (props) => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const changeData = useDevStore((state) => state.changeData)
   const [loading, setLoading] = useState(false)
-
   const [variable, setVariable] = useState([])
+
+  const [_render, setRender] = useState(false)
 
   const [form, setForm] = useState({
     price: 0,
@@ -157,9 +50,10 @@ const ProductCreateModal = (props) => {
   }, [])
 
   useEffect(() => {
-    const timeout = setTimeout(() => changeData(form), 1000)
-    return () => clearTimeout(timeout)
-  }, [form])
+    console.log('stored')
+    const interval = setInterval(() => changeData(formDataRef.current), 1000)
+    return () => clearInterval(interval)
+  }, [])
 
   const getVariables = async () => {
     try {
@@ -197,7 +91,7 @@ const ProductCreateModal = (props) => {
     try {
       setLoading(true)
       if (props.onSubmit) {
-        props.onSubmit(form)
+        props.onSubmit(formDataRef.current)
       }
     } catch (error) {
       console.log('error', error, error?.response?.data?.message)
@@ -208,36 +102,31 @@ const ProductCreateModal = (props) => {
   }
 
   const handleAttributes = (val) => {
-    setForm({
-      ...form,
+    formDataRef.current = {
+      ...formDataRef.current,
       attributes: val,
-    })
-    // formDataRef.current = {
-    //   ...formDataRef.current,
-    //   attributes: val,
-    // }
+    }
+    setRender(!_render)
   }
 
   const handleVariations = (val) => {
-    setForm({
-      ...form,
+    formDataRef.current = {
+      ...formDataRef.current,
       variations: val,
-    })
-    // formDataRef.current = {
-    //   ...formDataRef.current,
-    //   variations: val,
-    // }
+    }
+    setRender(!_render)
   }
+
   return (
     <>
       <Content className={'p-4'}>
-        <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row gx-2 '} fluid>
+        <Form formValue={formDataRef?.current} className={'row gx-2 '} fluid>
           <div className="col-10 bg-w rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <CardBlock>
-              <KMInput name="title" label="Tên sản phẩm" />
-              <KMInput name="slug" label="Đường dẫn" />
-              <KMEditor name="content" label="Nội dung" />
-              <KMEditor name="description" label="Mô tả" />
+              <KMInput name="title" label="Tên sản phẩm" onChange={(v) => (formDataRef.current.title = v)} />
+              <KMInput name="slug" label="Đường dẫn" onChange={(v) => (formDataRef.current.slug = v)} />
+              <KMEditor name="content" label="Nội dung" onChange={(v) => (formDataRef.current.content = v)} />
+              <KMEditor name="description" label="Mô tả" onChange={(v) => (formDataRef.current.description = v)} />
             </CardBlock>
 
             <CardBlock>
@@ -247,31 +136,34 @@ const ProductCreateModal = (props) => {
                     <Form.ControlLabel>Loại biến thể</Form.ControlLabel>
                     <SelectPicker
                       name="type"
-                      onChange={(value) => setForm({ ...form, type: value })}
+                      onChange={(value) => {
+                        formDataRef.current.type = value
+                        setRender(!_render)
+                      }}
                       data={[
                         { label: 'Đơn giản', value: 'simple' },
                         { label: 'Nhiều biến thể', value: 'variable' },
                       ]}
-                      value={form['type']}
                     />
                   </Form.Group>
                 </FlexboxGrid.Item>
 
-                {form?.type === 'simple' && (
+                {formDataRef.current?.type === 'simple' && (
                   <div className="p-1">
-                    <KMPrice name="price" label="Giá tiền" onChange={(val) => console.log(val)} />
+                    <KMPrice name="price" label="Giá tiền" onChange={(v) => console.log('price changed', v)} />
                   </div>
                 )}
-                {form?.type === 'variable' && (
+
+                {formDataRef.current?.type === 'variable' && (
                   <FlexboxGrid.Item style={{ width: '100%' }}>
                     <GroupVariant
                       variableData={variable}
                       attribute={{
-                        attributes: form?.attributes || [],
+                        attributes: formDataRef.current?.attributes || [],
                         setAttributes: (value) => handleAttributes(value),
                       }}
                       variation={{
-                        variations: form.variations || [],
+                        variations: formDataRef.current?.variations || [],
                         setVariations: (value) => handleVariations(value),
                       }}
                     />
@@ -300,14 +192,16 @@ const ProductCreateModal = (props) => {
                   group
                   action={process.env.API + '/api/upload'}
                   onSuccess={(resp, file) => {
-                    setForm({
-                      ...form,
-                      image: form.image
-                        ? [...form.image, { src: resp.url, name: file.name }]
+                    setRender(!_render)
+
+                    formDataRef.current = {
+                      ...formDataRef.current,
+                      image: formDataRef.current.image
+                        ? [...formDataRef.current.image, { src: resp.url, name: file.name }]
                         : [{ src: resp.url, name: file.name }],
-                    })
+                    }
                   }}
-                  value={form.image}
+                  value={formDataRef.current?.image}
                 />
               </Form.Group>
             </CardBlock>
@@ -323,6 +217,7 @@ const ProductCreateModal = (props) => {
                   valueKey={'_id'}
                   preventOverflow
                   cascade
+                  onChange={(v) => (formDataRef.current.category = v)}
                 />
               </Form.Group>
             </CardBlock>
