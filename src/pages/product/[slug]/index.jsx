@@ -241,8 +241,11 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
   }
 
   const handleQueryItem = async (params) => {
+
     queryRef.current = { ...queryRef.current, ...params }
+
     const resp = await GlobalProductService.filterProduct({ ...queryRef.current, slug: props.slug })
+
     const { data } = resp.data
 
     setListAvailable(data)
@@ -250,6 +253,7 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
     let nextState = [...attributes]
 
     if (Object.keys(queryRef.current).length < attributes.length) {
+
       nextState = nextState.map(({ name, value }) => {
         if (queryRef.current[name]) {
           return {
@@ -272,6 +276,7 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
           }
         }
       })
+      
     } else if (Object.keys(queryRef.current).length >= attributes.length) {
       nextState = nextState.map(({ name, value }) => {
         if (params[name]) {
@@ -344,7 +349,7 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
                 <p style={{ color: 'var(--rs-blue-800)' }}>{item.name} :</p>
                 {item.value?.map(({ v, active }) => (
                   <Radio value={v} disabled={!active}>
-                    <span className="p-2 bg-light border"> {v}</span>
+                    <span className="p-2 bg-light"> {v}</span>
                   </Radio>
                 ))}
               </RadioGroup>

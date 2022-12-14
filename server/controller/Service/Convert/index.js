@@ -247,37 +247,30 @@ export default class ConvertController {
 
   getAttribute = async (req, res) => {
     try {
-      let _verAttr = await ProductAttribute.findOne({ key: 'Phiên bản' })
-      let _sizeAttr = await ProductAttribute.findOne({ key: 'Dung lượng' })
-      let _colorAttr = await ProductAttribute.findOne({ key: 'Màu sắc' })
-      console.log(_verAttr._doc._id)
+      console.log('come')
+      // let _verAttr = await ProductAttribute.findOne({ key: 'Phiên bản' })
+      // let _sizeAttr = await ProductAttribute.findOne({ key: 'Dung lượng' })
+      // let _colorAttr = await ProductAttribute.findOne({ key: 'Màu sắc' })
+      const data = SKU.map(({ name, slug, attributes }) => ({
+        title: name,
+        slug,
+        attributes: attributes?.map((item) => ({
+          name: item.name,
+          value: item.options,
+        })),
+      }))
 
-      // for (let { name } of verAttr) {
-      //   let _attr = new ProductAttributeTerm({
-      //     parentId: _verAttr._doc._id,
-      //     name,
-      //   })
-
-      //   await _attr.save()
-      // }
-
-      // for (let { name } of sizeAttr) {
-      //   let _attr = new ProductAttributeTerm({
-      //     parentId: _sizeAttr._doc._id,
-      //     name,
-      //   })
-
-      //   await _attr.save()
-      // }
-      // for (let { name } of colorAttr) {
-      //   let _attr = new ProductAttributeTerm({
-      //     parentId: _colorAttr._doc._id,
-      //     name,
-      //   })
-
-      //   await _attr.save()
-      // }
-
+      for (let { attributes, slug, title } of data) {
+        await Product.updateOne(
+          { title, slug },
+          {
+            attributes: attributes,
+          },
+          {
+            new: true,
+          },
+        )
+      }
       return res.status(200).json({
         message: 'ok',
       })
