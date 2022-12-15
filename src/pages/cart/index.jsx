@@ -14,25 +14,6 @@ import { formatCurrency } from 'src/helper'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
 
-const EditableCell = ({ rowData, dataKey, onChange, ...props }) => {
-  const editing = rowData.status === 'EDIT'
-  return (
-    <Cell {...props} className={editing ? 'table-content-editing' : ''}>
-      {editing ? (
-        <input
-          className="rs-input"
-          defaultValue={rowData[dataKey]}
-          onChange={(event) => {
-            onChange && onChange(rowData.id, dataKey, event.target.value)
-          }}
-        />
-      ) : (
-        <span className="table-content-edit-span">{rowData[dataKey]}</span>
-      )}
-    </Cell>
-  )
-}
-
 export default function Cart(props) {
   const [data, setData] = useState([])
 
@@ -45,13 +26,15 @@ export default function Cart(props) {
 
   useEffect(() => {
     try {
-      let item = JSON.parse(localStorage.getItem('khaMobileCart'))
+      let cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
 
-      let isValidData = item?.some((attr) => !attr.quantity || !attr.price || !attr._id)
+      console.log(cartItem)
 
-      if (!isValidData) handleGetListItemPrice(item)
+      let isValidData = cartItem?.some((attr) => !attr.quantity || !attr.price || !attr._id)
+
+      if (!isValidData) handleGetListItemPrice(cartItem)
       else {
-        if (!localStorage.getItem('khaMobileCart') === null) {
+        if (!cartItem || cartItem !== null) {
           alert('Có lỗi xảy ra khi thêm vào giỏ hàng, vui lòng thử lại sau')
         }
         localStorage.setItem('khaMobileCart', null)

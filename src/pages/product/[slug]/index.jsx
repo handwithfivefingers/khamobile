@@ -54,7 +54,7 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
 
   const [form, setForm] = useState({
     quantity: 1,
-    img: data?.img,
+    image: data?.image,
     _id: data?._id,
   })
 
@@ -131,8 +131,8 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
     localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
   }
 
-  const handleBuyNow = () => {
-    const cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
+  const handleBuyNow = async () => {
+    const cartItem = await JSON.parse(localStorage.getItem('khaMobileCart'))
 
     let listItem = []
 
@@ -148,100 +148,98 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
       listItem.push(form)
     }
 
-    localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
+    await localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
 
-    console.log(listItem)
     // return
 
     router.push('/cart')
   }
 
-  const renderPrimaryVariant = () => {
-    let html = null
-    let havePrimaryVariant = _relationProd.some((item) => item.value && item.primary)
-    if (havePrimaryVariant) {
-      html = (
-        <div className="col-12">
-          <div className="row row-cols-auto gy-2">
-            {_relationProd.map((item) => {
-              let isDisabled = item?.item?.some((child) => !child.price)
+  // const renderPrimaryVariant = () => {
+  //   let html = null
+  //   let havePrimaryVariant = _relationProd.some((item) => item.value && item.primary)
+  //   if (havePrimaryVariant) {
+  //     html = (
+  //       <div className="col-12">
+  //         <div className="row row-cols-auto gy-2">
+  //           {_relationProd.map((item) => {
+  //             let isDisabled = item?.item?.some((child) => !child.price)
 
-              return (
-                <div
-                  className={clsx('col btn shadow-sm rounded border ml-2', styles.skuSelect, styles.btnIcon, {
-                    [styles.active]: activeVariant.value === item.value,
-                    [styles.disabled]: isDisabled,
-                  })}
-                  onClick={() => {
-                    if (!isDisabled) {
-                      setActiveVariant(item)
-                      setForm({
-                        ...form,
-                        variantId: null,
-                        price: null,
-                        quantity: 1,
-                        img: '',
-                      })
-                    }
-                  }}
-                >
-                  <span>
-                    {item.primary} : {item.value}
-                  </span>
-                </div>
-              )
-            })}
-          </div>
-          <Divider />
-        </div>
-      )
-    }
-    return html
-  }
+  //             return (
+  //               <div
+  //                 className={clsx('col btn shadow-sm rounded border ml-2', styles.skuSelect, styles.btnIcon, {
+  //                   [styles.active]: activeVariant.value === item.value,
+  //                   [styles.disabled]: isDisabled,
+  //                 })}
+  //                 onClick={() => {
+  //                   if (!isDisabled) {
+  //                     setActiveVariant(item)
+  //                     setForm({
+  //                       ...form,
+  //                       variantId: null,
+  //                       price: null,
+  //                       quantity: 1,
+  //                       img: '',
+  //                     })
+  //                   }
+  //                 }}
+  //               >
+  //                 <span>
+  //                   {item.primary} : {item.value}
+  //                 </span>
+  //               </div>
+  //             )
+  //           })}
+  //         </div>
+  //         <Divider />
+  //       </div>
+  //     )
+  //   }
+  //   return html
+  // }
 
-  const renderSubVariant = () => {
-    return (
-      <div className="col-12">
-        <div className="row gy-2 gx-2">
-          {activeVariant?.item?.map((item) => {
-            let isDisabled = !item?.price
-            return (
-              <div className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}>
-                <div
-                  className={clsx(' shadow-sm rounded border', styles.skuSelect, {
-                    [styles.active]: form._id === item._id || form.variantId === item._id,
-                    [styles.disabled]: isDisabled,
-                  })}
-                  onClick={() => {
-                    setForm({
-                      ...form,
-                      variantId: item._id,
-                      price: item.price,
-                    })
-                  }}
-                >
-                  {item.attribute &&
-                    Object.keys(item.attribute).map((key) => {
-                      if (key !== item.primary)
-                        return (
-                          <>
-                            <span>
-                              {key}:{item[key]} <br />
-                            </span>
-                          </>
-                        )
-                    })}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    )
-  }
+  // const renderSubVariant = () => {
+  //   return (
+  //     <div className="col-12">
+  //       <div className="row gy-2 gx-2">
+  //         {activeVariant?.item?.map((item) => {
+  //           let isDisabled = !item?.price
+  //           return (
+  //             <div className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}>
+  //               <div
+  //                 className={clsx(' shadow-sm rounded border', styles.skuSelect, {
+  //                   [styles.active]: form._id === item._id || form.variantId === item._id,
+  //                   [styles.disabled]: isDisabled,
+  //                 })}
+  //                 onClick={() => {
+  //                   setForm({
+  //                     ...form,
+  //                     variantId: item._id,
+  //                     price: item.price,
+  //                   })
+  //                 }}
+  //               >
+  //                 {item.attribute &&
+  //                   Object.keys(item.attribute).map((key) => {
+  //                     if (key !== item.primary)
+  //                       return (
+  //                         <>
+  //                           <span>
+  //                             {key}:{item[key]} <br />
+  //                           </span>
+  //                         </>
+  //                       )
+  //                   })}
+  //               </div>
+  //             </div>
+  //           )
+  //         })}
+  //       </div>
+  //     </div>
+  //   )
+  // }
 
   const handleQueryItem = async (params) => {
-
     queryRef.current = { ...queryRef.current, ...params }
 
     const resp = await GlobalProductService.filterProduct({ ...queryRef.current, slug: props.slug })
@@ -253,7 +251,6 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
     let nextState = [...attributes]
 
     if (Object.keys(queryRef.current).length < attributes.length) {
-
       nextState = nextState.map(({ name, value }) => {
         if (queryRef.current[name]) {
           return {
@@ -276,7 +273,6 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
           }
         }
       })
-      
     } else if (Object.keys(queryRef.current).length >= attributes.length) {
       nextState = nextState.map(({ name, value }) => {
         if (params[name]) {
@@ -306,6 +302,16 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
           }
         }
       })
+
+      console.log('data Selected', data)
+
+      let [productSelected] = data
+      const { _id, ...rest } = productSelected
+      setForm((prevState) => ({
+        ...prevState,
+        ...rest,
+        variantId: _id,
+      }))
     }
 
     setAttributes(nextState)
@@ -341,12 +347,14 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
           {attributes?.map((item) => {
             return (
               <RadioGroup
-                className="d-flex flex-row border-0"
+                className="d-flex flex-row border-0 flex-wrap p-1"
                 appearance="picker"
                 onChange={(v) => handleQueryItem({ [item.name]: v })}
                 value={queryRef.current?.[item.name] || ''}
               >
-                <p style={{ color: 'var(--rs-blue-800)' }}>{item.name} :</p>
+                <p className=" flex-shrink-0" style={{ color: 'var(--rs-blue-800)' }}>
+                  {item.name} :
+                </p>
                 {item.value?.map(({ v, active }) => (
                   <Radio value={v} disabled={!active}>
                     <span className="p-2 bg-light"> {v}</span>
@@ -551,7 +559,8 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
                 </div>
               </CardBlock>
             </div>
-            <div className="col-lg-3 col-md-12">
+
+            <div className={clsx('col-lg-3 col-md-12', styles.hiddenOnMd)}>
               <SideFilter />
             </div>
           </div>
