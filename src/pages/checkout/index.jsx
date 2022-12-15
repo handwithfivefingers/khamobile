@@ -148,9 +148,8 @@ export default function Checkout() {
               value={form.userType}
               inline
             >
-              <Radio value="login">Đăng nhập</Radio>
-              <Radio value="register">Đăng kí</Radio>
               <Radio value="anonymous">Khách</Radio>
+              <Radio value="login">Đăng nhập</Radio>
             </RadioGroup>
           </Form.Group>
         </Panel>
@@ -165,11 +164,15 @@ export default function Checkout() {
     html = (
       <Panel bordered header={<h5>Địa chỉ giao hàng/ thanh toán</h5>}>
         <Form.Group controlId="company">
-          <Form.ControlLabel>Công ty</Form.ControlLabel>
+          <Form.ControlLabel>
+            Công ty<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+          </Form.ControlLabel>
           <Form.Control name="company" />
         </Form.Group>
         <Form.Group controlId="address_1">
-          <Form.ControlLabel>Địa chỉ 1</Form.ControlLabel>
+          <Form.ControlLabel>
+            Địa chỉ 1<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+          </Form.ControlLabel>
           <Form.Control name="address_1" />
         </Form.Group>
         <Form.Group controlId="address_2">
@@ -178,12 +181,16 @@ export default function Checkout() {
         </Form.Group>
 
         <Form.Group controlId="city">
-          <Form.ControlLabel>Tỉnh/ Thành phố</Form.ControlLabel>
+          <Form.ControlLabel>
+            Tỉnh/ Thành phố<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+          </Form.ControlLabel>
           <Form.Control name="city" />
         </Form.Group>
 
         <Form.Group controlId="postCode">
-          <Form.ControlLabel>Mã vùng</Form.ControlLabel>
+          <Form.ControlLabel>
+            Mã vùng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+          </Form.ControlLabel>
           <Form.Control name="postCode" />
         </Form.Group>
       </Panel>
@@ -313,20 +320,20 @@ export default function Checkout() {
 
                 <div className="col-12">
                   <Panel header={<h5>Thông tin đơn hàng</h5>} className="shadow  bg-white">
-                    <Table autoHeight data={form?.product} wordWrap="break-word">
-                      <Column align="left" verticalAlign="middle" resizable flexGrow={1}>
+                    <Table autoHeight data={form?.product}>
+                      <Column align="left" verticalAlign="middle"  flexGrow={1}>
                         <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>
                           Tên sản phẩm
                         </HeaderCell>
                         <Cell dataKey="title" />
                       </Column>
 
-                      <Column align="center" verticalAlign="middle" resizable width={200}>
+                      <Column align="center" verticalAlign="middle" >
                         <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Đơn giá</HeaderCell>
                         <Cell dataKey="price" />
                       </Column>
 
-                      <Column width={120} verticalAlign="middle" align="center" resizable>
+                      <Column width={120} verticalAlign="middle" align="center">
                         <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Số lượng</HeaderCell>
                         <Cell dataKey="quantity" />
                       </Column>

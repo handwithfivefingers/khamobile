@@ -150,7 +150,9 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
   return (
     <Navbar {...props} className={styles.nav} ref={nodeRef}>
       <Navbar.Brand className={styles.brand} href="#" style={{ maxWidth: 200 }}>
-        <Image src={LOGO} alt="Kha mobile" priority />
+        <Link href="/" passHref>
+          <Image src={LOGO} alt="Kha mobile" priority />
+        </Link>
       </Navbar.Brand>
 
       {renderMenuLeft()}

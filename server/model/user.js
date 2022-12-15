@@ -6,6 +6,18 @@ export default {
   phone: String,
   hash_password: String,
 
+  delivery: {
+    company: String,
+    address_1: String,
+    address_2: String,
+    city: String,
+    postCode: String,
+  },
+  access: {
+    type: Boolean,
+    default: false,
+  },
+
   role: {
     type: String,
     enum: ['user', 'admin', 'anonymous'],

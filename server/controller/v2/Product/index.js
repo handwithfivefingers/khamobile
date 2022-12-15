@@ -201,26 +201,112 @@ export default class ProductController {
 
   getProduct = async (req, res) => {
     try {
-      let { price, createdAt, feature, activePage, pageSize } = req.query
+      let { price, createdAt, feature, activePage, pageSize, maxPrice, stock_status } = req.query
 
       let pageS = pageSize || 10
+
       let activeP = (activePage > 0 && activePage) || 1
+
       let _prod
 
+      const UNIT_PRICE = 1000000
+      const MAXPRICE = Number(maxPrice) * UNIT_PRICE || 999 * UNIT_PRICE
+
+      console.log(MAXPRICE)
+      let count
       if (price || createdAt) {
-        _prod = await Product.find({})
+        _prod = await Product.find({
+          price: {
+            $lt: MAXPRICE,
+          },
+        })
+          .select('-content -_id -createdAt -updatedAt -__v')
           .sort([
             ['price', price || 1],
             ['createdAt', createdAt || 1],
           ])
           .skip(activeP * pageS - pageS)
           .limit(pageS)
+
+        count = await Product.find({
+          price: {
+            $lt: MAXPRICE,
+          },
+        }).count()
       } else {
-        _prod = await Product.find({})
+        _prod = await Product.find({
+          price: {
+            $lt: MAXPRICE,
+          },
+        })
+          .select('-content -_id -createdAt -updatedAt -__v')
           .skip(activeP * pageS - pageS)
           .limit(pageS)
+        count = await Product.find({
+          price: {
+            $lt: MAXPRICE,
+          },
+        }).count()
       }
-      const count = await Product.find({}).count()
+
+      // const sort = []
+
+      // const pipeAggregate = [
+      //   {
+      //     $lookup: {
+      //       from: 'productvariants',
+      //       localField: '_id',
+      //       foreignField: 'parentId',
+      //       as: 'child',
+      //     },
+      //   },
+      //   {
+      //     $unwind: '$child',
+      //   },
+      //   {
+      //     $project: {
+      //       title: '$title',
+      //       description: '$description',
+      //       price: '$price',
+      //       slug: '$slug',
+      //       stock_status: '$stock_status',
+      //       type: '$type',
+      //       category: '$category',
+      //       image: '$image',
+      //       attributes: '$attributes',
+      //       childPrice: '$child.price',
+      //     },
+      //   },
+      // ]
+
+      // if (maxPrice) {
+      //   sort.push({
+      //     $match: {
+      //       $and : [
+      //         {
+      //           'price': $exists: {true}
+      //         }
+      //       ]
+      //     }
+      //   })
+      // }
+
+      // if (price || createdAt) {
+      //   sort.push(
+      //     {
+      //       $sort: {
+      //         price: price || 1,
+      //         createdAt: createdAt || 1,
+      //       },
+      //     },
+      //     { $skip: activeP * pageS - pageS },
+      //     { $limit: pageS },
+      //   )
+      // }
+
+      // pipeAggregate.push(sort)
+
+      // _prod = await Product.aggregate(pipeAggregate)
 
       return res.status(200).json({
         length: _prod.length,

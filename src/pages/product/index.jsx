@@ -11,9 +11,9 @@ import CommonLayout from 'component/UI/Layout'
 
 import Link from 'next/link'
 
-import { useEffect, useState, useMemo } from 'react'
+import { useEffect, useState, useMemo, useRef } from 'react'
 
-import { Button, Drawer, IconButton, Pagination, SelectPicker } from 'rsuite'
+import { Button, Col, Drawer, IconButton, Pagination, Row, SelectPicker } from 'rsuite'
 
 import GlobalProductService from 'service/global/Product.service'
 
@@ -25,30 +25,7 @@ import FunnelIcon from '@rsuite/icons/Funnel'
 
 const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
 
-const pricingFilter = [
-  {
-    label: 'Từ thấp đến cao',
-    value: ['price', '1'],
-  },
-  {
-    label: 'Từ cao đến đến',
-    value: ['price', '-1'],
-  },
-  {
-    label: 'Mới nhất',
-    value: ['feature', '-1'],
-  },
-  {
-    label: 'Hot nhất',
-    value: ['createdAt', '-1'],
-  },
-]
 export default function Product(props) {
-  const [drawer, setDrawer] = useState({
-    open: false,
-    placement: 'left',
-  })
-
   const [activePage, setActivePage] = useState(1)
 
   const [product, setProduct] = useState([])
@@ -56,6 +33,8 @@ export default function Product(props) {
   const [loading, setLoading] = useState(false)
 
   const [filter, setFilter] = useState({})
+
+  const cardRef = useRef()
 
   useEffect(() => {
     getProducts()
@@ -68,33 +47,37 @@ export default function Product(props) {
       let params = {}
       params = {
         activePage,
-        pageSize: 16,
+        pageSize: 20,
         ...filter,
       }
 
       const resp = await GlobalProductService.getProduct(params)
 
-      // console.log(resp.data)
-
       setProduct(resp.data)
     } catch (error) {
       console.log('getProducts error: ' + error)
     } finally {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth',
+      })
       setLoading(false)
     }
   }
 
   const renderSkeleton = useMemo(() => {
-    return [...Array(8).keys()].map((item) => {
+    return [...Array(20).keys()].map((item) => {
       return (
-        <div className="col-12 col-md-6 col-lg-4 col-xl-3">
+        <div className={styles.gridItem}>
           <CardSkeletonProduct />
         </div>
       )
     })
   }, [])
 
-  const openFilter = (placement) => setDrawer({ open: true, placement })
+  const onFilterChange = (val) => {
+    setFilter(val)
+  }
 
   return (
     <div className="row p-0">
@@ -106,66 +89,48 @@ export default function Product(props) {
       <div className="col-12 p-0 py-2 border-top">
         <div className="container">
           <div className="row">
-            <div className={clsx('col-12 col-md-4 col-lg-2', styles.hideOnMD)}>
-              <SideFilter />
-            </div>
+            <div className={clsx([styles.vr, 'col-12'])}>
+              <Row gutter={12}>
+                <Col md={24}>
+                  <p>
+                    The category description can be positioned anywhere on the page via the layout page builder inside
+                    the
+                  </p>
+                </Col>
 
-            <div className={clsx([styles.vr, 'col-12 col-md-8 col-lg-10'])}>
-              <CardBlock>
-                <div className="row gy-4">
-                  <div className="col-12">
-                    <p>
-                      The category description can be positioned anywhere on the page via the layout page builder inside
-                      the
-                    </p>
-                  </div>
-                  <Divider />
-                  <div className="col-6">
-                    <div className={clsx(styles.filter, styles.showOnMD)}>
-                      <label>Filter: </label>
-                      <IconButton icon={<FunnelIcon />} onClick={() => openFilter('left')} />
+                <Col md={24}>
+                  <SideFilter onChange={onFilterChange} filter={filter} />
+                </Col>
+              </Row>
+              <Divider />
+
+              <CardBlock className="border-0" ref={cardRef}>
+                <Row gutter={12}>
+                  <Col md={24}>
+                    <div className={styles.grid}>
+                      {loading && renderSkeleton}
+
+                      {!loading &&
+                        product?.data?.map((prod) => {
+                          return (
+                            <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
+                              <div className={styles.gridItem}>
+                                <Card
+                                  imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
+                                  title={prod.title}
+                                  price={prod.price}
+                                  underlinePrice={prod?.underlinePrice || null}
+                                  type={prod.type}
+                                  variable={prod.variable}
+                                  hover
+                                />
+                              </div>
+                            </Link>
+                          )
+                        })}
                     </div>
-                  </div>
-                  <div className="col-6">
-                    <div className={styles.sort}>
-                      <label>Pricing: </label>
-                      <SelectPicker
-                        data={pricingFilter}
-                        style={{ width: 224 }}
-                        onChange={(value) => {
-                          console.log(value)
-                          if (value) {
-                            let [type, val] = value
-                            setFilter({ ...filter, [type]: val })
-                          } else {
-                            setFilter(null)
-                          }
-                        }}
-                      />
-                    </div>
-                  </div>
-
-                  {loading && renderSkeleton}
-
-                  {!loading &&
-                    product?.data?.map((prod) => {
-                      return (
-                        <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
-                          <div className="col-12 col-md-6 col-lg-4 col-xl-3">
-                            <Card
-                              imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
-                              title={prod.title}
-                              price={prod.price}
-                              underlinePrice={prod?.underlinePrice || null}
-                              type={prod.type}
-                              variable={prod.variable}
-                              hover
-                            />
-                          </div>
-                        </Link>
-                      )
-                    })}
-                </div>
+                  </Col>
+                </Row>
               </CardBlock>
               <div className={styles.pagi}>
                 <Pagination
@@ -175,35 +140,17 @@ export default function Product(props) {
                   first
                   size="sm"
                   total={product?.total}
-                  limit={16}
+                  limit={20}
                   activePage={activePage}
-                  onChangePage={(page) => setActivePage(page)}
+                  onChangePage={(page) => {
+                    setActivePage(page)
+                  }}
                 />
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      <Drawer
-        placement={drawer.placement}
-        open={drawer.open}
-        onClose={() => setDrawer({ ...drawer, open: false })}
-        size="xs"
-      >
-        <Drawer.Header>
-          <Drawer.Title>Lọc sản phẩm</Drawer.Title>
-          <Drawer.Actions>
-            <Button onClick={() => setDrawer({ ...drawer, open: false })}>Cancel</Button>
-            <Button onClick={() => setDrawer({ ...drawer, open: false })} appearance="primary">
-              Confirm
-            </Button>
-          </Drawer.Actions>
-        </Drawer.Header>
-        <Drawer.Body>
-          <SideFilter />
-        </Drawer.Body>
-      </Drawer>
     </div>
   )
 }

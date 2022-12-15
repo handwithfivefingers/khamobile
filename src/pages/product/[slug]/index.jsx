@@ -36,6 +36,8 @@ import GlobalProductService from 'service/global/Product.service'
 import { formatCurrency } from 'src/helper'
 import styles from './styles.module.scss'
 
+const { Column, HeaderCell, Cell } = Table
+
 const CustomInputNumber = ({ rowKey, value, ...props }) => {
   return <InputNumber value={value} {...props} />
 }
@@ -327,6 +329,7 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
       }
     })
     setAttributes(attributeData)
+    setForm((prevState) => ({ ...prevState, price: null, variantId: null }))
   }
 
   const renderVariant = () => {
@@ -560,8 +563,32 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
               </CardBlock>
             </div>
 
-            <div className={clsx('col-lg-3 col-md-12', styles.hiddenOnMd)}>
-              <SideFilter />
+            <div className={clsx('col-lg-3 col-md-12')}>
+              {/* <SideFilter /> */}
+              <CardBlock className="border-0">
+                <Table
+                  height={400}
+                  data={data}
+                  onRowClick={(rowData) => {
+                    console.log(rowData)
+                  }}
+                >
+                  <Column width={60} align="center" fixed>
+                    <HeaderCell>Id</HeaderCell>
+                    <Cell dataKey="id" />
+                  </Column>
+
+                  <Column width={150}>
+                    <HeaderCell>First Name</HeaderCell>
+                    <Cell dataKey="firstName" />
+                  </Column>
+
+                  <Column width={150}>
+                    <HeaderCell>Last Name</HeaderCell>
+                    <Cell dataKey="lastName" />
+                  </Column>
+                </Table>
+              </CardBlock>
             </div>
           </div>
 
@@ -582,13 +609,13 @@ const TabsList = (props) => {
       appearance: 'primary',
       // style: { background: 'var(--rs-red-800)', color: '#fff' },
     },
-    {
-      key: 'information',
-      active: 'red',
-      appearance: 'primary',
-      name: 'Thông tin sản phẩm',
-      // style: { background: 'var(--rs-red-800)', color: '#fff' },
-    },
+    // {
+    //   key: 'information',
+    //   active: 'red',
+    //   appearance: 'primary',
+    //   name: 'Thông tin sản phẩm',
+    //   // style: { background: 'var(--rs-red-800)', color: '#fff' },
+    // },
     {
       key: 'preview',
       name: 'Review',

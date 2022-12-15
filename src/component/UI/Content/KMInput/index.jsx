@@ -99,6 +99,7 @@ const KMPrice = ({ name, label, onChange, ...props }) => {
 }
 
 const Pricing = forwardRef(({ value, onChange, ...props }, ref) => {
+  console.log(value)
   const handleChange = ({ formattedValue, value, floatValue }) => {
     if (onChange) {
       return onChange(value)
@@ -121,4 +122,4 @@ const Pricing = forwardRef(({ value, onChange, ...props }, ref) => {
 const InputProxy = forwardRef((props, ref) => {
   return <input class="rs-input" type="text" {...props} ref={ref} />
 })
-export { KMInput, KMSelect, KMEditor, KMInputPassword, KMPrice }
+export { KMInput, KMSelect, KMEditor, KMInputPassword, KMPrice, Pricing }
