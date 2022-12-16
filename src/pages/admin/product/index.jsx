@@ -1,13 +1,63 @@
 import AdminLayout from 'component/UI/AdminLayout'
-import { useEffect, useState } from 'react'
-import { Button, Content, Modal, Table, useToaster, Message } from 'rsuite'
+import { forwardRef, useEffect, useState } from 'react'
+import {
+  Button,
+  Content,
+  Modal,
+  Table,
+  useToaster,
+  Message,
+  IconButton,
+  Whisper,
+  ButtonGroup,
+  Popover,
+  Pagination,
+} from 'rsuite'
 import ProductService from 'service/admin/Product.service'
 import { useCommonStore } from 'src/store/commonStore'
 import dynamic from 'next/dynamic'
-
+import PlusIcon from '@rsuite/icons/Plus'
+import TrashIcon from '@rsuite/icons/Trash'
+import CheckIcon from '@rsuite/icons/Check'
+import CloseIcon from '@rsuite/icons/Close'
 const ProductCreateModal = dynamic(() => import('component/Modal/Product/create'))
 
 const { Column, HeaderCell, Cell } = Table
+
+const renderAlert = ({ onClose, onProgress, right, top, className }, ref) => {
+  return (
+    <Popover ref={ref} className={className} full>
+      <Message showIcon type="warning" header="Bạn có muốn xóa?">
+        <ButtonGroup>
+          <IconButton
+            icon={<CloseIcon />}
+            size="sm"
+            appearance="default"
+            color="blue"
+            onClick={(event) => {
+              onClose()
+              event.stopPropagation()
+            }}
+          />
+          <IconButton icon={<CheckIcon />} size="sm" appearance="primary" color="blue" onClick={onProgress} />
+        </ButtonGroup>
+      </Message>
+    </Popover>
+  )
+}
+
+const ActionCell = ({ rowData, dataKey, ...props }) => {
+  const onProgress = (event) => {
+    props?.onDelete(rowData, event)
+  }
+  return (
+    <Cell {...props} className="link-group">
+      <Whisper placement="leftStart" trigger="click" speaker={renderAlert} onProgress={onProgress}>
+        <IconButton size="xs" appearance="subtle" icon={<TrashIcon />} />
+      </Whisper>
+    </Cell>
+  )
+}
 
 const Products = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
@@ -21,6 +71,14 @@ const Products = () => {
   })
 
   const toaster = useToaster()
+
+  const [limit, setLimit] = useState(10)
+  const [page, setPage] = useState(1)
+
+  const handleChangeLimit = (dataKey) => {
+    setPage(1)
+    setLimit(dataKey)
+  }
 
   useEffect(() => {
     changeTitle('Page Products')
@@ -68,7 +126,6 @@ const Products = () => {
     try {
       setLoading(true)
 
-      console.log('onCreate',formValue)
       // return
       const resp = await ProductService.createProduct(formValue)
       if (resp.status === 200) {
@@ -109,10 +166,34 @@ const Products = () => {
 
   const message = (type, header) => <Message showIcon type={type} header={header} closable />
 
+  const handleDelete = (rowData, event) => {
+    console.log(rowData)
+    event.stopPropagation()
+  }
+
+  const data = product.filter((v, i) => {
+    const start = limit * (page - 1)
+    const end = start + limit
+    return i >= start && i < end
+  })
+
   return (
     <>
       <Content className={'bg-w h-100'}>
-        <Table fillHeight data={product} onRowClick={handleOpenProduct} loading={loading}>
+        <Table
+          // fillHeight={!loading}
+          height={40 * (limit + 1)}
+          rowHeight={40}
+          data={() =>
+            product.filter((v, i) => {
+              const start = limit * (page - 1)
+              const end = start + limit
+              return i >= start && i < end
+            })
+          }
+          onRowClick={handleOpenProduct}
+          loading={loading}
+        >
           <Column width={60} align="center" fixed>
             <HeaderCell>Id</HeaderCell>
             <Cell dataKey="_id" />
@@ -132,9 +213,12 @@ const Products = () => {
             <HeaderCell>Price</HeaderCell>
             <Cell dataKey="price" />
           </Column>
-          <Column width={100}>
+
+          <Column width={100} align="center">
             <HeaderCell>
-              <Button
+              <IconButton
+                icon={<PlusIcon />}
+                size="xs"
                 color="blue"
                 appearance="primary"
                 onClick={() =>
@@ -143,13 +227,31 @@ const Products = () => {
                     component: <ProductCreateModal onSubmit={onCreate} />,
                   })
                 }
-              >
-                Add
-              </Button>
+              />
             </HeaderCell>
-            <Cell />
+
+            <ActionCell onDelete={handleDelete} right={0} />
           </Column>
         </Table>
+        <div style={{ padding: 20 }}>
+          <Pagination
+            prev
+            next
+            first
+            last
+            ellipsis
+            boundaryLinks
+            maxButtons={5}
+            size="xs"
+            layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+            total={product.length}
+            limitOptions={[10, 30, 50]}
+            limit={limit}
+            activePage={page}
+            onChangePage={setPage}
+            onChangeLimit={handleChangeLimit}
+          />
+        </div>
       </Content>
 
       <Modal size={'full'} open={modal.open} onClose={handleClose} keyboard={false} backdrop={'static'}>

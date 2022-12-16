@@ -13,6 +13,8 @@ import fs from 'fs'
 import axios from 'axios'
 import moment from 'moment'
 import { User } from '#model'
+
+
 const storage = multer.diskStorage({
   limits: { fileSize: 1 * Math.pow(1024, 2 /* MBs*/) },
   fileFilter(req, file, cb) {
@@ -49,6 +51,7 @@ export const TrackingApi = async (req, res, next) => {
  * @param { string } url
  * @returns { object } { filename, name }
  */
+
 export const handleDownloadFile = async (url) => {
   try {
     console.log(url)
@@ -114,53 +117,3 @@ export const authenticating = async (req, res, next) => {
     })
   }
 }
-
-// export default {
-// 	upload,
-// 	TrackingApi,
-// };
-// const requireSignin = async (req, res, next) => {
-// 	try {
-// 		let token = req.cookies['sessionId'];
-
-// 		if (!token) throw { message: 'Authorization required' };
-
-// 		const decoded = await jwt.verify(token, process.env.SECRET);
-
-// 		if (decoded) {
-// 			let { _id, role, updatedAt } = decoded;
-
-// 			let _user = await User.findOne({ _id });
-
-// 			if (new Date(_user.updatedAt).getTime() !== new Date(updatedAt).getTime()) throw { message: 'Token Expired' };
-
-// 			const newToken = jwt.sign({ _id, role, updatedAt }, process.env.SECRET, {
-// 				expiresIn: process.env.EXPIRE_TIME,
-// 			});
-
-// 			req.role = decoded.role;
-
-// 			req.id = decoded._id;
-
-// 			var hour = 3600000;
-
-// 			res.cookie('sessionId', newToken, {
-// 				maxAge: 2 * 24 * hour,
-// 				httpOnly: true,
-// 			});
-
-// 			next();
-// 		}
-// 	} catch (err) {
-// 		// authFailedHandler(res)
-// 		res.clearCookie();
-// 		return authFailedHandler(res);
-// 		// return errHandler(err, res)
-// 	}
-// };
-
-// module.exports = {
-// 	upload,
-// 	requireSignin,
-// 	TrackingApi,
-// };

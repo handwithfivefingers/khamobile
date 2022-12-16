@@ -70,3 +70,26 @@
     border: none;
   }
 }
+.navItem {
+  transition:all 0.2s;
+  &:hover,
+  &:active,
+  &:focus,
+  &.active {
+    &:not(ul) {
+      background-color: var(--rs-blue-800) !important;
+      color: #fff !important; 
+    }
+  }
+  &.navSubMenu {
+    &:hover,
+    &:active,
+    &:focus,
+    &.active {
+      > a {
+        background-color: var(--rs-blue-800);
+        color: #fff;
+      }
+    }
+  }
+}

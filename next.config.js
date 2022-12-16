@@ -29,8 +29,9 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   env: {
+    NODE_ENV: 'development',
     port: process.env.PORT,
-    host: process.env.HOST + ':' + process.env.PORT,
+    host: process.env.HOST,
     API: process.env.API,
     GG_CLIENT_ID: process.env.GG_CLIENT_ID,
     GG_CLIENT_SECRET: process.env.GG_CLIENT_SECRET,

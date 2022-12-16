@@ -63,17 +63,20 @@ export default function MyApp({ Component, pageProps }) {
           </Layout>
         )}
 
-        <div className={'dev'} style={{ zIndex: 999999999 }}>
-          <IconButton onClick={handleDev} icon={<GearIcon spin style={{ fontSize: '2em' }} />} />
-        </div>
+        {process.env.NODE_ENV !== 'production' && (
+          <>
+            <div className={'dev'} style={{ zIndex: 999999999 }}>
+              <IconButton onClick={handleDev} icon={<GearIcon spin style={{ fontSize: '2em' }} />} />
+            </div>
 
-        <Drawer open={drawer.open} placement="right" onClose={() => setDrawer({ open: false })}>
-          <Drawer.Actions>
-          </Drawer.Actions>
-          <Drawer.Body>
-            <JsonViewer data={data} />
-          </Drawer.Body>
-        </Drawer>
+            <Drawer open={drawer.open} placement="right" onClose={() => setDrawer({ open: false })}>
+              <Drawer.Actions></Drawer.Actions>
+              <Drawer.Body>
+                <JsonViewer data={data} />
+              </Drawer.Body>
+            </Drawer>
+          </>
+        )}
       </CustomProvider>
     </>
   )

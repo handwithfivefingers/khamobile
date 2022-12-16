@@ -37,8 +37,11 @@ export default class OrderController {
        * Step2: Create Order
        * Step3: Send mail
        */
-      let userId = req.id
+      let userId = req.body.userId
       let user, deliveryInformation
+
+      console.log(userId)
+
       if (!userId) {
         // const _user = await User.findOne({ email: email })
         // if(_user) {
@@ -64,7 +67,7 @@ export default class OrderController {
         const _userSaved = new User(user)
         await _userSaved.save()
       } else {
-        let _user = await User.findOne({ _id: mongoose.ObjectId(userId) })
+        let _user = await User.findOne({ _id: mongoose.Types.ObjectId(userId) })
 
         user = _user
 
@@ -128,7 +131,19 @@ export default class OrderController {
         paymentType,
         amount,
         status,
-        product,
+        product: product.map((item) => {
+          if (item.variantId) {
+            return {
+              productId: item.variantId,
+              quantity: item.quantity,
+            }
+          } else {
+            return {
+              productId: item._id,
+              quantity: item.quantity,
+            }
+          }
+        }),
       })
 
       await order.save()
@@ -147,10 +162,22 @@ export default class OrderController {
   getOrderById = async (req, res) => {
     try {
       let { _id } = req.params
-      let _order = await Order.findOne({ _id: mongoose.Types.ObjectId(_id) }).populate({
-        path: 'userId',
-        select: '-createdAt -updatedAt -__v -delete_flag -role',
+
+      let _order = await Order.findOne({
+        _id: mongoose.Types.ObjectId(_id),
       })
+        .populate({
+          path: 'userId',
+          select: 'firstName lastName phone email username -_id',
+        })
+        .populate({
+          path: 'product.productId',
+          select: 'title slug price',
+        })
+        .populate({
+          path: 'product.variantId',
+          select: 'price attributes',
+        })
 
       return res.status(200).json({
         message: 'Get Order successfully',

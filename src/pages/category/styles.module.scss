@@ -68,4 +68,11 @@
   background-repeat: no-repeat;
   background-size: auto 100px;
   background-color: #fff;
+  cursor: pointer;
+  border: 0;
+  box-shadow: var(--main-box-shadow);
+  transition: var(--main-transition);
+  &:hover {
+    box-shadow: var(--main-box-shadow-hover);
+  }
 }

@@ -32,12 +32,22 @@
       border-radius: 4px;
 
       .rs-carousel-slider-item {
-        background-color: #eee !important;
+        background-color: #fff !important;
         div,
         span,
         img {
           border-radius: 4px;
         }
+      }
+    }
+  }
+  .rs-carousel-toolbar {
+    li.rs-carousel-label-wrapper {
+      .rs-carousel-label {
+        background-color: var(--rs-blue-100);
+      }
+      & input:checked ~ label {
+        background-color: var(--rs-blue-800);
       }
     }
   }
@@ -79,6 +89,6 @@
   }
 }
 
-p+p {
+p + p {
   margin-top: 4px !important;
 }

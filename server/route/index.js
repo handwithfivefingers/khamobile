@@ -40,6 +40,7 @@ AppRouter.use(
   WebRouter.productCategoryRouter,
   WebRouter.orderRouter,
   WebRouter.userRouter,
+  WebRouter.seoRouter,
 )
 
 export default AppRouter

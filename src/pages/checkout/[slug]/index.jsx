@@ -76,7 +76,9 @@ const USER_SERVICE = {
 export default function OrderReceived({ data }) {
   // console.log(data)
   const [form, setForm] = useState(data)
+  const [tabsBank, setTabsBank] = useState([])
 
+  console.log(data)
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -162,26 +164,24 @@ export default function OrderReceived({ data }) {
               <div className="row gx-4 gy-4">
                 <div className="col-12">
                   <Panel header={<h5>Thông tin đơn hàng</h5>} className="shadow  bg-white">
-                    <Table autoHeight data={form?.product} wordWrap="break-word">
-                      <Column align="left" verticalAlign="middle" resizable flexGrow={1}>
-                        <HeaderCell style={{ background: 'var(--rs-blue-700)', color: 'white' }}>
-                          Tên sản phẩm
-                        </HeaderCell>
-                        <Cell dataKey="title" />
-                      </Column>
-
-                      <Column align="center" verticalAlign="middle" resizable width={200}>
-                        <HeaderCell style={{ background: 'var(--rs-blue-700)', color: 'white' }}>Đơn giá</HeaderCell>
-                        <Cell dataKey="price" />
-                      </Column>
-
-                      <Column width={120} verticalAlign="middle" align="center" resizable>
-                        <HeaderCell style={{ background: 'var(--rs-blue-700)', color: 'white' }}>Số lượng</HeaderCell>
-                        <Cell dataKey="quantity" />
-                      </Column>
-                    </Table>
-
                     <List>
+                      {data?.product?.map((item) => {
+                        return (
+                          <List.Item
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'space-between',
+                              color: 'var(--rs-blue-700)',
+                            }}
+                          >
+                            <span style={{ textAlign: 'center', padding: '0px 10px' }}>{item.productId?.title}</span>
+                            <span style={{ textAlign: 'center', padding: '0px 10px' }}>
+                              <b>{formatCurrency(item.variantId?.price || item.productId?.price)}</b>
+                            </span>
+                          </List.Item>
+                        )
+                      })}
+
                       <List.Item
                         style={{
                           display: 'flex',
@@ -221,20 +221,19 @@ export default function OrderReceived({ data }) {
                         <div className="col-4">
                           <ButtonGroup block vertical>
                             {USER_SERVICE.value.map(({ bankName, bankCode }) => {
-                              return (
-                                <Button
-                                  onClick={() =>
-                                    (document.querySelector('#p').innerHTML = [bankName, bankCode].join(' : '))
-                                  }
-                                >
-                                  {bankName}
-                                </Button>
-                              )
+                              return <Button onClick={() => setTabsBank([bankName, bankCode])}>{bankName}</Button>
                             })}
                           </ButtonGroup>
                         </div>
                         <div className="col-8">
-                          <Tag color="blue" id="p" size="lg" style={{ background: 'var(--rs-blue-700)' }}></Tag>
+                          <Tag color="blue" id="p" size="lg" style={{ background: 'var(--rs-blue-700)' }}>
+                            <span>{tabsBank.join(' : ')}</span>
+                          </Tag>
+                          <br />
+                          Nội dung chuyển khoản: <br />
+                          <Tag size="md">
+                            {data.userId.lastName} {data.userId.firstName}
+                          </Tag>
                         </div>
                       </div>
                     </Panel>
@@ -257,7 +256,7 @@ export const getServerSideProps = async (ctx) => {
   const resp = await axios.get('/order' + '/' + slug)
 
   const { data } = resp.data
-
+  console.log(data)
   return {
     props: {
       data,

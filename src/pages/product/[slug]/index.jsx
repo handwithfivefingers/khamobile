@@ -35,6 +35,7 @@ import CloseIcon from '@rsuite/icons/Close'
 import GlobalProductService from 'service/global/Product.service'
 import { formatCurrency } from 'src/helper'
 import styles from './styles.module.scss'
+import PostHelmet from 'component/PostHelmet'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -42,7 +43,7 @@ const CustomInputNumber = ({ rowKey, value, ...props }) => {
   return <InputNumber value={value} {...props} />
 }
 
-export default function ProductDetail({ data, _relationProd, ...props }) {
+export default function ProductDetail({ data, _relationProd, seo, ...props }) {
   const formRef = useRef()
   const pricingRef = useRef()
   const btnBarRef = useRef()
@@ -66,6 +67,7 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
 
   useEffect(() => {
     if (data) {
+      console.log(data)
       if (_relationProd.length > 0) {
         let { primaryKey } = data
         let index = _relationProd.findIndex((item) => item._id === primaryKey)
@@ -78,7 +80,7 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
         })
       }
 
-      if (data?.attributes) {
+      if (data?.attributes?.length) {
         onResetAttributes()
       }
     }
@@ -401,19 +403,20 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
   }
 
   return (
-    <div className="row p-0">
-      <div className="col-12 p-0">
-        <PageHeader type="h1" left divideClass={styles.divideLeft}>
-          {data.title}
-        </PageHeader>
-      </div>
-      <div className="col-12 p-0 py-2 border-top">
-        <div className="container product_detail">
-          <div className="row gy-4">
-            <div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
-              <div className="row gy-4">
-                <div className="col-12 col-md-6 col-lg-6">
-                  <CardBlock>
+    <>
+      <PostHelmet seo={seo} />
+      <div className="row p-0">
+        <div className="col-12 p-0">
+          <PageHeader type="h1" left divideClass={styles.divideLeft}>
+            {data.title}
+          </PageHeader>
+        </div>
+        <div className="col-12 p-0 py-2 border-top">
+          <div className="container product_detail">
+            <div className="row gy-4">
+              <div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
+                <div className="row gy-4">
+                  <div className="col-12 col-md-6 col-lg-6">
                     <Carousel placement={'left'} shape={'bar'} className="custom-slider" autoplay>
                       {data?.image?.map((item) => {
                         return (
@@ -434,82 +437,47 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
                         )
                       })}
                     </Carousel>
-                  </CardBlock>
-                </div>
+                  </div>
 
-                <div className="col-12 col-md-6 col-lg-6">
-                  <CardBlock>
-                    <Form ref={formRef} model={model}>
-                      <Panel className={clsx('py-4')}>
-                        <div
-                          className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)}
-                          style={{ gap: 4 }}
-                        >
-                          <div className={'row w-100 '} ref={pricingRef}>
-                            <div className="col-12">
-                              <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
-                              <input
-                                type="hidden"
-                                value={form?.price * form?.quantity || 999999}
-                                className="bk-product-price"
-                              />
+                  <div className="col-12 col-md-6 col-lg-6">
+                    <CardBlock className="border-0">
+                      <Form ref={formRef} model={model}>
+                        <Panel className={clsx('py-4')}>
+                          <div
+                            className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)}
+                            style={{ gap: 4 }}
+                          >
+                            <div className={'row w-100 '} ref={pricingRef}>
+                              <div className="col-12">
+                                <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
+                                <input
+                                  type="hidden"
+                                  value={form?.price * form?.quantity || 999999}
+                                  className="bk-product-price"
+                                />
+                              </div>
+
+                              <div className="col-12">{renderVariantProduct}</div>
                             </div>
-
-                            <div className="col-12">{renderVariantProduct}</div>
                           </div>
-                        </div>
 
-                        <Divider />
+                          <Divider />
 
-                        <div
-                          className={clsx('d-inline-flex align-items-center', styles.groupVariant)}
-                          style={{ gap: 4 }}
-                        >
-                          <Form.Control
-                            name="quantity"
-                            accepter={CustomInputNumber}
-                            style={{ width: 60 }}
-                            defaultValue={form.quantity}
-                            onChange={(value) => setForm({ ...form, quantity: value })}
-                            min={1}
-                          />
-                          <input type="hidden" value={form.quantity} className="bk-product-qty" />
-                          <Divider vertical />
-
-                          <Button
-                            color="red"
-                            appearance="primary"
-                            className={styles.btnIcon}
-                            onClick={handleAddToCart}
-                            style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                          <div
+                            className={clsx('d-inline-flex align-items-center', styles.groupVariant)}
+                            style={{ gap: 4 }}
                           >
-                            <BiCart />
-                            Thêm vào giỏ hàng
-                          </Button>
-                          <Button
-                            appearance="primary"
-                            className={styles.btnIcon}
-                            onClick={handleBuyNow}
-                            style={{ background: 'var(--rs-blue-800)' }}
-                          >
-                            <BiDollarCircle />
-                            Mua ngay
-                          </Button>
+                            <Form.Control
+                              name="quantity"
+                              accepter={CustomInputNumber}
+                              style={{ width: 60 }}
+                              defaultValue={form.quantity}
+                              onChange={(value) => setForm({ ...form, quantity: value })}
+                              min={1}
+                            />
+                            <input type="hidden" value={form.quantity} className="bk-product-qty" />
+                            <Divider vertical />
 
-                          <div className="bk-btn"></div>
-                        </div>
-                        <Divider />
-
-                        <div className={clsx(styles.groudpVariantForMobile, 'border rounded shadow')} ref={btnBarRef}>
-                          <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
-                          <input
-                            type="hidden"
-                            value={form?.price * form?.quantity || 999999}
-                            className="bk-product-price"
-                          />
-
-                          {/* {renderVariantProduct} */}
-                          <div className={styles.action}>
                             <Button
                               color="red"
                               appearance="primary"
@@ -529,73 +497,107 @@ export default function ProductDetail({ data, _relationProd, ...props }) {
                               <BiDollarCircle />
                               Mua ngay
                             </Button>
-                          </div>
-                        </div>
 
-                        <TabsList data={data} />
-                      </Panel>
-                    </Form>
-                  </CardBlock>
+                            <div className="bk-btn"></div>
+                          </div>
+                          <Divider />
+
+                          <div className={clsx(styles.groudpVariantForMobile, 'border rounded shadow')} ref={btnBarRef}>
+                            <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
+                            <input
+                              type="hidden"
+                              value={form?.price * form?.quantity || 999999}
+                              className="bk-product-price"
+                            />
+
+                            {/* {renderVariantProduct} */}
+                            <div className={styles.action}>
+                              <Button
+                                color="red"
+                                appearance="primary"
+                                className={styles.btnIcon}
+                                onClick={handleAddToCart}
+                                style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                              >
+                                <BiCart />
+                                Thêm vào giỏ hàng
+                              </Button>
+                              <Button
+                                appearance="primary"
+                                className={styles.btnIcon}
+                                onClick={handleBuyNow}
+                                style={{ background: 'var(--rs-blue-800)' }}
+                              >
+                                <BiDollarCircle />
+                                Mua ngay
+                              </Button>
+                            </div>
+                          </div>
+
+                          <TabsList data={data} />
+                        </Panel>
+                      </Form>
+                    </CardBlock>
+                  </div>
                 </div>
+              </div>
+
+              <div className="col-lg-9 col-md-12">
+                <CardBlock>
+                  <div
+                    className={clsx(styles.productContent, {
+                      [styles.open]: toggleContent,
+                    })}
+                  >
+                    {data?.content && parser(data?.content)}
+                    {!toggleContent && (
+                      <Button
+                        appearance="ghost"
+                        color="red"
+                        onClick={() => setToggleContent(true)}
+                        className={styles.btnToggle}
+                        style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                      >
+                        Xem thêm
+                      </Button>
+                    )}
+                  </div>
+                </CardBlock>
+              </div>
+
+              <div className={clsx('col-lg-3 col-md-12')}>
+                <CardBlock className="border-0">
+                  <Table
+                    height={400}
+                    data={data}
+                    onRowClick={(rowData) => {
+                      console.log(rowData)
+                    }}
+                  >
+                    <Column width={60} align="center" fixed>
+                      <HeaderCell>Id</HeaderCell>
+                      <Cell dataKey="id" />
+                    </Column>
+
+                    <Column width={150}>
+                      <HeaderCell>First Name</HeaderCell>
+                      <Cell dataKey="firstName" />
+                    </Column>
+
+                    <Column width={150}>
+                      <HeaderCell>Last Name</HeaderCell>
+                      <Cell dataKey="lastName" />
+                    </Column>
+                  </Table>
+                </CardBlock>
               </div>
             </div>
 
-            <div className="col-lg-9 col-md-12">
-              <CardBlock>
-                <div
-                  className={clsx(styles.productContent, {
-                    [styles.open]: toggleContent,
-                  })}
-                >
-                  {data?.content && parser(data?.content)}
-                  {!toggleContent && (
-                    <Button
-                      appearance="ghost"
-                      color="red"
-                      onClick={() => setToggleContent(true)}
-                      className={styles.btnToggle}
-                      style={{ background: 'var(--rs-red-800)', color: '#fff' }}
-                    >
-                      Xem thêm
-                    </Button>
-                  )}
-                </div>
-              </CardBlock>
-            </div>
-
-            <div className={clsx('col-lg-3 col-md-12')}>
-              {/* <SideFilter /> */}
-              <CardBlock className="border-0">
-                <Table
-                  height={400}
-                  data={data}
-                  onRowClick={(rowData) => {
-                    console.log(rowData)
-                  }}
-                >
-                  <Column width={60} align="center" fixed>
-                    <HeaderCell>Id</HeaderCell>
-                    <Cell dataKey="id" />
-                  </Column>
-
-                  <Column width={150}>
-                    <HeaderCell>First Name</HeaderCell>
-                    <Cell dataKey="firstName" />
-                  </Column>
-
-                  <Column width={150}>
-                    <HeaderCell>Last Name</HeaderCell>
-                    <Cell dataKey="lastName" />
-                  </Column>
-                </Table>
-              </CardBlock>
-            </div>
+            <div id="bk-modal"></div>
           </div>
-
-          <div id="bk-modal"></div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
@@ -671,12 +673,13 @@ export const getServerSideProps = async (ctx) => {
   ctx.res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
 
   const resp = await axios.get('/product' + '/' + slug)
-  const { data, _relationProd } = resp.data
+  const { data, _relationProd, seo } = resp.data
   return {
     props: {
       data,
       _relationProd,
       slug,
+      seo,
     },
   }
 }

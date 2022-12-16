@@ -1,10 +1,8 @@
-// const { Product, Category } = require('@model')
-// const { successHandler, errHandler } = require('@response')
-// const slugify = require('slugify')
-import { MESSAGE } from '#server/constant/message'
-import { ProductVariant, Product, ProductCategory } from '#server/model'
+import { generateSeoTag } from '#common/helper'
+import { Product, ProductCategory } from '#server/model'
 import _ from 'lodash'
 import mongoose from 'mongoose'
+
 export default class ProductController {
   getProductSlug = async (req, res) => {
     try {
@@ -13,7 +11,6 @@ export default class ProductController {
       let parentItem = await Product.findOne({
         slug,
       })
-      // let parentId = parentItem._id
 
       let data = await Product.aggregate([
         {
@@ -48,7 +45,6 @@ export default class ProductController {
       ])
 
       let primaryKey = parentItem.primary
-
       data = data.map((item) => {
         let obj = { ...item }
         for (let key in item.attribute) {
@@ -57,8 +53,17 @@ export default class ProductController {
         return obj
       })
 
+      const seoTags = await generateSeoTag({
+        title: parentItem.title,
+        description: parentItem.description,
+        keywords: parentItem.title,
+        url: `${process.env.HOSTNAME}/product/${parentItem.slug}`,
+        image: `${parentItem.image?.[0]?.src}`,
+      })
+
       return res.status(200).json({
         data: parentItem,
+        seo: [seoTags.head, seoTags.body],
         _relationProd: _.chain(data)
           .groupBy(primaryKey)
           .map((value, key) => {
@@ -79,7 +84,6 @@ export default class ProductController {
 
   getHomeProduct = async (req, res) => {
     try {
-      let _prod
       let _cate = await ProductCategory.aggregate([
         {
           $project: {
@@ -120,6 +124,56 @@ export default class ProductController {
               },
             ],
             as: 'child',
+          },
+        },
+        {
+          $unwind: '$child',
+        },
+        {
+          $group: {
+            _id: {
+              _id: '$_id',
+              name: '$name',
+              slug: '$slug',
+            },
+            child: {
+              $push: {
+                title: '$child.title',
+                price: '$child.price',
+                description: '$child.description',
+                slug: '$child.slug',
+                category: '$child.category',
+                image: '$child.image',
+              },
+            },
+          },
+        },
+        {
+          $project: {
+            _id: '$_id._id',
+            name: '$_id.name',
+            slug: '$_id.slug',
+            child: '$child',
+          },
+        },
+        {
+          $lookup: {
+            from: 'productcategories',
+            localField: '_id',
+            foreignField: 'parent',
+            pipeline: [
+              {
+                $limit: 4,
+              },
+              {
+                $project: {
+                  _id: '$_id',
+                  name: '$name',
+                  slug: '$slug',
+                },
+              },
+            ],
+            as: 'categories',
           },
         },
       ])
@@ -210,9 +264,9 @@ export default class ProductController {
       let _prod
 
       const UNIT_PRICE = 1000000
+
       const MAXPRICE = Number(maxPrice) * UNIT_PRICE || 999 * UNIT_PRICE
 
-      console.log(MAXPRICE)
       let count
       if (price || createdAt) {
         _prod = await Product.find({
@@ -248,65 +302,6 @@ export default class ProductController {
           },
         }).count()
       }
-
-      // const sort = []
-
-      // const pipeAggregate = [
-      //   {
-      //     $lookup: {
-      //       from: 'productvariants',
-      //       localField: '_id',
-      //       foreignField: 'parentId',
-      //       as: 'child',
-      //     },
-      //   },
-      //   {
-      //     $unwind: '$child',
-      //   },
-      //   {
-      //     $project: {
-      //       title: '$title',
-      //       description: '$description',
-      //       price: '$price',
-      //       slug: '$slug',
-      //       stock_status: '$stock_status',
-      //       type: '$type',
-      //       category: '$category',
-      //       image: '$image',
-      //       attributes: '$attributes',
-      //       childPrice: '$child.price',
-      //     },
-      //   },
-      // ]
-
-      // if (maxPrice) {
-      //   sort.push({
-      //     $match: {
-      //       $and : [
-      //         {
-      //           'price': $exists: {true}
-      //         }
-      //       ]
-      //     }
-      //   })
-      // }
-
-      // if (price || createdAt) {
-      //   sort.push(
-      //     {
-      //       $sort: {
-      //         price: price || 1,
-      //         createdAt: createdAt || 1,
-      //       },
-      //     },
-      //     { $skip: activeP * pageS - pageS },
-      //     { $limit: pageS },
-      //   )
-      // }
-
-      // pipeAggregate.push(sort)
-
-      // _prod = await Product.aggregate(pipeAggregate)
 
       return res.status(200).json({
         length: _prod.length,

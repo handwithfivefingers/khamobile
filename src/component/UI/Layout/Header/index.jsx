@@ -1,24 +1,30 @@
 import CogIcon from '@rsuite/icons/legacy/Cog'
-import { Badge, DOMHelper, Dropdown, Nav, Navbar, IconButton, Button, Drawer, Sidenav, Affix } from 'rsuite'
+import { Badge, Drawer, Dropdown, IconButton, Nav, Navbar, Sidenav } from 'rsuite'
 
 import LOGO from 'assets/img/logo.png'
 import Image from 'next/image'
 import Link from 'next/link'
-import styles from './styles.module.scss'
-import { useEffect, forwardRef, useState } from 'react'
+import { forwardRef, useEffect, useState } from 'react'
 import GlobalCategoryService from 'service/global/Category.service'
+import styles from './styles.module.scss'
 
-import MobileIcon from '@rsuite/icons/Mobile'
 import DeviceOtherIcon from '@rsuite/icons/DeviceOther'
-import PcIcon from '@rsuite/icons/Pc'
 import GridIcon from '@rsuite/icons/Grid'
-import ListIcon from '@rsuite/icons/List'
-import TextImageIcon from '@rsuite/icons/TextImage'
-import PeoplesIcon from '@rsuite/icons/Peoples'
-import HomeIcon from '@rsuite/icons/legacy/Home'
-import { FaShoppingBasket } from 'react-icons/fa'
-import { useRef } from 'react'
 import AlignRightIcon from '@rsuite/icons/legacy/AlignRight'
+import HomeIcon from '@rsuite/icons/legacy/Home'
+import ListIcon from '@rsuite/icons/List'
+import MobileIcon from '@rsuite/icons/Mobile'
+import PcIcon from '@rsuite/icons/Pc'
+import PeoplesIcon from '@rsuite/icons/Peoples'
+import TextImageIcon from '@rsuite/icons/TextImage'
+import { useRef } from 'react'
+import { FaShoppingBasket } from 'react-icons/fa'
+
+import UserInfoIcon from '@rsuite/icons/UserInfo'
+import { useRouter } from 'next/router'
+import clsx from 'clsx'
+import { HEADER_MENU } from 'src/constant/header.constant.jsx'
+
 const NavLink = forwardRef((props, ref) => {
   const { href, as, ...rest } = props
   return (
@@ -32,18 +38,14 @@ const renderIconButton = ({ placement, ...props }, ref) => {
   return <IconButton {...props} ref={ref} icon={<AlignRightIcon />} />
 }
 
-const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
+const CustomNavbar = ({ ...props }) => {
   const [cartLength, setCartLength] = useState(null)
   const [cateMenu, setCateMenu] = useState([])
-
   const [drawer, setDrawer] = useState(false)
-
-  const [width, setWidth] = useState({
-    lg: false,
-    md: false,
-    sm: false,
-  })
+  const [activeKey, setActiveKey] = useState(null)
   const nodeRef = useRef()
+  const router = useRouter()
+
   useEffect(() => {
     let item = JSON.parse(localStorage.getItem('khaMobileCart'))
 
@@ -52,6 +54,16 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
     }
     getCateData()
   }, [])
+
+  useEffect(() => {
+    if (router.pathname.includes('/product')) {
+      setActiveKey('/product')
+    } else if (router.pathname.includes('/category')) {
+      setActiveKey('/category')
+    } else {
+      setActiveKey(router.pathname)
+    }
+  }, [router])
 
   const getCateData = async () => {
     try {
@@ -90,6 +102,9 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
             <Dropdown.Item as={NavLink} href="/cart" icon={<FaShoppingBasket />}>
               <Badge content={cartLength}>Giỏ hàng</Badge>
             </Dropdown.Item>
+            <Dropdown.Item as={NavLink} href="/user" icon={<UserInfoIcon />}>
+              User
+            </Dropdown.Item>
             <Dropdown.Item as={NavLink} href={`/admin`} icon={<CogIcon />}>
               Admin
             </Dropdown.Item>
@@ -102,8 +117,14 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
               <Badge content={cartLength}>Giỏ hàng</Badge>
             </Nav.Item>
           </Link>
+          <Link href="/user" passHref>
+            <Nav.Item icon={<UserInfoIcon />} eventKey="8">
+              User
+            </Nav.Item>
+          </Link>
+
           <Link href="/admin" passHref>
-            <Nav.Item icon={<CogIcon />} eventKey="7">
+            <Nav.Item icon={<CogIcon />} eventKey="9">
               Admin
             </Nav.Item>
           </Link>
@@ -119,28 +140,41 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
       <>
         <IconButton icon={<GridIcon />} onClick={() => setDrawer(!drawer)} className={styles.hamLeft} />
 
-        <Nav onSelect={onSelect} activeKey={activeKey} className={styles.navLeft}>
-          <Nav.Item as={NavLink} href="/" icon={<HomeIcon />}>
-            Trang chủ
-          </Nav.Item>
-          <Nav.Item as={NavLink} href="/about-us" icon={<PeoplesIcon />}>
-            Về chúng tôi
-          </Nav.Item>
+        <Nav activeKey={activeKey} className={styles.navLeft}>
+          {HEADER_MENU.map((navItem) => {
+            if (navItem.subMenu) {
+              return (
+                <Dropdown
+                  title={navItem.label}
+                  trigger="hover"
+                  icon={navItem.icon}
+                  key={navItem.path}
+                  className={clsx(styles.navItem, styles.navSubMenu, { [styles.active]: activeKey === navItem.path })}
+                >
+                  <Dropdown.Item as={NavLink} href="/product" icon={<DeviceOtherIcon />}>
+                    Tất cả sản phẩm
+                  </Dropdown.Item>
+                  <Dropdown.Item as={NavLink} href="/category" icon={<MobileIcon />}>
+                    Danh mục
+                  </Dropdown.Item>
 
-          <Dropdown title="Sản phẩm" trigger="hover" icon={<PcIcon />}>
-            <Dropdown.Item as={NavLink} href="/product" icon={<DeviceOtherIcon />}>
-              Tất cả sản phẩm
-            </Dropdown.Item>
-            <Dropdown.Item as={NavLink} href="/category" icon={<MobileIcon />}>
-              Danh mục
-            </Dropdown.Item>
-
-            {renderDropdownMenu(cateMenu, 'click')}
-          </Dropdown>
-
-          <Nav.Item as={NavLink} href="/tin-tuc" icon={<TextImageIcon />}>
-            Tin tức
-          </Nav.Item>
+                  {renderDropdownMenu(cateMenu, 'click')}
+                </Dropdown>
+              )
+            } else {
+              return (
+                <Nav.Item
+                  as={NavLink}
+                  href={navItem.path}
+                  icon={navItem.icon}
+                  key={navItem.path}
+                  className={clsx(styles.navItem, { [styles.active]: activeKey === navItem.path })}
+                >
+                  {navItem.label}
+                </Nav.Item>
+              )
+            }
+          })}
         </Nav>
       </>
     )
@@ -156,6 +190,7 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
       </Navbar.Brand>
 
       {renderMenuLeft()}
+
       {renderMenuRight()}
 
       <Drawer open={drawer} onClose={() => setDrawer(false)} size={'xs'} style={{ width: 250 }} placement="left">
@@ -198,5 +233,3 @@ const CustomNavbar = ({ onSelect, activeKey, ...props }) => {
   )
 }
 export default CustomNavbar
-
-CustomNavbar.defaultProps = {}

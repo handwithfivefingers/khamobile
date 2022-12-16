@@ -20,8 +20,10 @@ import GlobalProductService from 'service/global/Product.service'
 import styles from './styles.module.scss'
 
 import PageHeader from 'component/UI/Content/PageHeader'
+
 import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
-import FunnelIcon from '@rsuite/icons/Funnel'
+import PostHelmet from 'component/PostHelmet'
+import GlobalHomeService from 'service/global/Home.service'
 
 const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
 
@@ -78,34 +80,35 @@ export default function Product(props) {
   const onFilterChange = (val) => {
     setFilter(val)
   }
-
   return (
-    <div className="row p-0">
-      <div className="col-12 p-0">
-        <PageHeader type="h3" left divideClass={styles.divideLeft}>
-          Sản phẩm
-        </PageHeader>
-      </div>
-      <div className="col-12 p-0 py-2 border-top">
-        <div className="container">
-          <div className="row">
-            <div className={clsx([styles.vr, 'col-12'])}>
-              <Row gutter={12}>
-                <Col md={24}>
-                  <p>
-                    The category description can be positioned anywhere on the page via the layout page builder inside
-                    the
-                  </p>
-                </Col>
+    <>
+      <PostHelmet seo={props.seo} />
 
-                <Col md={24}>
-                  <SideFilter onChange={onFilterChange} filter={filter} />
-                </Col>
-              </Row>
-              <Divider />
-
-              <CardBlock className="border-0" ref={cardRef}>
+      <div className="row p-0">
+        <div className="col-12 p-0">
+          <PageHeader type="h3" left divideClass={styles.divideLeft}>
+            Sản phẩm
+          </PageHeader>
+        </div>
+        <div className="col-12 p-0 py-2 border-top">
+          <div className="container">
+            <div className="row">
+              <div className={clsx([styles.vr, 'col-12'])}>
                 <Row gutter={12}>
+                  <Col md={24}>
+                    <p>
+                      The category description can be positioned anywhere on the page via the layout page builder inside
+                      the
+                    </p>
+                  </Col>
+
+                  <Col md={24}>
+                    <SideFilter onChange={onFilterChange} filter={filter} />
+                  </Col>
+                </Row>
+                <Divider />
+
+                <Row gutter={12} ref={cardRef}>
                   <Col md={24}>
                     <div className={styles.grid}>
                       {loading && renderSkeleton}
@@ -131,28 +134,39 @@ export default function Product(props) {
                     </div>
                   </Col>
                 </Row>
-              </CardBlock>
-              <div className={styles.pagi}>
-                <Pagination
-                  prev
-                  last
-                  next
-                  first
-                  size="sm"
-                  total={product?.total}
-                  limit={20}
-                  activePage={activePage}
-                  onChangePage={(page) => {
-                    setActivePage(page)
-                  }}
-                />
+                <div className={styles.pagi}>
+                  <Pagination
+                    prev
+                    last
+                    next
+                    first
+                    size="sm"
+                    total={product?.total}
+                    limit={20}
+                    activePage={activePage}
+                    onChangePage={(page) => {
+                      setActivePage(page)
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 
 Product.Layout = CommonLayout
+
+export const getServerSideProps = async (ctx) => {
+  const resp = await GlobalHomeService.getProductSeo()
+
+  const data = resp.data
+  return {
+    props: {
+      seo: data.seo,
+    },
+  }
+}

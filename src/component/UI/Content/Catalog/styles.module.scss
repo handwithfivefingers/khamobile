@@ -20,13 +20,22 @@
       gap: 8px;
       .listLink {
         direction: ltr;
-        ul {
+        .list {
+          overflow: hidden;
+          display: block;
           list-style-type: none;
           padding-left: 0;
-          li {
-            text-decoration: underline;
+          .subCateItem {
+            text-decoration: none;
             font-size: 14px;
             cursor: pointer;
+            // padding: 6px 0px;
+            a {
+              text-decoration: none;
+              cursor: pointer;
+              padding: 2px 0px;
+              display: block;
+            }
           }
         }
       }
@@ -68,12 +77,20 @@
 
       .content {
         .listLink {
-          ul {
-            li {
+          .list {
+            overflow: hidden;
+            display: block;
+            .subCateItem {
               text-decoration: none;
               font-size: 16px;
               cursor: pointer;
-              padding: 6px 0px;
+              padding: 4px 0px;
+              a {
+                // text-decoration: none;
+                font-size: 16px;
+                cursor: pointer;
+                // padding: 6px 0px;
+              }
             }
           }
         }
@@ -96,4 +113,7 @@
   white-space: normal;
   overflow: visible;
   text-overflow: initial;
+  div {
+    margin-left: 0;
+  }
 }

@@ -24,7 +24,7 @@ const Catalog = (props) => {
 
   const handleRedirect = (group) => {
     // console.log(group)
-    return router.push('/category/' + group.slug)
+    return router.push('/category/' + group.slug + '?page=1')
   }
 
   return (
@@ -42,19 +42,16 @@ const Catalog = (props) => {
           />
 
           <div className={styles.listLink}>
-            <ul>
-              <li>
-                <a>Accessories</a>
-              </li>
-              <li>
-                <a>Dresses</a>
-              </li>
-              <li>
-                <a>Pants</a>
-              </li>
-              <li>
-                <a>T-Shirts</a>
-              </li>
+            <ul className={styles.list}>
+              {props.data?.categories?.map((cateItem) => (
+                <li key={[cateItem._id, cateItem.slug]} className={styles.subCateItem}>
+                  <Link href={`/category/${cateItem.slug}?page=1`} passHref>
+                    <a className="text-truncate w-100" alt={cateItem.name}>
+                      {cateItem.name}
+                    </a>
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 

@@ -16,7 +16,9 @@ import GlobalHomeService from 'service/global/Home.service'
 import { useEffect, useState } from 'react'
 import styles from './styles.module.scss'
 import CardBlock from 'component/UI/Content/CardBlock'
-const Home = () => {
+import axios from 'axios'
+import PostHelmet from 'component/PostHelmet'
+const Home = (props) => {
   const [data, setData] = useState([])
   useEffect(() => {
     getHomeProd()
@@ -24,18 +26,50 @@ const Home = () => {
   const getHomeProd = async () => {
     try {
       let resp = await GlobalHomeService.getHomeProd()
-      setData(resp.data.data)
+      // sort Item
+
+      const { data } = resp.data
+
+      const nextState = [{}, {}, {}, {}, {}, {}, {}]
+
+      for (let i = 0; i < data.length; i++) {
+        let item = data[i]
+        if (item._id === '6382d12ebd85e309e477dba3') {
+          /* Sản Phẩm Nổi Bật */
+          nextState[6] = item
+        } else if (item._id === '6382d12ebd85e309e477db84') {
+          /* Apple Watch */
+          nextState[1] = item
+        } else if (item._id === '6382d12dbd85e309e477db81') {
+          /* Accessories */
+          nextState[0] = item
+        } else if (item._id === '6382d12ebd85e309e477db86') {
+          /* Ipad */
+          nextState[2] = item
+        } else if (item._id === '6382d12ebd85e309e477db97') {
+          /* Macbook */
+          nextState[5] = item
+        } else if (item._id === '6382d12ebd85e309e477db8d') {
+          /* IPHONE */
+          nextState[3] = item
+        } else nextState[4] = item
+      }
+
+      setData(nextState)
     } catch (error) {
       console.log(error)
     }
   }
 
+  console.log(data)
   // console.log('data', data)
   return (
     <>
-      <Head>
+      {/* <Head>
         <title>Kha Mobile</title>
-      </Head>
+      </Head> */}
+
+      <PostHelmet seo={props?.seo} />
 
       <section className="container-fluid">
         <div className="row gx-2 gy-2">
@@ -280,51 +314,18 @@ const SelfCarousel = () => {
       <img src={images[4].itemImageSrc} height="250" />
     </Carousel>
   )
-  return (
-    <div id="carouselExampleDark" className="carousel carousel-dark slide" data-bs-ride="carousel">
-      <div className="carousel-indicators">
-        <button
-          type="button"
-          data-bs-target="#carouselExampleDark"
-          data-bs-slide-to="0"
-          className="active"
-          aria-current="true"
-          aria-label="Slide 1"
-        ></button>
-        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="1" aria-label="Slide 2"></button>
-        <button type="button" data-bs-target="#carouselExampleDark" data-bs-slide-to="2" aria-label="Slide 3"></button>
-      </div>
-      <div className="carousel-inner">
-        <div className="carousel-item active" data-bs-interval="10000">
-          <img src={images[0].itemImageSrc} className="d-block w-100" alt="..." />
-        </div>
-        <div className="carousel-item" data-bs-interval="2000">
-          <img src={images[1].itemImageSrc} className="d-block w-100" alt="..." />
-        </div>
-        <div className="carousel-item">
-          <img src={images[2].itemImageSrc} className="d-block w-100" alt="..." />
-        </div>
-      </div>
-      <button
-        className="carousel-control-prev"
-        type="button"
-        data-bs-target="#carouselExampleDark"
-        data-bs-slide="prev"
-      >
-        <span className="carousel-control-prev-icon" aria-hidden="true"></span>
-        <span className="visually-hidden">Previous</span>
-      </button>
-      <button
-        className="carousel-control-next"
-        type="button"
-        data-bs-target="#carouselExampleDark"
-        data-bs-slide="next"
-      >
-        <span className="carousel-control-next-icon" aria-hidden="true"></span>
-        <span className="visually-hidden">Next</span>
-      </button>
-    </div>
-  )
+}
+
+export const getServerSideProps = async (ctx) => {
+  const resp = await GlobalHomeService.getHomeSeo()
+
+  const data = resp.data
+  console.log(data)
+  return {
+    props: {
+      seo: data.seo,
+    },
+  }
 }
 
 export default Home

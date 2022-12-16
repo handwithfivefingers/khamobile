@@ -37,9 +37,13 @@ export default {
 
   product: [
     {
+      variantId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'ProductVariant',
+      },
       productId: {
-        type: String,
-        require: true,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Product',
       },
       quantity: {
         type: Number,
