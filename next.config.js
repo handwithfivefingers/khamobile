@@ -29,7 +29,7 @@ const nextConfig = {
     imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
   },
   env: {
-    NODE_ENV: 'development',
+    NODE: process.env.NODE_ENV,
     port: process.env.PORT,
     host: process.env.HOST,
     API: process.env.API,

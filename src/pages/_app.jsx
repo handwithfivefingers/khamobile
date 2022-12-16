@@ -63,7 +63,7 @@ export default function MyApp({ Component, pageProps }) {
           </Layout>
         )}
 
-        {process.env.NODE_ENV !== 'production' && (
+        {process.env.NODE !== 'production' && (
           <>
             <div className={'dev'} style={{ zIndex: 999999999 }}>
               <IconButton onClick={handleDev} icon={<GearIcon spin style={{ fontSize: '2em' }} />} />
