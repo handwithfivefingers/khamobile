@@ -5,5 +5,5 @@ import clsx from 'clsx'
 
 export default function CardBlock(props) {
   const classCard = clsx(['card', props.className, styles.card])
-  return <div className={classCard}>{props.children}</div>
+  return <div className={classCard} style={props?.style}>{props.children}</div>
 }

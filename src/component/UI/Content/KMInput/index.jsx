@@ -1,4 +1,4 @@
-import { Form, Input, SelectPicker, InputGroup } from 'rsuite'
+import { Form, Input, SelectPicker, InputGroup, MaskedInput } from 'rsuite'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import EyeIcon from '@rsuite/icons/legacy/Eye'
 import EyeSlashIcon from '@rsuite/icons/legacy/EyeSlash'
@@ -57,7 +57,15 @@ const KMInput = ({ name, label, onChange, ...props }) => {
       onChange(v)
     }
   }
-
+  if (props?.mask?.length) {
+    return (
+      <Form.Group controlId={name}>
+        <Form.ControlLabel>{label}</Form.ControlLabel>
+        <Form.Control name={name} accepter={MaskInput} {...props} onChange={handleOnChange} />
+        {/* <MaskedInput {...props} /> */}
+      </Form.Group>
+    )
+  }
   return (
     <Form.Group controlId={name}>
       <Form.ControlLabel>{label}</Form.ControlLabel>
@@ -122,4 +130,9 @@ const Pricing = forwardRef(({ value, onChange, ...props }, ref) => {
 const InputProxy = forwardRef((props, ref) => {
   return <input class="rs-input" type="text" {...props} ref={ref} />
 })
+
+const MaskInput = forwardRef((props, ref) => {
+  return <MaskedInput {...props} ref={ref} />
+})
+
 export { KMInput, KMSelect, KMEditor, KMInputPassword, KMPrice, Pricing }

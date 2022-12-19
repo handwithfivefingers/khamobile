@@ -18,3 +18,15 @@
   width: 100%;
   height: auto;
 }
+
+.w-100 {
+  .rs-form-group {
+    // width: 100%;
+    .rs-form-control {
+      width: 100%;
+      input {
+        width: 100%;
+      }
+    }
+  }
+}

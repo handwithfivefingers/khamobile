@@ -1,8 +1,9 @@
+import CardBlock from 'component/UI/Content/CardBlock'
+import { KMInput } from 'component/UI/Content/KMInput'
 import PageHeader from 'component/UI/Content/PageHeader'
-import JsonViewer from 'component/UI/JsonViewer'
 import { useRouter } from 'next/router'
-import React, { useState, useEffect, useRef } from 'react'
-import { Button, ButtonGroup, Form, List, Panel, Placeholder, Radio, RadioGroup, Table, Schema, Stack } from 'rsuite'
+import { useEffect, useRef, useState } from 'react'
+import { Button, ButtonGroup, FlexboxGrid, Form, List, Panel, Radio, RadioGroup, Table } from 'rsuite'
 import GlobalOrderService from 'service/global/Order.service'
 import GlobalProductService from 'service/global/Product.service'
 import { CheckoutModel } from 'src/constant/model.constant'
@@ -22,7 +23,8 @@ export default function Checkout() {
 
   const [form, setForm] = useState({
     deliveryType: 'cod',
-    userType: 'login',
+    userType: 'anonymous',
+    paymentType: 'transfer',
   })
 
   const [price, setPrice] = useState(0)
@@ -87,7 +89,9 @@ export default function Checkout() {
         console.error('Form Error')
         return
       }
+
       console.log(form)
+
       const resp = await GlobalOrderService.createOrder(form)
       if (resp.data.orderId) {
         localStorage.setItem('khaMobileCart', null)
@@ -162,38 +166,64 @@ export default function Checkout() {
     let html = null
 
     html = (
-      <Panel bordered header={<h5>Địa chỉ giao hàng/ thanh toán</h5>}>
-        <Form.Group controlId="company">
-          <Form.ControlLabel>
-            Công ty<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="company" />
-        </Form.Group>
-        <Form.Group controlId="address_1">
-          <Form.ControlLabel>
-            Địa chỉ 1<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="address_1" />
-        </Form.Group>
-        <Form.Group controlId="address_2">
-          <Form.ControlLabel>Địa chỉ 2</Form.ControlLabel>
-          <Form.Control name="address_2" />
-        </Form.Group>
+      <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+        <FlexboxGrid.Item style={{ width: '100%' }}>
+          <h5>Địa chỉ giao hàng/ thanh toán</h5>
+        </FlexboxGrid.Item>
 
-        <Form.Group controlId="city">
-          <Form.ControlLabel>
-            Tỉnh/ Thành phố<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="city" />
-        </Form.Group>
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput
+            name="company"
+            label={
+              <>
+                Công ty <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+              </>
+            }
+          />
+        </FlexboxGrid.Item>
 
-        <Form.Group controlId="postCode">
-          <Form.ControlLabel>
-            Mã vùng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="postCode" />
-        </Form.Group>
-      </Panel>
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput
+            name="address_1"
+            label={
+              <>
+                Địa chỉ 1<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+              </>
+            }
+          />
+        </FlexboxGrid.Item>
+
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput name="address_2" label={<>Địa chỉ 2</>} />
+        </FlexboxGrid.Item>
+
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput
+            name="city"
+            label={
+              <>
+                Tỉnh/ Thành phố<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+              </>
+            }
+          />
+        </FlexboxGrid.Item>
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput
+            name="postCode"
+            label={
+              <>
+                Mã vùng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+              </>
+            }
+            mask={[/\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+            placeholder="xxxxxx"
+            guide={true}
+            showMask={true}
+            onChange={(val) => console.log(val)}
+            keepCharPositions={false}
+          />
+        </FlexboxGrid.Item>
+      </CardBlock>
     )
     return html
   }
@@ -202,32 +232,50 @@ export default function Checkout() {
     let html = null
 
     html = (
-      <Panel header={<h5>Thông tin cá nhân</h5>} bordered>
-        <Form.Group controlId="firstName">
-          <Form.ControlLabel>
-            Tên <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="firstName" />
-        </Form.Group>
-        <Form.Group controlId="lastName">
-          <Form.ControlLabel>
-            Họ và tên lót <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="lastName" />
-        </Form.Group>
-        <Form.Group controlId="email">
-          <Form.ControlLabel>
-            Địa chỉ email <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="email" />
-        </Form.Group>
-        <Form.Group controlId="phone">
-          <Form.ControlLabel>
-            Số điện thoại <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="phone" />
-        </Form.Group>
-      </Panel>
+      <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+        <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
+          <FlexboxGrid.Item style={{ width: '100%' }}>
+            <h5>Thông tin cá nhân</h5>
+          </FlexboxGrid.Item>
+
+          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+            <KMInput
+              name="fullName"
+              label={
+                <>
+                  Họ và tên <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                </>
+              }
+            />
+          </FlexboxGrid.Item>
+
+          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+            <KMInput
+              name="email"
+              label={
+                <>
+                  Email <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                </>
+              }
+            />
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+            <KMInput
+              name="phone"
+              label={
+                <>
+                  Số điện thoại <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                </>
+              }
+              mask={[/[0-9]/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
+              placeholder="012 345 6789"
+              guide={false}
+              onChange={(val) => console.log(val)}
+              keepCharPositions={true}
+            />
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
+      </CardBlock>
     )
 
     return html
@@ -240,32 +288,7 @@ export default function Checkout() {
       html = renderShippingAddress()
     } else {
       if (condition === 'login') {
-        html = (
-          <div className="col-12">
-            <Panel header={<h5>Đăng nhập</h5>} bordered>
-              <Form.Group controlId="username">
-                <Form.ControlLabel>
-                  Tên tài khoản <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-                </Form.ControlLabel>
-                <Form.Control name="username" />
-              </Form.Group>
-
-              <Form.Group controlId="password">
-                <Form.ControlLabel>
-                  Mật khẩu <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-                </Form.ControlLabel>
-                <Form.Control name="password" />
-              </Form.Group>
-              <Button
-                onClick={handleLogin}
-                color="blue"
-                style={{ background: 'var(--rs-blue-800)', color: '#fff', display: 'flex', marginLeft: 'auto' }}
-              >
-                Đăng nhập
-              </Button>
-            </Panel>
-          </div>
-        )
+        html = <div className="col-12">{renderLoginForm()}</div>
       } else {
         html = (
           <>
@@ -279,6 +302,36 @@ export default function Checkout() {
     return html
   }
 
+  const renderLoginForm = () => {
+    let html = null
+    html = (
+      <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+        <h5>Đăng nhập</h5>
+        <Form.Group controlId="username">
+          <Form.ControlLabel>
+            Tên tài khoản <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+          </Form.ControlLabel>
+          <Form.Control name="username" style={{ width: '100%' }} className="d-flex flex-1" />
+        </Form.Group>
+
+        <Form.Group controlId="password">
+          <Form.ControlLabel>
+            Mật khẩu <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+          </Form.ControlLabel>
+          <Form.Control name="password" />
+        </Form.Group>
+        <Button
+          onClick={handleLogin}
+          color="blue"
+          style={{ background: 'var(--rs-blue-800)', color: '#fff', display: 'flex', marginLeft: 'auto' }}
+        >
+          Đăng nhập
+        </Button>
+      </CardBlock>
+    )
+    return html
+  }
+
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -289,7 +342,7 @@ export default function Checkout() {
       <div className="col-12 p-0 py-2 border-top">
         <div className="container">
           <Form
-            className="row gx-4  gy-4"
+            className="row gx-4 gy-4"
             formValue={form}
             onChange={(formVal) => setForm(formVal)}
             model={CheckoutModel}
@@ -297,15 +350,17 @@ export default function Checkout() {
           >
             <div className="col-12 col-md-6 col-lg-4">
               <div className="row gy-4">
-                <div className="col-12 p-0">{renderInformationBlock()}</div>
+                <div className="col-12 ">{renderInformationBlock()}</div>
 
                 {renderUserInformationByCondition(form.userType)}
               </div>
             </div>
+
             <div className="col-12 col-md-6 col-lg-8">
               <div className="row gx-4 gy-4">
                 <div className="col-12">
-                  <Panel header={<h5>Phương thức vận chuyển</h5>} className="shadow  bg-white">
+                  <CardBlock className="border-0">
+                    <h5>Phương thức vận chuyển</h5>
                     <Form.Group controlId="radioList">
                       <RadioGroup
                         name="radioList"
@@ -315,20 +370,21 @@ export default function Checkout() {
                         <Radio value="cod">COD</Radio>
                       </RadioGroup>
                     </Form.Group>
-                  </Panel>
+                  </CardBlock>
                 </div>
 
                 <div className="col-12">
-                  <Panel header={<h5>Thông tin đơn hàng</h5>} className="shadow  bg-white">
+                  <CardBlock className="border-0">
+                    <h5>Thông tin đơn hàng</h5>
                     <Table autoHeight data={form?.product}>
-                      <Column align="left" verticalAlign="middle"  flexGrow={1}>
+                      <Column align="left" verticalAlign="middle" flexGrow={1}>
                         <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>
                           Tên sản phẩm
                         </HeaderCell>
                         <Cell dataKey="title" />
                       </Column>
 
-                      <Column align="center" verticalAlign="middle" >
+                      <Column align="center" verticalAlign="middle">
                         <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Đơn giá</HeaderCell>
                         <Cell dataKey="price" />
                       </Column>
@@ -353,17 +409,22 @@ export default function Checkout() {
                         </span>
                       </List.Item>
                     </List>
-                  </Panel>
+                  </CardBlock>
                 </div>
                 <div className="col-12">
-                  <Panel header={<h5>Hình thức thanh toán</h5>} className="shadow  bg-white">
+                  <CardBlock className="border-0">
+                    <h5>Hình thức thanh toán</h5>
                     <Form.Group controlId="radioList">
-                      <RadioGroup name="radioList" onChange={(val) => setForm({ ...form, paymentType: val })}>
+                      <RadioGroup
+                        name="radioList"
+                        onChange={(val) => setForm({ ...form, paymentType: val })}
+                        value={form.paymentType}
+                      >
                         <Radio value="transfer">Chuyển khoản</Radio>
                         <Radio value="vnpay">Qua Vn-Pay</Radio>
                       </RadioGroup>
                     </Form.Group>
-                  </Panel>
+                  </CardBlock>
                 </div>
 
                 <div className="col-12">

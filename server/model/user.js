@@ -1,7 +1,6 @@
 export default {
   username: String,
-  firstName: String,
-  lastName: String,
+  fullName: String,
   email: String,
   phone: String,
   hash_password: String,

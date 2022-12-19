@@ -6,6 +6,8 @@ import MailServer from '#controller/Service/MailServer'
 import { formatCurrency } from '#common/helper'
 import TEMPLATE_MAIL from '#constant/templateMail'
 import shortid from 'shortid'
+import moment from 'moment'
+import PaymentController from '#controller/Service/Payment'
 export default class OrderController {
   handleCreateOrder = async (req, res) => {
     try {
@@ -28,7 +30,9 @@ export default class OrderController {
         status,
         product,
       } = req.body
-
+      let result = {
+        message: 'Create order successfully',
+      }
       // Create User
       /**
        * Step1: Checking user
@@ -38,20 +42,15 @@ export default class OrderController {
        * Step3: Send mail
        */
       let userId = req.body.userId
-      let user, deliveryInformation
+      let user, deliveryInformation, urlPayment
 
       console.log(userId)
 
       if (!userId) {
-        // const _user = await User.findOne({ email: email })
-        // if(_user) {
-
-        // }
         user = {
           _id: userId,
           username: shortid(),
-          firstName,
-          lastName,
+          fullName,
           email,
           phone,
           delivery: {
@@ -99,17 +98,34 @@ export default class OrderController {
 
       const responseMailSending = await this.sendMail({
         email: user.email,
-        username: user.username,
-        firstName: user.firstName,
+        username: user.fullName,
+        firstName: user.fullName,
         orderId: response.orderId,
         product,
       })
-      if (responseMailSending.status) {
-        return res.status(200).json({
-          message: 'Create order successfully',
-          orderId: response.orderId,
+
+      if (!responseMailSending.status) throw { message: 'Cant send mail' }
+
+      if (paymentType === 'vnpay') {
+        const paymentResp = await new PaymentController().createLinkPayment({
+          createDate: moment().format('yyyyMMddhhmmss'),
+          orderId: moment().format('hhmmss'),
+          amount,
+          orderInfo: response.orderId,
+          ip:
+            req.headers['x-forwarded-for'] ||
+            req.connection.remoteAddress ||
+            req.socket.remoteAddress ||
+            req.connection.socket.remoteAddress,
         })
+
+        urlPayment = paymentResp.url
       }
+
+      result.orderId = response.orderId
+      result.urlPayment = urlPayment
+
+      return res.status(200).json(result)
     } catch (error) {
       console.log('handleCreateOrder: ' + error)
       return res.status(400).json({
@@ -218,8 +234,6 @@ export default class OrderController {
           subTotal: formatCurrency(subTotal, { symbol: ' đ' }),
         },
       }
-
-      console.log(JSON.stringify(mailObject, null, 2))
 
       await new MailServer().sendMailOnly(mailObject)
       return { status: true }

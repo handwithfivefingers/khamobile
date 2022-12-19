@@ -93,29 +93,23 @@ export default function OrderReceived({ data }) {
               <div className="row gy-4">
                 <div className="col-12">
                   <Panel header={<h5>Thông tin cá nhân</h5>} bordered>
-                    <Form.Group controlId="firstName">
-                      <Form.ControlLabel>
-                        Tên <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-                      </Form.ControlLabel>
-                      <Form.Control name="firstName" value={data['userId']['firstName']} />
-                    </Form.Group>
                     <Form.Group controlId="lastName">
                       <Form.ControlLabel>
-                        Họ và tên lót <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                        Họ và tên <span style={{ color: 'var(--rs-red-500)' }}>*</span>
                       </Form.ControlLabel>
-                      <Form.Control name="lastName" value={data['userId']['lastName']} />
+                      <Form.Control name="fullName" value={data['userId']?.['fullName']} />
                     </Form.Group>
                     <Form.Group controlId="email">
                       <Form.ControlLabel>
                         Địa chỉ email <span style={{ color: 'var(--rs-red-500)' }}>*</span>
                       </Form.ControlLabel>
-                      <Form.Control name="email" value={data['userId']['email']} />
+                      <Form.Control name="email" value={data['userId']?.['email']} />
                     </Form.Group>
                     <Form.Group controlId="phone">
                       <Form.ControlLabel>
                         Số điện thoại <span style={{ color: 'var(--rs-red-500)' }}>*</span>
                       </Form.ControlLabel>
-                      <Form.Control name="phone" value={data['userId']['phone']} />
+                      <Form.Control name="phone" value={data['userId']?.['phone']} />
                     </Form.Group>
                   </Panel>
                 </div>
@@ -123,25 +117,25 @@ export default function OrderReceived({ data }) {
                   <Panel bordered header={<h5>Địa chỉ giao hàng/ thanh toán</h5>}>
                     <Form.Group controlId="company">
                       <Form.ControlLabel>Công ty</Form.ControlLabel>
-                      <Form.Control name="company" value={data['deliveryInformation']['company']} />
+                      <Form.Control name="company" value={data['deliveryInformation']?.['company']} />
                     </Form.Group>
                     <Form.Group controlId="address_1">
                       <Form.ControlLabel>Địa chỉ 1</Form.ControlLabel>
-                      <Form.Control name="address_1" value={data['deliveryInformation']['address_1']} />
+                      <Form.Control name="address_1" value={data['deliveryInformation']?.['address_1']} />
                     </Form.Group>
                     <Form.Group controlId="address_2">
                       <Form.ControlLabel>Địa chỉ 2</Form.ControlLabel>
-                      <Form.Control name="address_2" value={data['deliveryInformation']['address_2']} />
+                      <Form.Control name="address_2" value={data['deliveryInformation']?.['address_2']} />
                     </Form.Group>
 
                     <Form.Group controlId="city">
                       <Form.ControlLabel>Tỉnh/ Thành phố</Form.ControlLabel>
-                      <Form.Control name="city" value={data['deliveryInformation']['city']} />
+                      <Form.Control name="city" value={data['deliveryInformation']?.['city']} />
                     </Form.Group>
 
                     <Form.Group controlId="postCode">
                       <Form.ControlLabel>Mã vùng</Form.ControlLabel>
-                      <Form.Control name="postCode" value={data['deliveryInformation']['postCode']} />
+                      <Form.Control name="postCode" value={data['deliveryInformation']?.['postCode']} />
                     </Form.Group>
                   </Panel>
                 </div>
@@ -231,9 +225,7 @@ export default function OrderReceived({ data }) {
                           </Tag>
                           <br />
                           Nội dung chuyển khoản: <br />
-                          <Tag size="md">
-                            {data.userId.lastName} {data.userId.firstName}
-                          </Tag>
+                          <Tag size="md">{data.userId?.fullName}</Tag>
                         </div>
                       </div>
                     </Panel>
