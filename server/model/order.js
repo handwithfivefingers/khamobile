@@ -6,6 +6,12 @@ export default {
     ref: 'User',
   },
 
+  userInformation: {
+    fullName: String,
+    phone: String,
+    email: String,
+  },
+
   deliveryInformation: {
     company: String,
     address_1: String,

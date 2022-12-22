@@ -90,11 +90,13 @@ export default function Checkout() {
         return
       }
 
-      console.log(form)
-
       const resp = await GlobalOrderService.createOrder(form)
+
       if (resp.data.orderId) {
         localStorage.setItem('khaMobileCart', null)
+        if (resp.data.urlPayment && form.paymentType === 'vnpay') {
+          window.open(resp.data.urlPayment)
+        }
         router.push(`/checkout/${resp.data.orderId}`)
       }
     } catch (error) {

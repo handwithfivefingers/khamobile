@@ -1,5 +1,5 @@
 import express from 'express'
-import { upload } from '#server/middleware'
+import { upload, userMiddleware, adminMiddleware } from '#server/middleware'
 import AdminRouter from './admin'
 import WebRouter from './web'
 import ServiceRouter from './service'
@@ -26,13 +26,14 @@ AppRouter.use('/service', ServiceRouter)
 
 AppRouter.use(
   '/admin',
+  adminMiddleware,
   AdminRouter.UserRouter,
   AdminRouter.CateRouter,
   AdminRouter.PostRouter,
   AdminRouter.ProductAttributeRoute,
   AdminRouter.ProductRouter,
 )
-AppRouter.post('/upload', upload.fields([{ name: 'upload', maxCount: 1 }]), UploadRouter)
+AppRouter.post('/upload', userMiddleware, upload.fields([{ name: 'upload', maxCount: 1 }]), UploadRouter)
 
 AppRouter.use(
   '/',

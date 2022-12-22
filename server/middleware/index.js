@@ -14,7 +14,6 @@ import axios from 'axios'
 import moment from 'moment'
 import { User } from '#model'
 
-
 const storage = multer.diskStorage({
   limits: { fileSize: 1 * Math.pow(1024, 2 /* MBs*/) },
   fileFilter(req, file, cb) {
@@ -114,6 +113,32 @@ export const authenticating = async (req, res, next) => {
     return res.status(401).json({
       message: 'Permission Denied',
       error: err,
+    })
+  }
+}
+
+export const userMiddleware = async (req, res, next) => {
+  try {
+    if (!req.id || !req.role) throw { message: 'Authorization required' }
+    if (req.role === 'user' || req.role === 'admin') next()
+    else throw { message: 'Permission Denied' }
+  } catch (error) {
+    return res.status(401).json({
+      message: 'Permission Denied',
+      error: error,
+    })
+  }
+}
+
+export const adminMiddleware = async (req, res, next) => {
+  try {
+    if (!req.id || !req.role) throw { message: 'Authorization required' }
+    if (req.role === 'admin') next()
+    else throw { message: 'Permission Denied' }
+  } catch (error) {
+    return res.status(401).json({
+      message: 'Permission Denied',
+      error: error,
     })
   }
 }

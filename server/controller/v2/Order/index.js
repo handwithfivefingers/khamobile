@@ -12,10 +12,8 @@ export default class OrderController {
   handleCreateOrder = async (req, res) => {
     try {
       let {
-        userType,
         email,
-        firstName,
-        lastName,
+        fullName,
         phone,
 
         company,
@@ -41,30 +39,27 @@ export default class OrderController {
        * Step2: Create Order
        * Step3: Send mail
        */
+
       let userId = req.body.userId
+
       let user, deliveryInformation, urlPayment
 
-      console.log(userId)
+      // console.log(userId)
 
       if (!userId) {
         user = {
-          _id: userId,
-          username: shortid(),
           fullName,
           email,
           phone,
-          delivery: {
-            company,
-            address_1,
-            address_2,
-            city,
-            postCode,
-          },
         }
 
-        userId = new mongoose.Types.ObjectId()
-        const _userSaved = new User(user)
-        await _userSaved.save()
+        deliveryInformation = {
+          company,
+          address_1,
+          address_2,
+          city,
+          postCode,
+        }
       } else {
         let _user = await User.findOne({ _id: mongoose.Types.ObjectId(userId) })
 
@@ -74,6 +69,13 @@ export default class OrderController {
           let delivery = user.delivery
 
           let isdeliveryEqual = isEqual(delivery, { company, address_1, address_2, city, postCode })
+
+          userInformation = {
+            fullName: user.fullName,
+            phone: user.phone,
+            email: user.email,
+          }
+
           if (isdeliveryEqual) {
             deliveryInformation = {
               ...delivery,
@@ -81,11 +83,12 @@ export default class OrderController {
           } else {
             deliveryInformation = { company, address_1, address_2, city, postCode }
           }
-        }
+        } else throw { message: 'user not found' }
       }
 
       const response = await this.createOrder({
         userId,
+        userInformation: user,
         deliveryInformation,
         deliveryType,
         paymentType,
@@ -108,8 +111,8 @@ export default class OrderController {
 
       if (paymentType === 'vnpay') {
         const paymentResp = await new PaymentController().createLinkPayment({
-          createDate: moment().format('yyyyMMddhhmmss'),
-          orderId: moment().format('hhmmss'),
+          createDate: moment().format('YYYYMMDDHHmmss'),
+          orderId: moment().format('HHmmss'),
           amount,
           orderInfo: response.orderId,
           ip:
@@ -118,11 +121,11 @@ export default class OrderController {
             req.socket.remoteAddress ||
             req.connection.socket.remoteAddress,
         })
-
         urlPayment = paymentResp.url
       }
 
       result.orderId = response.orderId
+
       result.urlPayment = urlPayment
 
       return res.status(200).json(result)
@@ -135,13 +138,23 @@ export default class OrderController {
     }
   }
 
-  createOrder = async ({ userId, deliveryInformation, deliveryType, paymentType, amount, status, product }) => {
+  createOrder = async ({
+    userId,
+    userInformation,
+    deliveryInformation,
+    deliveryType,
+    paymentType,
+    amount,
+    status,
+    product,
+  }) => {
     try {
       const orderId = new mongoose.Types.ObjectId()
 
       let order = new Order({
         _id: orderId,
         userId,
+        userInformation,
         deliveryInformation,
         deliveryType,
         paymentType,
@@ -164,10 +177,6 @@ export default class OrderController {
 
       await order.save()
 
-      // return res.status(200).json({
-      //   message: 'Tạo đơn hàng thành công',
-      //   orderId,
-      // })
       return { orderId, status: true }
     } catch (error) {
       console.log('createOrder error', error)
@@ -202,6 +211,23 @@ export default class OrderController {
     } catch (error) {
       return res.status(400).json({
         message: 'Get Order thất bại',
+      })
+    }
+  }
+
+  getOrders = async (req, res) => {
+    try {
+      if (!req.id) throw { message: 'You dont have permission' }
+      const _order = await Order.find({ userId: req.id })
+
+      return res.status(200).json({
+        data: _order,
+        message: 'Get Order successfully',
+      })
+    } catch (error) {
+      return res.status(400).json({
+        message: 'Something went wrong',
+        error,
       })
     }
   }

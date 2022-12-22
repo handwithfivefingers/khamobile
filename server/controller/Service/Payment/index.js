@@ -171,11 +171,10 @@ import crypto from 'crypto'
 
 export default class PaymentController {
   constructor() {}
-  createLinkPayment = async (params) => {
+  createLinkPayment = async ({ createDate, orderId, amount, orderInfo, ip }) => {
     try {
-      let { createDate, orderId, amount, orderInfo } = params
 
-      let vnp_Params = this.getVpnParams({ createDate, orderId, amount, orderInfo })
+      let vnp_Params = this.getVpnParams({ createDate, orderId, amount: +amount * 100, orderInfo, ip })
 
       var vnpUrl = process.env.VNPAY_URL_PAYMENT
 

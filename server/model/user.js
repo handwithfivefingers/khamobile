@@ -20,7 +20,7 @@ export default {
   role: {
     type: String,
     enum: ['user', 'admin', 'anonymous'],
-    default: 'anonymous',
+    default: 'user',
   },
 
   delete_flag: {
