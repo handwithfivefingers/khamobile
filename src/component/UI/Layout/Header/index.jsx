@@ -4,7 +4,7 @@ import { Badge, Drawer, Dropdown, IconButton, Nav, Navbar, Sidenav } from 'rsuit
 import LOGO from 'assets/img/logo.png'
 import Image from 'next/image'
 import Link from 'next/link'
-import { forwardRef, useEffect, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useState } from 'react'
 import GlobalCategoryService from 'service/global/Category.service'
 import styles from './styles.module.scss'
 
@@ -24,7 +24,8 @@ import UserInfoIcon from '@rsuite/icons/UserInfo'
 import { useRouter } from 'next/router'
 import clsx from 'clsx'
 import { HEADER_MENU } from 'src/constant/header.constant.jsx'
-
+import { useAuthorizationStore } from 'src/store/authenticateStore'
+import UserChangeIcon from '@rsuite/icons/UserChange'
 const NavLink = forwardRef((props, ref) => {
   const { href, as, ...rest } = props
   return (
@@ -43,6 +44,7 @@ const CustomNavbar = ({ ...props }) => {
   const [cateMenu, setCateMenu] = useState([])
   const [drawer, setDrawer] = useState(false)
   const [activeKey, setActiveKey] = useState(null)
+  const { authenticate, isAdmin } = useAuthorizationStore((state) => state)
   const nodeRef = useRef()
   const router = useRouter()
 
@@ -93,7 +95,7 @@ const CustomNavbar = ({ ...props }) => {
     return html
   }
 
-  const renderMenuRight = () => {
+  const renderMenuRight = useMemo(() => {
     let html = null
     html = (
       <>
@@ -102,12 +104,24 @@ const CustomNavbar = ({ ...props }) => {
             <Dropdown.Item as={NavLink} href="/cart" icon={<FaShoppingBasket />}>
               <Badge content={cartLength}>Giỏ hàng</Badge>
             </Dropdown.Item>
-            <Dropdown.Item as={NavLink} href="/user" icon={<UserInfoIcon />}>
-              User
-            </Dropdown.Item>
-            <Dropdown.Item as={NavLink} href={`/admin`} icon={<CogIcon />}>
-              Admin
-            </Dropdown.Item>
+
+            {!authenticate && (
+              <Dropdown.Item as={NavLink} href="/login" icon={<UserChangeIcon />}>
+                Đăng nhập
+              </Dropdown.Item>
+            )}
+
+            {authenticate && (
+              <Dropdown.Item as={NavLink} href="/user" icon={<UserInfoIcon />}>
+                User
+              </Dropdown.Item>
+            )}
+
+            {authenticate && isAdmin && (
+              <Dropdown.Item as={NavLink} href={`/admin`} icon={<CogIcon />}>
+                Admin
+              </Dropdown.Item>
+            )}
           </Dropdown>
         </Nav>
 
@@ -117,22 +131,37 @@ const CustomNavbar = ({ ...props }) => {
               <Badge content={cartLength}>Giỏ hàng</Badge>
             </Nav.Item>
           </Link>
-          <Link href="/user" passHref>
-            <Nav.Item icon={<UserInfoIcon />} eventKey="8">
-              User
-            </Nav.Item>
-          </Link>
 
-          <Link href="/admin" passHref>
-            <Nav.Item icon={<CogIcon />} eventKey="9">
-              Admin
-            </Nav.Item>
-          </Link>
+          {!authenticate && (
+            <Link href="/login" passHref>
+              <Nav.Item icon={<UserChangeIcon />} eventKey="8">
+                Đăng nhập
+              </Nav.Item>
+            </Link>
+          )}
+
+          {authenticate && (
+            <Link href="/user" passHref>
+              <Nav.Item icon={<UserInfoIcon />} eventKey="8">
+                User
+              </Nav.Item>
+            </Link>
+          )}
+
+          {authenticate && isAdmin && (
+            <Link href="/admin" passHref>
+              <Nav.Item icon={<CogIcon />} eventKey="9">
+                Admin
+              </Nav.Item>
+            </Link>
+          )}
         </Nav>
       </>
     )
+
     return html
-  }
+  }, [authenticate, isAdmin])
+
   const renderMenuLeft = () => {
     let html = null
 
@@ -191,7 +220,7 @@ const CustomNavbar = ({ ...props }) => {
 
       {renderMenuLeft()}
 
-      {renderMenuRight()}
+      {renderMenuRight}
 
       <Drawer open={drawer} onClose={() => setDrawer(false)} size={'xs'} style={{ width: 250 }} placement="left">
         <Drawer.Header>

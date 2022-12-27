@@ -10,4 +10,6 @@ router.post('/register', new UserController().registerUser)
 
 router.post('/authenticate', authenticating, new UserController().authenticateUser)
 
+router.post('/logout', authenticating, new UserController().Logout)
+
 export default router

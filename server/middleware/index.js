@@ -100,6 +100,8 @@ export const authenticating = async (req, res, next) => {
 
       req.id = decoded._id
 
+      console.log('authenticating', decoded.role, decoded._id)
+
       var hour = 3600000
 
       res.cookie('sessionId', newToken, {
@@ -132,8 +134,9 @@ export const userMiddleware = async (req, res, next) => {
 
 export const adminMiddleware = async (req, res, next) => {
   try {
-    if (!req.id || !req.role) throw { message: 'Authorization required' }
+    console.log(req.role, req.id)
     if (req.role === 'admin') next()
+    // if (!req.id || !req.role) throw { message: 'Authorization required' }
     else throw { message: 'Permission Denied' }
   } catch (error) {
     return res.status(401).json({

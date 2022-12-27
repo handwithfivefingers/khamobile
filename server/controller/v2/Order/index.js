@@ -217,6 +217,7 @@ export default class OrderController {
 
   getOrders = async (req, res) => {
     try {
+      console.log(req)
       if (!req.id) throw { message: 'You dont have permission' }
       const _order = await Order.find({ userId: req.id })
 

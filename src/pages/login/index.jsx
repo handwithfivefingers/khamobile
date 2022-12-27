@@ -20,11 +20,13 @@ export default function LoginPage() {
     password: '',
   })
 
-  const { authenticate, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
+  const { authenticate, isAdmin, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
 
   useEffect(() => {
-    if (authenticate) {
+    if (authenticate && isAdmin) {
       router.push('/admin')
+    } else if (authenticate && !isAdmin) {
+      router.push('/user')
     }
   }, [authenticate])
 
@@ -43,6 +45,7 @@ export default function LoginPage() {
         changeAuthenticateStatus({
           authenticate: data.authenticate,
           user: data.data,
+          isAdmin: data?.data?.role === 'admin',
         })
       }
     } catch (error) {

@@ -31,6 +31,7 @@ export default function MyApp({ Component, pageProps }) {
         changeAuthenticateStatus({
           authenticate: resp.data.authenticate,
           user: resp.data.data,
+          isAdmin: resp.data.data.role === 'admin',
         })
       }
     } catch (error) {
@@ -38,6 +39,7 @@ export default function MyApp({ Component, pageProps }) {
       changeAuthenticateStatus({
         authenticate: false,
         user: {},
+        isAdmin: false,
       })
     }
   }

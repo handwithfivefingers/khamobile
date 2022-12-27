@@ -1,87 +1,104 @@
-const { existHandler, successHandler, errHandler, permisHandler, deletedHandler } = require('../../../response')
-const { Order, Product, User } = require('../../../model')
-const _ = require('lodash')
+// const { existHandler, successHandler, errHandler, permisHandler, deletedHandler } = require('../../../response')
+// const { Order, Product, User } = require('../../../model')
+// const _ = require('lodash')
 
-module.exports = class OrderAdmin {
+import { Order } from '#model'
+export default class OrderAdmin {
   PAGE_SIZE = 10
 
   constructor() {}
 
-  getOrderByID = async (req, res) => {
-    const { id } = req.params
+  getOrders = async (req, res) => {
     try {
-      if (req.role !== 'admin') return permisHandler(res)
+      const _order = await Order.find({})
 
-      const _order = await Order.findById(id)
-      .populate('products', 'name type')
-      .populate('data.create_company.main_career', ['name', 'code'])
-
-      return successHandler(_order, res)
-    } catch (err) {
-      console.log('getOrderBySlug error')
-      return errHandler(err, res)
+      return res.status(200).json({
+        data: _order,
+        message: 'Lấy danh sách order thành công',
+      })
+    } catch (error) {
+      return res.status(400).json({
+        message: 'Something went wrong',
+        error,
+      })
     }
   }
 
-  getAllOrder = async (req, res) => {
-    try {
-      if (req.role !== 'admin') return permisHandler(res)
+  // getOrderByID = async (req, res) => {
+  //   const { id } = req.params
+  //   try {
+  //     if (req.role !== 'admin') return permisHandler(res)
 
-      let { type } = req.query
+  //     const _order = await Order.findById(id)
+  //       .populate('products', 'name type')
+  //       .populate('data.create_company.main_career', ['name', 'code'])
 
-      // pagination using cursor
-      /**
-       *  Collections.find({ _id: { $gte: cursor_id } })
-       * .limit(100);
-       *
-       */
+  //     return successHandler(_order, res)
+  //   } catch (err) {
+  //     console.log('getOrderBySlug error')
+  //     return errHandler(err, res)
+  //   }
+  // }
 
-      let _order = await Order.find({ delete_flag: { $ne: 1 } })
-        .populate('main_career', ['name', 'code'])
-        .populate('category', 'name type')
-        .populate('products', 'name')
-        .populate({
-          path: 'orderOwner',
-          select: 'name email',
-        })
-        .sort('-createdAt')
+  // getAllOrder = async (req, res) => {
+  //   try {
+  //     if (req.role !== 'admin') return permisHandler(res)
 
-      const count = await Order.find({}).countDocuments()
+  //     let { type } = req.query
 
-      return successHandler({ _order, count }, res)
-    } catch (err) {
-      console.log('getOrders error', err)
-      return errHandler(err, res)
-    }
-  }
+  //     // pagination using cursor
+  //     /**
+  //      *  Collections.find({ _id: { $gte: cursor_id } })
+  //      * .limit(100);
+  //      *
+  //      */
 
-  deleteOrder = async (req, res) => {
-    let { id } = req.params
-    try {
-      await Order.findOneAndUpdate({ _id: id }, { delete_flag: 1 })
+  //     let _order = await Order.find({ delete_flag: { $ne: 1 } })
+  //       .populate('main_career', ['name', 'code'])
+  //       .populate('category', 'name type')
+  //       .populate('products', 'name')
+  //       .populate({
+  //         path: 'orderOwner',
+  //         select: 'name email',
+  //       })
+  //       .sort('-createdAt')
 
-      return deletedHandler(_, res)
-    } catch (err) {
-      console.log('deleteOrder error')
+  //     const count = await Order.find({}).countDocuments()
 
-      return errHandler(err, res)
-    }
-  }
+  //     return successHandler({ _order, count }, res)
+  //   } catch (err) {
+  //     console.log('getOrders error', err)
+  //     return errHandler(err, res)
+  //   }
+  // }
 
-  reforceDelete = async (req, res) => {
-    try {
-      // return res.status(200).json({})
-      await Order.deleteMany({})
+  // deleteOrder = async (req, res) => {
+  //   let { id } = req.params
+  //   try {
+  //     await Order.findOneAndUpdate({ _id: id }, { delete_flag: 1 })
 
-      // await Category.insertMany(this.data)
+  //     return deletedHandler(_, res)
+  //   } catch (err) {
+  //     console.log('deleteOrder error')
 
-      // let data = await Category.find({})
+  //     return errHandler(err, res)
+  //   }
+  // }
 
-      return res.status(200).json({ message: 'delete done' })
-    } catch (err) {
-      console.log(err)
-      return errHandler(err, res)
-    } finally {
-    }
-  }
+  // reforceDelete = async (req, res) => {
+  //   try {
+  //     // return res.status(200).json({})
+  //     await Order.deleteMany({})
+
+  //     // await Category.insertMany(this.data)
+
+  //     // let data = await Category.find({})
+
+  //     return res.status(200).json({ message: 'delete done' })
+  //   } catch (err) {
+  //     console.log(err)
+  //     return errHandler(err, res)
+  //   } finally {
+  //   }
+  // }
 }

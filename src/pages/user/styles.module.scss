@@ -13,6 +13,7 @@
 .divideLeft {
   margin-left: 0;
 }
+
 .main {
   // background-color: transparent;
   // box-shadow: none;
@@ -20,4 +21,18 @@
 .action {
   display: flex;
   justify-content: flex-end;
+}
+
+.active {
+  background: #fff !important;
+  box-shadow: var(--main-box-shadow);
+  border-radius: 8px !important;
+  color: var(--rs-blue-800) !important;
+  cursor: pointer;
+}
+
+.header {
+  ~ div {
+    margin-left: 0;
+  }
 }

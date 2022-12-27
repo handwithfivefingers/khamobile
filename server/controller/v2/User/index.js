@@ -196,6 +196,14 @@ export default class UserController {
     }
   }
 
+  Logout = async (req, res) => {
+    res.clearCookie('sessionId')
+
+    return res.status(200).json({
+      authenticate: false,
+    })
+  }
+
   createUserFromGoogle = async (user) => {
     try {
       var password = Math.random().toString(36).slice(-8)
@@ -236,7 +244,7 @@ export default class UserController {
       let userId = req.id
 
       const _user = await User.findOne({ _id: mongoose.Types.ObjectId(userId), delete_flag: 0 }).select(
-        '-hash_password -role -updatedAt -createdAt -delete_flag -__v',
+        '-hash_password -updatedAt -createdAt -delete_flag -__v',
       )
 
       if (!_user) throw new Error({ message: 'User not found' })
