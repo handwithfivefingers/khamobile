@@ -36,14 +36,13 @@ import {
   Table,
   Tag,
 } from 'rsuite'
-import JsonViewer from 'component/UI/JsonViewer'
-import { useEffect } from 'react'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import CharacterAuthorizeIcon from '@rsuite/icons/CharacterAuthorize'
 import { formatCurrency } from 'src/helper'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { KMInput } from 'component/UI/Content/KMInput'
 import { BsInboxes } from 'react-icons/bs'
+import { useRouter } from 'next/router'
 
 const { HeaderCell, Cell, Column } = Table
 
@@ -78,8 +77,8 @@ const USER_SERVICE = {
 }
 
 export default function OrderReceived({ data }) {
-
   const [tabsBank, setTabsBank] = useState([])
+  const router = useRouter()
 
   const renderPaymentContent = () => {
     let html = null
@@ -120,7 +119,9 @@ export default function OrderReceived({ data }) {
 
     return html
   }
+
   console.log(data)
+
   if (!data)
     return (
       <div className="d-flex justify-content-center flex-column align-items-center">
@@ -191,7 +192,17 @@ export default function OrderReceived({ data }) {
                               color: 'var(--rs-blue-700)',
                             }}
                           >
-                            <span style={{ textAlign: 'center', padding: '0px 10px' }}>{item.productId?.title}</span>
+                            <span style={{ textAlign: 'center', padding: '0px 10px' }}>
+                              {item.productId?.title || item.variantId?.parentId?.title || ''}
+                            </span>
+                            {item.variantId && (
+                              <span style={{ textAlign: 'center', padding: '0px 10px' }}>
+                                {Object.keys(item.variantId?.attributes)
+                                  .map((key) => item.variantId?.attributes[key])
+                                  .join(' - ')}
+                              </span>
+                            )}
+
                             <span style={{ textAlign: 'center', padding: '0px 10px' }}>
                               <b>{formatCurrency(item.variantId?.price || item.productId?.price)}</b>
                             </span>
@@ -245,7 +256,7 @@ export const getServerSideProps = async (ctx) => {
   const resp = await axios.get('/order' + '/' + slug)
 
   const { data } = resp.data
-  console.log(data)
+  // console.log(data)
   return {
     props: {
       data,

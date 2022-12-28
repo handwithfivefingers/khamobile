@@ -2,7 +2,7 @@ import CardBlock from 'component/UI/Content/CardBlock'
 import { KMInput } from 'component/UI/Content/KMInput'
 import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { Button, ButtonGroup, FlexboxGrid, Form, List, Panel, Radio, RadioGroup, Table } from 'rsuite'
 import GlobalOrderService from 'service/global/Order.service'
 import GlobalProductService from 'service/global/Product.service'
@@ -14,12 +14,9 @@ import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
 
 export default function Checkout() {
-  const formRef = useRef()
   const router = useRouter()
 
   const { authenticate, user, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
-
-  const changeData = useDevStore((state) => state.changeData)
 
   const [form, setForm] = useState({
     deliveryType: 'cod',
@@ -28,6 +25,9 @@ export default function Checkout() {
   })
 
   const [price, setPrice] = useState(0)
+  const deliveryRef = useRef()
+  const informationRef = useRef()
+  const loginRef = useRef()
 
   useEffect(() => {
     let item = JSON.parse(localStorage.getItem('khaMobileCart'))
@@ -38,19 +38,9 @@ export default function Checkout() {
 
   useEffect(() => {
     if (authenticate && user) {
-      setForm((state) => ({
-        ...state,
-        ...user,
-        userId: user._id,
-        userType: 'login',
-      }))
+      deliveryRef.current = user.delivery
     }
-  }, [authenticate])
-
-  useEffect(() => {
-    const timeout = setTimeout(() => changeData(form), 1000)
-    return () => clearTimeout(timeout)
-  }, [form])
+  }, [authenticate, user])
 
   const handleGetListItemPrice = async (item) => {
     try {
@@ -85,201 +75,75 @@ export default function Checkout() {
 
   const handleSaveOrder = async () => {
     try {
-      if (!formRef.current.check()) {
-        console.error('Form Error')
-        return
-      }
+      // console.log(formRef.current)
+      // if (!formRef.current.check()) {
+      //   console.log('Form Error')
+      //   return
+      // }
 
-      const resp = await GlobalOrderService.createOrder(form)
+      // const resp = await GlobalOrderService.createOrder(form)
 
-      if (resp.data.orderId) {
-        localStorage.setItem('khaMobileCart', null)
-        if (resp.data.urlPayment && form.paymentType === 'vnpay') {
-          window.open(resp.data.urlPayment)
-        }
-        router.push(`/checkout/${resp.data.orderId}`)
-      }
+      // if (resp.data.orderId) {
+      //   localStorage.setItem('khaMobileCart', null)
+      //   if (resp.data.urlPayment && form.paymentType === 'vnpay') window.open(resp.data.urlPayment)
+      //   else router.push(`/checkout/${resp.data.orderId}`)
+      // }
+      let deliveryValue = deliveryRef.current
     } catch (error) {
       console.log('handleSaveOrder', error)
     }
-  }
-
-  const handleLogin = () => {
-    console.log(form)
   }
 
   const renderInformationBlock = () => {
     let html = null
     if (authenticate) {
       html = (
-        <Panel header={<h5>Tài khoản</h5>} bordered>
-          <List>
-            <List.Item
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                color: 'var(--rs-blue-800)',
-              }}
-            >
-              <span>Tên tài khoản: {form.lastName + ' ' + form.firstName} </span>
-            </List.Item>
-            <List.Item
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                color: 'var(--rs-blue-800)',
-              }}
-            >
-              <span>Email: {form.email} </span>
-            </List.Item>
-            <List.Item
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                color: 'var(--rs-blue-800)',
-              }}
-            >
-              <span>Phone: {form.phone} </span>
-            </List.Item>
-          </List>
-        </Panel>
+        <div className="col-12 p-0">
+          <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+            <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
+              <FlexboxGrid.Item style={{ width: '100%' }}>
+                <h5>Tài khoản</h5>
+              </FlexboxGrid.Item>
+              <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+                <span style={{ color: 'var(--rs-blue-800)' }}>Tên tài khoản: {user.fullName || ''} </span>
+              </FlexboxGrid.Item>
+              <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+                <span style={{ color: 'var(--rs-blue-800)' }}>Email: {user.email} </span>
+              </FlexboxGrid.Item>
+              <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+                <span style={{ color: 'var(--rs-blue-800)' }}>Phone: {user.phone} </span>
+              </FlexboxGrid.Item>
+            </FlexboxGrid>
+          </CardBlock>
+        </div>
       )
     } else {
       html = (
-        <Panel header={<h5>Tài khoản</h5>} bordered>
-          <Form.Group controlId="userType">
-            <RadioGroup
-              name="userType"
-              onChange={(val) => setForm({ ...form, userType: val })}
-              value={form.userType}
-              inline
-            >
-              <Radio value="anonymous">Khách</Radio>
-              <Radio value="login">Đăng nhập</Radio>
-            </RadioGroup>
-          </Form.Group>
-        </Panel>
+        <div className="col-12">
+          <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+            <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
+              <FlexboxGrid.Item style={{ width: '100%' }}>
+                <h5>Tài khoản</h5>
+              </FlexboxGrid.Item>
+
+              <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+                <Form.Group controlId="userType">
+                  <RadioGroup
+                    name="userType"
+                    onChange={(val) => setForm({ ...form, userType: val })}
+                    value={form.userType}
+                    inline
+                  >
+                    <Radio value="anonymous">Khách</Radio>
+                    <Radio value="login">Đăng nhập</Radio>
+                  </RadioGroup>
+                </Form.Group>
+              </FlexboxGrid.Item>
+            </FlexboxGrid>
+          </CardBlock>
+        </div>
       )
     }
-    return html
-  }
-
-  const renderShippingAddress = () => {
-    let html = null
-
-    html = (
-      <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
-        <FlexboxGrid.Item style={{ width: '100%' }}>
-          <h5>Địa chỉ giao hàng/ thanh toán</h5>
-        </FlexboxGrid.Item>
-
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          <KMInput
-            name="company"
-            label={
-              <>
-                Công ty <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-              </>
-            }
-          />
-        </FlexboxGrid.Item>
-
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          <KMInput
-            name="address_1"
-            label={
-              <>
-                Địa chỉ 1<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-              </>
-            }
-          />
-        </FlexboxGrid.Item>
-
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          <KMInput name="address_2" label={<>Địa chỉ 2</>} />
-        </FlexboxGrid.Item>
-
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          <KMInput
-            name="city"
-            label={
-              <>
-                Tỉnh/ Thành phố<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-              </>
-            }
-          />
-        </FlexboxGrid.Item>
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          <KMInput
-            name="postCode"
-            label={
-              <>
-                Mã vùng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-              </>
-            }
-            mask={[/\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
-            placeholder="xxxxxx"
-            guide={true}
-            showMask={true}
-            onChange={(val) => console.log(val)}
-            keepCharPositions={false}
-          />
-        </FlexboxGrid.Item>
-      </CardBlock>
-    )
-    return html
-  }
-
-  const renderUserInformation = () => {
-    let html = null
-
-    html = (
-      <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
-        <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
-          <FlexboxGrid.Item style={{ width: '100%' }}>
-            <h5>Thông tin cá nhân</h5>
-          </FlexboxGrid.Item>
-
-          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-            <KMInput
-              name="fullName"
-              label={
-                <>
-                  Họ và tên <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-                </>
-              }
-            />
-          </FlexboxGrid.Item>
-
-          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-            <KMInput
-              name="email"
-              label={
-                <>
-                  Email <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-                </>
-              }
-            />
-          </FlexboxGrid.Item>
-          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-            <KMInput
-              name="phone"
-              label={
-                <>
-                  Số điện thoại <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-                </>
-              }
-              mask={[/[0-9]/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, ' ', /\d/, /\d/, /\d/, /\d/]}
-              placeholder="012 345 6789"
-              guide={false}
-              onChange={(val) => console.log(val)}
-              keepCharPositions={true}
-            />
-          </FlexboxGrid.Item>
-        </FlexboxGrid>
-      </CardBlock>
-    )
-
     return html
   }
 
@@ -287,16 +151,24 @@ export default function Checkout() {
     let html = null
 
     if (authenticate) {
-      html = renderShippingAddress()
+      html = <DeliveryInformation ref={deliveryRef} data={deliveryRef.current} />
     } else {
       if (condition === 'login') {
-        html = <div className="col-12">{renderLoginForm()}</div>
+        html = (
+          <div className="col-12">
+            <LoginForm ref={loginRef} handleLogin={handleLogin} />
+          </div>
+        )
       } else {
         html = (
           <>
-            <div className="col-12">{renderUserInformation()}</div>
+            <div className="col-12">
+              <UserInformation ref={informationRef} data={user} />
+            </div>
 
-            <div className="col-12">{renderShippingAddress()}</div>
+            <div className="col-12">
+              <DeliveryInformation ref={deliveryRef} data={deliveryRef.current} />
+            </div>
           </>
         )
       }
@@ -304,34 +176,9 @@ export default function Checkout() {
     return html
   }
 
-  const renderLoginForm = () => {
-    let html = null
-    html = (
-      <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
-        <h5>Đăng nhập</h5>
-        <Form.Group controlId="username">
-          <Form.ControlLabel>
-            Tên tài khoản <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="username" style={{ width: '100%' }} className="d-flex flex-1" />
-        </Form.Group>
-
-        <Form.Group controlId="password">
-          <Form.ControlLabel>
-            Mật khẩu <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="password" />
-        </Form.Group>
-        <Button
-          onClick={handleLogin}
-          color="blue"
-          style={{ background: 'var(--rs-blue-800)', color: '#fff', display: 'flex', marginLeft: 'auto' }}
-        >
-          Đăng nhập
-        </Button>
-      </CardBlock>
-    )
-    return html
+  const handleLogin = (value) => {
+    // console.log(form)
+    console.log(value)
   }
 
   return (
@@ -343,22 +190,15 @@ export default function Checkout() {
       </div>
       <div className="col-12 p-0 py-2 border-top">
         <div className="container">
-          <Form
-            className="row gx-4 gy-4"
-            formValue={form}
-            onChange={(formVal) => setForm(formVal)}
-            model={CheckoutModel}
-            ref={formRef}
-          >
-            <div className="col-12 col-md-6 col-lg-4">
+          <div className="row gx-4 gy-4">
+            <div className="col-12 col-md-6 col-lg-4 col-xl-3">
               <div className="row gy-4">
-                <div className="col-12 ">{renderInformationBlock()}</div>
-
+                {renderInformationBlock()}
                 {renderUserInformationByCondition(form.userType)}
               </div>
             </div>
 
-            <div className="col-12 col-md-6 col-lg-8">
+            <div className="col-12 col-md-6 col-lg-8 col-xl-9">
               <div className="row gx-4 gy-4">
                 <div className="col-12">
                   <CardBlock className="border-0">
@@ -446,10 +286,180 @@ export default function Checkout() {
                 </div>
               </div>
             </div>
-          </Form>
+          </div>
         </div>
       </div>
-      {/* <JsonViewer data={form} /> */}
     </div>
   )
 }
+
+const UserInformation = forwardRef(({ data, ...props }, ref) => {
+  const [state, setState] = useState(data)
+  useEffect(() => {
+    setState(data)
+  }, [data])
+
+  return (
+    <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+      <Form
+        formValue={state}
+        onChange={(val) => {
+          setState(val)
+          ref.current = { ...val }
+        }}
+      >
+        <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
+          <FlexboxGrid.Item style={{ width: '100%' }}>
+            <h5>Thông tin cá nhân</h5>
+          </FlexboxGrid.Item>
+
+          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+            <KMInput
+              name="fullName"
+              label={
+                <>
+                  Họ và tên <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                </>
+              }
+            />
+          </FlexboxGrid.Item>
+
+          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+            <KMInput
+              name="email"
+              label={
+                <>
+                  Email <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                </>
+              }
+            />
+          </FlexboxGrid.Item>
+          <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+            <KMInput
+              name="phone"
+              label={
+                <>
+                  Số điện thoại <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                </>
+              }
+              mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+              placeholder="0123456789"
+              guide={false}
+              onChange={(val) => console.log(val)}
+              keepCharPositions={true}
+            />
+          </FlexboxGrid.Item>
+        </FlexboxGrid>
+      </Form>
+    </CardBlock>
+  )
+})
+
+const DeliveryInformation = forwardRef(({ data, ...props }, ref) => {
+  const [state, setState] = useState(data)
+  useEffect(() => {
+    setState(data)
+  }, [data])
+  return (
+    <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+      <Form
+        key={['delivery']}
+        formValue={state}
+        onChange={(val) => {
+          setState(val)
+          ref.current = { ...val }
+        }}
+      >
+        <FlexboxGrid.Item style={{ width: '100%' }}>
+          <h5>Địa chỉ giao hàng/ thanh toán</h5>
+        </FlexboxGrid.Item>
+
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput
+            name="company"
+            label={
+              <>
+                Công ty <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+              </>
+            }
+          />
+        </FlexboxGrid.Item>
+
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput
+            name="address_1"
+            label={
+              <>
+                Địa chỉ 1<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+              </>
+            }
+          />
+        </FlexboxGrid.Item>
+
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput name="address_2" label={<>Địa chỉ 2</>} />
+        </FlexboxGrid.Item>
+
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput
+            name="city"
+            label={
+              <>
+                Tỉnh/ Thành phố<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+              </>
+            }
+          />
+        </FlexboxGrid.Item>
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+          <KMInput
+            name="postCode"
+            label={
+              <>
+                Mã vùng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+              </>
+            }
+            mask={[/\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
+            placeholder="xxxxxx"
+            guide={true}
+            showMask={true}
+            onChange={(val) => console.log(val)}
+            keepCharPositions={false}
+          />
+        </FlexboxGrid.Item>
+      </Form>
+    </CardBlock>
+  )
+})
+
+const LoginForm = forwardRef((props, ref) => {
+  const [state, setState] = useState({})
+
+  console.log('rendered')
+  return (
+    <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+      <Form formValue={state} onChange={(val) => setState(val)}>
+        <h5>Đăng nhập</h5>
+        <Form.Group controlId="username">
+          <Form.ControlLabel>
+            Tên tài khoản <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+          </Form.ControlLabel>
+          <Form.Control name="username" className="d-flex flex-1" />
+        </Form.Group>
+
+        <Form.Group controlId="password">
+          <Form.ControlLabel>
+            Mật khẩu <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+          </Form.ControlLabel>
+          <Form.Control name="password" />
+        </Form.Group>
+        <Button
+          onClick={() => props?.handleLogin(state)}
+          color="blue"
+          style={{ background: 'var(--rs-blue-800)', color: '#fff', display: 'flex', marginLeft: 'auto' }}
+        >
+          Đăng nhập
+        </Button>
+      </Form>
+    </CardBlock>
+  )
+})

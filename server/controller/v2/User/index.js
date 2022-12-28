@@ -55,14 +55,13 @@ export default class UserController {
 
       if (_user) throw { message: 'tài khoản đã tồn tại' }
 
-      const { username, firstName, lastName, email, phone, password } = req.body
+      const { username, fullName, email, phone, password } = req.body
 
       const hash_password = await bcrypt.hash(password, 10)
 
       const _obj = new User({
         username,
-        firstName,
-        lastName,
+        fullName,
         email,
         phone,
         hash_password,
@@ -75,10 +74,6 @@ export default class UserController {
       let _tokenObj = { _id, role }
 
       await this.generateToken(_tokenObj, res)
-
-      // let mailParams = await this.getMailParams({ name, phone, password, role, email: _email }, res)
-
-      // await sendmailWithAttachments(req, res, mailParams)
 
       return res.status(201).json({
         role,
@@ -116,6 +111,8 @@ export default class UserController {
             email: _user.email,
             phone: _user.phone,
             role: _user.role,
+            fullName: _user.fullName,
+            delivery: _user.delivery,
           }
 
           return res.status(200).json({
@@ -252,6 +249,101 @@ export default class UserController {
       res.status(200).json({ authenticate: true, data: _user })
     } catch (error) {
       res.status(400).json({ authenticate: false, message: error?.message })
+    }
+  }
+
+  updateDeliveryInformation = async (req, res) => {
+    try {
+      const { company, address_1, address_2, city, postCode } = req.body
+      const id = req.id
+
+      if (!id) throw { message: 'Unauthorized' }
+
+      await User.updateOne(
+        {
+          _id: mongoose.Types.ObjectId(id),
+        },
+        {
+          delivery: {
+            company,
+            address_1,
+            address_2,
+            city,
+            postCode,
+          },
+        },
+        {
+          new: true,
+        },
+      )
+
+      return res.status(200).json({
+        message: 'updated delivery successfully',
+      })
+    } catch (error) {
+      return res.status(400).json({ error, message: 'Something went wrong' })
+    }
+  }
+
+  updateInformation = async (req, res) => {
+    try {
+      const { username, fullName, email, phone } = req.body
+      const id = req.id
+
+      if (!id) throw { message: 'Unauthorized' }
+
+      await User.updateOne(
+        {
+          _id: mongoose.Types.ObjectId(id),
+        },
+        {
+          username,
+          fullName,
+          email,
+          phone,
+        },
+        {
+          new: true,
+        },
+      )
+
+      return res.status(200).json({
+        message: 'updated Information successfully',
+      })
+    } catch (error) {
+      return res.status(400).json({ error, message: 'Something went wrong' })
+    }
+  }
+
+  updatePassword = async (req, res) => {
+    try {
+      const { old_password, new_password, confirm_password } = req.body
+
+      const id = req.id
+
+      if (!req.role || req.role === 'admin') throw { message: 'You are not allowed' }
+
+      if (!id) throw { message: 'Unauthorized' }
+
+      if (confirm_password !== new_password) throw { message: 'Password doesnt match' }
+
+      const _user = await User.findOne({ _id: mongoose.Types.ObjectId(id) })
+
+      const auth = await _user.authenticate(old_password)
+
+      if (!auth) throw { message: 'Authentication failed' }
+
+      const hash_password = await bcrypt.hash(password, 10)
+
+      _user.hash_password = hash_password
+
+      await _user.save()
+
+      return res.status(200).json({
+        message: 'updated Password successfully',
+      })
+    } catch (error) {
+      return res.status(400).json({ error, message: 'Something went wrong' })
     }
   }
 }

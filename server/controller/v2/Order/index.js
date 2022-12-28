@@ -70,12 +70,6 @@ export default class OrderController {
 
           let isdeliveryEqual = isEqual(delivery, { company, address_1, address_2, city, postCode })
 
-          userInformation = {
-            fullName: user.fullName,
-            phone: user.phone,
-            email: user.email,
-          }
-
           if (isdeliveryEqual) {
             deliveryInformation = {
               ...delivery,
@@ -85,7 +79,7 @@ export default class OrderController {
           }
         } else throw { message: 'user not found' }
       }
-
+      console.log(user)
       const response = await this.createOrder({
         userId,
         userInformation: user,
@@ -163,7 +157,7 @@ export default class OrderController {
         product: product.map((item) => {
           if (item.variantId) {
             return {
-              productId: item.variantId,
+              variantId: item.variantId,
               quantity: item.quantity,
             }
           } else {
@@ -197,12 +191,23 @@ export default class OrderController {
         })
         .populate({
           path: 'product.productId',
-          select: 'title slug price',
+          select: 'title slug price -_id',
         })
         .populate({
           path: 'product.variantId',
-          select: 'price attributes',
+          select: 'price attributes parentId ',
+          populate: {
+            path: 'parentId',
+            model: 'Product',
+            select: 'title -_id',
+          },
         })
+      // .populate({
+      //   path: 'product.variantId.parentId',
+      //   select: 'title',
+      // })
+
+      console.log(JSON.stringify(_order, null, 4))
 
       return res.status(200).json({
         message: 'Get Order successfully',
@@ -217,9 +222,25 @@ export default class OrderController {
 
   getOrders = async (req, res) => {
     try {
-      console.log(req)
       if (!req.id) throw { message: 'You dont have permission' }
       const _order = await Order.find({ userId: req.id })
+        .populate({
+          path: 'userId',
+          select: 'firstName lastName phone email username -_id',
+        })
+        .populate({
+          path: 'product.productId',
+          select: 'title slug price -_id',
+        })
+        .populate({
+          path: 'product.variantId',
+          select: 'price attributes parentId ',
+          populate: {
+            path: 'parentId',
+            model: 'Product',
+            select: 'title -_id',
+          },
+        })
 
       return res.status(200).json({
         data: _order,

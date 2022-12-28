@@ -4,10 +4,11 @@ import Heading from 'component/UI/Content/Heading'
 import { KMInput } from 'component/UI/Content/KMInput'
 import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
-import { Avatar, Button, Form, Nav, Sidenav, Stack, Table } from 'rsuite'
+import { forwardRef, useEffect, useRef, useState } from 'react'
+import { Avatar, Button, Form, Nav, Sidenav, Stack, Table, Tag } from 'rsuite'
 import AuthenticateService from 'service/authenticate/Authenticate.service'
 import GlobalOrderService from 'service/global/Order.service'
+import { formatCurrency } from 'src/helper'
 import { useAuthorizationStore } from 'src/store/authenticateStore'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
@@ -16,13 +17,33 @@ export default function MyOrder() {
   const router = useRouter()
   const [data, setData] = useState()
   const { authenticate, user } = useAuthorizationStore((state) => state)
+  const [render, setRender] = useState(false)
   const userData = useRef()
+  const orderData = useRef([])
+  const userDelivery = useRef()
+
+  const userInformation = useRef()
+
+  const deliveryForm = useRef()
+  const informationForm = useRef()
   useEffect(() => {
     if (!authenticate) router.push('/')
     else {
       handleChangeRouter('order')
     }
   }, [])
+
+  useEffect(() => {
+    userDelivery.current = {
+      ...user.delivery,
+    }
+    userInformation.current = {
+      fullName: user.fullName,
+      email: user.email,
+      phone: user.phone,
+      username: user.username,
+    }
+  }, [user])
 
   useEffect(() => {
     if (router.query.type) {
@@ -39,85 +60,6 @@ export default function MyOrder() {
     return router.push('/')
   }
 
-  const renderByType = () => {
-    switch (router.query.type) {
-      case 'order':
-        return (
-          <>
-            <Heading type="h5" className={styles.header}>
-              Quản lý đơn hàng
-            </Heading>
-            <Table>
-              <Column width={60} align="center" flexGrow={1}>
-                <HeaderCell>Id</HeaderCell>
-                <Cell dataKey="_id" />
-              </Column>
-              <Column width={60} align="center" flexGrow={1}>
-                <HeaderCell>Tên sản phẩm</HeaderCell>
-                <Cell dataKey="_id" />
-              </Column>
-              <Column width={60} align="center" flexGrow={1}>
-                <HeaderCell>Mô tả</HeaderCell>
-                <Cell dataKey="_id" />
-              </Column>
-              <Column width={60} align="center" flexGrow={1}>
-                <HeaderCell>Trạng thái Thanh toán</HeaderCell>
-                <Cell dataKey="_id" />
-              </Column>
-              <Column width={60} align="center" flexGrow={1}>
-                <HeaderCell>...</HeaderCell>
-                <Cell />
-              </Column>
-            </Table>
-          </>
-        )
-      case 'address':
-        return (
-          <>
-            <Heading type="h5" className={styles.header}>
-              Cập nhật địa chỉ giao hàng
-            </Heading>
-
-            <Form formValue={user.delivery || {}} layout="horizontal">
-              <KMInput name="company" label="Công ty" />
-              <KMInput name="address_1" label="Địa chỉ 1" />
-              <KMInput name="address_2" label="Địa chỉ 2" />
-              <KMInput name="city" label="Thành phố" />
-              <KMInput name="postCode" label="Mã bưu điện" />
-              <Form.Group>
-                <Form.ControlLabel>{''}</Form.ControlLabel>
-                <Button style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Cập nhật</Button>
-              </Form.Group>
-            </Form>
-          </>
-        )
-      case 'information':
-        return (
-          <>
-            <Heading type="h5" className={styles.header}>
-              Cập nhật thông tin cá nhân
-            </Heading>
-            <Form
-              formValue={user || {}}
-              layout="horizontal"
-              onChange={({ username, fullName, email, phone }) =>
-                (userData.current = { username, fullName, email, phone })
-              }
-            >
-              <KMInput name="username" label="Nickname" />
-              <KMInput name="fullName" label="Họ và tên" />
-              <KMInput name="email" label="Địa chỉ email" />
-              <KMInput name="phone" label="Số điện thoại" />
-              <Form.Group>
-                <Form.ControlLabel>{''}</Form.ControlLabel>
-                <Button style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Cập nhật</Button>
-              </Form.Group>
-            </Form>
-          </>
-        )
-    }
-  }
-
   const handleGetItemByQuery = (nameRouter) => {
     switch (nameRouter) {
       case 'order':
@@ -131,14 +73,28 @@ export default function MyOrder() {
 
   const getOrder = async () => {
     try {
-      const data = await GlobalOrderService.getOrders()
-
-      console.log(data)
+      const resp = await GlobalOrderService.getOrders()
+      const { data } = resp.data
+      orderData.current = data
     } catch (error) {
       console.log('getOrder', error)
+    } finally {
+      setRender(!render)
     }
   }
 
+  const renderByType = () => {
+    switch (router.query.type) {
+      case 'order':
+        return <UserOrder data={orderData.current} />
+      case 'address':
+        return <AddressInformation data={userDelivery.current} />
+      case 'information':
+        return <UserInformation data={userInformation.current} />
+    }
+  }
+
+  console.log('rendered', user)
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -193,5 +149,136 @@ export default function MyOrder() {
         </div>
       </div>
     </div>
+  )
+}
+
+const UserOrder = ({ data, ...props }) => {
+  return (
+    <>
+      <Heading type="h5" className={styles.header}>
+        Quản lý đơn hàng
+      </Heading>
+      <Table data={data || []}>
+        <Column align="left" flexGrow={1}>
+          <HeaderCell>Tên sản phẩm</HeaderCell>
+          <Cell dataKey="product">
+            {(rowData) => (
+              <span>
+                {rowData.product?.map((_prod) => (
+                  <Tag>{_prod?.productId?.title || _prod?.variantId?.parentId?.title}</Tag>
+                ))}
+              </span>
+            )}
+          </Cell>
+        </Column>
+        <Column align="center" flexGrow={1}>
+          <HeaderCell>Mô tả</HeaderCell>
+          <Cell>
+            {(rowData) => (
+              <span>
+                {rowData.product?.map(
+                  (_prod) =>
+                    _prod?.variantId?.attributes &&
+                    Object.keys(_prod?.variantId?.attributes).map((key) => (
+                      <Tag>{_prod?.variantId?.attributes[key]}</Tag>
+                    )),
+                )}
+              </span>
+            )}
+          </Cell>
+        </Column>
+        <Column width={100} align="center">
+          <HeaderCell>Thanh toán</HeaderCell>
+          <Cell dataKey="status">{(rowData) => <Tag>{rowData?.status}</Tag>}</Cell>
+        </Column>
+        <Column width={150} align="right">
+          <HeaderCell>Giá tiền</HeaderCell>
+          <Cell dataKey="amount">{(rowData) => <span>{formatCurrency(rowData?.amount, { symbol: ' đ' })}</span>}</Cell>
+        </Column>
+        <Column width={60} align="center">
+          <HeaderCell>...</HeaderCell>
+          <Cell />
+        </Column>
+      </Table>
+    </>
+  )
+}
+
+const AddressInformation = ({ data, ...props }) => {
+  const [formVal, setFormVal] = useState(data)
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async () => {
+    console.log('handleSubmit', formVal)
+
+    try {
+      setLoading(true)
+      const resp = await AuthenticateService.changeDelivery(formVal)
+      console.log(resp)
+    } catch (error) {
+      console.log('submit error', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <>
+      <Heading type="h5" className={styles.header}>
+        Cập nhật địa chỉ giao hàng
+      </Heading>
+
+      <Form key={['user', 'delivery']} formValue={formVal} layout="horizontal" onChange={(val) => setFormVal(val)}>
+        <KMInput name="company" label="Công ty" />
+        <KMInput name="address_1" label="Địa chỉ 1" />
+        <KMInput name="address_2" label="Địa chỉ 2" />
+        <KMInput name="city" label="Thành phố" />
+        <KMInput name="postCode" label="Mã bưu điện" />
+        <Form.Group>
+          <Form.ControlLabel>{''}</Form.ControlLabel>
+          <Button style={{ background: 'var(--rs-blue-800)', color: 'white' }} onClick={handleSubmit} loading={loading}>
+            Cập nhật
+          </Button>
+        </Form.Group>
+      </Form>
+    </>
+  )
+}
+
+const UserInformation = ({ data, ...props }) => {
+  const [formVal, setFormVal] = useState(data)
+  const [loading, setLoading] = useState(false)
+
+  const handleSubmit = async () => {
+    console.log('handleSubmit', formVal)
+    try {
+      setLoading(true)
+      const resp = await AuthenticateService.changeInformation(formVal)
+      console.log(resp)
+    } catch (error) {
+      console.log('submit error', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <>
+      <Heading type="h5" className={styles.header}>
+        Cập nhật thông tin cá nhân
+      </Heading>
+      <Form key={['user', 'information']} formValue={formVal} layout="horizontal" onChange={(val) => setFormVal(val)}>
+        <KMInput name="username" label="Nickname" />
+        <KMInput name="fullName" label="Họ và tên" />
+        <KMInput name="email" label="Địa chỉ email" />
+        <KMInput name="phone" label="Số điện thoại" />
+        <Form.Group>
+          <Form.ControlLabel>{''}</Form.ControlLabel>
+          <Button style={{ background: 'var(--rs-blue-800)', color: 'white' }} onClick={handleSubmit} loading={loading}>
+            Cập nhật
+          </Button>
+        </Form.Group>
+      </Form>
+    </>
   )
 }

@@ -1,41 +1,34 @@
+import CloseIcon from '@rsuite/icons/Close'
 import clsx from 'clsx'
+import PostHelmet from 'component/PostHelmet'
 import CardBlock from 'component/UI/Content/CardBlock'
-import Heading from 'component/UI/Content/Heading'
 import PageHeader from 'component/UI/Content/PageHeader'
-import SideFilter from 'component/UI/Content/SideFilter'
-import JsonViewer from 'component/UI/JsonViewer'
 import CommonLayout from 'component/UI/Layout'
 import axios from 'configs/axiosInstance'
 import parser from 'html-react-parser'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import Script from 'next/script'
-import { useRef } from 'react'
-import { useEffect } from 'react'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { BiCart, BiDollarCircle } from 'react-icons/bi'
 import {
-  Affix,
   Button,
   ButtonGroup,
   Carousel,
   Divider,
+  DOMHelper,
   Form,
+  IconButton,
   InputNumber,
   Panel,
+  Radio,
+  RadioGroup,
   Rate,
   Schema,
   Table,
-  DOMHelper,
-  RadioGroup,
-  Radio,
-  IconButton,
 } from 'rsuite'
-import CloseIcon from '@rsuite/icons/Close'
 import GlobalProductService from 'service/global/Product.service'
-import { formatCurrency } from 'src/helper'
+import { formatCurrency, imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
-import PostHelmet from 'component/PostHelmet'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -158,90 +151,6 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
 
     router.push('/cart')
   }
-
-  // const renderPrimaryVariant = () => {
-  //   let html = null
-  //   let havePrimaryVariant = _relationProd.some((item) => item.value && item.primary)
-  //   if (havePrimaryVariant) {
-  //     html = (
-  //       <div className="col-12">
-  //         <div className="row row-cols-auto gy-2">
-  //           {_relationProd.map((item) => {
-  //             let isDisabled = item?.item?.some((child) => !child.price)
-
-  //             return (
-  //               <div
-  //                 className={clsx('col btn shadow-sm rounded border ml-2', styles.skuSelect, styles.btnIcon, {
-  //                   [styles.active]: activeVariant.value === item.value,
-  //                   [styles.disabled]: isDisabled,
-  //                 })}
-  //                 onClick={() => {
-  //                   if (!isDisabled) {
-  //                     setActiveVariant(item)
-  //                     setForm({
-  //                       ...form,
-  //                       variantId: null,
-  //                       price: null,
-  //                       quantity: 1,
-  //                       img: '',
-  //                     })
-  //                   }
-  //                 }}
-  //               >
-  //                 <span>
-  //                   {item.primary} : {item.value}
-  //                 </span>
-  //               </div>
-  //             )
-  //           })}
-  //         </div>
-  //         <Divider />
-  //       </div>
-  //     )
-  //   }
-  //   return html
-  // }
-
-  // const renderSubVariant = () => {
-  //   return (
-  //     <div className="col-12">
-  //       <div className="row gy-2 gx-2">
-  //         {activeVariant?.item?.map((item) => {
-  //           let isDisabled = !item?.price
-  //           return (
-  //             <div className={clsx([' col-12 col-md-6 col-lg-6 col-xl-4'])}>
-  //               <div
-  //                 className={clsx(' shadow-sm rounded border', styles.skuSelect, {
-  //                   [styles.active]: form._id === item._id || form.variantId === item._id,
-  //                   [styles.disabled]: isDisabled,
-  //                 })}
-  //                 onClick={() => {
-  //                   setForm({
-  //                     ...form,
-  //                     variantId: item._id,
-  //                     price: item.price,
-  //                   })
-  //                 }}
-  //               >
-  //                 {item.attribute &&
-  //                   Object.keys(item.attribute).map((key) => {
-  //                     if (key !== item.primary)
-  //                       return (
-  //                         <>
-  //                           <span>
-  //                             {key}:{item[key]} <br />
-  //                           </span>
-  //                         </>
-  //                       )
-  //                   })}
-  //               </div>
-  //             </div>
-  //           )
-  //         })}
-  //       </div>
-  //     </div>
-  //   )
-  // }
 
   const handleQueryItem = async (params) => {
     queryRef.current = { ...queryRef.current, ...params }
@@ -398,10 +307,6 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
     price: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
   })
 
-  const myLoader = ({ src, width, quality }) => {
-    return process.env.API + src + `?w=${width}&q=${quality || 75}`
-  }
-
   return (
     <>
       <PostHelmet seo={seo} />
@@ -426,7 +331,7 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                               layout="fill"
                               objectFit="contain"
                               className="bk-product-image"
-                              loader={myLoader}
+                              loader={imageLoader}
                               loading="lazy"
                               placeholder="blur"
                               blurDataURL={

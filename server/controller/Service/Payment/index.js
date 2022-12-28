@@ -168,12 +168,11 @@
 import { Order } from '#model'
 import qs from 'query-string'
 import crypto from 'crypto'
-
+import { ResponseCode } from '#common/ResponseCode'
 export default class PaymentController {
   constructor() {}
   createLinkPayment = async ({ createDate, orderId, amount, orderInfo, ip }) => {
     try {
-
       let vnp_Params = this.getVpnParams({ createDate, orderId, amount: +amount * 100, orderInfo, ip })
 
       var vnpUrl = process.env.VNPAY_URL_PAYMENT
@@ -189,6 +188,155 @@ export default class PaymentController {
         error: err,
         status: false,
       }
+    }
+  }
+
+  onHandleReturnUrl = async (req, res) => {
+    try {
+      console.log('coming here')
+
+      var vnp_Params = req.query
+
+      var secureHash = vnp_Params['vnp_SecureHash']
+
+      delete vnp_Params['vnp_SecureHash']
+
+      delete vnp_Params['vnp_SecureHashType']
+
+      vnp_Params = this.sortObject(vnp_Params)
+
+      var tmnCode = process.env.VNPAY_TMNCODE
+
+      var secretKey = process.env.VNPAY_SECRET
+
+      var signData = qs.stringify(vnp_Params, { encode: false })
+
+      var hmac = crypto.createHmac('sha512', secretKey)
+
+      var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest('hex')
+
+      const url =
+        process.env.NODE_ENV === 'development'
+          ? `http://localhost:3002/checkout/${vnp_Params['vnp_OrderInfo']}?`
+          : `https://khamobile.truyenmai.com/checkout/${vnp_Params['vnp_OrderInfo']}?`
+      // http://localhost:3005/api/service/payment/url_return?vnp_Amount=3760000000&vnp_BankCode=NCB&vnp_BankTranNo=VNP13916831&vnp_CardType=ATM&vnp_OrderInfo=63abc7c2b12084687be9fa6e&vnp_PayDate=20221228113712&vnp_ResponseCode=00&vnp_TmnCode=KHAMOBIL&vnp_TransactionNo=13916831&vnp_TransactionStatus=00&vnp_TxnRef=113619&vnp_SecureHash=a7bb99edb41900f46328f57ce1e0c8b2b5aef936cdc5d49ab6df501df16ba2b5b15c49ab20e77d0c931c64b3b48bf13d3b8430f010891c1af1b53d46ae1103f5
+      if (secureHash === signed) {
+        //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+        let code = vnp_Params['vnp_ResponseCode']
+        const query = qs.stringify({
+          code,
+          text: ResponseCode[code],
+        })
+
+        if (code === '00') {
+          // Success
+          // const _update = {
+          //   payment: Number(1),
+          // }
+
+          // await Order.updateOne({ _id: req.query.vnp_OrderInfo }, _update, {
+          //   new: true,
+          // })
+
+          // let _order = await Order.findOne({
+          //   _id: req.query.vnp_OrderInfo,
+          // }).populate('orderOwner', '_id name email')
+
+          // let [{ subject, content }] = await Setting.find().populate('mailPaymentSuccess')
+
+          // let params = {
+          //   email: _order.orderOwner.email || 'handgd1995@gmail.com',
+          //   subject,
+          //   content,
+          //   type: 'any',
+          // }
+
+          // await sendmailWithAttachments(req, res, params)
+
+          return res.redirect(url + query)
+        }
+        return res.redirect(url + query)
+      } else {
+        const query = qs.stringify({
+          code: ResponseCode[97],
+        })
+        return res.redirect(url + query)
+      }
+    } catch (error) {}
+  }
+  getUrlReturn = async (req, res) => {
+    // console.log(req.query, " Get URL Return");
+    try {
+      var vnp_Params = req.query
+
+      var secureHash = vnp_Params['vnp_SecureHash']
+
+      delete vnp_Params['vnp_SecureHash']
+
+      delete vnp_Params['vnp_SecureHashType']
+
+      vnp_Params = sortObject(vnp_Params)
+
+      var tmnCode = process.env.VNPAY_TMNCODE
+
+      var secretKey = process.env.VNPAY_SECRET
+
+      var signData = qs.stringify(vnp_Params, { encode: false })
+
+      var hmac = crypto.createHmac('sha512', secretKey)
+
+      var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest('hex')
+
+      let url =
+        process.env.NODE_ENV === 'development'
+          ? `http://localhost:3003/user/result?`
+          : `https://app.thanhlapcongtyonline.vn/user/result?`
+
+      if (secureHash === signed) {
+        //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
+        let code = vnp_Params['vnp_ResponseCode']
+        const query = qs.stringify({
+          code,
+          text: ResponseCode[code],
+        })
+
+        if (code === '00') {
+          // Success
+          const _update = {
+            payment: Number(1),
+          }
+
+          await Order.updateOne({ _id: req.query.vnp_OrderInfo }, _update, {
+            new: true,
+          })
+
+          let _order = await Order.findOne({
+            _id: req.query.vnp_OrderInfo,
+          }).populate('orderOwner', '_id name email')
+
+          let [{ subject, content }] = await Setting.find().populate('mailPaymentSuccess')
+
+          let params = {
+            email: _order.orderOwner.email || 'handgd1995@gmail.com',
+            subject,
+            content,
+            type: 'any',
+          }
+
+          await sendmailWithAttachments(req, res, params)
+
+          return res.redirect(url + query)
+        }
+        return res.redirect(url + query)
+      } else {
+        const query = qs.stringify({
+          code: ResponseCode[97],
+        })
+        return res.redirect(url + query)
+      }
+    } catch (err) {
+      console.log('getUrlReturn', err)
+      return errHandler(err, res)
     }
   }
 

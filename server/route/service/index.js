@@ -3,11 +3,10 @@ import { upload } from '#middleware'
 import express from 'express'
 import ConvertController from '#controller/Service/Convert'
 import MailServer from '#controller/Service/MailServer'
+import PaymentController from '#controller/Service/payment'
 const router = express.Router()
-
+// Test route
 router.get('/sku', upload.none(), new ConvertController().getSKU)
-
-// router.get('/sku/:_id', upload.none(), new ConvertController().getSKUById)
 
 router.post('/variant', upload.none(), new ConvertController().getVariantOfSKU)
 
@@ -16,5 +15,9 @@ router.post('/attribute', upload.none(), new ConvertController().getAttribute)
 router.post('/get-image', upload.none(), new ConvertController().getImageFromProduct)
 
 router.post('/mail', upload.none(), new MailServer().sendMail)
+
+// Public Routes
+
+router.get('/payment/url_return', new PaymentController().onHandleReturnUrl)
 
 export default router
