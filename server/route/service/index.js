@@ -3,7 +3,7 @@ import { upload } from '#middleware'
 import express from 'express'
 import ConvertController from '#controller/Service/Convert'
 import MailServer from '#controller/Service/MailServer'
-import PaymentController from '#controller/Service/payment'
+import PaymentController from '#controller/Service/Payment'
 const router = express.Router()
 // Test route
 router.get('/sku', upload.none(), new ConvertController().getSKU)
