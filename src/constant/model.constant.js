@@ -12,4 +12,8 @@ const CheckoutModel = Schema.Model({
   postCode: Schema.Types.StringType().isRequired('Mã vùng không chính xác,vui lòng thử lại'),
 })
 
-export { CheckoutModel }
+const AttributeModel = Schema.Model({
+  key: Schema.Types.StringType().isRequired('Thuộc tính không chính xác, vui lòng thử lại'),
+})
+
+export { CheckoutModel, AttributeModel }

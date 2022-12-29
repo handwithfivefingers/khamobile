@@ -3,7 +3,7 @@ import { KMInput } from 'component/UI/Content/KMInput'
 import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
 import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { Button, ButtonGroup, FlexboxGrid, Form, List, Panel, Radio, RadioGroup, Table } from 'rsuite'
+import { Button, ButtonGroup, FlexboxGrid, Form, List, Panel, Radio, RadioGroup, Table, Tag } from 'rsuite'
 import GlobalOrderService from 'service/global/Order.service'
 import GlobalProductService from 'service/global/Product.service'
 import { CheckoutModel } from 'src/constant/model.constant'
@@ -219,21 +219,34 @@ export default function Checkout() {
                   <CardBlock className="border-0">
                     <h5>Thông tin đơn hàng</h5>
                     <Table autoHeight data={form?.product}>
-                      <Column align="left" verticalAlign="middle" flexGrow={1}>
+                      <Column align="left" fullText>
                         <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>
                           Tên sản phẩm
                         </HeaderCell>
                         <Cell dataKey="title" />
                       </Column>
 
-                      <Column align="center" verticalAlign="middle">
-                        <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Đơn giá</HeaderCell>
-                        <Cell dataKey="price" />
-                      </Column>
-
-                      <Column width={120} verticalAlign="middle" align="center">
+                      <Column width={120} align="left">
                         <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Số lượng</HeaderCell>
                         <Cell dataKey="quantity" />
+                      </Column>
+
+                      <Column width={220} align="left">
+                        <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Mô tả</HeaderCell>
+                        <Cell dataKey="attributes">
+                          {(rowData) =>
+                            Object.keys(rowData?.attributes).map((key) => (
+                              <>
+                                <Tag>{rowData?.attributes[key]}</Tag>
+                              </>
+                            ))
+                          }
+                        </Cell>
+                      </Column>
+
+                      <Column align="right">
+                        <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Đơn giá</HeaderCell>
+                        <Cell dataKey="price" />
                       </Column>
                     </Table>
 

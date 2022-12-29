@@ -144,6 +144,8 @@ export default class ProductController {
                 slug: '$child.slug',
                 category: '$child.category',
                 image: '$child.image',
+                type: '$child.type',
+                _id: '$child._id',
               },
             },
           },
@@ -226,6 +228,7 @@ export default class ProductController {
               variantId: '$variants._id',
               price: '$variants.price',
               image: { $first: '$image' },
+              attributes: '$variants.attributes',
             },
           },
         )

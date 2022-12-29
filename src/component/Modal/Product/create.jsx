@@ -19,17 +19,6 @@ const ProductCreateModal = (props) => {
 
   const [_render, setRender] = useState(false)
 
-  const [form, setForm] = useState({
-    price: 0,
-    regular_price: 0,
-    purchasable: true,
-    stock_status: true,
-    parentId: '',
-    variations: [],
-    category: [],
-    ...props?.data,
-  })
-
   const formDataRef = useRef({
     price: 0,
     regular_price: 0,

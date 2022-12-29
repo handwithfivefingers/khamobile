@@ -1,13 +1,14 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import demoImg from 'assets/img/demo-phone.png'
 import styles from './styles.module.scss'
 import clsx from 'clsx'
-import { formatCurrency } from 'src/helper'
+import { formatCurrency, imageLoader } from 'src/helper'
 import { useRouter } from 'next/router'
-import { Placeholder } from 'rsuite'
+import { IconButton, Placeholder } from 'rsuite'
 import { Image } from '@rsuite/icons'
 import * as NextImage from 'next/image'
 import LOADER from 'assets/img/loader2.gif'
+import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 
 export default function Card({
   imgSrc,
@@ -22,8 +23,38 @@ export default function Card({
   variable,
   slug,
   loading,
+  wishList = { status: false },
+  _id,
 }) {
+  const [wish, setWish] = useState(wishList.status)
+
   const router = useRouter()
+
+  useEffect(() => {
+    const wishItem = JSON.parse(localStorage.getItem('khaMobileWish')) || []
+    if (wishItem && wishItem.some((item) => item === _id)) {
+      setWish(true)
+    }
+  }, [])
+
+  const handleAddWishList = (e) => {
+    e.stopPropagation()
+    const wishItem = JSON.parse(localStorage.getItem('khaMobileWish')) || []
+    let index = wishItem?.findIndex((item) => item === _id)
+    const nextState = []
+    if (index !== -1) {
+      if (wish) {
+        nextState = [...wishItem.slice(0, index), wishItem.slice(index + 1)]
+      } else {
+        nextState = [...wishItem, _id]
+      }
+    } else {
+      nextState = [...wishItem, _id]
+    }
+    console.log(nextState)
+    localStorage.setItem('khaMobileWish', JSON.stringify(nextState))
+    setWish(!wish)
+  }
 
   const classCard = clsx([
     'card',
@@ -53,12 +84,6 @@ export default function Card({
     return <CardSkeleton classCard={classCard} />
   }
 
-  const myLoader = ({ src, width, quality }) => {
-    // return `https://example.com/${src}?w=${width}&q=${quality || 75}`
-    return process.env.API + src + `?w=${width}&q=${quality || 75}`
-  }
-
-
   if (slug) {
     return (
       <div className={classCard} onClick={() => handleRouting(slug)}>
@@ -74,7 +99,7 @@ export default function Card({
               }
               placeholder="blur"
               loading={'lazy'}
-              loader={myLoader}
+              loader={imageLoader}
             />
           ) : (
             <Image className={styles.img} />
@@ -90,10 +115,19 @@ export default function Card({
               <s>{formatCurrency(underlinePrice)}</s>
             </p>
           )}
+          {wishList && (
+            <div className={styles.wishList}>
+              <IconButton
+                icon={wish ? <AiFillHeart style={{ fill: 'var(--rs-red-700)' }} /> : <AiOutlineHeart />}
+                onClick={handleAddWishList}
+              />
+            </div>
+          )}
         </div>
       </div>
     )
   }
+
   return (
     <div className={classCard}>
       <div className={clsx('card-img-top', styles.cardImg)}>
@@ -108,7 +142,7 @@ export default function Card({
             }
             placeholder="blur"
             loading={'lazy'}
-            loader={myLoader}
+            loader={imageLoader}
           />
         ) : (
           <Image className={styles.img} />
@@ -123,6 +157,14 @@ export default function Card({
           <p className={styles.cardText}>
             <s>{formatCurrency(underlinePrice)}</s>
           </p>
+        )}
+        {wishList && (
+          <div className={styles.wishList}>
+            <IconButton
+              icon={wish ? <AiFillHeart style={{ fill: 'var(--rs-red-700)' }} /> : <AiOutlineHeart />}
+              onClick={handleAddWishList}
+            />
+          </div>
         )}
       </div>
     </div>

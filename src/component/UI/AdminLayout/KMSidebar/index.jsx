@@ -16,12 +16,13 @@ import MobileIcon from '@rsuite/icons/Mobile'
 import OffIcon from '@rsuite/icons/Off'
 import GearIcon from '@rsuite/icons/Gear'
 import MessageIcon from '@rsuite/icons/Message'
-import ListIcon from '@rsuite/icons/List';
-import DeviceOtherIcon from '@rsuite/icons/DeviceOther';
-import StorageIcon from '@rsuite/icons/Storage';
-import TextImageIcon from '@rsuite/icons/TextImage';
-import PeoplesIcon from '@rsuite/icons/Peoples';
+import ListIcon from '@rsuite/icons/List'
+import DeviceOtherIcon from '@rsuite/icons/DeviceOther'
+import StorageIcon from '@rsuite/icons/Storage'
+import TextImageIcon from '@rsuite/icons/TextImage'
+import PeoplesIcon from '@rsuite/icons/Peoples'
 import AuthenticateService from 'service/authenticate/Authenticate.service'
+import { useAuthorizationStore } from 'src/store/authenticateStore'
 const headerStyles = {
   padding: 18,
   fontSize: 16,
@@ -35,9 +36,13 @@ const headerStyles = {
 export default function KMSidebar() {
   const [expand, setExpand] = useState(true)
 
+  const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
   const router = useRouter()
   const logout = async () => {
     await AuthenticateService.logout()
+    await changeAuthenticateStatus({
+      authenticate: false,
+    })
     return router.push('/')
   }
   return (
@@ -94,7 +99,7 @@ export default function KMSidebar() {
                   Danh mục
                 </Nav.Item>
               </Link>
-              <Link href="/admin/product/variable" passHref>
+              <Link href="/admin/product/attribute" passHref>
                 <Nav.Item eventKey="4-2" icon={<StorageIcon />}>
                   Biến thể
                 </Nav.Item>

@@ -51,7 +51,7 @@ const KMInputPassword = ({ name, label, ...props }) => {
   )
 }
 
-const KMInput = ({ name, label, onChange, ...props }) => {
+const KMInput = ({ name, label, onChange, helpText, ...props }) => {
   const handleOnChange = (v) => {
     if (onChange) {
       onChange(v)
@@ -62,7 +62,7 @@ const KMInput = ({ name, label, onChange, ...props }) => {
       <Form.Group controlId={name}>
         <Form.ControlLabel>{label}</Form.ControlLabel>
         <Form.Control name={name} accepter={MaskInput} {...props} onChange={handleOnChange} />
-        {/* <MaskedInput {...props} /> */}
+        {helpText && <Form.HelpText>{helpText}</Form.HelpText>}
       </Form.Group>
     )
   }
@@ -70,6 +70,7 @@ const KMInput = ({ name, label, onChange, ...props }) => {
     <Form.Group controlId={name}>
       <Form.ControlLabel>{label}</Form.ControlLabel>
       <Form.Control name={name} accepter={CustomInput} {...props} onChange={handleOnChange} />
+      {helpText && <Form.HelpText>{helpText}</Form.HelpText>}
     </Form.Group>
   )
 }

@@ -17,7 +17,7 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
       // const value =
       const nextState = []
       for (const { name } of attributes) {
-        let item = variableData.find((item) => item._id === name)
+        let item = variableData.find((item) => item._id?.key === name)
         if (item) {
           nextState.push({ name, child: item?.item })
         }
@@ -31,8 +31,8 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
 
     if (variableData?.length) {
       opts = variableData.map(({ _id, item }) => ({
-        label: _id,
-        value: [_id, item],
+        label: _id.key,
+        value: [_id.key, item],
       }))
     }
     return opts

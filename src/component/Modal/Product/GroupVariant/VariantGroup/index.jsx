@@ -42,14 +42,6 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props 
     }
   }, [])
 
-  // useEffect(() => {
-  //   if (groupVariantRef.current?.length) {
-  //   console.log('trigger rendered 2', groupVariantRef.current)
-
-  //     setVariations(groupVariantRef.current)
-  //   }
-  // }, [groupVariantRef.current])
-
   const handleAddVariant = () => {
     let nextState = [...groupVariantRef.current]
     switch (typeRef.current) {

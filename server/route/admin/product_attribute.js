@@ -1,18 +1,17 @@
 import express from 'express'
 import { upload } from '#middleware'
-// import ProductVariableController from '#controller/admin/ProductVariable';
-// import { variableValidate, isRequiresValidated } from '#server/validator/product_variable';
+
 import ProductAttributeController from '#controller/admin/ProductAttribute'
 const router = express.Router()
 
-// const { getVariable, createVariable, updateVariable } = new ProductVariableController();
+router.get('/product_attribute', new ProductAttributeController().getAttributeWithTerm)
 
-// router.get('/product/variable', upload.none(), getVariable);
+router.get('/product_attribute_list', new ProductAttributeController().getAttribute)
 
-// router.post('/product/variable', variableValidate, isRequiresValidated, createVariable);
+router.post('/product_attribute', new ProductAttributeController().createAttributes)
 
-// router.post('/product/variable/:_id', variableValidate, isRequiresValidated, updateVariable);
+router.get('/product_attribute/:_id', new ProductAttributeController().getAttributeWithTermById)
 
-router.get('/product_attribute', new ProductAttributeController().getAttribute)
+router.post('/product_attribute/:_id', new ProductAttributeController().handleSaveAttributesTerm)
 
 export default router

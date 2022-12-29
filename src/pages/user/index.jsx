@@ -16,7 +16,7 @@ const { HeaderCell, Cell, Column } = Table
 export default function MyOrder() {
   const router = useRouter()
   const [data, setData] = useState()
-  const { authenticate, user } = useAuthorizationStore((state) => state)
+  const { authenticate, user, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
   const [render, setRender] = useState(false)
   const userData = useRef()
   const orderData = useRef([])
@@ -57,6 +57,9 @@ export default function MyOrder() {
 
   const logout = async () => {
     await AuthenticateService.logout()
+    await changeAuthenticateStatus({
+      authenticate: false,
+    })
     return router.push('/')
   }
 

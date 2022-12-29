@@ -12,7 +12,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { BiCart, BiDollarCircle } from 'react-icons/bi'
 import {
   Button,
-  ButtonGroup,
   Carousel,
   Divider,
   DOMHelper,
@@ -22,7 +21,6 @@ import {
   Panel,
   Radio,
   RadioGroup,
-  Rate,
   Schema,
   Table,
 } from 'rsuite'
@@ -38,8 +36,11 @@ const CustomInputNumber = ({ rowKey, value, ...props }) => {
 
 export default function ProductDetail({ data, _relationProd, seo, ...props }) {
   const formRef = useRef()
+
   const pricingRef = useRef()
+
   const btnBarRef = useRef()
+
   const [toggleContent, setToggleContent] = useState(false)
 
   const [activeVariant, setActiveVariant] = useState([])
@@ -321,33 +322,14 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
             <div className="row gy-4">
               <div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
                 <div className="row gy-4">
-                  <div className="col-12 col-md-6 col-lg-6">
-                    <Carousel placement={'left'} shape={'bar'} className="custom-slider" autoplay>
-                      {data?.image?.map((item) => {
-                        return (
-                          <div style={{ position: 'relative' }}>
-                            <Image
-                              src={item?.src}
-                              layout="fill"
-                              objectFit="contain"
-                              className="bk-product-image"
-                              loader={imageLoader}
-                              loading="lazy"
-                              placeholder="blur"
-                              blurDataURL={
-                                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
-                              }
-                            />
-                          </div>
-                        )
-                      })}
-                    </Carousel>
+                  <div className="col-12 col-md-12 col-lg-5">
+                    <Slider image={data?.image} />
                   </div>
 
-                  <div className="col-12 col-md-6 col-lg-6">
+                  <div className="col-12 col-md-12 col-lg-7">
                     <CardBlock className="border-0">
                       <Form ref={formRef} model={model}>
-                        <Panel className={clsx('py-4')}>
+                        <Panel style={{ paddingBottom: 0, paddingTop: 24 }}>
                           <div
                             className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)}
                             style={{ gap: 4 }}
@@ -382,6 +364,17 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                             />
                             <input type="hidden" value={form.quantity} className="bk-product-qty" />
                             <Divider vertical />
+                            <Button
+                              appearance="primary"
+                              className={styles.btnIcon}
+                              onClick={handleBuyNow}
+                              style={{ background: 'var(--rs-blue-800)' }}
+                            >
+                              <div className="d-flex flex-column">
+                                <span>Mua ngay</span>
+                                <span style={{ fontSize: 12 }}>(giao tận nơi hoặc lấy tại cửa hàng)</span>
+                              </div>
+                            </Button>
 
                             <Button
                               color="red"
@@ -390,22 +383,14 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                               onClick={handleAddToCart}
                               style={{ background: 'var(--rs-red-800)', color: '#fff' }}
                             >
-                              <BiCart />
-                              Thêm vào giỏ hàng
-                            </Button>
-                            <Button
-                              appearance="primary"
-                              className={styles.btnIcon}
-                              onClick={handleBuyNow}
-                              style={{ background: 'var(--rs-blue-800)' }}
-                            >
-                              <BiDollarCircle />
-                              Mua ngay
+                              <div className="d-flex flex-column align-items-center">
+                                <BiCart />
+                                <span style={{ fontSize: 12 }}> Thêm vào giỏ hàng</span>
+                              </div>
                             </Button>
 
                             <div className="bk-btn"></div>
                           </div>
-                          <Divider />
 
                           <div className={clsx(styles.groudpVariantForMobile, 'border rounded shadow')} ref={btnBarRef}>
                             <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
@@ -438,10 +423,12 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                               </Button>
                             </div>
                           </div>
-
-                          <TabsList data={data} />
                         </Panel>
                       </Form>
+                    </CardBlock>
+
+                    <CardBlock className="border-0 mt-4">
+                      <TabsList data={data} />
                     </CardBlock>
                   </div>
                 </div>
@@ -507,68 +494,76 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
 }
 
 const TabsList = (props) => {
-  const [tabs, setTabs] = useState('description')
-  const tabsList = [
-    {
-      key: 'description',
-      active: 'red',
-      name: 'Mô tả',
-      appearance: 'primary',
-      // style: { background: 'var(--rs-red-800)', color: '#fff' },
-    },
-    // {
-    //   key: 'information',
-    //   active: 'red',
-    //   appearance: 'primary',
-    //   name: 'Thông tin sản phẩm',
-    //   // style: { background: 'var(--rs-red-800)', color: '#fff' },
-    // },
-    {
-      key: 'preview',
-      name: 'Review',
-      active: 'red',
-      appearance: 'primary',
-      // style: { background: 'var(--rs-red-800)', color: '#fff' },
-    },
-  ]
+  return (
+    <div className={styles.tabs}>
+      <h6>Khuyến mãi</h6>
+      <div className={styles.tabsContent}>{parser(props?.data?.description || '')}</div>
+    </div>
+  )
+}
 
-  const handleRenderTabs = () => {
-    if (tabs === 'preview') {
-      return (
-        <>
-          <div className="d-inline-flex align-items-center" style={{ gap: 4, height: '100%' }}>
-            <Rate defaultValue={3} size="xs" readOnly />
-            <div>Base on 1 Reviews</div>
-            <div>Write a review</div>
-          </div>
-        </>
-      )
-    } else if (tabs === 'information') {
-      return <div>information</div>
-    } else if (tabs === 'description') {
-      return <div>{parser(props?.data?.description || '')}</div>
-    }
-  }
+const Slider = ({ image, ...props }) => {
+  const [sliderActive, setSliderActive] = useState(0)
 
   return (
     <>
-      <ButtonGroup>
-        {tabsList.map((item) => (
-          <Button
-            onClick={() => setTabs(item.key)}
-            color={tabs === item.key ? item.active : ''}
-            appearance={tabs === item.key ? item.appearance : 'ghost'}
-            style={{
-              background: item.key === tabs ? 'var(--rs-red-800)' : 'transparent',
-              borderColor: ' var(--rs-red-800)',
-              color: item.key === tabs ? '#fff' : 'var(--rs-red-800)',
-            }}
+      <div className={styles.slider}>
+        <div className={styles.carousel}>
+          <Carousel
+            placement={'left'}
+            shape={'bar'}
+            className="custom-slider"
+            autoplay
+            autoplayInterval={4000}
+            defaultActiveIndex={0}
+            activeIndex={sliderActive}
+            onSelect={(index) => setSliderActive(index)}
+            onSlideStart={(index, event) => setSliderActive(index)}
           >
-            {item.name}
-          </Button>
-        ))}
-      </ButtonGroup>
-      <div style={{ paddingTop: 20 }}>{handleRenderTabs()}</div>
+            {image?.map((item) => {
+              return (
+                <div style={{ position: 'relative' }}>
+                  <Image
+                    src={item?.src}
+                    layout="fill"
+                    objectFit="contain"
+                    className="bk-product-image"
+                    loader={imageLoader}
+                    loading="lazy"
+                    placeholder="blur"
+                    blurDataURL={
+                      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
+                    }
+                  />
+                </div>
+              )
+            })}
+          </Carousel>
+        </div>
+        <div className={styles.imgThumb}>
+          {image?.map((item, index) => {
+            return (
+              <div
+                style={{ position: 'relative' }}
+                className={clsx(styles.thumbItem, { [styles.active]: index === sliderActive })}
+                onClick={() => setSliderActive(index)}
+              >
+                <Image
+                  src={item?.src}
+                  layout="fill"
+                  objectFit="contain"
+                  loader={imageLoader}
+                  loading="lazy"
+                  placeholder="blur"
+                  blurDataURL={
+                    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
+                  }
+                />
+              </div>
+            )
+          })}
+        </div>
+      </div>
     </>
   )
 }

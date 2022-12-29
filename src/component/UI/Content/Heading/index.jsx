@@ -22,6 +22,8 @@ export default function Heading(props) {
         return <h4 className={classProps}>{props.children}</h4>
       case 'h5':
         return <h5 className={classProps}>{props.children}</h5>
+      case 'h6':
+        return <h6 className={classProps}>{props.children}</h6>
     }
   }
 

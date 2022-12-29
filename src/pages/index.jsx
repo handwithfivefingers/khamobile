@@ -112,6 +112,7 @@ const Home = (props) => {
                           price={item.price}
                           type={item.type}
                           slug={`/product/${item.slug}`}
+                          _id={item._id}
                         />
                       )
                     })}

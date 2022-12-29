@@ -30,15 +30,11 @@ const Orders = () => {
     }
   }
 
-  const handleOpenModalDelivery = (rowData, dataKey) => {
-    console.log(rowData[dataKey])
-    // setModal({ ...modal, visible: true, component: <DeliveryModal deliveryInformation={rowData[dataKey]} /> })
+  const handleOpenModalDelivery = (rowData) => {
+    // console.log(rowData)
+    setModal({ ...modal, visible: true, component: <DeliveryModal data={rowData} /> })
   }
-  const CustomRenderCell = ({ rowData, dataKey, ...props }) => (
-    <Cell {...props}>
-      <Button onClick={() => handleOpenModalDelivery(rowData, dataKey)}>Xem thêm</Button>
-    </Cell>
-  )
+
   return (
     <>
       <Content className={'bg-w'}>
@@ -59,7 +55,7 @@ const Orders = () => {
             <Cell dataKey="userInformation.fullName" />
           </Column>
           <Column flexGrow={1}>
-            <HeaderCell>Email</HeaderCell>
+            <HeaderCell>Số điện thoại</HeaderCell>
             <Cell dataKey="userInformation.phone" />
           </Column>
           <Column flexGrow={1}>
@@ -67,10 +63,6 @@ const Orders = () => {
             <Cell dataKey="userInformation.email" />
           </Column>
 
-          {/* <Column width={150}>
-            <HeaderCell>Địa chỉ giao hàng</HeaderCell>
-            <CustomRenderCell dataKey="deliveryInformation" />
-          </Column> */}
           <Column width={150}>
             <HeaderCell>Phương thức thanh toán</HeaderCell>
             <Cell dataKey="paymentType">
@@ -81,6 +73,7 @@ const Orders = () => {
               )}
             </Cell>
           </Column>
+
           <Column width={150}>
             <HeaderCell>Trạng thái thanh toán</HeaderCell>
             <Cell dataKey="status">
@@ -91,13 +84,14 @@ const Orders = () => {
               )}
             </Cell>
           </Column>
+
           <Column width={80} fixed="right">
             <HeaderCell>...</HeaderCell>
 
             <Cell>
               {(rowData) => (
                 <span>
-                  <a onClick={() => alert(`id:${rowData.id}`)}> Edit </a>
+                  <Button onClick={() => handleOpenModalDelivery(rowData)}>Edit</Button>
                 </span>
               )}
             </Cell>
