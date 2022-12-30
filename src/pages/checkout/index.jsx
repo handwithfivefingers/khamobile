@@ -6,7 +6,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 're
 import { Button, ButtonGroup, FlexboxGrid, Form, List, Panel, Radio, RadioGroup, Table, Tag } from 'rsuite'
 import GlobalOrderService from 'service/global/Order.service'
 import GlobalProductService from 'service/global/Product.service'
-import { CheckoutModel } from 'src/constant/model.constant'
+import { CheckoutModel, DeliveryModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
 import { useAuthorizationStore } from 'src/store/authenticateStore'
 import { useDevStore } from 'src/store/devStore'
@@ -39,6 +39,7 @@ export default function Checkout() {
   useEffect(() => {
     if (authenticate && user) {
       deliveryRef.current = user.delivery
+      informationRef.current = user
     }
   }, [authenticate, user])
 
@@ -75,6 +76,22 @@ export default function Checkout() {
 
   const handleSaveOrder = async () => {
     try {
+      let deliveryValue = deliveryRef.current
+      let userInformationValue = informationRef.current
+
+      const params = {
+        delivery: {
+          ...deliveryValue,
+        },
+        userInformation: {
+          fullName: userInformationValue.fullName,
+          phone: userInformationValue.phone,
+          email: userInformationValue.email,
+        },
+        userId: authenticate ? userInformationValue._id : null,
+      }
+      console.log(deliveryRef.current.validate())
+
       // console.log(formRef.current)
       // if (!formRef.current.check()) {
       //   console.log('Form Error')
@@ -88,7 +105,8 @@ export default function Checkout() {
       //   if (resp.data.urlPayment && form.paymentType === 'vnpay') window.open(resp.data.urlPayment)
       //   else router.push(`/checkout/${resp.data.orderId}`)
       // }
-      let deliveryValue = deliveryRef.current
+      console.log('deliveryValue', deliveryValue)
+      console.log('userInformationValue', userInformationValue)
     } catch (error) {
       console.log('handleSaveOrder', error)
     }
@@ -163,7 +181,7 @@ export default function Checkout() {
         html = (
           <>
             <div className="col-12">
-              <UserInformation ref={informationRef} data={user} />
+              <UserInformation ref={informationRef} data={informationRef.current} />
             </div>
 
             <div className="col-12">
@@ -219,7 +237,7 @@ export default function Checkout() {
                   <CardBlock className="border-0">
                     <h5>Thông tin đơn hàng</h5>
                     <Table autoHeight data={form?.product}>
-                      <Column align="left" fullText>
+                      <Column align="left" fullText flexGrow={1}>
                         <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>
                           Tên sản phẩm
                         </HeaderCell>
@@ -308,6 +326,7 @@ export default function Checkout() {
 
 const UserInformation = forwardRef(({ data, ...props }, ref) => {
   const [state, setState] = useState(data)
+
   useEffect(() => {
     setState(data)
   }, [data])
@@ -370,32 +389,31 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
 
 const DeliveryInformation = forwardRef(({ data, ...props }, ref) => {
   const [state, setState] = useState(data)
+
+  const deliveryForm = useRef()
+
   useEffect(() => {
     setState(data)
   }, [data])
+
   return (
     <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
       <Form
         key={['delivery']}
         formValue={state}
+        ref={deliveryForm}
         onChange={(val) => {
           setState(val)
-          ref.current = { ...val }
+          ref.current = { ...val, validate: () => deliveryForm.current.check() }
         }}
+        model={DeliveryModel}
       >
         <FlexboxGrid.Item style={{ width: '100%' }}>
           <h5>Địa chỉ giao hàng/ thanh toán</h5>
         </FlexboxGrid.Item>
 
         <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          <KMInput
-            name="company"
-            label={
-              <>
-                Công ty <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-              </>
-            }
-          />
+          <KMInput name="company" label="Công ty" />
         </FlexboxGrid.Item>
 
         <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
@@ -431,12 +449,8 @@ const DeliveryInformation = forwardRef(({ data, ...props }, ref) => {
                 Mã vùng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
               </>
             }
-            mask={[/\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
             placeholder="xxxxxx"
-            guide={true}
-            showMask={true}
             onChange={(val) => console.log(val)}
-            keepCharPositions={false}
           />
         </FlexboxGrid.Item>
       </Form>
