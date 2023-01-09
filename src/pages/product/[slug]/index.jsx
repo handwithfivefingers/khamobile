@@ -105,7 +105,13 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
       }
     }
 
-    typeof window !== 'undefined' && document.addEventListener('scroll', scrollEvent, true)
+    if (typeof window !== 'undefined') {
+      document.addEventListener('scroll', scrollEvent, true)
+      if (window.FB) {
+        window.FB.XFBML.parse()
+      }
+    }
+
     return () => document.removeEventListener('scroll', scrollEvent, true)
   }, [])
 
@@ -481,6 +487,28 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                       <Cell dataKey="lastName" />
                     </Column>
                   </Table>
+                </CardBlock>
+              </div>
+
+              <div className="col-12">
+                <CardBlock className="border-0">
+                  <div className="">Bình luận</div>
+                  {process.env.NODE_ENV !== 'production' ? (
+                    <div
+                      class="fb-comments"
+                      data-href={'https://khamobile.truyenmai.com' + router.asPath}
+                      data-width="100%"
+                      data-numposts="5"
+                    />
+                  ) : (
+                    <div
+                      class="fb-comments"
+                      data-href={process.env.CANONICAL + router.asPath}
+                      data-width="100%"
+                      data-numposts="5"
+                      data-lazy="true"
+                    />
+                  )}
                 </CardBlock>
               </div>
             </div>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import LOGO from 'assets/img/logo.png'
 import BCT from 'assets/img/bct.png'
 import { Button, Panel, Placeholder, IconButton } from 'rsuite'
@@ -10,11 +10,36 @@ import MessageIcon from '@rsuite/icons/Message'
 import Script from 'next/script'
 import { FaCcVisa, FaCcPaypal, FaCcStripe, FaCcJcb } from 'react-icons/fa'
 import { BsCashCoin } from 'react-icons/bs'
+
 export default function Footer() {
+  useEffect(() => {
+    if (window.FB) {
+      window.FB.XFBML.parse()
+    }
+  }, [])
   return (
     <div className="container-fluid border-top mt-4">
       <div id="fb-root"></div>
-      <Script src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v15.0&appId=947978842238826&autoLogAppEvents=1" />
+      <Script
+        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v15.0&appId=1263039330945343&autoLogAppEvents=1"
+        onError={(e) => console.log('scriptError', e)}
+        onLoad={() => {
+          console.log('Script has loaded')
+        }}
+        nonce="bW1o2vpX"
+        async
+        defer
+        crossorigin="anonymous"
+      />
+      {/* 
+      <script
+        async
+        defer
+        crossorigin="anonymous"
+        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v15.0&appId=1263039330945343&autoLogAppEvents=1"
+        nonce="bW1o2vpX"
+      ></script> */}
+
       <div className="row p-0">
         <div className="col-12 p-0">
           <div className="container p-0">
