@@ -80,6 +80,7 @@ export default function Product(props) {
   const onFilterChange = (val) => {
     setFilter(val)
   }
+
   return (
     <>
       <PostHelmet seo={props.seo} />

@@ -384,4 +384,54 @@ export default class ProductController {
       session.endSession()
     }
   }
+
+  deleteProduct = async (req, res) => {
+    try {
+      const { _id } = req.body
+      let result
+      if (!_id) throw { message: 'Product doesnt exists' }
+
+      if (TYPE_VARIANT.VARIANT === req.body.type) {
+        result = await this.deleteVariantProduct(_id)
+      } else if (TYPE_VARIANT.SIMPLE === req.body.type) {
+        result = await this.deleteSimpleProduct(_id)
+      }
+
+      if (!result) throw result.error
+
+      return res.status(200).json({
+        message: 'Product deleted',
+        result,
+      })
+    } catch (error) {
+      console.log(error)
+      return res.status(400).json({
+        message: 'Failed',
+        error,
+      })
+    }
+  }
+
+  deleteSimpleProduct = async (_id) => {
+    try {
+      await Product.deleteOne({ _id: mongoose.Types.ObjectId(_id) })
+      return { status: true }
+    } catch (error) {
+      console.log('deleteSimpleProduct error', error)
+      return { status: false, error }
+    }
+  }
+
+  deleteVariantProduct = async (_id) => {
+    try {
+      await Product.deleteOne({ _id: mongoose.Types.ObjectId(_id) })
+
+      await ProductVariant.deleteMany({ parentId: mongoose.Types.ObjectId(_id) })
+
+      return { status: true }
+    } catch (error) {
+      console.log('deleteVariantProduct error', error)
+      return { status: false, error }
+    }
+  }
 }

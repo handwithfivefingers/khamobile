@@ -75,6 +75,7 @@ const SideFilter = (props) => {
 
   const setParentChange = () => {
     props?.onChange(filter)
+    setDrawer((state) => ({ ...state, open: false }))
   }
   const handleFilterChange = (val) => {
     let lastElement = val.slice(-1)
@@ -84,7 +85,7 @@ const SideFilter = (props) => {
     setFilter({})
     setParentChange()
   }
-  // console.log(filter, props?.filter)
+
   return (
     <div className={'row gy-2'}>
       <div className="col-12">
@@ -100,7 +101,7 @@ const SideFilter = (props) => {
         <div className={styles.sort}>
           <h5 style={{ color: 'var(--rs-gray-800)' }}>Sắp xếp theo</h5>
           <Stack spacing={6}>
-            {renderButtonSort} <IconButton icon={<CloseIcon />} onClick={clearFilter} />
+            {renderButtonSort} <IconButton icon={<CloseIcon />} onClick={clearFilter} className={clsx(styles.btn)} />
           </Stack>
         </div>
       </div>

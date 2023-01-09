@@ -10,7 +10,7 @@ import ProductService from 'service/admin/Product.service'
 import { useCommonStore } from 'src/store/commonStore'
 import { useDevStore } from 'src/store/devStore'
 import GroupVariant from './GroupVariant'
-
+import slugify from 'slugify'
 const ProductCreateModal = (props) => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const changeData = useDevStore((state) => state.changeData)
@@ -36,12 +36,6 @@ const ProductCreateModal = (props) => {
     getVariables()
     getCategory()
     changeTitle('Create Post')
-  }, [])
-
-  useEffect(() => {
-    console.log('stored')
-    const interval = setInterval(() => changeData(formDataRef.current), 1000)
-    return () => clearInterval(interval)
   }, [])
 
   const getVariables = async () => {
@@ -112,7 +106,14 @@ const ProductCreateModal = (props) => {
         <Form formValue={formDataRef?.current} className={'row gx-2 '} fluid>
           <div className="col-10 bg-w rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <CardBlock>
-              <KMInput name="title" label="Tên sản phẩm" onChange={(v) => (formDataRef.current.title = v)} />
+              <KMInput
+                name="title"
+                label="Tên sản phẩm"
+                onChange={(v) => {
+                  formDataRef.current.title = v
+                  formDataRef.current.slug = slugify(v, { lower: true })
+                }}
+              />
               <KMInput name="slug" label="Đường dẫn" onChange={(v) => (formDataRef.current.slug = v)} />
               <KMEditor name="content" label="Nội dung" onChange={(v) => (formDataRef.current.content = v)} />
               <KMEditor name="description" label="Mô tả" onChange={(v) => (formDataRef.current.description = v)} />
@@ -125,6 +126,7 @@ const ProductCreateModal = (props) => {
                     <Form.ControlLabel>Loại biến thể</Form.ControlLabel>
                     <SelectPicker
                       name="type"
+                      value={formDataRef.current?.type}
                       onChange={(value) => {
                         formDataRef.current.type = value
                         setRender(!_render)
@@ -139,7 +141,14 @@ const ProductCreateModal = (props) => {
 
                 {formDataRef.current?.type === 'simple' && (
                   <div className="p-1">
-                    <KMPrice name="price" label="Giá tiền" onChange={(v) => console.log('price changed', v)} />
+                    <KMPrice
+                      name="price"
+                      label="Giá tiền"
+                      onChange={(v) => {
+                        console.log('price changed', v)
+                        formDataRef.current.price = v
+                      }}
+                    />
                   </div>
                 )}
 
@@ -180,9 +189,9 @@ const ProductCreateModal = (props) => {
                   accepter={CustomUpload}
                   group
                   action={process.env.API + '/api/upload'}
+                  withCredentials={true}
                   onSuccess={(resp, file) => {
                     setRender(!_render)
-
                     formDataRef.current = {
                       ...formDataRef.current,
                       image: formDataRef.current.image
@@ -211,15 +220,11 @@ const ProductCreateModal = (props) => {
               </Form.Group>
             </CardBlock>
 
-            <CardBlock>
-              <Form.Group>
-                <ButtonToolbar>
-                  <Button appearance="primary" onClick={onSubmit}>
-                    Tạo
-                  </Button>
-                </ButtonToolbar>
-              </Form.Group>
-            </CardBlock>
+            <Form.Group>
+              <Button appearance="primary" onClick={onSubmit}>
+                Tạo
+              </Button>
+            </Form.Group>
           </div>
         </Form>
       </Content>

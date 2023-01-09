@@ -16,6 +16,8 @@ const ProductService = {
 
   createProduct: async (form) => await axios.post(path.product + '/create', form),
 
+  deleteProduct: async (form) => await axios.post(path.product + '/delete', form),
+
   getAttribute: async () => await axios.get(path.attribute),
 
   getAttributeTermById: async (id) => await axios.get(path.attribute + '/' + id),

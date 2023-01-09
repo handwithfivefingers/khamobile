@@ -13,4 +13,7 @@ router.get('/product/:_id', new ProductController().getProductById)
 router.post('/product/create', new ProductController().createProduct)
 
 router.post('/product/update', new ProductController().updateProduct)
+
+router.post('/product/delete', new ProductController().deleteProduct)
+
 export default router

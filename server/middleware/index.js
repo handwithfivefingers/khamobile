@@ -122,6 +122,7 @@ export const authenticating = async (req, res, next) => {
 export const userMiddleware = async (req, res, next) => {
   try {
     if (!req.id || !req.role) throw { message: 'Authorization required' }
+
     if (req.role === 'user' || req.role === 'admin') next()
     else throw { message: 'Permission Denied' }
   } catch (error) {

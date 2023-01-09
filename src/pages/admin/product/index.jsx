@@ -1,30 +1,34 @@
-import AdminLayout from 'component/UI/AdminLayout'
-import { forwardRef, useEffect, useState } from 'react'
-import {
-  Button,
-  Content,
-  Modal,
-  Table,
-  useToaster,
-  Message,
-  IconButton,
-  Whisper,
-  ButtonGroup,
-  Popover,
-  Pagination,
-} from 'rsuite'
-import ProductService from 'service/admin/Product.service'
-import { useCommonStore } from 'src/store/commonStore'
-import dynamic from 'next/dynamic'
-import PlusIcon from '@rsuite/icons/Plus'
-import TrashIcon from '@rsuite/icons/Trash'
 import CheckIcon from '@rsuite/icons/Check'
 import CloseIcon from '@rsuite/icons/Close'
+import EditIcon from '@rsuite/icons/Edit'
+import PlusIcon from '@rsuite/icons/Plus'
+import TrashIcon from '@rsuite/icons/Trash'
+import AdminLayout from 'component/UI/AdminLayout'
+import moment from 'moment'
+import dynamic from 'next/dynamic'
+import { forwardRef, useEffect, useRef, useState } from 'react'
+import {
+  ButtonGroup,
+  Content,
+  IconButton,
+  Message,
+  Modal,
+  Pagination,
+  Popover,
+  Stack,
+  Table,
+  useToaster,
+  Whisper,
+} from 'rsuite'
+import ProductService from 'service/admin/Product.service'
+import { formatCurrency } from 'src/helper'
+import { useCommonStore } from 'src/store/commonStore'
+
 const ProductCreateModal = dynamic(() => import('component/Modal/Product/create'))
 
 const { Column, HeaderCell, Cell } = Table
 
-const renderAlert = ({ onClose, onProgress, right, top, className }, ref) => {
+const RenderAlert = forwardRef(({ right, top, className, ...props }, ref) => {
   return (
     <Popover ref={ref} className={className} full>
       <Message showIcon type="warning" header="Bạn có muốn xóa?">
@@ -35,34 +39,50 @@ const renderAlert = ({ onClose, onProgress, right, top, className }, ref) => {
             appearance="default"
             color="blue"
             onClick={(event) => {
-              onClose()
-              event.stopPropagation()
+              props?.closeRef.current.close()
             }}
           />
-          <IconButton icon={<CheckIcon />} size="sm" appearance="primary" color="blue" onClick={onProgress} />
+          <IconButton
+            icon={<CheckIcon />}
+            size="sm"
+            appearance="primary"
+            color="blue"
+            onClick={() => props.onClick()}
+          />
         </ButtonGroup>
       </Message>
     </Popover>
   )
-}
+})
 
-const ActionCell = ({ rowData, dataKey, ...props }) => {
+const ActionCell = ({ rowData, dataKey, onEdit, ...props }) => {
+  const whisperRef = useRef()
   const onProgress = (event) => {
     props?.onDelete(rowData, event)
   }
   return (
     <Cell {...props} className="link-group">
-      <Whisper placement="leftStart" trigger="click" speaker={renderAlert} onProgress={onProgress}>
-        <IconButton size="xs" appearance="subtle" icon={<TrashIcon />} />
-      </Whisper>
+      <Stack spacing={8}>
+        <IconButton onClick={() => onEdit(rowData)} size="sm" appearance="primary" icon={<EditIcon />} color="blue" />
+        <Whisper
+          placement="leftStart"
+          trigger="click"
+          speaker={<RenderAlert {...props} onClick={onProgress} closeRef={whisperRef} />}
+          ref={whisperRef}
+        >
+          <IconButton size="sm" appearance="primary" icon={<TrashIcon />} color="red" />
+        </Whisper>
+      </Stack>
     </Cell>
   )
 }
 
 const Products = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
-
+  const [sortColumn, setSortColumn] = useState()
+  const [sortType, setSortType] = useState()
   const [product, setProduct] = useState([])
+
   const [loading, setLoading] = useState(false)
 
   const [modal, setModal] = useState({
@@ -125,8 +145,6 @@ const Products = () => {
   const onCreate = async (formValue) => {
     try {
       setLoading(true)
-
-      // return
       const resp = await ProductService.createProduct(formValue)
       if (resp.status === 200) {
         toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
@@ -143,7 +161,7 @@ const Products = () => {
       )
       handleClose()
     } finally {
-      setLoading(false)
+      getProducts()
     }
   }
 
@@ -157,46 +175,93 @@ const Products = () => {
   }
 
   const handleOpenProduct = async ({ _id, type }) => {
-    let data = await getProductById({ _id, type })
-    setModal({
-      open: true,
-      component: <ProductCreateModal data={data} onSubmit={onUpdate} />,
-    })
+    try {
+      setLoading(true)
+      let data = await getProductById({ _id, type })
+      setModal({
+        open: true,
+        component: <ProductCreateModal data={data} onSubmit={onUpdate} />,
+      })
+    } catch (error) {
+    } finally {
+      setLoading(false)
+    }
   }
 
   const message = (type, header) => <Message showIcon type={type} header={header} closable />
 
-  const handleDelete = (rowData, event) => {
-    console.log(rowData)
-    event.stopPropagation()
+  const handleDelete = async (rowData, event) => {
+    try {
+      let resp = await ProductService.deleteProduct({ _id: rowData._id, type: rowData.type })
+      if (resp.status === 200) {
+      }
+    } catch (error) {
+      console.log('deleteProduct', error, error?.response?.data)
+    } finally {
+      getProducts()
+    }
   }
 
-  const data = product.filter((v, i) => {
-    const start = limit * (page - 1)
-    const end = start + limit
-    return i >= start && i < end
-  })
+  const handleSortColumn = (sortColumn, sortType) => {
+    setLoading(true)
+    setTimeout(() => {
+      setLoading(false)
+      setSortColumn(sortColumn)
+      setSortType(sortType)
+    }, 500)
+  }
+
+  const getData = () => {
+    if (sortColumn && sortType) {
+      const prod = product.sort((a, b) => {
+        let x = moment(a[sortColumn]).valueOf()
+        let y = moment(b[sortColumn]).valueOf()
+        // if (typeof x === 'string') {
+        //   x = x.charCodeAt()
+        // }
+        // if (typeof y === 'string') {
+        //   y = y.charCodeAt()
+        // }
+
+        if (sortType === 'asc') {
+          return x - y
+        } else {
+          return y - x
+        }
+      })
+
+      console.log('coming xxx', sortColumn, sortType, prod)
+
+      return prod.filter((v, i) => {
+        const start = limit * (page - 1)
+        const end = start + limit
+        return i >= start && i < end
+      })
+    }
+
+    return product.filter((v, i) => {
+      const start = limit * (page - 1)
+      const end = start + limit
+      return i >= start && i < end
+    })
+  }
 
   return (
     <>
-      <Content className={'bg-w h-100'}>
+      <Content className={'bg-w'}>
         <Table
           // fillHeight={!loading}
-          height={40 * (limit + 1)}
-          rowHeight={40}
-          data={() =>
-            product.filter((v, i) => {
-              const start = limit * (page - 1)
-              const end = start + limit
-              return i >= start && i < end
-            })
-          }
-          onRowClick={handleOpenProduct}
+          height={60 * (limit + 1)}
+          rowHeight={60}
+          data={getData()}
           loading={loading}
+          sortColumn={sortColumn}
+          sortType={sortType}
+          onSortColumn={handleSortColumn}
         >
-          <Column width={60} align="center" fixed>
+          <Column width={60} align="center" fixed fullText>
             <HeaderCell>Id</HeaderCell>
-            <Cell dataKey="_id" />
+            <Cell dataKey="_id">{(rowData) => <span onClick={(e) => e.preventDefault()}>{rowData['_id']}</span>}</Cell>
           </Column>
 
           <Column width={150} flexGrow={1}>
@@ -204,14 +269,23 @@ const Products = () => {
             <Cell dataKey="title" />
           </Column>
 
-          <Column width={150}>
-            <HeaderCell>Content</HeaderCell>
-            <Cell dataKey="content" />
+          <Column width={120} sortable>
+            <HeaderCell>Ngày cập nhật</HeaderCell>
+            <Cell dataKey="updatedAt">
+              {(rowData) => <span>{moment(rowData.updatedAt).format('DD/MM/YYYY')}</span>}
+            </Cell>
           </Column>
 
-          <Column width={100}>
+          <Column width={120} sortable>
+            <HeaderCell>Ngày tạo</HeaderCell>
+            <Cell dataKey="createdAt">
+              {(rowData) => <span>{moment(rowData.createdAt).format('DD/MM/YYYY')}</span>}
+            </Cell>
+          </Column>
+
+          <Column width={120} fullText>
             <HeaderCell>Price</HeaderCell>
-            <Cell dataKey="price" />
+            <Cell dataKey="price">{(rowData) => <span>{formatCurrency(rowData.price, { symbol: ' đ' })}</span>}</Cell>
           </Column>
 
           <Column width={100} align="center">
@@ -230,7 +304,7 @@ const Products = () => {
               />
             </HeaderCell>
 
-            <ActionCell onDelete={handleDelete} right={0} />
+            <ActionCell onDelete={handleDelete} onEdit={handleOpenProduct} right={0} />
           </Column>
         </Table>
         <div style={{ padding: 20 }}>

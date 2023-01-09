@@ -35,7 +35,13 @@ AppRouter.use(
   AdminRouter.ProductRouter,
   AdminRouter.OrderRouter,
 )
-AppRouter.post('/upload', userMiddleware, upload.fields([{ name: 'upload', maxCount: 1 }]), UploadRouter)
+AppRouter.post(
+  '/upload',
+  authenticating,
+  userMiddleware,
+  upload.fields([{ name: 'upload', maxCount: 1 }]),
+  UploadRouter,
+)
 
 AppRouter.use(
   '/',

@@ -2,6 +2,7 @@ import CloseIcon from '@rsuite/icons/Close'
 import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
 import CardBlock from 'component/UI/Content/CardBlock'
+import NoData from 'component/UI/Content/NoData'
 import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
 import axios from 'configs/axiosInstance'
@@ -471,19 +472,15 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                     onRowClick={(rowData) => {
                       console.log(rowData)
                     }}
+                    renderEmpty={() => <NoData />}
                   >
-                    <Column width={60} align="center" fixed>
-                      <HeaderCell>Id</HeaderCell>
-                      <Cell dataKey="id" />
-                    </Column>
-
                     <Column width={150}>
-                      <HeaderCell>First Name</HeaderCell>
+                      <HeaderCell>Thông số kỹ thuật</HeaderCell>
                       <Cell dataKey="firstName" />
                     </Column>
 
                     <Column width={150}>
-                      <HeaderCell>Last Name</HeaderCell>
+                      <HeaderCell />
                       <Cell dataKey="lastName" />
                     </Column>
                   </Table>
@@ -492,7 +489,6 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
 
               <div className="col-12">
                 <CardBlock className="border-0">
-                  <div className="">Bình luận</div>
                   {process.env.NODE_ENV !== 'production' ? (
                     <div
                       class="fb-comments"
@@ -597,18 +593,29 @@ const Slider = ({ image, ...props }) => {
 }
 
 export const getServerSideProps = async (ctx) => {
-  const { slug } = ctx.query
-  ctx.res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  try {
+    const { slug } = ctx.query
+    ctx.res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
 
-  const resp = await axios.get('/product' + '/' + slug)
-  const { data, _relationProd, seo } = resp.data
-  return {
-    props: {
-      data,
-      _relationProd,
-      slug,
-      seo,
-    },
+    const resp = await axios.get('/product' + '/' + slug)
+    if (resp.status !== 200) {
+      return {
+        notFound: true,
+      }
+    }
+    const { data, _relationProd, seo } = resp.data
+    return {
+      props: {
+        data,
+        _relationProd,
+        slug,
+        seo,
+      },
+    }
+  } catch (error) {
+    return {
+      notFound: true,
+    }
   }
 }
 

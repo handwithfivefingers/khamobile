@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
 import Card from 'component/UI/Content/Card'
 import CardBlock from 'component/UI/Content/CardBlock'
+import NoData from 'component/UI/Content/NoData'
 import PageHeader from 'component/UI/Content/PageHeader'
 import SideFilter from 'component/UI/Content/SideFilter'
 import CommonLayout from 'component/UI/Layout'
@@ -35,7 +36,7 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
   }
 
   if (!data) {
-    return 'Không có dữ liệu'
+    return <NoData />
   }
 
   const renderProduct = () => {
@@ -89,6 +90,7 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
     }
     return html
   }
+
   return (
     <>
       <PostHelmet seo={data?.seo} />
