@@ -5,6 +5,7 @@ const path = {
   variable: '/admin/product/variable',
   attribute: '/admin/product_attribute',
   attributeList: '/admin/product_attribute_list',
+  searchProduct: '/search',
 }
 
 const ProductService = {
@@ -27,6 +28,8 @@ const ProductService = {
   saveAttributeTerm: async (id, form) => await axios.post(path.attribute + '/' + id, form),
 
   createAttribute: async (form) => await axios.post(path.attribute, form),
+
+  searchProduct: async (form) => await axios.post(path.searchProduct, form),
 }
 
 export default ProductService

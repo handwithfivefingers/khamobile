@@ -258,7 +258,7 @@ export default class ProductController {
 
   getProduct = async (req, res) => {
     try {
-      let { price, createdAt, feature, activePage, pageSize, maxPrice, stock_status } = req.query
+      let { price, createdAt, feature, activePage, pageSize, maxPrice, stock_status, all } = req.query
 
       let pageS = pageSize || 10
 
@@ -271,39 +271,43 @@ export default class ProductController {
       const MAXPRICE = Number(maxPrice) * UNIT_PRICE || 999 * UNIT_PRICE
 
       let count
-      if (price || createdAt) {
-        _prod = await Product.find({
-          price: {
-            $lt: MAXPRICE,
-          },
-        })
-          .select('-content -_id -createdAt -updatedAt -__v')
-          .sort([
-            ['price', price || 1],
-            ['createdAt', createdAt || 1],
-          ])
-          .skip(activeP * pageS - pageS)
-          .limit(pageS)
-
-        count = await Product.find({
-          price: {
-            $lt: MAXPRICE,
-          },
-        }).count()
+      if (all) {
+        _prod = await Product.find().select('-content -_id -createdAt -updatedAt -__v')
       } else {
-        _prod = await Product.find({
-          price: {
-            $lt: MAXPRICE,
-          },
-        })
-          .select('-content -_id -createdAt -updatedAt -__v')
-          .skip(activeP * pageS - pageS)
-          .limit(pageS)
-        count = await Product.find({
-          price: {
-            $lt: MAXPRICE,
-          },
-        }).count()
+        if (price || createdAt) {
+          _prod = await Product.find({
+            price: {
+              $lt: MAXPRICE,
+            },
+          })
+            .select('-content -_id -createdAt -updatedAt -__v')
+            .sort([
+              ['price', price || 1],
+              ['createdAt', createdAt || 1],
+            ])
+            .skip(activeP * pageS - pageS)
+            .limit(pageS)
+
+          count = await Product.find({
+            price: {
+              $lt: MAXPRICE,
+            },
+          }).count()
+        } else {
+          _prod = await Product.find({
+            price: {
+              $lt: MAXPRICE,
+            },
+          })
+            .select('-content -_id -createdAt -updatedAt -__v')
+            .skip(activeP * pageS - pageS)
+            .limit(pageS)
+          count = await Product.find({
+            price: {
+              $lt: MAXPRICE,
+            },
+          }).count()
+        }
       }
 
       return res.status(200).json({
@@ -372,6 +376,25 @@ export default class ProductController {
     } catch (error) {
       return res.status(200).json({
         data: [],
+      })
+    }
+  }
+
+  searchProduct = async (req, res) => {
+    try {
+      const title = new RegExp(req.body.title, 'i')
+
+      const _data = await Product.find({
+        title: { $regex: title },
+      })
+      const count = _data.length
+      return res.status(200).json({
+        data: _data,
+        count,
+      })
+    } catch (error) {
+      return res.status(400).json({
+        error,
       })
     }
   }

@@ -8,7 +8,8 @@ export default class SeoController {
       const seoTags = await generateSeoTag({
         title: 'Trang chủ Khamobile',
         description: 'Trang chủ Khamobile - Chuyên kinh doanh các mặt hàng về Apple',
-        url: `${process.env.HOSTNAME}`,
+        url: `${process.env.CANONICAL}`,
+        breadcrumb: [{ title: 'Trang chủ', url: process.env.CANONICAL }],
       })
 
       return res.status(200).json({
@@ -26,7 +27,11 @@ export default class SeoController {
       const seoTags = await generateSeoTag({
         title: 'Về chúng tôi - Khamobile',
         description: 'Về chúng tôi - Sứ mệnh Khamobile',
-        url: `${process.env.HOSTNAME}/about-us`,
+        url: `${process.env.CANONICAL}/about-us`,
+        breadcrumb: [
+          { title: 'Trang chủ', url: process.env.CANONICAL },
+          { title: 'About us', url: process.env.CANONICAL + '/about-us' },
+        ],
       })
 
       return res.status(200).json({

@@ -6,7 +6,7 @@ const path = {
 }
 
 const GlobalCategoryService = {
-  getProdCate: async () => await axios.get(path.prodCate),
+  getProdCate: async (params) => await axios.get(path.prodCate, { params }),
   getProdByCategorySlug: async (slug, params) => await axios.get(path.prodCate + '/' + slug, { params }),
 }
 export default GlobalCategoryService

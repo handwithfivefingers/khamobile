@@ -9,12 +9,6 @@ import CustomSlider from '../Slider'
 import styles from './styles.module.scss'
 const Catalog = (props) => {
   const router = useRouter()
-  const IMG = [
-    'https://www.journal-theme.com/1/image/cache/catalog/journal3/products/fashion/f1-250x250.jpg.webp',
-    'https://www.journal-theme.com/1/image/cache/catalog/journal3/products/fashion/additional/8549539065_78e985be0c_o-250x250.jpg.webp',
-    'https://www.journal-theme.com/1/image/cache/catalog/journal3/products/fashion/r2-250x250.jpg.webp',
-    'https://www.journal-theme.com/1/image/cache/catalog/journal3/products/fashion/j1-250x250.jpg.webp',
-  ]
   const className = clsx([
     styles.grid,
     {

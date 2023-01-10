@@ -4,54 +4,52 @@ import { generateSeoTag } from '#common/helper'
 export default class ProductCategoryController {
   getCategory = async (req, res) => {
     try {
-      let { type } = req.query
+      let { all } = req.query
+
       let _category
-
-      _category = await ProductCategory.aggregate([
-        {
-          $project: {
-            _id: '$_id',
-            name: '$name',
-            slug: '$slug',
-            parent: '$parent',
-            image: '$image',
+      if (all) {
+        _category = await ProductCategory.aggregate([
+          {
+            $project: {
+              _id: '$_id',
+              name: '$name',
+              slug: '$slug',
+              parent: '$parent',
+              image: '$image',
+            },
           },
-        },
-        {
-          $lookup: {
-            from: 'productcategories',
-            localField: '_id',
-            foreignField: 'parent',
-            as: 'child',
+          {
+            $lookup: {
+              from: 'productcategories',
+              localField: '_id',
+              foreignField: 'parent',
+              as: 'child',
+            },
           },
-        },
-        // {
-        //   $project: {
-        //     _id: '$_id',
-        //     name: '$name',
-        //     slug: '$slug',
-        //     child: {
-        //       _id: '$child._id',
-        //       name: '$child.name',
-        //       slug: '$child.slug',
-        //     },
-        //   },
-        // },
-        // {
-        //   $group: {
-        //     _id: '$parent',
-        //     item: {
-        //       $push: {
-        //         id: '$_id',
-        //         name: '$name',
-        //         slug: '$slug',
-        //       },
-        //     },
-        //   },
-        // },
-      ])
+        ])
+      } else {
+        _category = await ProductCategory.aggregate([
+          {
+            $project: {
+              _id: '$_id',
+              name: '$name',
+              slug: '$slug',
+              parent: '$parent',
+              image: '$image',
+            },
+          },
+          {
+            $lookup: {
+              from: 'productcategories',
+              localField: '_id',
+              foreignField: 'parent',
+              as: 'child',
+            },
+          },
+        ])
 
-      _category = _category.filter((item) => item.child.length)
+        _category = _category.filter((item) => item.child.length)
+      }
 
       // console.log(_category)
 

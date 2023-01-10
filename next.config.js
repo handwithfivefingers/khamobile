@@ -33,6 +33,7 @@ const nextConfig = {
     port: process.env.PORT,
     host: process.env.HOST,
     API: process.env.API,
+    APP_NAME: process.env.APP_NAME,
     GG_CLIENT_ID: process.env.GG_CLIENT_ID,
     GG_CLIENT_SECRET: process.env.GG_CLIENT_SECRET,
   },

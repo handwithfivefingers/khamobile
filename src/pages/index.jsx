@@ -18,6 +18,7 @@ import styles from './styles.module.scss'
 import CardBlock from 'component/UI/Content/CardBlock'
 import axios from 'axios'
 import PostHelmet from 'component/PostHelmet'
+import { SiteLinksSearchBoxJsonLd } from 'next-seo'
 const Home = (props) => {
   const [data, setData] = useState([])
   useEffect(() => {
@@ -71,6 +72,15 @@ const Home = (props) => {
 
       <PostHelmet seo={props?.seo} />
 
+      <SiteLinksSearchBoxJsonLd
+        url={process.env.host}
+        potentialActions={[
+          {
+            target: `${process.env.host}/search?q`,
+            queryInput: 'page',
+          },
+        ]}
+      />
       <section className="container-fluid">
         <div className="row gx-2 gy-2">
           <div className="col-12">

@@ -118,7 +118,7 @@ export default function Product(props) {
                         product?.data?.map((prod) => {
                           return (
                             <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
-                              <div className={styles.gridItem}>
+                              <a className={styles.gridItem}>
                                 <Card
                                   imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
                                   title={prod.title}
@@ -128,7 +128,7 @@ export default function Product(props) {
                                   variable={prod.variable}
                                   hover
                                 />
-                              </div>
+                              </a>
                             </Link>
                           )
                         })}

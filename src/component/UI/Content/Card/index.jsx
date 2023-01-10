@@ -9,6 +9,7 @@ import { Image } from '@rsuite/icons'
 import * as NextImage from 'next/image'
 import LOADER from 'assets/img/loader2.gif'
 import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
+import Link from 'next/link'
 
 export default function Card({
   imgSrc,
@@ -86,45 +87,47 @@ export default function Card({
 
   if (slug) {
     return (
-      <div className={classCard} onClick={() => handleRouting(slug)}>
-        <div className={clsx('card-img-top', styles.cardImg)}>
-          {imgSrc ? (
-            <NextImage
-              src={imgSrc}
-              className={styles.img}
-              alt="..."
-              layout="fill"
-              blurDataURL={
-                'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
-              }
-              placeholder="blur"
-              loading={'lazy'}
-              loader={imageLoader}
-            />
-          ) : (
-            <Image className={styles.img} />
-          )}
-        </div>
-        <div className={styles.cardBody}>
-          <div className={styles.cardTitle}>
-            <h5>{title}</h5>
-          </div>
-          <p className={styles.cardText}>{getPrice(price)}</p>
-          {underlinePrice && (
-            <p className={styles.cardText}>
-              <s>{formatCurrency(underlinePrice)}</s>
-            </p>
-          )}
-          {wishList && (
-            <div className={styles.wishList}>
-              <IconButton
-                icon={wish ? <AiFillHeart style={{ fill: 'var(--rs-red-700)' }} /> : <AiOutlineHeart />}
-                onClick={handleAddWishList}
+      <Link href={slug} passHref>
+        <a className={classCard}>
+          <div className={clsx('card-img-top', styles.cardImg)}>
+            {imgSrc ? (
+              <NextImage
+                src={imgSrc}
+                className={styles.img}
+                alt="..."
+                layout="fill"
+                blurDataURL={
+                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
+                }
+                placeholder="blur"
+                loading={'lazy'}
+                loader={imageLoader}
               />
+            ) : (
+              <Image className={styles.img} />
+            )}
+          </div>
+          <div className={styles.cardBody}>
+            <div className={styles.cardTitle}>
+              <h5>{title}</h5>
             </div>
-          )}
-        </div>
-      </div>
+            <p className={styles.cardText}>{getPrice(price)}</p>
+            {underlinePrice && (
+              <p className={styles.cardText}>
+                <s>{formatCurrency(underlinePrice)}</s>
+              </p>
+            )}
+            {wishList && (
+              <div className={styles.wishList}>
+                <IconButton
+                  icon={wish ? <AiFillHeart style={{ fill: 'var(--rs-red-700)' }} /> : <AiOutlineHeart />}
+                  onClick={handleAddWishList}
+                />
+              </div>
+            )}
+          </div>
+        </a>
+      </Link>
     )
   }
 

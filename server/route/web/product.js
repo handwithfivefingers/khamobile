@@ -14,4 +14,6 @@ router.post('/product_id', new ProductController().getProductById)
 
 router.get('/home', new ProductController().getHomeProduct)
 
+router.post('/search', new ProductController().searchProduct)
+
 export default router
