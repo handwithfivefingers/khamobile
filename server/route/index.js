@@ -50,6 +50,7 @@ AppRouter.use(
   WebRouter.orderRouter,
   WebRouter.userRouter,
   WebRouter.seoRouter,
+  WebRouter.provinceRouter,
 )
 
 export default AppRouter

@@ -1,8 +1,7 @@
-const { findNestedObj } = require('@common/helper')
-const PROVINCE = require('@uploads/mockdata/province.json')
-const { sortBy } = require('lodash')
+import _ from 'lodash'
+import PROVINCE from '#uploads/mockup/province' assert { type: 'json' }
 
-module.exports = class Province {
+export default class Province {
   getProvince = async (req, res) => {
     try {
       let data = PROVINCE.map(({ districts, ...item }) => ({ ...item }))
@@ -42,7 +41,7 @@ module.exports = class Province {
       wards: getWards ? [...wards] : [],
     }))
 
-    return sortBy(result, 'codename')
+    return _.sortBy(result, 'codename')
   }
 
   /**
