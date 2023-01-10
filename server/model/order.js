@@ -13,11 +13,10 @@ export default {
   },
 
   deliveryInformation: {
-    company: String,
-    address_1: String,
-    address_2: String,
     city: String,
-    postCode: String,
+    district: String,
+    wards: String,
+    address: String,
   },
 
   deliveryType: {
@@ -57,6 +56,8 @@ export default {
       },
     },
   ],
+
   createDate: String,
+
   orderId: String,
 }

@@ -12,15 +12,8 @@ export default class OrderController {
   handleCreateOrder = async (req, res) => {
     try {
       let {
-        email,
-        fullName,
-        phone,
-
-        company,
-        address_1,
-        address_2,
-        city,
-        postCode,
+        userInformation,
+        deliveryInformation,
 
         deliveryType,
         paymentType,
@@ -42,61 +35,29 @@ export default class OrderController {
 
       let userId = req.body.userId
 
-      let user, deliveryInformation, urlPayment
+      let urlPayment
+      const createDate = moment().format('YYYYMMDDHHmmss')
 
-      // console.log(userId)
-
-      if (!userId) {
-        user = {
-          fullName,
-          email,
-          phone,
-        }
-
-        deliveryInformation = {
-          company,
-          address_1,
-          address_2,
-          city,
-          postCode,
-        }
-      } else {
-        let _user = await User.findOne({ _id: mongoose.Types.ObjectId(userId) })
-
-        user = _user
-
-        if (user) {
-          let delivery = user.delivery
-
-          let isdeliveryEqual = isEqual(delivery, { company, address_1, address_2, city, postCode })
-
-          if (isdeliveryEqual) {
-            deliveryInformation = {
-              ...delivery,
-            }
-          } else {
-            deliveryInformation = { company, address_1, address_2, city, postCode }
-          }
-        } else throw { message: 'user not found' }
-      }
-      console.log(user)
-      const response = await this.createOrder({
-        userId,
-        userInformation: user,
+      const orderObject = {
+        userInformation,
         deliveryInformation,
         deliveryType,
         paymentType,
         amount,
         status,
         product,
-      })
+        createDate,
+      }
+      if (userId) orderObject.userId = userId
+
+      const response = await this.createOrder(orderObject)
 
       if (!response.status) throw { message: 'Create order failed' }
 
       const responseMailSending = await this.sendMail({
-        email: user.email,
-        username: user.fullName,
-        firstName: user.fullName,
+        email: userInformation.email,
+        username: userInformation.fullName,
+        firstName: userInformation.fullName,
         orderId: response.orderId,
         product,
       })
@@ -105,7 +66,7 @@ export default class OrderController {
 
       if (paymentType === 'vnpay') {
         const paymentResp = await new PaymentController().createLinkPayment({
-          createDate: moment().format('YYYYMMDDHHmmss'),
+          createDate: createDate,
           orderId: moment().format('HHmmss'),
           amount,
           orderInfo: response.orderId,
@@ -119,7 +80,6 @@ export default class OrderController {
       }
 
       result.orderId = response.orderId
-
       result.urlPayment = urlPayment
 
       return res.status(200).json(result)
@@ -141,6 +101,7 @@ export default class OrderController {
     amount,
     status,
     product,
+    createDate,
   }) => {
     try {
       const orderId = new mongoose.Types.ObjectId()
@@ -167,6 +128,7 @@ export default class OrderController {
             }
           }
         }),
+        createDate,
       })
 
       await order.save()
@@ -187,7 +149,7 @@ export default class OrderController {
       })
         .populate({
           path: 'userId',
-          select: 'firstName lastName phone email username -_id',
+          select: 'firstName lastName phone email username createdDate -_id',
         })
         .populate({
           path: 'product.productId',

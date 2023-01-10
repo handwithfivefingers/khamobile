@@ -5,9 +5,7 @@ const path = {
 }
 
 const ProvinceService = {
-  getCity: () => axios.get(path.province),
-  getDistrict: (districtCode) => axios.get(path.province, { code: districtCode }),
-  getWard: (districtCode, wardCode) => axios.get(path.province, { code: districtCode, wards: wardCode }),
+  getCity: (params) => axios.get(path.province, { params }),
 }
 
 export default ProvinceService

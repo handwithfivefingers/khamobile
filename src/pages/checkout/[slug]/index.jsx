@@ -43,6 +43,11 @@ import CardBlock from 'component/UI/Content/CardBlock'
 import { KMInput } from 'component/UI/Content/KMInput'
 import { BsInboxes } from 'react-icons/bs'
 import { useRouter } from 'next/router'
+import clsx from 'clsx'
+import { FaCcVisa, FaCcPaypal, FaCcStripe, FaCcJcb } from 'react-icons/fa'
+import { BsCashCoin } from 'react-icons/bs'
+import PhoneIcon from '@rsuite/icons/Phone'
+import MessageIcon from '@rsuite/icons/Message'
 
 const { HeaderCell, Cell, Column } = Table
 
@@ -52,32 +57,38 @@ const USER_SERVICE = {
     {
       bankName: 'Ngân Hàng Techcombank',
       bankCode: '0777999966',
+      id: 1,
     },
     {
       bankName: 'Ngân Hàng ACB',
       bankCode: '1995 9968',
+      id: 2,
     },
     {
       bankName: 'Ngân Hàng ACB',
       bankCode: '219069729',
+      id: 3,
     },
     {
       bankName: 'Ngân Hàng VP Bank',
       bankCode: '777999966',
+      id: 4,
     },
     {
       bankName: 'Ngân Hàng MB',
       bankCode: '1090160069999',
+      id: 5,
     },
     {
       bankName: 'Ngân Hàng SCB',
       bankCode: '28601259966',
+      id: 6,
     },
   ],
 }
 
 export default function OrderReceived({ data }) {
-  const [tabsBank, setTabsBank] = useState([])
+  const [tabsBank, setTabsBank] = useState(0)
   const router = useRouter()
 
   const renderPaymentContent = () => {
@@ -92,20 +103,33 @@ export default function OrderReceived({ data }) {
               {USER_SERVICE.name}
             </Stack>
 
-            <div className="row">
-              <div className="col-4">
-                <ButtonGroup block vertical>
-                  {USER_SERVICE.value.map(({ bankName, bankCode }) => {
-                    return <Button onClick={() => setTabsBank([bankName, bankCode])}>{bankName}</Button>
-                  })}
-                </ButtonGroup>
+            <div className="row py-2">
+              <div className="col-12 col-sm-12 col-md-6 col-lg-4 d-flex flex-column p-2">
+                {USER_SERVICE.value.map(({ bankName, bankCode }, index) => {
+                  return (
+                    <Button
+                      onClick={() => setTabsBank(index)}
+                      className={clsx({
+                        [styles.active]: tabsBank === index,
+                      })}
+                    >
+                      {bankName}
+                    </Button>
+                  )
+                })}
               </div>
-              <div className="col-8">
+
+              <div className="col-12 col-sm-12 col-md-6  col-lg-8 p-2">
                 <Tag color="blue" id="p" size="lg" style={{ background: 'var(--rs-blue-700)' }}>
-                  <span>{tabsBank.join(' : ')}</span>
+                  <span>
+                    {USER_SERVICE.value[tabsBank].bankName} : {USER_SERVICE.value[tabsBank].bankCode}
+                  </span>
                 </Tag>
                 <br />
-                Nội dung chuyển khoản: <br />
+                <p>
+                  <span> Nội dung chuyển khoản:</span>
+                  <p>Thanh toan {data?.createDate}</p>
+                </p>
                 <Tag size="md">{data.userId?.fullName}</Tag>
               </div>
             </div>
@@ -119,8 +143,6 @@ export default function OrderReceived({ data }) {
 
     return html
   }
-
-  console.log(data)
 
   if (!data)
     return (
@@ -139,11 +161,12 @@ export default function OrderReceived({ data }) {
       <div className="col-12 p-0 py-2 border-top">
         <div className="container">
           <Form className="row gx-4 gy-4" plaintext formValue={data}>
-            <div className="col-12 col-md-6 col-lg-4">
+            <div className="col-12 col-md-12 col-lg-4">
               <div className="row gy-4">
                 <div className="col-12">
+                  <h5 className="text-secondary">Thông tin cá nhân</h5>
+
                   <CardBlock className="border-0">
-                    <h5>Thông tin cá nhân</h5>
                     <KMInput name="fullName" label="Họ và tên" value={data?.['userInformation']?.['fullName']} />
                     <KMInput name="phone" label="Số điện thoại liên lạc" value={data?.['userInformation']?.['phone']} />
                     <KMInput name="email" label="Địa chỉ email" value={data?.['userInformation']?.['email']} />
@@ -151,37 +174,36 @@ export default function OrderReceived({ data }) {
                 </div>
 
                 <div className="col-12">
+                  <h5 className="text-secondary">Địa chỉ giao hàng/ thanh toán</h5>
+
                   <CardBlock className="border-0">
-                    <h5>Địa chỉ giao hàng/ thanh toán</h5>
-                    <KMInput name="company" label="Công ty" value={data?.['deliveryInformation']?.['company']} />
-                    <KMInput name="address_1" label="Địa chỉ 1" value={data?.['deliveryInformation']?.['address_1']} />
-                    <KMInput name="address_2" label="Địa chỉ 2" value={data?.['deliveryInformation']?.['address_2']} />
-                    <KMInput name="city" label="Tỉnh/ Thành phố" value={data?.['deliveryInformation']?.['city']} />
-                    <KMInput name="postCode" label="Mã vùng" value={data?.['deliveryInformation']?.['postCode']} />
+                    <KMInput name="city" label="Công ty" value={data?.['deliveryInformation']?.['city']} />
+                    <KMInput name="district" label="Địa chỉ 1" value={data?.['deliveryInformation']?.['district']} />
+                    <KMInput name="wards" label="Địa chỉ 2" value={data?.['deliveryInformation']?.['wards']} />
+                    <KMInput name="address" label="Tỉnh/ Thành phố" value={data?.['deliveryInformation']?.['address']} />
                   </CardBlock>
                 </div>
 
                 <div className="col-12">
+                  <h5 className="text-secondary">Thông tin giao nhận</h5>
+
                   <CardBlock className="border-0">
-                    <h5>Phương thức vận chuyển</h5>
                     <Form.Group controlId="radioList">
-                      <RadioGroup
-                        name="radioList"
-                        onChange={(val) => setForm({ ...form, deliveryType: val })}
-                        value={data?.deliveryType}
-                      >
-                        <Radio value="cod">COD</Radio>
+                      <RadioGroup name="radioList" value={data?.deliveryType} plaintext>
+                        <Radio value="onStore">Nhận tại cửa hàng</Radio>
+                        <Radio value="onAddress">Giao hàng tại nhà</Radio>
                       </RadioGroup>
                     </Form.Group>
                   </CardBlock>
                 </div>
               </div>
             </div>
-            <div className="col-12 col-md-6 col-lg-8">
+            <div className="col-12 col-md-12 col-lg-8">
               <div className="row gx-4 gy-4">
                 <div className="col-12">
+                  <h5 className="text-secondary">Thông tin đơn hàng</h5>
+
                   <CardBlock className="border-0">
-                    <h5>Thông tin đơn hàng</h5>
                     <List>
                       {data?.product?.map((item) => {
                         return (
@@ -226,18 +248,46 @@ export default function OrderReceived({ data }) {
                   </CardBlock>
                 </div>
                 <div className="col-12">
+                  <h5 className="text-secondary">
+                    {data?.paymentType === 'transfer'
+                      ? 'Chuyển khoản ngân hàng'
+                      : data?.paymentType === 'vnpay'
+                      ? 'Cổng thanh toán Vn-Pay'
+                      : ''}
+                  </h5>
+                  <CardBlock className="border-0">{renderPaymentContent()}</CardBlock>
+                </div>
+                <div className="col-12">
+                  <h5 className="text-secondary"></h5>
                   <CardBlock className="border-0">
-                    <h5>
-                      Phương thức thanh toán :{' '}
-                      <Tag color="blue" size="md" style={{ background: 'var(--rs-blue-700)' }}>
-                        {data?.paymentType === 'transfer'
-                          ? 'Chuyển khoản ngân hàng'
-                          : data?.paymentType === 'vnpay'
-                          ? 'Cổng thanh toán Vn-Pay'
-                          : ''}
-                      </Tag>
-                    </h5>
-                    {renderPaymentContent()}
+                    <p>Chúng tôi sẽ liên lạc lại với bạn sau ít phút</p>
+                    <ul>
+                      <ul className={styles.listLink}>
+                        <h6>Mọi thắc mắc xin vui lòng liên hệ:</h6>
+                        <li>
+                          <IconButton icon={<MessageIcon />} appearance="subtle" />
+                          <span className="text-dark">
+                            220/9A, Đường Xô Viết Nghệ Tĩnh, Phường 21, Bình Thạnh, Hồ Chí Minh
+                          </span>
+                        </li>
+                        <li>
+                          <IconButton icon={<PhoneIcon />} appearance="subtle" />
+                          <span>
+                            <a href="tel:+0777999966" className="text-dark">
+                              0777 9999 66
+                            </a>
+                          </span>
+                        </li>
+                        <li>
+                          <IconButton icon={<MessageIcon />} appearance="subtle" />
+                          <span>
+                            <a href="mailto:kha44mobile@gmail.com" className="text-dark">
+                              kha44mobile@gmail.com
+                            </a>
+                          </span>
+                        </li>
+                      </ul>
+                    </ul>
                   </CardBlock>
                 </div>
               </div>

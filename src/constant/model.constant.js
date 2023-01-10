@@ -5,9 +5,10 @@ const CheckoutModel = Schema.Model({
 })
 
 const DeliveryModel = Schema.Model({
-  address_1: Schema.Types.StringType().isRequired('Địa chỉ giao hàng không chính xác,vui lòng thử lại'),
+  address: Schema.Types.StringType().isRequired('Địa chỉ giao hàng không chính xác,vui lòng thử lại'),
   city: Schema.Types.StringType().isRequired('Thành phố không chính xác,vui lòng thử lại'),
-  postCode: Schema.Types.StringType().isRequired('Mã vùng không chính xác,vui lòng thử lại'),
+  district: Schema.Types.StringType().isRequired('Quận/Huyện không chính xác,vui lòng thử lại'),
+  wards: Schema.Types.StringType().isRequired('Phường/Thị xã/Trấn không chính xác,vui lòng thử lại'),
 })
 const UserInformationModel = Schema.Model({
   fullName: Schema.Types.StringType().isRequired('Họ và tên không chính xác, vui lòng thử lại'),

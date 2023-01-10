@@ -5,9 +5,10 @@ import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { Button, ButtonGroup, FlexboxGrid, Form, List, Radio, RadioGroup, Table, Tag } from 'rsuite'
+import GlobalOrderService from 'service/global/Order.service'
 import GlobalProductService from 'service/global/Product.service'
 import ProvinceService from 'service/global/Province.service'
-import { DeliveryModel } from 'src/constant/model.constant'
+import { DeliveryModel, UserInformationModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
 import { useAuthorizationStore } from 'src/store/authenticateStore'
 import styles from './styles.module.scss'
@@ -18,16 +19,18 @@ export default function Checkout() {
 
   const { authenticate, user, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
 
-  const [form, setForm] = useState({
-    deliveryType: 'cod',
-    userType: 'anonymous',
-    paymentType: 'transfer',
-  })
-
   const [price, setPrice] = useState(0)
+
+  const [render, setRender] = useState(false)
   const deliveryRef = useRef()
+
   const informationRef = useRef()
-  const loginRef = useRef()
+
+  const formRef = useRef({
+    deliveryType: 'onStore',
+    paymentType: 'transfer',
+    deliveryInformation: {},
+  })
 
   useEffect(() => {
     let item = JSON.parse(localStorage.getItem('khaMobileCart'))
@@ -40,6 +43,8 @@ export default function Checkout() {
     if (authenticate && user) {
       deliveryRef.current = user.delivery
       informationRef.current = user
+      formRef.current.deliveryInformation = user.delivery
+      setRender(!render)
     }
   }, [authenticate, user])
 
@@ -53,11 +58,11 @@ export default function Checkout() {
         return prev
       }, 0)
 
-      setForm((state) => ({
-        ...state,
+      formRef.current = {
+        ...formRef.current,
         amount: totalPrice,
         product: resp,
-      }))
+      }
 
       setPrice(totalPrice)
     } catch (error) {
@@ -76,37 +81,32 @@ export default function Checkout() {
 
   const handleSaveOrder = async () => {
     try {
-      let deliveryValue = deliveryRef.current
-      let userInformationValue = informationRef.current
+      let { deliveryCheck, ...restForm } = formRef.current
+
+      if (!deliveryCheck()) return
+
+      let { fullName, phone, email, _id } = informationRef.current
 
       const params = {
-        delivery: {
-          ...deliveryValue,
-        },
+        ...restForm,
         userInformation: {
-          fullName: userInformationValue.fullName,
-          phone: userInformationValue.phone,
-          email: userInformationValue.email,
+          fullName,
+          phone,
+          email,
         },
-        userId: authenticate ? userInformationValue._id : null,
+        userId: authenticate ? _id : null,
       }
-      console.log(deliveryRef.current.validate())
 
-      // console.log(formRef.current)
-      // if (!formRef.current.check()) {
-      //   console.log('Form Error')
-      //   return
-      // }
+      console.log(formRef.current)
+      console.log(params)
 
-      // const resp = await GlobalOrderService.createOrder(form)
+      const resp = await GlobalOrderService.createOrder(params)
 
-      // if (resp.data.orderId) {
-      //   localStorage.setItem('khaMobileCart', null)
-      //   if (resp.data.urlPayment && form.paymentType === 'vnpay') window.open(resp.data.urlPayment)
-      //   else router.push(`/checkout/${resp.data.orderId}`)
-      // }
-      console.log('deliveryValue', deliveryValue)
-      console.log('userInformationValue', userInformationValue)
+      if (resp.data.orderId) {
+        localStorage.setItem('khaMobileCart', null)
+        if (resp.data.urlPayment && form.paymentType === 'vnpay') window.open(resp.data.urlPayment)
+        else router.push(`/checkout/${resp.data.orderId}`)
+      }
     } catch (error) {
       console.log('handleSaveOrder', error)
     }
@@ -116,12 +116,10 @@ export default function Checkout() {
     let html = null
     if (authenticate) {
       html = (
-        <div className="col-12 p-0">
-          <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+        <div className="col-12">
+          <h5 className="text-secondary">Tài khoản</h5>
+          <CardBlock className="border-0">
             <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
-              <FlexboxGrid.Item style={{ width: '100%' }}>
-                <h5>Tài khoản</h5>
-              </FlexboxGrid.Item>
               <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
                 <span className="t-primary">Tên tài khoản: {user.fullName || ''} </span>
               </FlexboxGrid.Item>
@@ -138,7 +136,7 @@ export default function Checkout() {
     } else {
       html = (
         <div className="col-12">
-          <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
+          <CardBlock className="border-0">
             <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
               <FlexboxGrid.Item style={{ width: '100%' }}>
                 <h5>Tài khoản</h5>
@@ -149,7 +147,7 @@ export default function Checkout() {
                   <RadioGroup
                     name="userType"
                     onChange={(val) => setForm({ ...form, userType: val })}
-                    value={form.userType}
+                    value={formRef.current?.userType}
                     inline
                   >
                     <Radio value="anonymous">Khách</Radio>
@@ -168,28 +166,20 @@ export default function Checkout() {
   const renderUserInformationByCondition = (condition) => {
     let html = null
 
-    if (authenticate) {
-      html = <DeliveryInformation ref={deliveryRef} data={deliveryRef.current} />
+    if (condition) {
+      html = <DeliveryInformation ref={formRef} />
     } else {
-      if (condition === 'login') {
-        html = (
+      html = (
+        <>
           <div className="col-12">
-            <LoginForm ref={loginRef} handleLogin={handleLogin} />
+            <UserInformation ref={informationRef} data={informationRef.current} />
           </div>
-        )
-      } else {
-        html = (
-          <>
-            <div className="col-12">
-              <UserInformation ref={informationRef} data={informationRef.current} />
-            </div>
 
-            <div className="col-12">
-              <DeliveryInformation ref={deliveryRef} data={deliveryRef.current} />
-            </div>
-          </>
-        )
-      }
+          <div className="col-12">
+            <DeliveryInformation ref={formRef} />
+          </div>
+        </>
+      )
     }
     return html
   }
@@ -212,21 +202,21 @@ export default function Checkout() {
             <div className="col-12 col-md-6 col-lg-4 col-xl-3">
               <div className="row gy-4">
                 {renderInformationBlock()}
-                {renderUserInformationByCondition(form.userType)}
+                {renderUserInformationByCondition(authenticate)}
               </div>
             </div>
 
             <div className="col-12 col-md-6 col-lg-8 col-xl-9">
               <div className="row gx-4 gy-4">
                 <div className="col-12">
-                  <h5 style={{ color: '#666666' }}>Thông tin giao nhận</h5>
+                  <h5 className="text-secondary">Thông tin giao nhận</h5>
 
                   <CardBlock className="border-0">
                     <Form.Group controlId="radioList">
                       <RadioGroup
                         name="radioList"
-                        onChange={(val) => setForm({ ...form, deliveryType: val })}
-                        value={form.deliveryType}
+                        onChange={(val) => (formRef.current = { ...formRef.current, deliveryType: val })}
+                        defaultValue={formRef.current?.deliveryType}
                       >
                         <Radio value="onStore">Nhận tại cửa hàng</Radio>
                         <Radio value="onAddress">Giao hàng tại nhà</Radio>
@@ -236,65 +226,18 @@ export default function Checkout() {
                 </div>
 
                 <div className="col-12">
-                  <h5 style={{ color: '#666666' }}>Thông tin đơn hàng</h5>
+                  <h5 className="text-secondary">Thông tin đơn hàng</h5>
 
-                  <CardBlock className="border-0">
-                    <Table autoHeight data={form?.product}>
-                      <Column align="left" fullText flexGrow={1}>
-                        <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>
-                          Tên sản phẩm
-                        </HeaderCell>
-                        <Cell dataKey="title" />
-                      </Column>
-
-                      <Column width={120} align="left">
-                        <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Số lượng</HeaderCell>
-                        <Cell dataKey="quantity" />
-                      </Column>
-
-                      <Column width={220} align="left">
-                        <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Mô tả</HeaderCell>
-                        <Cell dataKey="attributes">
-                          {(rowData) =>
-                            Object.keys(rowData?.attributes).map((key) => (
-                              <>
-                                <Tag>{rowData?.attributes[key]}</Tag>
-                              </>
-                            ))
-                          }
-                        </Cell>
-                      </Column>
-
-                      <Column align="right">
-                        <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Đơn giá</HeaderCell>
-                        <Cell dataKey="price" />
-                      </Column>
-                    </Table>
-
-                    <List>
-                      <List.Item
-                        style={{
-                          display: 'flex',
-                          justifyContent: 'space-between',
-                          color: 'var(--rs-blue-800)',
-                        }}
-                      >
-                        <span style={{ textAlign: 'center', padding: '0px 10px' }}>Tổng cộng:</span>
-                        <span style={{ textAlign: 'center', padding: '0px 10px' }}>
-                          <b>{formatCurrency(price)}</b>
-                        </span>
-                      </List.Item>
-                    </List>
-                  </CardBlock>
+                  <TableInformation product={formRef.current?.product} price={price} />
                 </div>
                 <div className="col-12">
-                  <h5 style={{ color: '#666666' }}>Hình thức thanh toán</h5>
+                  <h5 className="text-secondary">Hình thức thanh toán</h5>
                   <CardBlock className="border-0">
                     <Form.Group controlId="radioList">
                       <RadioGroup
                         name="radioList"
-                        onChange={(val) => setForm({ ...form, paymentType: val })}
-                        value={form.paymentType}
+                        onChange={(val) => (formRef.current = { ...formRef.current, paymentType: val })}
+                        defaultValue={formRef.current?.paymentType}
                       >
                         <Radio value="transfer">Chuyển khoản</Radio>
                         <Radio value="vnpay">Qua Vn-Pay</Radio>
@@ -328,7 +271,7 @@ export default function Checkout() {
 
 const UserInformation = forwardRef(({ data, ...props }, ref) => {
   const [state, setState] = useState(data)
-
+  const userForm = useRef()
   useEffect(() => {
     setState(data)
   }, [data])
@@ -338,10 +281,12 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
       formValue={state}
       onChange={(val) => {
         setState(val)
-        ref.current = { ...val }
+        ref.current = { ...val, validate: () => userForm.current.check() }
       }}
+      ref={userForm}
+      model={UserInformationModel}
     >
-      <h5 style={{ color: '#666' }}>Thông tin cá nhân</h5>
+      <h5 className="text-secondary">Thông tin cá nhân</h5>
       <CardBlock className="border-0">
         <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
           <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
@@ -374,7 +319,6 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
                   Số điện thoại <span className="t-secondary">*</span>
                 </>
               }
-              mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
               placeholder="0123456789"
               guide={false}
               onChange={(val) => console.log(val)}
@@ -392,122 +336,218 @@ const DeliveryInformation = forwardRef(({ data, ...props }, ref) => {
 
   const deliveryForm = useRef()
 
-  const [province, setProvince] = useState({
-    city: [],
-    disctrict: [],
-    wards: [],
-  })
-
   useEffect(() => {
     setState(data)
-    getCity()
   }, [data])
 
-  const getCity = async () => {
-    const resp = await ProvinceService.getCity()
-    let { data } = resp.data
-    setProvince((prev) => ({ ...prev, city: data }))
-  }
-
-  const getDistrict = async (cityCode) => {
-    const resp = await ProvinceService.getCity(code)
-    let { data } = resp.data
-    setProvince((prev) => ({ ...prev, disctrict: data }))
-  }
-
-  const getWards = async (cityCode, districtCode) => {
-    const resp = await ProvinceService.getCity(cityCode, districtCode)
-    let { data } = resp.data
-    setProvince((prev) => ({ ...prev, wards: data }))
-  }
-
-  const handleSelectCity = (e) => {
-    console.log(e)
+  ref.current = {
+    ...ref.current,
+    deliveryCheck: () => deliveryForm.current.check(),
   }
 
   return (
-    <Form
-      key={['delivery']}
-      formValue={state}
-      ref={deliveryForm}
-      onChange={(val) => {
-        setState(val)
-        ref.current = { ...val, validate: () => deliveryForm.current.check() }
-      }}
-      // model={DeliveryModel}
-    >
-      <h5 style={{ color: '#666' }}>Địa chỉ giao hàng/ thanh toán</h5>
+    <Form key={['delivery']} formValue={state} ref={deliveryForm} model={DeliveryModel}>
+      <h5 className="text-secondary">Địa chỉ giao hàng/ thanh toán</h5>
 
       <CardBlock className="border-0">
         <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          {/* <KMInput
-            name="city"
-            label={
-              <>
-                Tỉnh/ Thành phố<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-              </>
-            }
-          /> */}
-          <KMSelect
-            name="city"
-            data={province?.city}
-            valueKey="code"
-            labelKey="name"
-            label={
-              <>
-                Tỉnh / Thành phố<span className="t-secondary">*</span>
-              </>
-            }
-            onChange={handleSelectCity}
-            style={{ width: '100%' }}
-          />
-
-          <KMSelect
-            name="district"
-            data={province?.district}
-            label={
-              <>
-                Quận / Huyện<span className="t-secondary">*</span>
-              </>
-            }
-            valueKey="code"
-            labelKey="name"
-            onChange={(v) => console.log(v)}
-            style={{ width: '100%' }}
-          />
-
-          <KMSelect
-            name="wards"
-            data={province?.wards}
-            valueKey="code"
-            labelKey="name"
-            label={
-              <>
-                Phường / Trấn / Thị xã <span className="t-secondary">*</span>
-              </>
-            }
-            onChange={(v) => console.log(v)}
-            style={{ width: '100%' }}
+          <SelectProvinceInput
+            ref={ref}
+            onChange={(v) => (ref.current.deliveryInformation = { ...ref.current.deliveryInformation, ...v })}
           />
         </FlexboxGrid.Item>
 
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
+        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100 mt-3">
           <KMInput
             name="address"
             label={
               <>
-                Địa chỉ giao hàng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                Địa chỉ giao hàng<span className="t-secondary">*</span>
               </>
             }
             type="textarea"
             rows={3}
             style={{ width: '100%' }}
+            onChange={(value) => (ref.current.deliveryInformation.address = value)}
           />
         </FlexboxGrid.Item>
       </CardBlock>
     </Form>
   )
 })
+
+const SelectProvinceInput = forwardRef((props, ref) => {
+  const [city, setCity] = useState([])
+
+  const [district, setDistrict] = useState([])
+
+  const [wards, setWards] = useState([])
+
+  const [params, setParams] = useState({
+    code: '',
+    wards: '',
+  })
+
+  const [select, setSelect] = useState()
+
+  useEffect(() => {
+    getCity()
+  }, [])
+
+  useEffect(() => {
+    getScreenData(params)
+  }, [params])
+
+  useEffect(() => {
+    props.onChange(select)
+  }, [select])
+
+  const getCity = async (params) => {
+    const resp = await ProvinceService.getCity()
+    let { data } = resp.data
+    setCity(data)
+  }
+
+  const getScreenData = async ({ code = null, wards = null } = {}) => {
+    try {
+      if (!code) return
+
+      let res = await ProvinceService.getCity({ code, wards })
+
+      let { data } = res.data
+      if (res) {
+        if (code) {
+          if (wards) {
+            return setWards(data)
+          }
+          return setDistrict(data)
+        }
+      }
+    } catch (err) {
+      console.log('getScreenData err: ' + err)
+    }
+  }
+
+  const handleSelectCity = async (value) => {
+    let item = city?.find((item) => item?.name === value)
+
+    wards?.length && setWards([])
+
+    district?.length && setDistrict([])
+
+    setSelect({ city: value, district: null, wards: null })
+
+    setParams({ wards: null, code: item?.code })
+  }
+
+  const handleSelectDistrict = async (value) => {
+    let item = district?.find((item) => item?.name === value)
+
+    setSelect((prev) => ({ ...prev, district: value }))
+
+    setParams((prev) => ({ ...prev, wards: item?.code }))
+  }
+
+  return (
+    <>
+      <KMSelect
+        name="city"
+        data={city}
+        valueKey="name"
+        labelKey="name"
+        label={
+          <>
+            Tỉnh / Thành phố<span className="t-secondary">*</span>
+          </>
+        }
+        onChange={handleSelectCity}
+        style={{ width: '100%' }}
+        value={select?.city}
+      />
+
+      <KMSelect
+        name="district"
+        data={district}
+        label={
+          <>
+            Quận / Huyện<span className="t-secondary">*</span>
+          </>
+        }
+        valueKey="name"
+        labelKey="name"
+        onChange={handleSelectDistrict}
+        style={{ width: '100%' }}
+        value={select?.district}
+      />
+
+      <KMSelect
+        name="wards"
+        data={wards}
+        valueKey="name"
+        labelKey="name"
+        label={
+          <>
+            Phường / Trấn / Thị xã <span className="t-secondary">*</span>
+          </>
+        }
+        onChange={(value) => setSelect((prev) => ({ ...prev, wards: value }))}
+        style={{ width: '100%' }}
+        value={select?.wards}
+      />
+    </>
+  )
+})
+
+const TableInformation = ({ product, price }) => {
+  return (
+    <CardBlock className="border-0">
+      <Table autoHeight data={product}>
+        <Column align="left" fullText flexGrow={1}>
+          <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Tên sản phẩm</HeaderCell>
+          <Cell dataKey="title" />
+        </Column>
+
+        <Column width={120} align="left">
+          <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Số lượng</HeaderCell>
+          <Cell dataKey="quantity" />
+        </Column>
+
+        <Column width={220} align="left">
+          <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Mô tả</HeaderCell>
+          <Cell dataKey="attributes">
+            {(rowData) =>
+              Object.keys(rowData?.attributes).map((key) => (
+                <>
+                  <Tag>{rowData?.attributes[key]}</Tag>
+                </>
+              ))
+            }
+          </Cell>
+        </Column>
+
+        <Column align="right">
+          <HeaderCell style={{ background: 'var(--rs-blue-800)', color: 'white' }}>Đơn giá</HeaderCell>
+          <Cell dataKey="price" />
+        </Column>
+      </Table>
+
+      <List>
+        <List.Item
+          style={{
+            display: 'flex',
+            justifyContent: 'space-between',
+            color: 'var(--rs-blue-800)',
+          }}
+        >
+          <span style={{ textAlign: 'center', padding: '0px 10px' }}>Tổng cộng:</span>
+          <span style={{ textAlign: 'center', padding: '0px 10px' }}>
+            <b>{formatCurrency(price)}</b>
+          </span>
+        </List.Item>
+      </List>
+    </CardBlock>
+  )
+}
 
 const LoginForm = forwardRef((props, ref) => {
   const [state, setState] = useState({})
