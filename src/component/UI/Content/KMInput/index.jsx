@@ -1,15 +1,18 @@
-import { Form, Input, SelectPicker, InputGroup, MaskedInput } from 'rsuite'
-import { forwardRef, useEffect, useRef, useState } from 'react'
 import EyeIcon from '@rsuite/icons/legacy/Eye'
 import EyeSlashIcon from '@rsuite/icons/legacy/EyeSlash'
-
+import { forwardRef, useState } from 'react'
+import { Form, Input, InputGroup, MaskedInput, SelectPicker } from 'rsuite'
 import dynamic from 'next/dynamic'
-import clsx from 'clsx'
 import { NumericFormat } from 'react-number-format'
 
 const Textarea = dynamic(() => import('component/UI/Editor'))
 
 const CustomInput = forwardRef((props, ref) => {
+  console.log(props.type, props.rows)
+  if (props.type) {
+    return <Input style={props?.style} onChange={props?.onChange} ref={ref} {...props} as={props.type} />
+  }
+
   return <Input style={props?.style} onChange={props?.onChange} ref={ref} {...props} />
 })
 
@@ -57,6 +60,7 @@ const KMInput = ({ name, label, onChange, helpText, ...props }) => {
       onChange(v)
     }
   }
+
   if (props?.mask?.length) {
     return (
       <Form.Group controlId={name}>
@@ -66,6 +70,7 @@ const KMInput = ({ name, label, onChange, helpText, ...props }) => {
       </Form.Group>
     )
   }
+
   return (
     <Form.Group controlId={name}>
       <Form.ControlLabel>{label}</Form.ControlLabel>

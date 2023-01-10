@@ -30,3 +30,19 @@
     }
   }
 }
+.t-primary {
+  color: var(--rs-blue-800);
+}
+.t-secondary {
+  color: var(--rs-red-500);
+}
+
+.bg-primary {
+  background: var(--rs-blue-800) !important;
+  background-color: var(--rs-blue-800) !important;
+}
+
+.bg-secondary {
+  background-color: var(--rs-red-600);
+  background: var(--rs-red-600);
+}

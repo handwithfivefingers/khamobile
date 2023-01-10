@@ -100,7 +100,7 @@ const CustomNavbar = ({ ...props }) => {
     html = (
       <>
         <Nav pullRight className={styles.ham}>
-          <Dropdown renderToggle={renderIconButton} placement="bottomEnd">
+          {/* <Dropdown renderToggle={renderIconButton} placement="bottomEnd">
             <Dropdown.Item as={NavLink} href="/cart" icon={<FaShoppingBasket />}>
               <Badge content={cartLength}>Giỏ hàng</Badge>
             </Dropdown.Item>
@@ -122,7 +122,10 @@ const CustomNavbar = ({ ...props }) => {
                 Admin
               </Dropdown.Item>
             )}
-          </Dropdown>
+          </Dropdown> */}
+          <Dropdown.Item as={NavLink} href="/cart" icon={<FaShoppingBasket />}>
+            <Badge content={cartLength}>Giỏ hàng</Badge>
+          </Dropdown.Item>
         </Nav>
 
         <Nav pullRight className={styles.navLinkHL}>
@@ -253,6 +256,13 @@ const CustomNavbar = ({ ...props }) => {
                 <Nav.Item as={NavLink} href="/tin-tuc" icon={<TextImageIcon />}>
                   Tin tức
                 </Nav.Item>
+
+                <Dropdown.Item as={NavLink} href="/user" icon={<UserInfoIcon />}>
+                  User
+                </Dropdown.Item>
+                <Dropdown.Item as={NavLink} href="/admin" icon={<CogIcon />}>
+                  Admin
+                </Dropdown.Item>
               </Nav>
             </Sidenav.Body>
           </Sidenav>

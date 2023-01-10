@@ -58,7 +58,7 @@ const generateSeoTag = (data) => {
     .setPageMeta(seoFromPost)
     // .openGraphData('video.movie')
     .setCanonical(process.env.CANONICAL)
-    .breadcrumb(data?.breadcrumb)
+    .breadcrumb(data?.breadcrumb || [])
     // .setIcons(icons)
     // .setTwitterMeta({
     // 	card: 'summary_large_image',

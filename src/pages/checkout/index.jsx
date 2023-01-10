@@ -1,16 +1,15 @@
+import clsx from 'clsx'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { KMInput, KMSelect } from 'component/UI/Content/KMInput'
 import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { Button, ButtonGroup, FlexboxGrid, Form, List, Panel, Radio, RadioGroup, Table, Tag } from 'rsuite'
-import GlobalOrderService from 'service/global/Order.service'
+import { forwardRef, useEffect, useRef, useState } from 'react'
+import { Button, ButtonGroup, FlexboxGrid, Form, List, Radio, RadioGroup, Table, Tag } from 'rsuite'
 import GlobalProductService from 'service/global/Product.service'
 import ProvinceService from 'service/global/Province.service'
-import { CheckoutModel, DeliveryModel } from 'src/constant/model.constant'
+import { DeliveryModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
 import { useAuthorizationStore } from 'src/store/authenticateStore'
-import { useDevStore } from 'src/store/devStore'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
 
@@ -18,11 +17,6 @@ export default function Checkout() {
   const router = useRouter()
 
   const { authenticate, user, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
-  const [province, setProvince] = useState({
-    city: [],
-    disctrict: [],
-    wards: [],
-  })
 
   const [form, setForm] = useState({
     deliveryType: 'cod',
@@ -36,7 +30,6 @@ export default function Checkout() {
   const loginRef = useRef()
 
   useEffect(() => {
-    getCity()
     let item = JSON.parse(localStorage.getItem('khaMobileCart'))
     if (item) {
       handleGetListItemPrice(item)
@@ -79,12 +72,6 @@ export default function Checkout() {
     } catch (error) {
       console.log('getScreenData ', error)
     }
-  }
-
-  const getCity = async () => {
-    const resp = await ProvinceService.getCity()
-    let { data } = resp.data
-    setProvince((prev) => ({ ...prev, city: data }))
   }
 
   const handleSaveOrder = async () => {
@@ -136,13 +123,13 @@ export default function Checkout() {
                 <h5>Tài khoản</h5>
               </FlexboxGrid.Item>
               <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-                <span style={{ color: 'var(--rs-blue-800)' }}>Tên tài khoản: {user.fullName || ''} </span>
+                <span className="t-primary">Tên tài khoản: {user.fullName || ''} </span>
               </FlexboxGrid.Item>
               <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-                <span style={{ color: 'var(--rs-blue-800)' }}>Email: {user.email} </span>
+                <span className="t-primary">Email: {user.email} </span>
               </FlexboxGrid.Item>
               <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-                <span style={{ color: 'var(--rs-blue-800)' }}>Phone: {user.phone} </span>
+                <span className="t-primary">Phone: {user.phone} </span>
               </FlexboxGrid.Item>
             </FlexboxGrid>
           </CardBlock>
@@ -198,7 +185,7 @@ export default function Checkout() {
             </div>
 
             <div className="col-12">
-              <DeliveryInformation ref={deliveryRef} data={deliveryRef.current} city={province.city} />
+              <DeliveryInformation ref={deliveryRef} data={deliveryRef.current} />
             </div>
           </>
         )
@@ -322,8 +309,7 @@ export default function Checkout() {
                       <Button
                         color="red"
                         appearance="primary"
-                        className={styles.btnIcon}
-                        style={{ background: 'var(--rs-blue-800)', color: '#fff' }}
+                        className={clsx(styles.btnIcon, 'bg-primary text-white')}
                         onClick={handleSaveOrder}
                       >
                         Thanh toán
@@ -363,7 +349,7 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
               name="fullName"
               label={
                 <>
-                  Họ và tên <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                  Họ và tên <span className="t-secondary">*</span>
                 </>
               }
             />
@@ -374,7 +360,7 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
               name="email"
               label={
                 <>
-                  Email <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                  Email <span className="t-secondary">*</span>
                 </>
               }
             />
@@ -385,7 +371,7 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
               name="phone"
               label={
                 <>
-                  Số điện thoại <span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                  Số điện thoại <span className="t-secondary">*</span>
                 </>
               }
               mask={[/[0-9]/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/, /\d/]}
@@ -401,12 +387,43 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
   )
 })
 
-const DeliveryInformation = forwardRef(({ data, city, ...props }, ref) => {
+const DeliveryInformation = forwardRef(({ data, ...props }, ref) => {
   const [state, setState] = useState(data)
+
   const deliveryForm = useRef()
+
+  const [province, setProvince] = useState({
+    city: [],
+    disctrict: [],
+    wards: [],
+  })
+
   useEffect(() => {
     setState(data)
+    getCity()
   }, [data])
+
+  const getCity = async () => {
+    const resp = await ProvinceService.getCity()
+    let { data } = resp.data
+    setProvince((prev) => ({ ...prev, city: data }))
+  }
+
+  const getDistrict = async (cityCode) => {
+    const resp = await ProvinceService.getCity(code)
+    let { data } = resp.data
+    setProvince((prev) => ({ ...prev, disctrict: data }))
+  }
+
+  const getWards = async (cityCode, districtCode) => {
+    const resp = await ProvinceService.getCity(cityCode, districtCode)
+    let { data } = resp.data
+    setProvince((prev) => ({ ...prev, wards: data }))
+  }
+
+  const handleSelectCity = (e) => {
+    console.log(e)
+  }
 
   return (
     <Form
@@ -417,30 +434,11 @@ const DeliveryInformation = forwardRef(({ data, city, ...props }, ref) => {
         setState(val)
         ref.current = { ...val, validate: () => deliveryForm.current.check() }
       }}
-      model={DeliveryModel}
+      // model={DeliveryModel}
     >
       <h5 style={{ color: '#666' }}>Địa chỉ giao hàng/ thanh toán</h5>
 
       <CardBlock className="border-0">
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100 p-0">
-          <KMInput name="company" label="Công ty" />
-        </FlexboxGrid.Item>
-
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          <KMInput
-            name="address_1"
-            label={
-              <>
-                Địa chỉ 1<span style={{ color: 'var(--rs-red-500)' }}>*</span>
-              </>
-            }
-          />
-        </FlexboxGrid.Item>
-
-        <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-          <KMInput name="address_2" label={<>Địa chỉ 2</>} />
-        </FlexboxGrid.Item>
-
         <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
           {/* <KMInput
             name="city"
@@ -449,29 +447,61 @@ const DeliveryInformation = forwardRef(({ data, city, ...props }, ref) => {
                 Tỉnh/ Thành phố<span style={{ color: 'var(--rs-red-500)' }}>*</span>
               </>
             }
-            
           /> */}
           <KMSelect
             name="city"
-            data={city.map((item) => ({ label: item.name, value: item.code }))}
+            data={province?.city}
+            valueKey="code"
+            labelKey="name"
             label={
               <>
-                Tỉnh/ Thành phố<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                Tỉnh / Thành phố<span className="t-secondary">*</span>
+              </>
+            }
+            onChange={handleSelectCity}
+            style={{ width: '100%' }}
+          />
+
+          <KMSelect
+            name="district"
+            data={province?.district}
+            label={
+              <>
+                Quận / Huyện<span className="t-secondary">*</span>
+              </>
+            }
+            valueKey="code"
+            labelKey="name"
+            onChange={(v) => console.log(v)}
+            style={{ width: '100%' }}
+          />
+
+          <KMSelect
+            name="wards"
+            data={province?.wards}
+            valueKey="code"
+            labelKey="name"
+            label={
+              <>
+                Phường / Trấn / Thị xã <span className="t-secondary">*</span>
               </>
             }
             onChange={(v) => console.log(v)}
+            style={{ width: '100%' }}
           />
         </FlexboxGrid.Item>
+
         <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
           <KMInput
-            name="postCode"
+            name="address"
             label={
               <>
-                Mã vùng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
+                Địa chỉ giao hàng<span style={{ color: 'var(--rs-red-500)' }}>*</span>
               </>
             }
-            placeholder="xxxxxx"
-            onChange={(val) => console.log(val)}
+            type="textarea"
+            rows={3}
+            style={{ width: '100%' }}
           />
         </FlexboxGrid.Item>
       </CardBlock>
@@ -482,7 +512,6 @@ const DeliveryInformation = forwardRef(({ data, city, ...props }, ref) => {
 const LoginForm = forwardRef((props, ref) => {
   const [state, setState] = useState({})
 
-  console.log('rendered')
   return (
     <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
       <Form formValue={state} onChange={(val) => setState(val)}>
