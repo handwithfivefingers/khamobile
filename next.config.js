@@ -37,6 +37,7 @@ const nextConfig = {
     GG_CLIENT_ID: process.env.GG_CLIENT_ID,
     GG_CLIENT_SECRET: process.env.GG_CLIENT_SECRET,
   },
+  output: 'standalone',
 }
 
 export default nextConfig
