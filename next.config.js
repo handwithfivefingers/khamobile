@@ -1,13 +1,11 @@
 // const webpack = require('webpack');
 // import webpack from 'webpack';
 // const UglifyJsPlugin = require('uglifyjs-webpack-plugin')
-import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
+// import UglifyJsPlugin from 'uglifyjs-webpack-plugin'
 
 const nextConfig = {
   /* config options here */
-  reactStrictMode: true,
-  swcMinify: true,
-  images: {
+   images: {
     formats: ['image/webp'],
     domains: [
       'via.placeholder.com', //facebook
@@ -39,18 +37,6 @@ const nextConfig = {
     APP_NAME: process.env.APP_NAME,
     GG_CLIENT_ID: process.env.GG_CLIENT_ID,
     GG_CLIENT_SECRET: process.env.GG_CLIENT_SECRET,
-  },
-  output: 'standalone',
-  webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
-    config.plugins = config.plugins.filter((p) => p.constructor.name !== 'UglifyJsPlugin')
-    config.plugins.push(
-      new UglifyJsPlugin({
-        cache: true,
-        parallel: true,
-        sourceMap: true,
-      }),
-    )
-    return config
   },
 }
 
