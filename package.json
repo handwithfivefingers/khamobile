@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "dev": "concurrently  \"npm run dev-sv \" \"npm run dev-next\" ",
-    "start": "concurrently  \"npm run next-start\" \"\"npm run sv",
+    "start": "concurrently  \"npm run next-start\" \"npm run sv\" ",
     "dev-sv": "nodemon --experimental-specifier-resolution=node --trace-deprecation app.js",
     "sv": "node --experimental-specifier-resolution=node --trace-deprecation app.js",
     "dev-next": "next dev --port=3002 ",

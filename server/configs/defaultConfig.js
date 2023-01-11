@@ -26,6 +26,7 @@ const URL_PERMISSIONS = [
   'http://localhost:3004',
   'http://10.0.14.235:3003',
   'https://khamobile.truyenmai.com',
+  'https://khamobile.vn',
 ]
 
 const corsOptions = {
