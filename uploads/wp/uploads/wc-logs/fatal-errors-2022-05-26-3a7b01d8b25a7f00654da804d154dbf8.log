@@ -1,0 +1,44 @@
+2022-05-26T05:11:55+00:00 CRITICAL Uncaught ArgumentCountError: Too few arguments to function sanitize_term_field(), 1 passed in /var/www/andylongstore/wp-content/plugins/xt-woo-variation-swatches-pro/admin/class-admin.php on line 501 and exactly 5 expected in /var/www/andylongstore/wp-includes/taxonomy.php:1633
+Stack trace:
+#0 /var/www/andylongstore/wp-content/plugins/xt-woo-variation-swatches-pro/admin/class-admin.php(501): sanitize_term_field('product')
+#1 /var/www/andylongstore/wp-includes/class-wp-hook.php(305): XT_Woo_Variation_Swatches_Admin->quick_edit_attribute_type_field('thumb', 'product')
+#2 /var/www/andylongstore/wp-includes/class-wp-hook.php(327): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/andylongstore/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
+#4 /var/www/andylongstore/wp-admin/includes/class-wp-posts-list-table.php(1995): do_action('quick_edit_cust...', 'thumb', 'product', '')
+#5 /var/www/andylongstore/wp-admin/edit.php(482): WP_Posts_List_Table->inline_edit()
+#6 {main}
+  thrown in /var/www/andylongstore/wp-includes/taxonomy.php on line 1633
+
+2022-05-26T05:26:30+00:00 CRITICAL Uncaught ArgumentCountError: Too few arguments to function sanitize_term_field(), 1 passed in /var/www/andylongstore/wp-content/plugins/xt-woo-variation-swatches-pro/admin/class-admin.php on line 501 and exactly 5 expected in /var/www/andylongstore/wp-includes/taxonomy.php:1633
+Stack trace:
+#0 /var/www/andylongstore/wp-content/plugins/xt-woo-variation-swatches-pro/admin/class-admin.php(501): sanitize_term_field('product')
+#1 /var/www/andylongstore/wp-includes/class-wp-hook.php(305): XT_Woo_Variation_Swatches_Admin->quick_edit_attribute_type_field('thumb', 'product')
+#2 /var/www/andylongstore/wp-includes/class-wp-hook.php(327): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/andylongstore/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
+#4 /var/www/andylongstore/wp-admin/includes/class-wp-posts-list-table.php(1995): do_action('quick_edit_cust...', 'thumb', 'product', '')
+#5 /var/www/andylongstore/wp-admin/edit.php(482): WP_Posts_List_Table->inline_edit()
+#6 {main}
+  thrown in /var/www/andylongstore/wp-includes/taxonomy.php on line 1633
+
+2022-05-26T14:10:52+00:00 CRITICAL Uncaught ArgumentCountError: Too few arguments to function sanitize_term_field(), 1 passed in /var/www/andylongstore/wp-content/plugins/xt-woo-variation-swatches-pro/admin/class-admin.php on line 501 and exactly 5 expected in /var/www/andylongstore/wp-includes/taxonomy.php:1633
+Stack trace:
+#0 /var/www/andylongstore/wp-content/plugins/xt-woo-variation-swatches-pro/admin/class-admin.php(501): sanitize_term_field('product')
+#1 /var/www/andylongstore/wp-includes/class-wp-hook.php(305): XT_Woo_Variation_Swatches_Admin->quick_edit_attribute_type_field('thumb', 'product')
+#2 /var/www/andylongstore/wp-includes/class-wp-hook.php(327): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/andylongstore/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
+#4 /var/www/andylongstore/wp-admin/includes/class-wp-posts-list-table.php(1995): do_action('quick_edit_cust...', 'thumb', 'product', '')
+#5 /var/www/andylongstore/wp-admin/edit.php(482): WP_Posts_List_Table->inline_edit()
+#6 {main}
+  thrown in /var/www/andylongstore/wp-includes/taxonomy.php on line 1633
+
+2022-05-26T14:24:06+00:00 CRITICAL Uncaught ArgumentCountError: Too few arguments to function sanitize_term_field(), 1 passed in /var/www/andylongstore/wp-content/plugins/xt-woo-variation-swatches-pro/admin/class-admin.php on line 501 and exactly 5 expected in /var/www/andylongstore/wp-includes/taxonomy.php:1633
+Stack trace:
+#0 /var/www/andylongstore/wp-content/plugins/xt-woo-variation-swatches-pro/admin/class-admin.php(501): sanitize_term_field('product')
+#1 /var/www/andylongstore/wp-includes/class-wp-hook.php(305): XT_Woo_Variation_Swatches_Admin->quick_edit_attribute_type_field('thumb', 'edit-tags')
+#2 /var/www/andylongstore/wp-includes/class-wp-hook.php(327): WP_Hook->apply_filters(NULL, Array)
+#3 /var/www/andylongstore/wp-includes/plugin.php(470): WP_Hook->do_action(Array)
+#4 /var/www/andylongstore/wp-admin/includes/class-wp-terms-list-table.php(701): do_action('quick_edit_cust...', 'thumb', 'edit-tags', 'pa_dung-luong')
+#5 /var/www/andylongstore/wp-admin/edit-tags.php(689): WP_Terms_List_Table->inline_edit()
+#6 {main}
+  thrown in /var/www/andylongstore/wp-includes/taxonomy.php on line 1633
+
