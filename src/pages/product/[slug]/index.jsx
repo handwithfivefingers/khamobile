@@ -108,7 +108,7 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
 
     if (typeof window !== 'undefined') {
       document.addEventListener('scroll', scrollEvent, true)
-      window.FB?.XFBML.parse()
+      window.FB?.XFBML.parse(document.querySelector('.fb-comments'))
     }
 
     return () => document.removeEventListener('scroll', scrollEvent, true)
@@ -401,7 +401,11 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                               </div>
                             </Button>
 
-                            <div className="bk-btn"></div>
+                            <div
+                              className={clsx('bk-btn', {
+                                [styles.notAllow]: !(form?.price * form?.quantity),
+                              })}
+                            ></div>
                           </div>
 
                           <div className={clsx(styles.groudpVariantForMobile, 'border rounded shadow')} ref={btnBarRef}>
@@ -471,14 +475,7 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
 
               <div className={clsx('col-lg-3 col-md-12')}>
                 <CardBlock className="border-0">
-                  <Table
-                    height={400}
-                    data={data}
-                    onRowClick={(rowData) => {
-                      console.log(rowData)
-                    }}
-                    renderEmpty={() => <NoData />}
-                  >
+                  <Table height={400} data={data} renderEmpty={() => <NoData description="Chưa có dữ liệu" />}>
                     <Column width={150}>
                       <HeaderCell>Thông số kỹ thuật</HeaderCell>
                       <Cell dataKey="firstName" />
