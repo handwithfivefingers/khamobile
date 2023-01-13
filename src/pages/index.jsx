@@ -84,8 +84,18 @@ const Home = (props) => {
                   <SelfCarousel />
                 </div>
                 <div className={styles.mainBanner}>
-                  <ImageBlock src={process.env.API + '/public' + '/wp/2022' + '/10' + '/BANNER-WEBSITE-01.png'} className={styles.banner} alt="..." height={'calc(50% - 12px)'} />
-                  <ImageBlock src={Homebanner_2.src} className={styles.banner} alt="..." height={'calc(50% - 12px)'} />
+                  <ImageBlock
+                    src={process.env.API + '/public' + '/wp/2022' + '/01' + '/trade-in-iphone-13.png'}
+                    className={styles.banner}
+                    alt="..."
+                    height={'calc(50% - 12px)'}
+                  />
+                  <ImageBlock
+                    src={process.env.API + '/public' + '/wp/2022' + '/06' + '/BANNER-WEBSITE-03-1.png'}
+                    className={styles.banner}
+                    alt="..."
+                    height={'calc(50% - 12px)'}
+                  />
                 </div>
               </div>
             </div>
@@ -313,7 +323,7 @@ const SelfCarousel = () => {
   return (
     <Carousel placement={'bottom'} shape={'bar'} className="custom-slider" autoplayInterval={3000} autoplay>
       {images.map((item, index) => (
-        <img src={item.itemImageSrc} height="250" key={index} />
+        <img src={item.itemImageSrc} key={index} />
       ))}
     </Carousel>
   )

@@ -9,6 +9,7 @@ import axios from 'configs/axiosInstance'
 import parser from 'html-react-parser'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
+import Script from 'next/script'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BiCart, BiDollarCircle } from 'react-icons/bi'
 import {
@@ -62,7 +63,6 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
 
   useEffect(() => {
     if (data) {
-      console.log(data)
       if (_relationProd.length > 0) {
         let { primaryKey } = data
         let index = _relationProd.findIndex((item) => item._id === primaryKey)
@@ -108,9 +108,7 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
 
     if (typeof window !== 'undefined') {
       document.addEventListener('scroll', scrollEvent, true)
-      if (window.FB) {
-        window.FB.XFBML.parse()
-      }
+      window.FB?.XFBML.parse()
     }
 
     return () => document.removeEventListener('scroll', scrollEvent, true)
@@ -224,8 +222,6 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
         }
       })
 
-      console.log('data Selected', data)
-
       let [productSelected] = data
       const { _id, ...rest } = productSelected
       setForm((prevState) => ({
@@ -269,7 +265,7 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
           {attributes?.map((item) => {
             return (
               <RadioGroup
-                className="d-flex flex-row border-0 flex-wrap p-1"
+                className={clsx('d-flex flex-row border-0 flex-wrap p-1')}
                 appearance="picker"
                 onChange={(v) => handleQueryItem({ [item.name]: v })}
                 value={queryRef.current?.[item.name] || ''}
@@ -279,7 +275,13 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                 </p>
                 {item.value?.map(({ v, active }) => (
                   <Radio value={v} disabled={!active}>
-                    <span className="p-2 bg-light"> {v}</span>
+                    <span
+                      className={clsx('p-2 bg-light', {
+                        'bk-product-property': active,
+                      })}
+                    >
+                      {v}
+                    </span>
                   </Radio>
                 ))}
               </RadioGroup>
@@ -318,10 +320,11 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
   return (
     <>
       <PostHelmet seo={seo} />
+
       <div className="row p-0">
         <div className="col-12 p-0">
           <PageHeader type="h1" left divideClass={styles.divideLeft}>
-            {data.title}
+            <span className="bk-product-name">{data.title}</span>
           </PageHeader>
         </div>
         <div className="col-12 p-0 py-2 border-top">
@@ -343,12 +346,12 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                           >
                             <div className={'row w-100 '} ref={pricingRef}>
                               <div className="col-12">
-                                <p className={clsx(styles.productPricing)}>{calculatePrice()}</p>
-                                <input
+                                <p className={clsx(styles.productPricing, 'bk-product-price')}>{calculatePrice()}</p>
+                                {/* <input
                                   type="hidden"
                                   value={form?.price * form?.quantity || 999999}
                                   className="bk-product-price"
-                                />
+                                /> */}
                               </div>
 
                               <div className="col-12">{renderVariantProduct}</div>
@@ -376,6 +379,7 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                               className={styles.btnIcon}
                               onClick={handleBuyNow}
                               style={{ background: 'var(--rs-blue-800)' }}
+                              disabled={!(form?.price * form?.quantity)}
                             >
                               <div className="d-flex flex-column">
                                 <span>Mua ngay</span>
@@ -389,6 +393,7 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
                               className={styles.btnIcon}
                               onClick={handleAddToCart}
                               style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+                              disabled={!(form?.price * form?.quantity)}
                             >
                               <div className="d-flex flex-column align-items-center">
                                 <BiCart />
@@ -513,6 +518,8 @@ export default function ProductDetail({ data, _relationProd, seo, ...props }) {
           </div>
         </div>
       </div>
+
+      <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" onLoad={() => console.log('bk loaded')} />
     </>
   )
 }
