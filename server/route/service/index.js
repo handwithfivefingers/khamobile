@@ -20,4 +20,6 @@ router.post('/mail', upload.none(), new MailServer().sendMail)
 
 router.get('/payment/url_return', new PaymentController().onHandleReturnUrl)
 
+router.get('/payment/ipn', new PaymentController().getUrlIpn)
+
 export default router

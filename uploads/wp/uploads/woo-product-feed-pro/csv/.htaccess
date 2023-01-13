@@ -1,9 +1,0 @@
-# BEGIN NoCache for woo-product-feed-pro
-<FilesMatch "\.(csv)$">
-  Header Set Pragma "no-cache"
-  Header Set Expires "Thu, 1 Jan 1970 00:00:00 GMT"
-  Header Set Cache-Control "max-age=0, no-store, no-cache, must-revalidate"
-  Header Unset ETag
-  FileETag None
-</FilesMatch>
-# END NoCache for woo-product-feed-pro XML
