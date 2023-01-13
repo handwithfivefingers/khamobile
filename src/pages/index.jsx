@@ -62,14 +62,8 @@ const Home = (props) => {
     }
   }
 
-  console.log(data)
-  // console.log('data', data)
   return (
     <>
-      {/* <Head>
-        <title>Kha Mobile</title>
-      </Head> */}
-
       <PostHelmet seo={props?.seo} />
 
       <SiteLinksSearchBoxJsonLd
@@ -90,8 +84,18 @@ const Home = (props) => {
                   <SelfCarousel />
                 </div>
                 <div className={styles.mainBanner}>
-                  <ImageBlock src={Homebanner_2.src} className={styles.banner} alt="..." height={'calc(50% - 12px)'} />
-                  <ImageBlock src={Homebanner_2.src} className={styles.banner} alt="..." height={'calc(50% - 12px)'} />
+                  <ImageBlock
+                    src={process.env.API + '/public' + '/wp/2022' + '/01' + '/trade-in-iphone-13.png'}
+                    className={styles.banner}
+                    alt="..."
+                    height={'calc(50% - 12px)'}
+                  />
+                  <ImageBlock
+                    src={process.env.API + '/public' + '/wp/2022' + '/06' + '/BANNER-WEBSITE-03-1.png'}
+                    className={styles.banner}
+                    alt="..."
+                    height={'calc(50% - 12px)'}
+                  />
                 </div>
               </div>
             </div>
@@ -292,23 +296,23 @@ Home.Layout = CommonLayout
 const SelfCarousel = () => {
   const [images, setImages] = useState([
     {
-      itemImageSrc: 'https://khamobile.vn/wp-content/uploads/2022/10/banner-moi-3.png',
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-3.png`,
       thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
     },
     {
-      itemImageSrc: 'https://khamobile.vn/wp-content/uploads/2022/10/banner-moi-1.png',
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-1.png`,
       thumbnailImageSrc: 'IPHONE 13 ProMax',
     },
     {
-      itemImageSrc: 'https://khamobile.vn/wp-content/uploads/2022/10/banner-moi-4.png',
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-4.png`,
       thumbnailImageSrc: 'ĐẠI HỘI THU CŨ ĐỔI MỚI',
     },
     {
-      itemImageSrc: 'https://khamobile.vn/wp-content/uploads/2022/10/banner-moi-2.png',
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/BANNER-WEBSITE-01.png`,
       thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
     },
     {
-      itemImageSrc: 'https://khamobile.vn/wp-content/uploads/2022/10/banner-moi-5.png',
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-5.png`,
       thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
     },
     {
@@ -318,11 +322,9 @@ const SelfCarousel = () => {
   ])
   return (
     <Carousel placement={'bottom'} shape={'bar'} className="custom-slider" autoplayInterval={3000} autoplay>
-      <img src={images[0].itemImageSrc} height="250" />
-      <img src={images[1].itemImageSrc} height="250" />
-      <img src={images[2].itemImageSrc} height="250" />
-      <img src={images[3].itemImageSrc} height="250" />
-      <img src={images[4].itemImageSrc} height="250" />
+      {images.map((item, index) => (
+        <img src={item.itemImageSrc} key={index} />
+      ))}
     </Carousel>
   )
 }

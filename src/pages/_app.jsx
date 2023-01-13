@@ -44,15 +44,10 @@ export default function MyApp({ Component, pageProps }) {
     }
   }
 
-  const handleDev = () => {
-    setDrawer({ open: true })
-  }
-
   return (
     <>
       <Head>
         <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" />
-        <Script src="https://pc.baokim.vn/js/bk_plus_v2.popup.js" />
       </Head>
       <CustomProvider>
         {Component.Admin ? (
@@ -63,21 +58,6 @@ export default function MyApp({ Component, pageProps }) {
           <Layout>
             <Component {...pageProps} />
           </Layout>
-        )}
-
-        {process.env.NODE !== 'production' && (
-          <>
-            <div className={'dev'} style={{ zIndex: 999999999 }}>
-              <IconButton onClick={handleDev} icon={<GearIcon spin style={{ fontSize: '2em' }} />} />
-            </div>
-
-            <Drawer open={drawer.open} placement="right" onClose={() => setDrawer({ open: false })}>
-              <Drawer.Actions></Drawer.Actions>
-              <Drawer.Body>
-                <JsonViewer data={data} />
-              </Drawer.Body>
-            </Drawer>
-          </>
         )}
       </CustomProvider>
     </>
