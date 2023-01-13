@@ -85,13 +85,13 @@ const Home = (props) => {
                 </div>
                 <div className={styles.mainBanner}>
                   <ImageBlock
-                    src={process.env.API + '/public' + '/wp/2022' + '/01' + '/trade-in-iphone-13.png'}
+                    src={process.env.API + '/public/wp/2022' + '/10' + '/banner-moi-4.png'}
                     className={styles.banner}
                     alt="..."
                     height={'calc(50% - 12px)'}
                   />
                   <ImageBlock
-                    src={process.env.API + '/public' + '/wp/2022' + '/06' + '/BANNER-WEBSITE-03-1.png'}
+                    src={process.env.API + '/public/wp/2022' + '/10' + '/banner-moi-5.png'}
                     className={styles.banner}
                     alt="..."
                     height={'calc(50% - 12px)'}
@@ -138,7 +138,7 @@ const Home = (props) => {
         </div>
       </section>
 
-      <section className="container">
+      {/* <section className="container">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
@@ -211,7 +211,7 @@ const Home = (props) => {
             </CustomSlider>
           </div>
         </div>
-      </section>
+      </section> */}
 
       <section className="container">
         <div className="row">
@@ -296,29 +296,28 @@ Home.Layout = CommonLayout
 const SelfCarousel = () => {
   const [images, setImages] = useState([
     {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-3.png`,
-      thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
-    },
-    {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-1.png`,
-      thumbnailImageSrc: 'IPHONE 13 ProMax',
-    },
-    {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-4.png`,
-      thumbnailImageSrc: 'ĐẠI HỘI THU CŨ ĐỔI MỚI',
-    },
-    {
       itemImageSrc: `${process.env.API}/public/wp/2022/10/BANNER-WEBSITE-01.png`,
       thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
     },
+
     {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-5.png`,
-      thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-1.png`,
+      thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
     },
     {
-      itemImageSrc: Homebanner_4.src,
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-2.png`,
+      thumbnailImageSrc: 'IPHONE 13 ProMax',
+    },
+    {
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-3.png`,
+      thumbnailImageSrc: 'IPHONE 13 ProMax',
+    },
+
+    {
+      itemImageSrc: `${process.env.API}/public/wp/2022/10/KHA-MOBILE-BANNER-21.10.2022.png`,
       thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
     },
+
   ])
   return (
     <Carousel placement={'bottom'} shape={'bar'} className="custom-slider" autoplayInterval={3000} autoplay>

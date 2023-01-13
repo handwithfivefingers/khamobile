@@ -68,7 +68,7 @@ const Catalog = (props) => {
         <div className={clsx(styles.listCatelog)}>
           <CustomSlider
             type={TYPE_CAROUSEL.MUTI}
-            slidesToShow={4}
+            slidesToShow={props.data?.child?.length > 5 ? 5 : 4}
             configs={{
               autoplay: true,
             }}

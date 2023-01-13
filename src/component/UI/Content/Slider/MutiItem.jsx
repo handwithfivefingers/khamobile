@@ -10,7 +10,7 @@ const MutiItem = (props) => {
     arrows: true,
     infinite: true,
     speed: 500,
-    slidesToShow: rest.slidesToShow || 5,
+    slidesToShow: rest.slidesToShow || 6,
     slidesToScroll: 1,
     ...rest.configs,
     nextArrow: <NextArrow />,
@@ -56,7 +56,7 @@ const MutiItem = (props) => {
       {
         breakpoint: 480,
         settings: {
-          slidesToShow: 1,
+          slidesToShow: 2,
           slidesToScroll: 1,
           dots: true,
         },
