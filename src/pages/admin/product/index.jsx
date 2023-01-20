@@ -11,16 +11,20 @@ import {
   ButtonGroup,
   Content,
   IconButton,
+  Input,
+  InputPicker,
   Message,
   Modal,
   Pagination,
   Popover,
+  SelectPicker,
   Stack,
   Table,
   useToaster,
   Whisper,
 } from 'rsuite'
 import ProductService from 'service/admin/Product.service'
+import CategoryService from 'service/admin/Category.service'
 import { formatCurrency } from 'src/helper'
 import { useCommonStore } from 'src/store/commonStore'
 
@@ -79,8 +83,11 @@ const ActionCell = ({ rowData, dataKey, onEdit, ...props }) => {
 
 const Products = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
+
   const [sortColumn, setSortColumn] = useState()
+
   const [sortType, setSortType] = useState()
+
   const [product, setProduct] = useState([])
 
   const [loading, setLoading] = useState(false)
@@ -93,7 +100,14 @@ const Products = () => {
   const toaster = useToaster()
 
   const [limit, setLimit] = useState(10)
+
   const [page, setPage] = useState(1)
+
+  const [filterData, setFilterData] = useState([])
+
+  const [filter, setFilter] = useState({})
+
+  const [categorySelector, setCategorySelector] = useState([])
 
   const handleChangeLimit = (dataKey) => {
     setPage(1)
@@ -103,15 +117,34 @@ const Products = () => {
   useEffect(() => {
     changeTitle('Page Products')
     getProducts()
+    getCategory()
   }, [])
 
+  useEffect(() => {
+    if (Object.keys(filter)) {
+      const data = [...product]
+      if (filter.category) data = data.filter((item) => item.category.some((_cate) => _cate.name === filter?.category))
+      if (filter.title) data = data.filter((item) => item.title?.toLowerCase().includes(filter?.title?.toLowerCase()))
+      setFilterData(data)
+    } else {
+      setFilterData(product)
+    }
+  }, [filter])
+
   const handleClose = () => setModal({ open: false, component: null })
+
+  const getCategory = async () => {
+    const resp = await CategoryService.getProdCate()
+    console.log(resp.data)
+    setCategorySelector(resp.data.data.map((item) => ({ label: item.name, value: item.name })))
+  }
 
   const getProducts = async () => {
     try {
       setLoading(true)
       const resp = await ProductService.getProduct()
       setProduct(resp.data.data)
+      setFilterData(resp.data.data)
     } catch (error) {
       console.log('getProducts error: ' + error)
     } finally {
@@ -213,16 +246,9 @@ const Products = () => {
 
   const getData = () => {
     if (sortColumn && sortType) {
-      const prod = product.sort((a, b) => {
+      const prod = filterData.sort((a, b) => {
         let x = moment(a[sortColumn]).valueOf()
         let y = moment(b[sortColumn]).valueOf()
-        // if (typeof x === 'string') {
-        //   x = x.charCodeAt()
-        // }
-        // if (typeof y === 'string') {
-        //   y = y.charCodeAt()
-        // }
-
         if (sortType === 'asc') {
           return x - y
         } else {
@@ -230,24 +256,32 @@ const Products = () => {
         }
       })
 
-      console.log('coming xxx', sortColumn, sortType, prod)
-
-      return prod.filter((v, i) => {
+      return filterData.filter((v, i) => {
         const start = limit * (page - 1)
         const end = start + limit
         return i >= start && i < end
       })
     }
 
-    return product.filter((v, i) => {
+    return filterData.filter((v, i) => {
       const start = limit * (page - 1)
       const end = start + limit
       return i >= start && i < end
     })
   }
 
+  console.log(filterData)
   return (
     <>
+      <Stack spacing={10} className="py-2">
+        <span>Tìm kiếm: </span>
+        <Input placeholder="Tên sản phẩm" onChange={(v) => setFilter((state) => ({ ...state, title: v }))} />
+        <SelectPicker
+          placeholder="Danh mục"
+          data={categorySelector || []}
+          onChange={(v) => setFilter((state) => ({ ...state, category: v }))}
+        />
+      </Stack>
       <Content className={'bg-w'}>
         <Table
           // fillHeight={!loading}

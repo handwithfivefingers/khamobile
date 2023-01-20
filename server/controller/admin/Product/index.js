@@ -11,6 +11,9 @@ export default class ProductController {
   getProduct = async (req, res) => {
     try {
       let _prod = await Product.find({})
+        .populate('category')
+        .select('_id title price slug category stock_status type image attributes createdAt updatedAt')
+      console.log(_prod)
       return res.status(200).json({
         data: _prod,
       })
