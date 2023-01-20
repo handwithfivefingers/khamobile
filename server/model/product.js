@@ -23,7 +23,7 @@ export default {
   category: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Category',
+      ref: 'ProductCategory',
     },
   ],
 

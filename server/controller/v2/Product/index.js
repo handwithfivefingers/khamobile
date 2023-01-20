@@ -61,18 +61,12 @@ export default class ProductController {
         image: `${parentItem.image?.[0]?.src}`,
       })
 
+      console.log(data)
+
       return res.status(200).json({
         data: parentItem,
         seo: [seoTags.head, seoTags.body],
-        _relationProd: _.chain(data)
-          .groupBy(primaryKey)
-          .map((value, key) => {
-            if (primaryKey) {
-              return { value: key, primary: primaryKey, item: value }
-            }
-            return { item: value }
-          })
-          .value(),
+        _relationProd: data,
       })
     } catch (error) {
       console.log(error)
