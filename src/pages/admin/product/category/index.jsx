@@ -5,7 +5,6 @@ import { Avatar, Content, Modal, Table } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import { useCommonStore } from 'src/store/commonStore'
 
-
 const { Column, HeaderCell, Cell } = Table
 
 const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
@@ -71,23 +70,9 @@ const Products = () => {
   }
   const handleClose = () => setModal({ ...modal, open: false })
 
-  const onUpdate = async (val) => {
+  const onUpdate = async ({ _id, ...val }) => {
     try {
-      console.log('onUpdate', val)
-      let { name, slug, _id, image, description } = val
-
-      const formData = new FormData()
-      formData.append('name', name)
-      formData.append('slug', slug)
-      formData.append('description', description)
-
-      if (image && typeof image === 'string') {
-        formData.append('image', image)
-      } else if (image.blobFile instanceof Blob) {
-        formData.append('image', image.blobFile)
-      }
-
-      const resp = await CategoryService.updateProdCateById(_id, formData)
+      const resp = await CategoryService.updateProdCateById(_id, val)
 
       if (resp.status === 200) {
         console.log('update success')

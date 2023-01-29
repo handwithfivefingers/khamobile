@@ -47,6 +47,7 @@ const SingleUpload = forwardRef((props, ref) => {
     }
   }, [props?.value])
 
+  console.log('props change', props.value)
   return (
     <Uploader
       ref={ref}

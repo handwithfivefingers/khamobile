@@ -1,19 +1,16 @@
 import { memo, useEffect, useRef, useState } from 'react'
-
 import CardBlock from 'component/UI/Content/CardBlock'
 import { KMEditor, KMInput, KMPrice } from 'component/UI/Content/KMInput'
 import Select from 'component/UI/Content/MutiSelect'
 import CustomUpload from 'component/UI/Upload/CustomUpload'
-import { Button, ButtonToolbar, Content, FlexboxGrid, Form, SelectPicker } from 'rsuite'
+import { Button, Content, FlexboxGrid, Form, SelectPicker } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import ProductService from 'service/admin/Product.service'
-import { useCommonStore } from 'src/store/commonStore'
-import { useDevStore } from 'src/store/devStore'
-import GroupVariant from './GroupVariant'
 import slugify from 'slugify'
+import { useCommonStore } from 'src/store/commonStore'
+import GroupVariant from './GroupVariant'
 const ProductCreateModal = (props) => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
-  const changeData = useDevStore((state) => state.changeData)
   const [loading, setLoading] = useState(false)
   const [variable, setVariable] = useState([])
 
