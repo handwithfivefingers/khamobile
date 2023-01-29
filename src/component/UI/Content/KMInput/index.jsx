@@ -35,13 +35,12 @@ const InputPassword = forwardRef((props, ref) => {
   const handleChange = () => {
     setVisible(!visible)
   }
+
   return (
-    <>
-      <InputGroup inside>
-        <Input type={visible ? 'text' : 'password'} ref={ref} {...props} />
-        <InputGroup.Button onClick={handleChange}>{visible ? <EyeIcon /> : <EyeSlashIcon />}</InputGroup.Button>
-      </InputGroup>
-    </>
+    <InputGroup inside>
+      <Input type={visible ? 'text' : 'password'} ref={ref} {...props} />
+      <InputGroup.Button onClick={handleChange}>{visible ? <EyeIcon /> : <EyeSlashIcon />}</InputGroup.Button>
+    </InputGroup>
   )
 })
 
