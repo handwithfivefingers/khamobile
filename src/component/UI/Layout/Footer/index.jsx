@@ -20,7 +20,8 @@ export default function Footer() {
   return (
     <div className="container-fluid border-top mt-4">
       <div id="fb-root"></div>
-      <Script
+
+      <script
         src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v15.0&appId=1263039330945343&autoLogAppEvents=1"
         onError={(e) => console.log('scriptError', e)}
         onLoad={() => {
@@ -31,14 +32,29 @@ export default function Footer() {
         defer
         crossorigin="anonymous"
       />
-      {/* 
+      <div id="fb-customer-chat" class="fb-customerchat"></div>
       <script
-        async
-        defer
-        crossorigin="anonymous"
-        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v15.0&appId=1263039330945343&autoLogAppEvents=1"
-        nonce="bW1o2vpX"
-      ></script> */}
+        dangerouslySetInnerHTML={{
+          __html: `var chatbox = document.getElementById('fb-customer-chat'); chatbox.setAttribute("page_id", "PAGE-ID");
+        chatbox.setAttribute("attribution", "biz_inbox");{' '}`,
+        }}
+      ></script>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `window.fbAsyncInit = function() {
+                FB.init({ xfbml : true, version : 'API-VERSION' })
+                 }
+                 (function(d, s, id) { 
+                 var js, fjs = d.getElementsByTagName(s)[0];
+                  if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; 
+                  js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js'; 
+                  fjs.parentNode.insertBefore(js, fjs); 
+                 }(document, 'script', 'facebook-jssdk')) `,
+        }}
+      ></script>
+      <div className={styles.contact}>
+        <div className={styles.zalo}></div>
+      </div>
 
       <div className="row p-0">
         <div className="col-12 p-0">

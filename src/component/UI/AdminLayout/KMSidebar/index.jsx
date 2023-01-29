@@ -38,6 +38,8 @@ export default function KMSidebar() {
 
   const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
   const router = useRouter()
+  const [active, setActive] = useState('/admin')
+
   const logout = async () => {
     await AuthenticateService.logout()
     await changeAuthenticateStatus({
@@ -45,6 +47,7 @@ export default function KMSidebar() {
     })
     return router.push('/')
   }
+
   return (
     <Sidebar
       style={{ display: 'flex', flexDirection: 'column' }}
@@ -59,73 +62,80 @@ export default function KMSidebar() {
           </div>
         </Link>
       </Sidenav.Header>
-      <Sidenav expanded={expand} defaultOpenKeys={['3']} appearance="subtle" className={'position-sticky top-0'}>
+
+      <Sidenav
+        expanded={expand}
+        defaultOpenKeys={['3']}
+        appearance="subtle"
+        className={'position-sticky top-0'}
+        onOpenChange={(e) => console.log('openChange', e)}
+      >
         <Sidenav.Body>
           <Nav>
             <Link href={'/admin'} passHref>
-              <Nav.Item eventKey="1" active icon={<DashboardIcon />}>
+              <Nav.Item eventKey="/admin" active icon={<DashboardIcon />}>
                 Dashboard
               </Nav.Item>
             </Link>
 
             <Link href="/admin/pages" passHref>
-              <Nav.Item eventKey="2" icon={<DetailIcon />}>
+              <Nav.Item eventKey="/admin/page" icon={<DetailIcon />}>
                 Pages
               </Nav.Item>
             </Link>
 
-            <Nav.Menu eventKey="3" icon={<TextImageIcon />} title="Post">
-              <Link href="/admin/posts" passHref>
+            <Nav.Menu eventKey="/admin/posts" icon={<TextImageIcon />} title="Post">
+              <Link href="/admin/post" passHref>
                 <Nav.Item eventKey="3-1" icon={<TextImageIcon />}>
                   Posts
                 </Nav.Item>
               </Link>
-              <Link href="/admin/posts/category" passHref>
+              <Link href="/admin/post/category" passHref>
                 <Nav.Item eventKey="3-2" icon={<ListIcon />}>
                   Danh mục
                 </Nav.Item>
               </Link>
             </Nav.Menu>
 
-            <Nav.Menu eventKey="4" icon={<MobileIcon />} title="Products">
+            <Nav.Menu eventKey="/admin/products" icon={<MobileIcon />} title="Products">
               {/* Products */}
               <Link href="/admin/product" passHref>
-                <Nav.Item eventKey="4-1" icon={<DeviceOtherIcon />}>
+                <Nav.Item eventKey="/admin/product" icon={<DeviceOtherIcon />}>
                   Products
                 </Nav.Item>
               </Link>
               <Link href="/admin/product/category" passHref>
-                <Nav.Item eventKey="4-2" icon={<ListIcon />}>
+                <Nav.Item eventKey="/admin/product/category" icon={<ListIcon />}>
                   Danh mục
                 </Nav.Item>
               </Link>
               <Link href="/admin/product/attribute" passHref>
-                <Nav.Item eventKey="4-2" icon={<StorageIcon />}>
+                <Nav.Item eventKey="/admin/product/attribute" icon={<StorageIcon />}>
                   Biến thể
                 </Nav.Item>
               </Link>
             </Nav.Menu>
 
             <Link href="/admin/users" passHref>
-              <Nav.Item eventKey="4" icon={<PeoplesIcon />}>
+              <Nav.Item eventKey="/admin/users" icon={<PeoplesIcon />}>
                 Users
               </Nav.Item>
             </Link>
 
             <Link href="/admin/order" passHref>
-              <Nav.Item eventKey="4" icon={<PageIcon />}>
+              <Nav.Item eventKey="/admin/order" icon={<PageIcon />}>
                 Order
               </Nav.Item>
             </Link>
 
             <Link href="/admin/email" passHref>
-              <Nav.Item eventKey="4" icon={<MessageIcon />}>
+              <Nav.Item eventKey="/admin/email" icon={<MessageIcon />}>
                 Email
               </Nav.Item>
             </Link>
 
             <Link href="/admin/setting" passHref>
-              <Nav.Item eventKey="4" icon={<GearIcon />}>
+              <Nav.Item eventKey="/admin/setting" icon={<GearIcon />}>
                 Setting
               </Nav.Item>
             </Link>
