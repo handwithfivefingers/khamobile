@@ -1,10 +1,11 @@
+import { CloseOutline } from '@rsuite/icons'
 import clsx from 'clsx'
 import BaoKim from 'component/UI/Content/BaoKim'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { BiCart } from 'react-icons/bi'
-import { Button, Divider, Form, InputNumber, Panel } from 'rsuite'
+import { Button, Divider, Form, IconButton, InputNumber, Panel } from 'rsuite'
 import { ProductModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
 import ProductOptions from '../ProductOption'
@@ -15,11 +16,9 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
 
   const formRef = useRef()
 
-  const queryRef = useRef({})
-
   const router = useRouter()
 
-  const [attributes, setAttributes] = useState([])
+  const [attributeMap, setAttributeMap] = useState(new Map())
 
   const [attributeSelect, setAttributeSelect] = useState({})
 
@@ -38,18 +37,29 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       }
 
       if (_relationProd.length) {
-        let { _id, ...rest } = _relationProd[0]
-
-        setForm((prevState) => ({
-          ...prevState,
-          ...rest,
-          variantId: _id,
-        }))
-
+        getDefaultOptions()
         resetFilterProduct()
       }
     }
   }, [])
+  const getDefaultOptions = () => {
+    // let { _id, ...rest } = _relationProd[0]
+
+    // setForm((prevState) => ({
+    //   ...prevState,
+    //   ...rest,
+    //   variantId: _id,
+    // }))
+    const minPriceItem = _relationProd.reduce(function (prev, curr) {
+      return prev.price < curr.price ? prev : curr
+    })
+    console.log(minPriceItem)
+
+    const { _id, ...rest } = minPriceItem
+
+    setForm((prevState) => ({ ...prevState, ...rest, variantId: minPriceItem._id }))
+    setAttributeSelect(rest.attribute)
+  }
 
   const resetFilterProduct = () => {
     setFilterProduct(_relationProd)
@@ -100,18 +110,19 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
   }
 
   const onResetAttributes = () => {
-    queryRef.current = {}
     const attributes = data?.attributes
-    const attributeData = attributes?.map(({ name, value }) => {
-      return {
+    const map = new Map()
+
+    attributes?.map(({ name, value }) => {
+      map.set(
         name,
-        value: value?.map((_val) => {
-          return { v: _val }
-        }),
-      }
+        value.map((v) => ({ v, active: true })),
+      )
     })
 
-    setAttributes(attributeData)
+    setAttributeMap(map)
+
+    setAttributeSelect({})
   }
 
   const calculatePrice = () => {
@@ -120,37 +131,54 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     return html
   }
 
-  const renderAttributes = () => {
-    let html = null
-    html = attributes.map((attribute) => {
-      return (
-        <div className={'row gx-2 gy-2 align-items-center w-100'}>
-          <ProductOptions
-            listAttribute={attribute.value}
-            attributeName={attribute.name}
-            onChange={handleAttributeChange}
-            // disabledValue={['ZA']}
-          />
-        </div>
-      )
-    })
-    return html
-  }
-
   const handleAttributeChange = ({ value, name: attributeName }) => {
-    console.log('handleAttributeChange', value, attributeName)
-
     const lastAttributeSelect = { ...attributeSelect }
 
     const currentAttributeSelect = { ...lastAttributeSelect, [attributeName]: value }
 
-    const listMatchProduct = [..._relationProd] // get all list variant Product
+    const productFiltered = []
+    const map = attributeMap
 
-    listMatchProduct = listMatchProduct.filter((productVariant) => {
+    if (Object.keys(currentAttributeSelect).length < data?.attributes.length) {
+    } else {
+      if (Object.keys(lastAttributeSelect).length === data?.attributes.length) {
+        currentAttributeSelect = { [attributeName]: value }
+      }
+    }
+
+    productFiltered = filterProductByAttributeName(currentAttributeSelect)
+
+    for (let [key, value] of [...map]) {
+      if (!currentAttributeSelect[key]) {
+        const isActive = (attrValue) => productFiltered.some((_item) => _item.attribute[key] === attrValue)
+
+        value = value.map((item) => ({
+          ...item,
+          active: isActive(item.v),
+        }))
+
+        map.set(key, value)
+      }
+    }
+    setAttributeMap(map)
+
+    setAttributeSelect(currentAttributeSelect)
+
+    setFilterProduct(productFiltered)
+  }
+
+  /**
+   *
+   * @param { * Object {[attributeName] : attributeValue } } attributeSelected
+   * @returns { * Array [ ...product ]}
+   */
+  const filterProductByAttributeName = (attributeSelected) => {
+    const nextState = [..._relationProd] // get all list variant Product
+
+    nextState = nextState.filter((productVariant) => {
       let result = true
-      // currentAttributeSelect
-      for (let attributeName in currentAttributeSelect) {
-        const attributeValue = currentAttributeSelect[attributeName]
+      for (let attributeName in attributeSelected) {
+        const attributeValue = attributeSelected[attributeName]
         if (productVariant[attributeName] !== attributeValue) {
           result = false
           break
@@ -158,22 +186,29 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       }
       return result
     })
-
-    console.log('currentAttributeSelect', currentAttributeSelect)
-    
-    console.log('matchVariant', listMatchProduct)
-
-    setAttributeSelect(currentAttributeSelect)
-
-    setFilterProduct(listMatchProduct)
+    return nextState
   }
 
-  const isProductExistsAfterFilter = ({ value, attributeName }) => {
-    const currentProducts = [...filterProduct]
-    return currentProducts.every((productVariant) => productVariant[attributeName] === value)
-  }
+  const renderAttributes = () => {
+    let html = null
 
-  console.log(filterProduct)
+    html = [...attributeMap].map(([attributeName, attributeValue], index) => {
+      return (
+        <div
+          className={'row gx-2 gy-2 align-items-center w-100'}
+          key={[attributeName, attributeValue, index].join('-')}
+        >
+          <ProductOptions
+            listAttribute={attributeValue}
+            attributeName={attributeName}
+            onChange={handleAttributeChange}
+            selectValue={attributeSelect?.[attributeName]}
+          />
+        </div>
+      )
+    })
+    return html
+  }
 
   return (
     <CardBlock className="border-0">
@@ -184,26 +219,27 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
               <div className="col-12">
                 <p className={clsx(styles.productPricing, 'bk-product-price')}>{calculatePrice()}</p>
               </div>
-
-              <div className="col-12">{renderAttributes()}</div>
+              <div className="col-12 position-relative">
+                <div className="position-absolute" style={{ top: 0, right: 0 }}>
+                  <IconButton
+                    icon={<CloseOutline />}
+                    circle
+                    size="md"
+                    style={{ color: 'var(--rs-blue-800)', background: 'transparent' }}
+                    onClick={onResetAttributes}
+                  />
+                </div>
+                {renderAttributes()}
+              </div>
             </div>
           </div>
 
           <Divider />
 
           <div className={clsx('d-inline-flex align-items-center', styles.groupVariant)} style={{ gap: 4 }}>
-            <Form.Control
-              name="quantity"
-              accepter={CustomInputNumber}
-              style={{ width: 60 }}
-              defaultValue={form.quantity}
-              onChange={(value) => setForm({ ...form, quantity: value })}
-              min={1}
-            />
-
             <input type="hidden" value={form.quantity} className="bk-product-qty" />
 
-            <Divider vertical />
+            {/* <Divider vertical /> */}
 
             <Button
               appearance="primary"
@@ -214,7 +250,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
             >
               <div className="d-flex flex-column">
                 <span>Mua ngay</span>
-                <span style={{ fontSize: 12 }}>(giao tận nơi hoặc lấy tại cửa hàng)</span>
+                <span style={{ fontSize: 12 }}>( giao tận nơi hoặc lấy tại cửa hàng )</span>
               </div>
             </Button>
 
@@ -227,7 +263,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
               disabled={!(form?.price * form?.quantity)}
             >
               <div className="d-flex flex-column align-items-center">
-                <BiCart />
+                <BiCart style={{ fontSize: 20 }} />
                 <span style={{ fontSize: 12 }}> Thêm vào giỏ hàng</span>
               </div>
             </Button>
