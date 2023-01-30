@@ -1,4 +1,6 @@
-window.addEventListener('load', function () {
+// window.addEventListener('load', )
+
+function baokimScript() {
   var t,
     e = 'inline-block',
     n = null,
@@ -97,7 +99,7 @@ window.addEventListener('load', function () {
     var I = O('POST', d + 'api/v1/order-temporary/store', JSON.stringify(M))
     I && (n = I.token)
   }
-  // console.log(c),
+  console.log(c)
   ;(function () {
     var n = O('GET', 'https://pc.baokim.vn/api/plus/get-merchant?domain=' + c, null)
     if (!n) return
@@ -576,4 +578,6 @@ window.addEventListener('load', function () {
         (h[i].innerHTML =
           '<strong style="display: block">Mua trả góp 0%</strong><span style="display: block"> Thủ tục đơn giản</span><span style="display: block; margin-bottom: 5px;">Qua thẻ: Visa, Master, JCB</span>')
   }
-})
+}
+
+baokimScript()
