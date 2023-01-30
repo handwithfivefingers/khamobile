@@ -1,0 +1,269 @@
+import { CloseOutline } from '@rsuite/icons'
+import clsx from 'clsx'
+import BaoKim from 'component/UI/Content/BaoKim'
+import CardBlock from 'component/UI/Content/CardBlock'
+import { useRouter } from 'next/router'
+import { useEffect, useRef, useState } from 'react'
+import { BiCart } from 'react-icons/bi'
+import { Button, Divider, Form, IconButton, InputNumber, Panel } from 'rsuite'
+import { ProductModel } from 'src/constant/model.constant'
+import { formatCurrency } from 'src/helper'
+import ProductOptions from '../ProductOption'
+import styles from './styles.module.scss'
+
+const ProductForm = ({ data, _relationProd, ...props }) => {
+  const pricingRef = useRef()
+
+  const formRef = useRef()
+
+  const router = useRouter()
+
+  const [attributeMap, setAttributeMap] = useState(new Map())
+
+  const [attributeSelect, setAttributeSelect] = useState({})
+
+  const [form, setForm] = useState({
+    quantity: 1,
+    image: data?.image,
+    _id: data?._id,
+  })
+
+  useEffect(() => {
+    if (data) {
+      if (data?.attributes?.length) {
+        onResetAttributes()
+      }
+      getDefaultOptions()
+    }
+  }, [])
+
+  const getDefaultOptions = () => {
+    if (_relationProd.length) {
+      const minPriceItem = _relationProd.reduce(function (prev, curr) {
+        return prev.price < curr.price ? prev : curr
+      })
+      console.log(minPriceItem)
+
+      const { _id, ...rest } = minPriceItem
+
+      setForm((prevState) => ({ ...prevState, ...rest, variantId: minPriceItem._id }))
+      setAttributeSelect(rest.attribute)
+    } else {
+      setForm((prevState) => ({ ...prevState, ...data }))
+    }
+  }
+
+  const handleAddToCart = () => {
+    const cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
+
+    let listItem = []
+
+    if (cartItem?.length) {
+      listItem = [...cartItem]
+    }
+
+    let index = listItem.findIndex((item) => item._id === form._id && item?.variantId === form?.variantId)
+
+    if (index !== -1) {
+      listItem[index].quantity = listItem[index].quantity + +form.quantity
+    } else {
+      listItem.push(form)
+    }
+
+    localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
+  }
+
+  const handleBuyNow = async () => {
+    const cartItem = await JSON.parse(localStorage.getItem('khaMobileCart'))
+
+    let listItem = []
+
+    if (cartItem?.length) {
+      listItem = [...cartItem]
+    }
+
+    let index = listItem.findIndex((item) => item._id === form._id)
+
+    if (index !== -1) {
+      listItem[index].quantity = listItem[index].quantity + +form.quantity
+    } else {
+      listItem.push(form)
+    }
+
+    await localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
+
+    // return
+
+    router.push('/cart')
+  }
+
+  const onResetAttributes = () => {
+    const attributes = data?.attributes
+    const map = new Map()
+
+    attributes?.map(({ name, value }) => {
+      map.set(
+        name,
+        value.map((v) => ({ v, active: true })),
+      )
+    })
+
+    setAttributeMap(map)
+
+    setAttributeSelect({})
+  }
+
+  const calculatePrice = () => {
+    let html = null
+    html = formatCurrency(form?.price * form?.quantity || 0)
+    return html
+  }
+
+  const handleAttributeChange = ({ value, name: attributeName }) => {
+    const lastAttributeSelect = { ...attributeSelect }
+
+    const currentAttributeSelect = { ...lastAttributeSelect, [attributeName]: value }
+
+    const productFiltered = []
+    const map = attributeMap
+
+    if (Object.keys(currentAttributeSelect).length < data?.attributes.length) {
+    } else {
+      if (Object.keys(lastAttributeSelect).length === data?.attributes.length) {
+        currentAttributeSelect = { [attributeName]: value }
+      }
+    }
+
+    productFiltered = filterProductByAttributeName(currentAttributeSelect)
+
+    for (let [key, value] of [...map]) {
+      if (!currentAttributeSelect[key]) {
+        const isActive = (attrValue) => productFiltered.some((_item) => _item.attribute[key] === attrValue)
+
+        value = value.map((item) => ({
+          ...item,
+          active: isActive(item.v),
+        }))
+
+        map.set(key, value)
+      }
+    }
+    setAttributeMap(map)
+
+    setAttributeSelect(currentAttributeSelect)
+  }
+
+  /**
+   *
+   * @param { * Object {[attributeName] : attributeValue } } attributeSelected
+   * @returns { * Array [ ...product ]}
+   */
+  const filterProductByAttributeName = (attributeSelected) => {
+    const nextState = [..._relationProd] // get all list variant Product
+
+    nextState = nextState.filter((productVariant) => {
+      let result = true
+      for (let attributeName in attributeSelected) {
+        const attributeValue = attributeSelected[attributeName]
+        if (productVariant[attributeName] !== attributeValue) {
+          result = false
+          break
+        }
+      }
+      return result
+    })
+    return nextState
+  }
+
+  const renderAttributes = () => {
+    let html = null
+
+    html = [...attributeMap].map(([attributeName, attributeValue], index) => {
+      return (
+        <div
+          className={'row gx-2 gy-2 align-items-center w-100'}
+          key={[attributeName, attributeValue, index].join('-')}
+        >
+          <ProductOptions
+            listAttribute={attributeValue}
+            attributeName={attributeName}
+            onChange={handleAttributeChange}
+            selectValue={attributeSelect?.[attributeName]}
+          />
+        </div>
+      )
+    })
+    return html
+  }
+
+  return (
+    <CardBlock className="border-0">
+      <Form ref={formRef} model={ProductModel}>
+        <Panel style={{ paddingBottom: 0, paddingTop: 24 }}>
+          <div className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)} style={{ gap: 4 }}>
+            <div className={'row w-100 '} ref={pricingRef}>
+              <div className="col-12">
+                <p className={clsx(styles.productPricing, 'bk-product-price')}>{calculatePrice()}</p>
+              </div>
+              <div className="col-12 position-relative">
+                <div className="position-absolute" style={{ top: 0, right: 0 }}>
+                  <IconButton
+                    icon={<CloseOutline />}
+                    circle
+                    size="md"
+                    style={{ color: 'var(--rs-blue-800)', background: 'transparent' }}
+                    onClick={onResetAttributes}
+                  />
+                </div>
+                {renderAttributes()}
+              </div>
+            </div>
+          </div>
+
+          <Divider />
+
+          <div className={clsx('d-inline-flex align-items-center', styles.groupVariant)} style={{ gap: 4 }}>
+            <input type="hidden" value={form.quantity} className="bk-product-qty" />
+
+            {/* <Divider vertical /> */}
+
+            <Button
+              appearance="primary"
+              className={styles.btnIcon}
+              onClick={handleBuyNow}
+              style={{ background: 'var(--rs-blue-800)' }}
+              disabled={!(form?.price * form?.quantity)}
+            >
+              <div className="d-flex flex-column">
+                <span>Mua ngay</span>
+                <span style={{ fontSize: 12 }}>( giao tận nơi hoặc lấy tại cửa hàng )</span>
+              </div>
+            </Button>
+
+            <Button
+              color="red"
+              appearance="primary"
+              className={styles.btnIcon}
+              onClick={handleAddToCart}
+              style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+              disabled={!(form?.price * form?.quantity)}
+            >
+              <div className="d-flex flex-column align-items-center">
+                <BiCart style={{ fontSize: 20 }} />
+                <span style={{ fontSize: 12 }}> Thêm vào giỏ hàng</span>
+              </div>
+            </Button>
+
+            <BaoKim />
+          </div>
+        </Panel>
+      </Form>
+    </CardBlock>
+  )
+}
+
+const CustomInputNumber = ({ rowKey, value, ...props }) => {
+  return <InputNumber value={value} {...props} />
+}
+
+export default ProductForm

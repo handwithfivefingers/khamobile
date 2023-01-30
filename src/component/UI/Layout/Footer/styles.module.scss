@@ -29,3 +29,47 @@
     }
   }
 }
+
+.contact {
+  display: flex;
+  flex-direction: column-reverse;
+  max-width: 50px;
+  position: fixed;
+  right: 10px;
+  bottom: 10px;
+}
+
+.listExpand {
+  visibility: hidden;
+  opacity: 0;
+  bottom: 10px;
+  transition: all 0.3s;
+}
+
+.contactExpand {
+  display: flex;
+  color: var(--rs-blue-800);
+  font-size: 32px;
+  bottom: 10px;
+  cursor: pointer;
+  @extend .contactItem;
+}
+
+.contactItem {
+  display: block;
+  width: 32px;
+  font-size: 32px;
+  color: var(--rs-blue-800);
+  img {
+    width: 32px;
+  }
+  &:hover {
+    color: var(--rs-red-800);
+  }
+}
+
+.activeExpand {
+  opacity: 1;
+  visibility: visible;
+  bottom: 54px;
+}

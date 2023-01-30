@@ -8,6 +8,7 @@ import { Button, ButtonToolbar, Content, Form, Input, Schema, Toggle } from 'rsu
 export default function ProductCategory(props) {
   const [form, setForm] = useState(props?.data)
   const [toggleUpload, setToggleUpload] = useState(true)
+  const [render, setRender] = useState(false)
   const formRef = useRef()
 
   const onSubmit = () => {
@@ -15,7 +16,7 @@ export default function ProductCategory(props) {
       console.error('Form Error')
       return
     }
-    props?.onSubmit({ ...form})
+    props?.onSubmit({ ...form })
   }
 
   const model = Schema.Model({
@@ -29,15 +30,15 @@ export default function ProductCategory(props) {
     <Content className={' p-4'}>
       <Form
         formValue={form}
-        onChange={(formVal) => setForm(formVal)}
+        onChange={(formVal) => setForm((prev) => ({ ...prev, ...formVal }))}
         className={'row gx-2 gy-2 '}
         fluid
         ref={formRef}
         model={model}
       >
-        <div className="col-12">
+        {/* <div className="col-12">
           <JsonViewer data={form} />
-        </div>
+        </div> */}
 
         <div className="col-8">
           <CardBlock>
@@ -47,46 +48,36 @@ export default function ProductCategory(props) {
           </CardBlock>
         </div>
 
-        <div className="col-4">
+        <div className="col-4 d-flex flex-column">
           <CardBlock>
             <Form.Group controlId="img">
-              <Form.ControlLabel>
-                Ảnh bài post
-                <Toggle
-                  className="px-2"
-                  checkedChildren="Uploader"
-                  unCheckedChildren="URL Link"
-                  checked={toggleUpload}
-                  onChange={(val) => {
-                    setToggleUpload(val)
-                    setForm({ ...form, img: [] })
-                  }}
-                />
-              </Form.ControlLabel>
-
-              {toggleUpload ? (
-                <Form.Control
-                  rows={5}
-                  name="image"
-                  accepter={CustomUpload}
-                  value={form['image']}
-                  shouldUpload={() => false}
-                />
-              ) : (
-                <Input onChange={(value, item) => setForm({ ...form, image: value })} value={form['image']} />
-              )}
+              <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
+              <Form.Control
+                rows={5}
+                name="upload"
+                accepter={CustomUpload}
+                action={process.env.API + '/api/upload'}
+                withCredentials={true}
+                onSuccess={(resp, file) => {
+                  setRender(!render)
+                  setForm((prev) => ({ ...prev, image: { src: resp.url, name: file.name } }))
+                }}
+                value={form?.image}
+              />
             </Form.Group>
           </CardBlock>
 
-          <CardBlock className="mt-2 ">
-            <Form.Group className="d-flex justify-content-end">
-              <ButtonToolbar>
-                <Button appearance="primary" onClick={onSubmit} className="py-2 px-4">
-                  Edit
-                </Button>
-              </ButtonToolbar>
-            </Form.Group>
-          </CardBlock>
+          <Form.Group
+            className="d-flex justify-content-end mt-2 align-items-end"
+            style={{ flex: 1, marginTop: 'auto ' }}
+          >
+            <ButtonToolbar>
+              <Button appearance="primary" onClick={onSubmit} className="py-2 px-4">
+                Edit
+              </Button>
+            </ButtonToolbar>
+          </Form.Group>
+          {/* </CardBlock> */}
         </div>
       </Form>
     </Content>

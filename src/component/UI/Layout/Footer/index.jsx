@@ -1,17 +1,17 @@
-import React, { useEffect } from 'react'
-import LOGO from 'assets/img/logo.png'
-import BCT from 'assets/img/bct.png'
-import { Button, Panel, Placeholder, IconButton } from 'rsuite'
-import Image from 'next/image'
-import styles from './styles.module.scss'
-import Link from 'next/link'
-import PhoneIcon from '@rsuite/icons/Phone'
 import MessageIcon from '@rsuite/icons/Message'
-import Script from 'next/script'
-import { FaCcVisa, FaCcPaypal, FaCcStripe, FaCcJcb } from 'react-icons/fa'
-import { BsCashCoin } from 'react-icons/bs'
-
+import PhoneIcon from '@rsuite/icons/Phone'
+import BCT from 'assets/img/bct.png'
+import LOGO from 'assets/img/logo.png'
+import clsx from 'clsx'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { BsCashCoin, BsTelephoneFill } from 'react-icons/bs'
+import { FaCcJcb, FaCcPaypal, FaCcStripe, FaCcVisa } from 'react-icons/fa'
+import { IconButton, Panel } from 'rsuite'
+import styles from './styles.module.scss'
 export default function Footer() {
+  const [expand, setExpand] = useState(false)
   useEffect(() => {
     if (window.FB) {
       window.FB.XFBML.parse()
@@ -21,39 +21,36 @@ export default function Footer() {
     <div className="container-fluid border-top mt-4">
       <div id="fb-root"></div>
 
-      <script
-        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v15.0&appId=1263039330945343&autoLogAppEvents=1"
-        onError={(e) => console.log('scriptError', e)}
-        onLoad={() => {
-          console.log('Script has loaded')
-        }}
-        nonce="bW1o2vpX"
-        async
-        defer
-        crossorigin="anonymous"
-      />
-      <div id="fb-customer-chat" class="fb-customerchat"></div>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `var chatbox = document.getElementById('fb-customer-chat'); chatbox.setAttribute("page_id", "PAGE-ID");
-        chatbox.setAttribute("attribution", "biz_inbox");{' '}`,
-        }}
-      ></script>
-      <script
-        dangerouslySetInnerHTML={{
-          __html: `window.fbAsyncInit = function() {
-                FB.init({ xfbml : true, version : 'API-VERSION' })
-                 }
-                 (function(d, s, id) { 
-                 var js, fjs = d.getElementsByTagName(s)[0];
-                  if (d.getElementById(id)) return; js = d.createElement(s); js.id = id; 
-                  js.src = 'https://connect.facebook.net/en_US/sdk/xfbml.customerchat.js'; 
-                  fjs.parentNode.insertBefore(js, fjs); 
-                 }(document, 'script', 'facebook-jssdk')) `,
-        }}
-      ></script>
       <div className={styles.contact}>
-        <div className={styles.zalo}></div>
+        <div className={styles.contactExpand} onClick={() => setExpand(!expand)}>
+          {/* <div className={styles.icon}>
+            <FcCustomerSupport />
+          </div> */}
+          <div className={styles.icon}>
+            <img src="/support-icon.png" />
+          </div>
+        </div>
+        <div className={clsx(styles.listExpand, { [styles.activeExpand]: expand })}>
+          <a className={styles.contactItem} href="tel:+84777999966">
+            <div className={styles.icon}>
+              <BsTelephoneFill />
+            </div>
+          </a>
+          <a className={styles.contactItem} href="https://zalo.me/0777999966" target="_blank">
+            <div className={styles.icon}>
+              <img src="/zalo-icon.png" />
+            </div>
+          </a>
+
+          <a className={styles.contactItem} href="https://www.messenger.com/t/104893688607812" target="_blank">
+            {/* <div className={styles.icon}>
+              <BsMessenger />
+            </div> */}
+            <div className={styles.icon}>
+              <img src="/messenger-icon.webp" />
+            </div>
+          </a>
+        </div>
       </div>
 
       <div className="row p-0">

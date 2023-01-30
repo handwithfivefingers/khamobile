@@ -8,34 +8,24 @@ const router = express.Router()
 
 const { createCategory, updateCategory, getCategory, getSingleCategory, getProductCategory } = CategoryController
 
-router.get('/category', upload.none(), getCategory)
+router.get('/category', getCategory)
 
-router.get('/category/:_id', upload.none(), getSingleCategory)
+router.get('/category/:_id', getSingleCategory)
 
-router.post(
-  '/category/:_id',
-  upload.fields([{ name: 'categoryImg', maxCount: 1 }]),
-  validateCreateCategory,
-  isRequiresValidated,
-  updateCategory,
-)
+router.post('/category/:_id', validateCreateCategory, isRequiresValidated, updateCategory)
 
-router.post(
-  '/category',
-  upload.fields([{ name: 'categoryImg', maxCount: 1 }]),
-  validateCreateCategory,
-  isRequiresValidated,
-  createCategory,
-)
+router.post('/category', validateCreateCategory, isRequiresValidated, createCategory)
 
-router.get('/product_category', upload.none(), new ProductCategoryController().getCategory)
 
-router.get('/product_category/:_id', upload.none(), new ProductCategoryController().getCategoryById)
 
-router.post(
-  '/product_category/:_id',
-  upload.fields([{ name: 'image', maxCount: 1 }]),
-  new ProductCategoryController().updateCategory,
-)
+
+router.get('/product_category', new ProductCategoryController().getCategory)
+
+router.get('/product_category/:_id', new ProductCategoryController().getCategoryById)
+
+router.post('/product_category', new ProductCategoryController().createCategory)
+
+router.post('/product_category/:_id', new ProductCategoryController().updateCategory)
+
 
 export default router

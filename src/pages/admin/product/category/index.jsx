@@ -1,10 +1,9 @@
 import ProductCategory from 'component/Modal/ProductCategory'
 import AdminLayout from 'component/UI/AdminLayout'
 import { useEffect, useRef, useState } from 'react'
-import { Avatar, Content, Modal, Table } from 'rsuite'
+import { Avatar, Content, Input, Modal, Pagination, SelectPicker, Stack, Table } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import { useCommonStore } from 'src/store/commonStore'
-
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -28,7 +27,12 @@ const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
 
 const Products = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
-  const [data, setData] = useState()
+  const [data, setData] = useState([])
+  const [filterData, setFilterData] = useState([])
+
+  const [limit, setLimit] = useState(10)
+
+  const [page, setPage] = useState(1)
 
   const [loading, setLoading] = useState(false)
 
@@ -37,6 +41,8 @@ const Products = () => {
     component: null,
   })
 
+  const [filter, setFilter] = useState('')
+
   const nodeRef = useRef()
 
   useEffect(() => {
@@ -44,13 +50,29 @@ const Products = () => {
     changeTitle('Page Danh mục')
   }, [])
 
+  useEffect(() => {
+    if (Object.keys(filter)) {
+      const dataFilter = [...data]
+      if (filter) dataFilter = dataFilter.filter((item) => item.name?.toLowerCase().includes(filter?.toLowerCase()))
+      setFilterData(dataFilter)
+    } else {
+      setFilterData(data)
+    }
+  }, [filter])
+
   const getCateData = async () => {
     try {
       let resp = await CategoryService.getProdCate()
       setData(resp.data.data)
+      setFilterData(resp.data.data)
     } catch (error) {
       console.log('error', error?.response?.data?.message)
     }
+  }
+
+  const handleChangeLimit = (dataKey) => {
+    setPage(1)
+    setLimit(dataKey)
   }
 
   const getCategoryById = async (_id) => {
@@ -69,25 +91,12 @@ const Products = () => {
       component: <ProductCategory data={data} onSubmit={onUpdate} />,
     })
   }
+
   const handleClose = () => setModal({ ...modal, open: false })
 
-  const onUpdate = async (val) => {
+  const onUpdate = async ({ _id, ...val }) => {
     try {
-      console.log('onUpdate', val)
-      let { name, slug, _id, image, description } = val
-
-      const formData = new FormData()
-      formData.append('name', name)
-      formData.append('slug', slug)
-      formData.append('description', description)
-
-      if (image && typeof image === 'string') {
-        formData.append('image', image)
-      } else if (image.blobFile instanceof Blob) {
-        formData.append('image', image.blobFile)
-      }
-
-      const resp = await CategoryService.updateProdCateById(_id, formData)
+      const resp = await CategoryService.updateProdCateById(_id, val)
 
       if (resp.status === 200) {
         console.log('update success')
@@ -97,10 +106,23 @@ const Products = () => {
     }
   }
 
+  const getData = () => {
+    return filterData.filter((v, i) => {
+      const start = limit * (page - 1)
+      const end = start + limit
+      return i >= start && i < end
+    })
+  }
+
   return (
     <>
-      <Content className={'bg-w h-100'} ref={nodeRef}>
-        <Table data={data} onRowClick={handleOpenCategory} loading={loading} fillHeight>
+      <Stack spacing={10} className="py-2">
+        <span>Tìm kiếm: </span>
+        <Input placeholder="Tên danh mục" onChange={(v) => setFilter(v)} />
+      </Stack>
+
+      <Content className={'bg-w'} ref={nodeRef}>
+        <Table data={getData()} onRowClick={handleOpenCategory} loading={loading} height={60 * (10 + 1)} rowHeight={60}>
           <Column width={150}>
             <HeaderCell></HeaderCell>
             <CustomRenderCell dataKey="image" />
@@ -132,6 +154,26 @@ const Products = () => {
             </Cell>
           </Column>
         </Table>
+
+        <div style={{ padding: 20 }}>
+          <Pagination
+            prev
+            next
+            first
+            last
+            ellipsis
+            boundaryLinks
+            maxButtons={5}
+            size="xs"
+            layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+            total={filterData.length}
+            limitOptions={[10, 30, 50]}
+            limit={limit}
+            activePage={page}
+            onChangePage={setPage}
+            onChangeLimit={handleChangeLimit}
+          />
+        </div>
       </Content>
 
       <Modal size={'full'} open={modal.open} onClose={handleClose} keyboard={false} backdrop={'static'}>

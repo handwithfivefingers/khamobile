@@ -352,7 +352,7 @@ const Products = () => {
             maxButtons={5}
             size="xs"
             layout={['total', '-', 'limit', '|', 'pager', 'skip']}
-            total={product.length}
+            total={filterData.length}
             limitOptions={[10, 30, 50]}
             limit={limit}
             activePage={page}

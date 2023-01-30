@@ -35,7 +35,7 @@ export default function MyApp({ Component, pageProps }) {
         })
       }
     } catch (error) {
-      console.log('authenticate failed', error)
+      // console.log('authenticate failed', error)
       changeAuthenticateStatus({
         authenticate: false,
         user: {},

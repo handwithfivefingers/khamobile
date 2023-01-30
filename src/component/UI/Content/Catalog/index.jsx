@@ -21,6 +21,8 @@ const Catalog = (props) => {
     return router.push('/category/' + group.slug + '?page=1')
   }
 
+  console.log('Catalog', props.data?.name)
+  console.log('Catalog', props.data)
   return (
     <div className={className}>
       <div className={clsx(styles.col, styles.firstCol)}>
@@ -30,7 +32,10 @@ const Catalog = (props) => {
         </div>
         <div className={styles.content}>
           <ImageBlock
-            src="https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp"
+            src={
+              process.env.API + props?.data?.image?.src ||
+              'https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp'
+            }
             height={'200px'}
             className={styles.imgCatalog}
           />

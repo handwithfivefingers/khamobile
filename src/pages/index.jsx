@@ -21,9 +21,11 @@ import PostHelmet from 'component/PostHelmet'
 import { SiteLinksSearchBoxJsonLd } from 'next-seo'
 const Home = (props) => {
   const [data, setData] = useState([])
+
   useEffect(() => {
     getHomeProd()
   }, [])
+
   const getHomeProd = async () => {
     try {
       let resp = await GlobalHomeService.getHomeProd()
@@ -84,7 +86,7 @@ const Home = (props) => {
                   <SelfCarousel />
                 </div>
                 <div className={styles.mainBanner}>
-                  <ImageBlock
+                  {/* <ImageBlock
                     src={process.env.API + '/public/wp/2022' + '/10' + '/banner-moi-4.png'}
                     className={styles.banner}
                     alt="..."
@@ -92,6 +94,18 @@ const Home = (props) => {
                   />
                   <ImageBlock
                     src={process.env.API + '/public/wp/2022' + '/10' + '/banner-moi-5.png'}
+                    className={styles.banner}
+                    alt="..."
+                    height={'calc(50% - 12px)'}
+                  /> */}
+                  <ImageBlock
+                    src={'/slide/banner-small-1.png'}
+                    className={styles.banner}
+                    alt="..."
+                    height={'calc(50% - 12px)'}
+                  />
+                  <ImageBlock
+                    src={'/slide/banner-small-2.png'}
                     className={styles.banner}
                     alt="..."
                     height={'calc(50% - 12px)'}
@@ -294,30 +308,49 @@ const Home = (props) => {
 Home.Layout = CommonLayout
 
 const SelfCarousel = () => {
+  // const [images, setImages] = useState([
+  //   {
+  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/BANNER-WEBSITE-01.png`,
+  //     thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
+  //   },
+
+  //   {
+  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-1.png`,
+  //     thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
+  //   },
+  //   {
+  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-2.png`,
+  //     thumbnailImageSrc: 'IPHONE 13 ProMax',
+  //   },
+  //   {
+  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-3.png`,
+  //     thumbnailImageSrc: 'IPHONE 13 ProMax',
+  //   },
+
+  //   {
+  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/KHA-MOBILE-BANNER-21.10.2022.png`,
+  //     thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
+  //   },
+
+  // ])
   const [images, setImages] = useState([
     {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/BANNER-WEBSITE-01.png`,
+      itemImageSrc: `/slide/banner-1.png`,
       thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
     },
 
     {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-1.png`,
+      itemImageSrc: `/slide/banner-2.png`,
       thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
     },
     {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-2.png`,
+      itemImageSrc: `/slide/banner-3.png`,
       thumbnailImageSrc: 'IPHONE 13 ProMax',
     },
     {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-3.png`,
+      itemImageSrc: `/slide/banner-4.png`,
       thumbnailImageSrc: 'IPHONE 13 ProMax',
     },
-
-    {
-      itemImageSrc: `${process.env.API}/public/wp/2022/10/KHA-MOBILE-BANNER-21.10.2022.png`,
-      thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
-    },
-
   ])
   return (
     <Carousel placement={'bottom'} shape={'bar'} className="custom-slider" autoplayInterval={3000} autoplay>

@@ -21,8 +21,7 @@ export default function ImageBlock({ src, alt, className, bordered, height }) {
   return (
     <div className={imgClass} style={{ '--height-offset': height ? height : '100%' }}>
       <img src={src} alt={alt} onClick={() => openImageViewer(true)} />
-
-      <Modal open={state} onClose={() => setState(false)} size="lg" style={{ background: 'transparent' }}>
+      <Modal open={state} onClose={() => setState(false)} size="md" style={{ background: 'transparent' }}>
         <Modal.Body>
           <img src={src} alt={alt} style={{ width: '100%', maxWidth: '1024px' }} />
         </Modal.Body>
