@@ -3,6 +3,7 @@ import clsx from 'clsx'
 import BaoKim from 'component/UI/Content/BaoKim'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { BiCart } from 'react-icons/bi'
 import { Button, Divider, Form, IconButton, InputNumber, Panel } from 'rsuite'
@@ -22,6 +23,8 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
 
   const [attributeSelect, setAttributeSelect] = useState({})
 
+  const [productFilter, setProductFilter] = useState([])
+
   const [form, setForm] = useState({
     quantity: 1,
     image: data?.image,
@@ -37,12 +40,18 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     }
   }, [])
 
+  useEffect(() => {
+    if (Object.keys(attributeSelect).length === data.attributes?.length && productFilter.length === 1) {
+      const [{ _id, ...rest }] = productFilter
+      setForm((prev) => ({ ...prev, ...rest, variantId: _id }))
+    }
+  }, [attributeSelect])
+
   const getDefaultOptions = () => {
     if (_relationProd.length) {
       const minPriceItem = _relationProd.reduce(function (prev, curr) {
         return prev.price < curr.price ? prev : curr
       })
-      console.log(minPriceItem)
 
       const { _id, ...rest } = minPriceItem
 
@@ -98,6 +107,12 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
   }
 
   const onResetAttributes = () => {
+    setForm({
+      quantity: 1,
+      image: data?.image,
+      _id: data?._id,
+    })
+
     const attributes = data?.attributes
     const map = new Map()
 
@@ -124,17 +139,17 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
 
     const currentAttributeSelect = { ...lastAttributeSelect, [attributeName]: value }
 
-    const productFiltered = []
     const map = attributeMap
 
     if (Object.keys(currentAttributeSelect).length < data?.attributes.length) {
+      // setForm((prev) => ({ ...prev, quantity: prev.quantity || 1 }))
     } else {
       if (Object.keys(lastAttributeSelect).length === data?.attributes.length) {
         currentAttributeSelect = { [attributeName]: value }
       }
     }
 
-    productFiltered = filterProductByAttributeName(currentAttributeSelect)
+    const productFiltered = filterProductByAttributeName(currentAttributeSelect)
 
     for (let [key, value] of [...map]) {
       if (!currentAttributeSelect[key]) {
@@ -148,6 +163,9 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
         map.set(key, value)
       }
     }
+
+    setProductFilter(productFiltered)
+
     setAttributeMap(map)
 
     setAttributeSelect(currentAttributeSelect)
@@ -158,6 +176,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
    * @param { * Object {[attributeName] : attributeValue } } attributeSelected
    * @returns { * Array [ ...product ]}
    */
+
   const filterProductByAttributeName = (attributeSelected) => {
     const nextState = [..._relationProd] // get all list variant Product
 
@@ -196,6 +215,12 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     return html
   }
 
+  const renderBaoKimElement = useMemo(() => {
+    let html = null
+    html = <BaoKim form={form} />
+    return html
+  }, [form])
+
   return (
     <CardBlock className="border-0">
       <Form ref={formRef} model={ProductModel}>
@@ -206,26 +231,30 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
                 <p className={clsx(styles.productPricing, 'bk-product-price')}>{calculatePrice()}</p>
               </div>
               <div className="col-12 position-relative">
-                <div className="position-absolute" style={{ top: 0, right: 0 }}>
-                  <IconButton
-                    icon={<CloseOutline />}
-                    circle
-                    size="md"
-                    style={{ color: 'var(--rs-blue-800)', background: 'transparent' }}
-                    onClick={onResetAttributes}
-                  />
-                </div>
-                {renderAttributes()}
+                {_relationProd.length ? (
+                  <>
+                    <div className="position-absolute" style={{ top: 0, right: 0 }}>
+                      <IconButton
+                        icon={<CloseOutline />}
+                        circle
+                        size="md"
+                        style={{ color: 'var(--rs-blue-800)', background: 'transparent' }}
+                        onClick={onResetAttributes}
+                      />
+                    </div>
+                    {renderAttributes()}
+                  </>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </div>
 
           <Divider />
 
-          <div className={clsx('d-inline-flex align-items-center', styles.groupVariant)} style={{ gap: 4 }}>
+          <div className={clsx(styles.groupVariant)}>
             <input type="hidden" value={form.quantity} className="bk-product-qty" />
-
-            {/* <Divider vertical /> */}
 
             <Button
               appearance="primary"
@@ -254,8 +283,10 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
               </div>
             </Button>
 
-            <BaoKim />
+            {renderBaoKimElement}
           </div>
+
+          <div id="bk-modal"></div>
         </Panel>
       </Form>
     </CardBlock>

@@ -9,7 +9,7 @@ import axios from 'configs/axiosInstance'
 import parser from 'html-react-parser'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Button, Carousel, Table } from 'rsuite'
 import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
@@ -17,7 +17,6 @@ import styles from './styles.module.scss'
 const { Column, HeaderCell, Cell } = Table
 
 export default function ProductDetail({ data, _relationProd, seo, slug, ...props }) {
-  
   const [toggleContent, setToggleContent] = useState(false)
 
   const router = useRouter()
