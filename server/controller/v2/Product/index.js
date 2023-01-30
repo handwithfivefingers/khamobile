@@ -84,6 +84,7 @@ export default class ProductController {
             _id: '$_id',
             name: '$name',
             slug: '$slug',
+            image:'$image',
             parent: '$parent',
           },
         },
@@ -105,6 +106,7 @@ export default class ProductController {
             _id: '$_id',
             name: '$name',
             slug: '$slug',
+            image: '$image',
           },
         },
         {
@@ -129,6 +131,7 @@ export default class ProductController {
               _id: '$_id',
               name: '$name',
               slug: '$slug',
+              image: '$image',
             },
             child: {
               $push: {
@@ -149,6 +152,7 @@ export default class ProductController {
             _id: '$_id._id',
             name: '$_id.name',
             slug: '$_id.slug',
+            image: '$_id.image',
             child: '$child',
           },
         },
@@ -174,6 +178,7 @@ export default class ProductController {
         },
       ])
 
+      console.log(_cate)
       return res.status(200).json({
         data: _cate,
       })

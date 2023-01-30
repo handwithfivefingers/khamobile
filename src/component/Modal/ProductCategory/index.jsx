@@ -36,9 +36,9 @@ export default function ProductCategory(props) {
         ref={formRef}
         model={model}
       >
-        <div className="col-12">
+        {/* <div className="col-12">
           <JsonViewer data={form} />
-        </div>
+        </div> */}
 
         <div className="col-8">
           <CardBlock>
@@ -48,7 +48,7 @@ export default function ProductCategory(props) {
           </CardBlock>
         </div>
 
-        <div className="col-4">
+        <div className="col-4 d-flex flex-column">
           <CardBlock>
             <Form.Group controlId="img">
               <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
@@ -67,15 +67,17 @@ export default function ProductCategory(props) {
             </Form.Group>
           </CardBlock>
 
-          <CardBlock className="mt-2 ">
-            <Form.Group className="d-flex justify-content-end">
-              <ButtonToolbar>
-                <Button appearance="primary" onClick={onSubmit} className="py-2 px-4">
-                  Edit
-                </Button>
-              </ButtonToolbar>
-            </Form.Group>
-          </CardBlock>
+          <Form.Group
+            className="d-flex justify-content-end mt-2 align-items-end"
+            style={{ flex: 1, marginTop: 'auto ' }}
+          >
+            <ButtonToolbar>
+              <Button appearance="primary" onClick={onSubmit} className="py-2 px-4">
+                Edit
+              </Button>
+            </ButtonToolbar>
+          </Form.Group>
+          {/* </CardBlock> */}
         </div>
       </Form>
     </Content>

@@ -22,8 +22,6 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
 
   const [attributeSelect, setAttributeSelect] = useState({})
 
-  const [filterProduct, setFilterProduct] = useState([])
-
   const [form, setForm] = useState({
     quantity: 1,
     image: data?.image,
@@ -35,34 +33,24 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       if (data?.attributes?.length) {
         onResetAttributes()
       }
-
-      if (_relationProd.length) {
-        getDefaultOptions()
-        resetFilterProduct()
-      }
+      getDefaultOptions()
     }
   }, [])
+
   const getDefaultOptions = () => {
-    // let { _id, ...rest } = _relationProd[0]
+    if (_relationProd.length) {
+      const minPriceItem = _relationProd.reduce(function (prev, curr) {
+        return prev.price < curr.price ? prev : curr
+      })
+      console.log(minPriceItem)
 
-    // setForm((prevState) => ({
-    //   ...prevState,
-    //   ...rest,
-    //   variantId: _id,
-    // }))
-    const minPriceItem = _relationProd.reduce(function (prev, curr) {
-      return prev.price < curr.price ? prev : curr
-    })
-    console.log(minPriceItem)
+      const { _id, ...rest } = minPriceItem
 
-    const { _id, ...rest } = minPriceItem
-
-    setForm((prevState) => ({ ...prevState, ...rest, variantId: minPriceItem._id }))
-    setAttributeSelect(rest.attribute)
-  }
-
-  const resetFilterProduct = () => {
-    setFilterProduct(_relationProd)
+      setForm((prevState) => ({ ...prevState, ...rest, variantId: minPriceItem._id }))
+      setAttributeSelect(rest.attribute)
+    } else {
+      setForm((prevState) => ({ ...prevState, ...data }))
+    }
   }
 
   const handleAddToCart = () => {
@@ -163,8 +151,6 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     setAttributeMap(map)
 
     setAttributeSelect(currentAttributeSelect)
-
-    setFilterProduct(productFiltered)
   }
 
   /**

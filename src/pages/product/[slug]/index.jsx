@@ -17,6 +17,7 @@ import styles from './styles.module.scss'
 const { Column, HeaderCell, Cell } = Table
 
 export default function ProductDetail({ data, _relationProd, seo, slug, ...props }) {
+  
   const [toggleContent, setToggleContent] = useState(false)
 
   const router = useRouter()
