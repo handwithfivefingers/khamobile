@@ -1,9 +1,9 @@
 import { Category, ProductCategory } from '#model'
-import { handleDownloadFile } from '#server/middleware'
 import { MESSAGE } from '#server/constant/message'
+import { handleDownloadFile } from '#server/middleware'
+import Response from '#server/response'
 import shortid from 'shortid'
 import slugify from 'slugify'
-import mongoose from 'mongoose'
 
 class CategoryController {
   createCategory = async (req, res) => {
@@ -38,10 +38,7 @@ class CategoryController {
 
       let data = await _obj.save()
 
-      return res.status(200).json({
-        message: MESSAGE.CREATED(),
-        data,
-      })
+      return new Response().created({ data }, res)
     } catch (error) {
       console.log('CategoryController createCategory', error)
 
@@ -53,7 +50,6 @@ class CategoryController {
 
   updateCategory = async (req, res) => {
     try {
-      // let { name, description, slug, parentCategory } = req.body;
       let { _id } = req.params
 
       let { name, description, slug, parentCategory } = req.body
@@ -89,11 +85,7 @@ class CategoryController {
       }
 
       let data = await Category.updateOne({ _id }, _updated, { new: true })
-
-      return res.status(200).json({
-        message: MESSAGE.UPDATED(),
-        data,
-      })
+      return new Response().updated({ data }, res)
     } catch (error) {
       return res.status(400).json({
         message: error?.message || MESSAGE.ERROR_ADMIN('danh mục'),
@@ -108,16 +100,10 @@ class CategoryController {
       let _cate = await Category.findOne({
         _id,
       }).select('-__v -createdAt -updatedAt')
-
-      return res.status(200).json({
-        data: _cate,
-        message: MESSAGE.FETCHED(),
-      })
+      return new Response().fetched({ data: _cate }, res)
     } catch (error) {
       console.log('getSingleCategory', error)
-      return res.status(400).json({
-        message: MESSAGE.SYSTEM_ERROR(),
-      })
+      return new Response().error(error, res)
     }
   }
 
@@ -131,15 +117,10 @@ class CategoryController {
 
       let _data = this.filterCate(_cate)
 
-      return res.status(200).json({
-        data: _data,
-        message: MESSAGE.FETCHED(),
-      })
+      return new Response().fetched({ data: _data }, res)
     } catch (error) {
       console.log('getCategory', error)
-      return res.status(400).json({
-        message: MESSAGE.SYSTEM_ERROR(),
-      })
+      return new Response().error(error, res)
     }
   }
 
@@ -172,13 +153,9 @@ class CategoryController {
     try {
       let _cate = await ProductCategory.find()
 
-      return res.status(200).json({
-        data: _cate,
-      })
+      return new Response().fetched({ data: _cate }, res)
     } catch (error) {
-      return res.status(400).json({
-        error,
-      })
+      return new Response().error(error, res)
     }
   }
 }

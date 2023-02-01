@@ -2,6 +2,7 @@ import { generateSeoTag } from '#common/helper'
 import { Product, ProductCategory } from '#server/model'
 import _ from 'lodash'
 import mongoose from 'mongoose'
+import Response from '#server/response'
 
 export default class ProductController {
   getProductSlug = async (req, res) => {
@@ -12,7 +13,7 @@ export default class ProductController {
         slug,
       })
 
-      let data = await Product.aggregate([
+      let _relationProd = await Product.aggregate([
         {
           $match: {
             slug,
@@ -40,18 +41,23 @@ export default class ProductController {
             regular_price: '$child.regular_price',
             attribute: '$child.attributes',
             primary: '$primary',
+            stock_status: '$child.stock_status',
+            purchasable: '$child.purchasable',
           },
         },
       ])
 
       let primaryKey = parentItem.primary
-      data = data.map((item) => {
-        let obj = { ...item }
-        for (let key in item.attribute) {
-          obj[key] = item.attribute[key]
-        }
-        return obj
-      })
+
+      _relationProd = _relationProd
+        .map((item) => {
+          let obj = { ...item }
+          for (let key in item.attribute) {
+            obj[key] = item.attribute[key]
+          }
+          return obj
+        })
+        ?.filter((item) => item.purchasable)
 
       const seoTags = await generateSeoTag({
         title: parentItem.title,
@@ -61,18 +67,17 @@ export default class ProductController {
         image: `${parentItem.image?.[0]?.src}`,
       })
 
-      console.log(data)
-
-      return res.status(200).json({
-        data: parentItem,
-        seo: [seoTags.head, seoTags.body],
-        _relationProd: data,
-      })
+      return new Response().fetched(
+        {
+          data: parentItem,
+          seo: [seoTags.head, seoTags.body],
+          _relationProd,
+        },
+        res,
+      )
     } catch (error) {
       console.log(error)
-      return res.status(400).json({
-        error,
-      })
+      return new Response().error(error, res)
     }
   }
 
@@ -84,7 +89,7 @@ export default class ProductController {
             _id: '$_id',
             name: '$name',
             slug: '$slug',
-            image:'$image',
+            image: '$image',
             parent: '$parent',
           },
         },
@@ -178,15 +183,15 @@ export default class ProductController {
         },
       ])
 
-      console.log(_cate)
-      return res.status(200).json({
-        data: _cate,
-      })
+      return new Response().fetched(
+        {
+          data: _cate,
+        },
+        res,
+      )
     } catch (error) {
       console.log(error)
-      return res.status(400).json({
-        error,
-      })
+      return new Response().error(error, res)
     }
   }
 
@@ -243,15 +248,15 @@ export default class ProductController {
       }
 
       let [_prod] = await Product.aggregate(pipe)
-
-      return res.status(200).json({
-        data: _prod,
-      })
+      return new Response().fetched(
+        {
+          data: _prod,
+        },
+        res,
+      )
     } catch (error) {
       console.log('getProductById', error)
-      return res.status(400).json({
-        error,
-      })
+      return new Response().error(error, res)
     }
   }
 
@@ -308,25 +313,23 @@ export default class ProductController {
           }).count()
         }
       }
-
-      return res.status(200).json({
-        length: _prod.length,
-        total: count,
-        data: _prod,
-      })
+      return new Response().fetched(
+        {
+          length: _prod.length,
+          total: count,
+          data: _prod,
+        },
+        res,
+      )
     } catch (error) {
       console.log('getProduct', error)
-      return res.status(400).json({
-        error,
-      })
+      return new Response().error(error, res)
     }
   }
 
   filterProduct = async (req, res) => {
     try {
       const { slug, ...query } = req.query
-
-      // console.log(query)
 
       const pipeFilter = await Product.aggregate([
         {
@@ -368,14 +371,19 @@ export default class ProductController {
         const isMatch = Object.keys(query).every((key) => itemAttributes[key] === query[key])
         if (isMatch) filteredData.push(item)
       }
-
-      return res.status(200).json({
-        data: filteredData,
-      })
+      return new Response().fetched(
+        {
+          data: filteredData,
+        },
+        res,
+      )
     } catch (error) {
-      return res.status(200).json({
-        data: [],
-      })
+      return new Response().fetched(
+        {
+          data: [],
+        },
+        res,
+      )
     }
   }
 
@@ -387,14 +395,16 @@ export default class ProductController {
         title: { $regex: title },
       })
       const count = _data.length
-      return res.status(200).json({
-        data: _data,
-        count,
-      })
+
+      return new Response().fetched(
+        {
+          data: _data,
+          count,
+        },
+        res,
+      )
     } catch (error) {
-      return res.status(400).json({
-        error,
-      })
+      return new Response().error(error, res)
     }
   }
 }

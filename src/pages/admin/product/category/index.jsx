@@ -1,7 +1,7 @@
 import ProductCategory from 'component/Modal/ProductCategory'
 import AdminLayout from 'component/UI/AdminLayout'
 import { useEffect, useRef, useState } from 'react'
-import { Avatar, Content, Input, Modal, Pagination, SelectPicker, Stack, Table } from 'rsuite'
+import { Avatar, Content, Input, Message, Modal, Pagination, SelectPicker, Stack, Table, useToaster } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import { useCommonStore } from 'src/store/commonStore'
 
@@ -44,6 +44,8 @@ const Products = () => {
   const [filter, setFilter] = useState('')
 
   const nodeRef = useRef()
+
+  const toaster = useToaster()
 
   useEffect(() => {
     getCateData()
@@ -94,14 +96,24 @@ const Products = () => {
 
   const handleClose = () => setModal({ ...modal, open: false })
 
+  const message = (type, header) => <Message showIcon type={type} header={header} closable />
+
+
   const onUpdate = async ({ _id, ...val }) => {
     try {
       const resp = await CategoryService.updateProdCateById(_id, val)
 
       if (resp.status === 200) {
         console.log('update success')
-      }
+        if (resp.status === 200) {
+          toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
+          handleClose()
+        }
+      } else throw resp
     } catch (error) {
+      toaster.push(message('error', error.response?.data?.message || error.response?.message), {
+        placement: 'topEnd',
+      })
       console.log('error updating category', error)
     }
   }

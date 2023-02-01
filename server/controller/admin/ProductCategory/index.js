@@ -1,7 +1,7 @@
-import ProductCate from '#uploads/mockup/product_category.json' assert { type: 'json' }
 import { ProductCategory } from '#model'
+import { MESSAGE } from '#server/constant/message'
+import Response from '#server/response'
 import mongoose from 'mongoose'
-import { handleDownloadFile } from '#middleware'
 import shortid from 'shortid'
 
 export default class ProductCategoryController {
@@ -9,11 +9,10 @@ export default class ProductCategoryController {
     try {
       // let _category = await ProductCategory.find({ parent: { $exists: false } }).select('-createdAt -updatedAt -__v')
       let _category = await ProductCategory.find({}).select('-createdAt -updatedAt -__v')
-      return res.status(200).json({
-        data: _category,
-      })
+
+      return new Response().fetched({ data: _category }, res)
     } catch (error) {
-      return res.status(400)
+      return new Response().error(error, res)
     }
   }
 
@@ -25,36 +24,34 @@ export default class ProductCategoryController {
         '-createdAt -updatedAt -__v',
       )
 
-      if (!_cate) throw { message: 'Category not found' }
+      if (!_cate) throw { message: MESSAGE.RESULT_NOT_FOUND() }
 
-      return res.status(200).json({ data: _cate })
+      return new Response().fetched({ data: _cate }, res)
     } catch (error) {
-      return res.status(400).json({ ...error })
+      return new Response().error(error, res)
     }
   }
 
   createCategory = async (req, res) => {
     try {
       const { name, description, slug, image } = req.body
-      
+
       let newSlug = slug
-      
+
       const _prodExist = await ProductCategory.findOne({ slug: slug })
 
       if (_prodExist) {
         newSlug = newSlug + '-' + shortid()
       }
-      
+
       const _prodCate = new ProductCategory({ name, description, slug: newSlug, image })
 
-      await _prodCate.save();
+      await _prodCate.save()
 
-      return res.status(200).json({
-        message: 'ok',
-      })
+      return new Response().created({}, res)
     } catch (error) {
       console.log('this.createCategory error: ' + error)
-      return res.status(400)
+      return new Response().error(error, res)
     }
   }
 
@@ -66,12 +63,11 @@ export default class ProductCategoryController {
 
       await ProductCategory.updateOne({ _id: mongoose.Types.ObjectId(_id) }, { ...formData }, { new: true })
 
-      return res.status(200).json({
-        message: 'ok',
-      })
+      return new Response().updated({}, res)
     } catch (error) {
       console.log('this.createCategory error: ' + error)
-      return res.status(400)
+
+      return new Response().error(error, res)
     }
   }
 }

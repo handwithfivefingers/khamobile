@@ -1,12 +1,8 @@
-import { MESSAGE } from '#server/constant/message'
-import { Product, ProductVariant } from '#model'
-import mongoose, { mongo, startSession } from 'mongoose'
-import shortid from 'shortid'
-import slugify from 'slugify'
-import ProductModel from './Model'
-import _ from 'lodash'
 import { TYPE_VARIANT } from '#constant/type'
-import { handleDownloadFile } from '#middleware'
+import { Product, ProductVariant } from '#model'
+import mongoose, { startSession } from 'mongoose'
+import Response from '#server/response'
+
 export default class ProductController {
   getProduct = async (req, res) => {
     try {
@@ -14,13 +10,15 @@ export default class ProductController {
         .populate('category')
         .select('_id title price slug category stock_status type image attributes createdAt updatedAt')
       console.log(_prod)
-      return res.status(200).json({
-        data: _prod,
-      })
+      // return res.status(200).json({
+      //   data: _prod,
+      // })
+      return new Response().fetched({ data: _prod }, res)
     } catch (error) {
-      return res.status(400).json({
-        error,
-      })
+      // return res.status(400).json({
+      //   error,
+      // })0
+      return new Response().error(error, res)
     }
   }
 
@@ -132,14 +130,16 @@ export default class ProductController {
       //   data.push(prod)
       // }
 
-      return res.status(200).json({
-        data: _prod,
-      })
+      // return res.status(200).json({
+      //   data: _prod,
+      // })
+      return new Response().fetched({ data: _prod }, res)
     } catch (error) {
       console.log(error)
-      return res.status(400).json({
-        error,
-      })
+      // return res.status(400).json({
+      //   error,
+      // })
+      return new Response().error(error, res)
     }
   }
 
@@ -158,12 +158,13 @@ export default class ProductController {
       }
 
       if (!result) throw result.error
-      return res.status(200).json({
-        message: 'ok',
-      })
+      // return res.status(200).json({
+      //   message: 'ok',
+      // })
+      return new Response().create({}, res)
     } catch (error) {
       console.log('create error', error)
-      return res.status(400).json({ error })
+      return new Response().error(error, res)
     }
   }
 
@@ -270,12 +271,13 @@ export default class ProductController {
       }
 
       if (!result) throw result.error
-      return res.status(200).json({
-        message: 'Updated thành công',
-      })
+      // return res.status(200).json({
+      //   message: 'Updated thành công',
+      // })
+      return new Response().fetched({}, res)
     } catch (error) {
       console.log('update Product error: ', error)
-      return res.status(400).json({ error })
+      return new Response().error(error, res)
     }
   }
 
@@ -402,16 +404,10 @@ export default class ProductController {
 
       if (!result) throw result.error
 
-      return res.status(200).json({
-        message: 'Product deleted',
-        result,
-      })
+      return new Response().deleted({}, res)
     } catch (error) {
       console.log(error)
-      return res.status(400).json({
-        message: 'Failed',
-        error,
-      })
+      return new Response().error(error, res)
     }
   }
 

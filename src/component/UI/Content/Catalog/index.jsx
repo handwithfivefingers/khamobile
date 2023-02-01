@@ -33,9 +33,10 @@ const Catalog = (props) => {
         <div className={styles.content}>
           <ImageBlock
             src={
-              process.env.API + props?.data?.image?.src ||
+              props?.data?.image?.src ||
               'https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp'
             }
+            engine={props?.data?.image?.src}
             height={'200px'}
             className={styles.imgCatalog}
           />
@@ -73,7 +74,7 @@ const Catalog = (props) => {
         <div className={clsx(styles.listCatelog)}>
           <CustomSlider
             type={TYPE_CAROUSEL.MUTI}
-            slidesToShow={props.data?.child?.length > 5 ? 5 : 4}
+            slidesToShow={4}
             configs={{
               autoplay: true,
             }}

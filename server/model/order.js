@@ -36,6 +36,7 @@ export default {
 
   status: {
     type: String,
+    enum: ['pending', 'completed'],
     default: 'pending',
     require: true,
   },

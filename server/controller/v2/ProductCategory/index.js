@@ -1,5 +1,6 @@
 import { ProductCategory } from '#model'
 import { generateSeoTag } from '#common/helper'
+import Response from '#server/response'
 
 export default class ProductCategoryController {
   getCategory = async (req, res) => {
@@ -16,6 +17,7 @@ export default class ProductCategoryController {
               slug: '$slug',
               parent: '$parent',
               image: '$image',
+              description: '$description',
             },
           },
           {
@@ -36,6 +38,7 @@ export default class ProductCategoryController {
               slug: '$slug',
               parent: '$parent',
               image: '$image',
+              description: '$description',
             },
           },
           {
@@ -51,25 +54,19 @@ export default class ProductCategoryController {
         _category = _category.filter((item) => item.child.length)
       }
 
-      // console.log(_category)
-
-      return res.status(200).json({
-        data: _category,
-      })
+      return new Response().fetched({ data: _category }, res)
     } catch (error) {
-      return res.status(400)
+      return new Response().error(error, res)
     }
   }
 
   createCategory = async (req, res) => {
     try {
-      return res.status(200).json({
-        message: 'ok',
-      })
+      return new Response().created({}, res)
     } catch (error) {
       console.log('this.createCategory error: ' + error)
 
-      return res.status(400)
+      return new Response().error(error, res)
     }
   }
 
@@ -172,21 +169,21 @@ export default class ProductCategoryController {
 
       let [_cateProd] = await ProductCategory.aggregate(pipeAggregate)
 
-      console.log()
-
       const seoTags = await generateSeoTag({
         title: `${_cate.name} mới nhất giá rẻ - Khamobile`,
         description: `${_cate.name} mới nhất giá rẻ - Khamobile`,
         url: `${process.env.HOSTNAME}/product/${_cate.slug}`,
       })
 
-      return res.status(200).json({
-        data: { cate: _cate, product: _cateProd, total: total?.total, seo: [seoTags.head, seoTags.body] },
-      })
+      return new Response().fetched(
+        {
+          data: { cate: _cate, product: _cateProd, total: total?.total, seo: [seoTags.head, seoTags.body] },
+        },
+        res,
+      )
     } catch (error) {
       console.log('this.getCategoryBySlug error: ' + error)
-
-      return res.status(400)
+      return new Response().error(error, res)
     }
   }
 }

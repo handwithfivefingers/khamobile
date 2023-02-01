@@ -4,20 +4,19 @@ import { User } from '#model'
 const APIKEY = '23f7d544800315b66201a18b3ed7e847'
 const SECRETKEY = '7e2277246dc637ebc2d03ce9d0f0e60a'
 export default class MailServer {
-  mailjet
+  
+  mailjet = new Mailjet({
+    apiKey: APIKEY,
+    apiSecret: SECRETKEY,
+  })
+
   constructor() {
-    this.mailjet = new Mailjet({
-      apiKey: APIKEY,
-      apiSecret: SECRETKEY,
-    })
     this.mailjet = this.mailjet.post('send', { version: 'v3.1' })
   }
 
   sendMail = async (req, res) => {
     try {
       let user = await User.findOne({ email: req.body.email })
-
-      console.log('sendMail', user)
 
       if (!user) throw { message: 'User not found' }
 

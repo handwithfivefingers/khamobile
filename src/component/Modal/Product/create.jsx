@@ -20,7 +20,7 @@ const ProductCreateModal = (props) => {
     price: 0,
     regular_price: 0,
     purchasable: true,
-    stock_status: true,
+    stock_status: 'instock',
     parentId: '',
     variations: [],
     category: [],
@@ -97,6 +97,14 @@ const ProductCreateModal = (props) => {
     setRender(!_render)
   }
 
+  const handleStockStatus = (name, value) => {
+    formDataRef.current = {
+      ...formDataRef.current,
+      [name]: value,
+    }
+    setRender(!_render)
+  }
+
   return (
     <>
       <Content className={'p-4'}>
@@ -152,14 +160,19 @@ const ProductCreateModal = (props) => {
                 {formDataRef.current?.type === 'variable' && (
                   <FlexboxGrid.Item style={{ width: '100%' }}>
                     <GroupVariant
+                      stockData={{
+                        stock_status: formDataRef.current?.stock_status,
+                        purchasable: formDataRef.current?.purchasable,
+                        setStock: handleStockStatus,
+                      }}
                       variableData={variable}
                       attribute={{
                         attributes: formDataRef.current?.attributes || [],
-                        setAttributes: (value) => handleAttributes(value),
+                        setAttributes: handleAttributes,
                       }}
                       variation={{
                         variations: formDataRef.current?.variations || [],
-                        setVariations: (value) => handleVariations(value),
+                        setVariations: handleVariations,
                       }}
                     />
                   </FlexboxGrid.Item>

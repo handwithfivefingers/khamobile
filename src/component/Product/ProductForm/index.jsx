@@ -119,7 +119,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     attributes?.map(({ name, value }) => {
       map.set(
         name,
-        value.map((v) => ({ v, active: true })),
+        value.map((v) => ({ v, active: _relationProd.some((item) => item.attribute[name] === v) })),
       )
     })
 
@@ -221,6 +221,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     return html
   }, [form])
 
+  console.log(form)
   return (
     <CardBlock className="border-0">
       <Form ref={formRef} model={ProductModel}>

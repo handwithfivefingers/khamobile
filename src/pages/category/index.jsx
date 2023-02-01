@@ -10,9 +10,10 @@ import GlobalHomeService from 'service/global/Home.service'
 import styles from './styles.module.scss'
 
 const Card = (props) => {
+  console.log(props)
   return (
-    <Panel {...props} bordered header={props.title} style={{ backgroundImage: `url(${props.imgSrc})` }}>
-      <Placeholder.Paragraph />
+    <Panel {...props} bordered header={<h5>{props.title}</h5>} style={{ backgroundImage: `url(${props.imgSrc})` }}>
+      {props?.description ? <p style={{ minHeight: 46 }}>{props?.description}</p> : <Placeholder.Paragraph />}
     </Panel>
   )
 }
@@ -74,6 +75,7 @@ export default function Category(props) {
                         title={item.name}
                         className={styles.imageBg}
                         imgSrc={item.image && `${process.env.API}${item.image?.src}`}
+                        description={item.description}
                       />
                     </Col>
                   )

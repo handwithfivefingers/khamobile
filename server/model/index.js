@@ -4,6 +4,7 @@ import product from './product'
 import productAttribute from './product_attributes'
 import productAttributeTerm from './product_attribute_term'
 import productVariant from './product_variant'
+import page from './page'
 
 import productCategory from './product_category'
 import post from './post'
@@ -31,6 +32,8 @@ const postSchema = new Schema({ ...post }, { timestamps: true })
 
 const orderSchema = new Schema({ ...order }, { timestamps: true })
 
+const pageSchema = new Schema({ ...page }, { timestamps: true })
+
 // Add method, Virtual
 
 userSchema.method({
@@ -46,8 +49,11 @@ productVariantSchema.virtual('attr', {
   foreignField: '_id',
 })
 
+
 productVariantSchema.set('toObject', { virtuals: true })
+
 productVariantSchema.set('toJSON', { virtuals: true })
+
 // Register Collection
 const User = model('User', userSchema)
 
@@ -67,4 +73,6 @@ const Post = model('Post', postSchema)
 
 const Order = model('Order', orderSchema)
 
-export { Category, Product, User, Post, ProductAttribute, ProductVariant, ProductCategory, ProductAttributeTerm, Order }
+const Page = model('Page', pageSchema)
+
+export { Category, Product, User, Post, ProductAttribute, ProductVariant, ProductCategory, ProductAttributeTerm, Order , Page}

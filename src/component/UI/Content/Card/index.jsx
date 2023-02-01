@@ -79,8 +79,6 @@ export default function Card({
     }
   }
 
-  const handleRouting = (sl) => router.push(sl)
-
   if (loading) {
     return <CardSkeleton classCard={classCard} />
   }
@@ -111,7 +109,7 @@ export default function Card({
             <div className={styles.cardTitle}>
               <h5>{title}</h5>
             </div>
-            <p className={styles.cardText}>{getPrice(price)}</p>
+            <p className={clsx(styles.cardText, 'm-0')}>{getPrice(price)}</p>
             {underlinePrice && (
               <p className={styles.cardText}>
                 <s>{formatCurrency(underlinePrice)}</s>

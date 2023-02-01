@@ -130,7 +130,7 @@ const Home = (props) => {
                 </div>
 
                 <div className="col-12">
-                  <CustomSlider type={TYPE_CAROUSEL.MUTI}>
+                  <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
                     {data?.[6]?.child?.map((item) => {
                       return (
                         <Card
@@ -152,7 +152,7 @@ const Home = (props) => {
         </div>
       </section>
 
-      {/* <section className="container">
+      <section className="container">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
@@ -225,7 +225,7 @@ const Home = (props) => {
             </CustomSlider>
           </div>
         </div>
-      </section> */}
+      </section>
 
       <section className="container">
         <div className="row">
@@ -308,31 +308,6 @@ const Home = (props) => {
 Home.Layout = CommonLayout
 
 const SelfCarousel = () => {
-  // const [images, setImages] = useState([
-  //   {
-  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/BANNER-WEBSITE-01.png`,
-  //     thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
-  //   },
-
-  //   {
-  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-1.png`,
-  //     thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
-  //   },
-  //   {
-  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-2.png`,
-  //     thumbnailImageSrc: 'IPHONE 13 ProMax',
-  //   },
-  //   {
-  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/banner-moi-3.png`,
-  //     thumbnailImageSrc: 'IPHONE 13 ProMax',
-  //   },
-
-  //   {
-  //     itemImageSrc: `${process.env.API}/public/wp/2022/10/KHA-MOBILE-BANNER-21.10.2022.png`,
-  //     thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
-  //   },
-
-  // ])
   const [images, setImages] = useState([
     {
       itemImageSrc: `/slide/banner-1.png`,

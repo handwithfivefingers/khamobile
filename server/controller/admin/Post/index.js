@@ -1,218 +1,184 @@
-import { Post } from '#model';
-import { handleDownloadFile } from '#server/middleware';
-import { MESSAGE } from '#server/constant/message';
-import shortid from 'shortid';
-import slugify from 'slugify';
-import mongoose from 'mongoose';
-import PostModel from './Model';
-import { MetadataGenerator } from 'metatags-generator';
+import { Post } from '#model'
+import { handleDownloadFile } from '#server/middleware'
+import Response from '#server/response'
+import { MetadataGenerator } from 'metatags-generator'
+import mongoose from 'mongoose'
+import shortid from 'shortid'
+import slugify from 'slugify'
+import PostModel from './Model'
 
-const equals = mongoose.equals;
+const equals = mongoose.equals
 
 class PostController {
-	createPost = async (req, res) => {
-		try {
-			let { title, slug, description, content, postImg, category } = req.body;
+  createPost = async (req, res) => {
+    try {
+      let { title, slug, description, content, postImg, category } = req.body
 
-			let _post = await Post.findOne({ slug });
+      let _post = await Post.findOne({ slug })
 
-			if (_post) slug = slugify(name.toLowerCase() + '-' + shortid());
+      if (_post) slug = slugify(name.toLowerCase() + '-' + shortid())
 
-			let file = req.files;
+      let file = req.files
 
-			let fileLength = Object.keys(file).length;
+      let fileLength = Object.keys(file).length
 
-			if (!fileLength && postImg && typeof postImg === 'string') {
+      if (!fileLength && postImg && typeof postImg === 'string') {
+        file = await handleDownloadFile(postImg)
 
-				file = await handleDownloadFile(postImg);
+        file = [{ ...file, filename: '/public/' + file.filename }]
+      } else file = file.postImg
 
-				file = [{ ...file, filename: '/public/' + file.filename }];
+      let _created = {
+        title,
+        slug: slug || slugify(req.body.title.toLowerCase()),
+        description,
+        content,
+        postImg: file || null,
+        category: category || null,
+      }
 
-			} else file = file.postImg;
+      const { ..._createObject } = new PostModel(_created)
 
-			let _created = {
-				title,
-				slug: slug || slugify(req.body.title.toLowerCase()),
-				description,
-				content,
-				postImg: file || null,
-				category: category || null,
-			};
+      const _obj = new Post(_createObject)
 
-			const { ..._createObject } = new PostModel(_created);
+      let data = await _obj.save()
 
-			const _obj = new Post(_createObject);
+      return new Response().created({ data }, res)
+    } catch (error) {
+      console.log('PostController createPost', error)
 
-			let data = await _obj.save();
+      return new Response().error(error, res)
+    }
+  }
 
-			return res.status(200).json({
-				message: MESSAGE.CREATED(),
-				data,
-			});
-		} catch (error) {
-			console.log('PostController createPost', error);
+  updatePost = async (req, res) => {
+    try {
+      let { _id } = req.params
 
-			return res.status(400).json({
-				message: MESSAGE.ERROR_ADMIN('danh mục'),
-			});
-		}
-	};
+      let { title, slug, description, content, postImg, category } = req.body
 
-	updatePost = async (req, res) => {
-		try {
-			let { _id } = req.params;
+      let isFile = false
 
-			let { title, slug, description, content, postImg, category } = req.body;
+      let file = null
+      console.log('coming ??', req.files, typeof req.body.postImg, req.body.postImg !== 'null')
 
-			let isFile = false;
+      if (req.files || typeof req.body.postImg === 'string') {
+        console.log('come in ??')
+        isFile = true
+        file = req.files
+        let fileLength = Object.keys(file).length
 
-			let file = null;
-			console.log('coming ??', req.files, typeof req.body.postImg, req.body.postImg !== 'null');
+        if (!fileLength && typeof postImg === 'string') {
+          file = await handleDownloadFile(postImg)
+          file = [file]
+        } else file = file.postImg
+      }
 
-			if (req.files || typeof req.body.postImg === 'string') {
-				console.log('come in ??');
-				isFile = true;
-				file = req.files;
-				let fileLength = Object.keys(file).length;
+      let _updated = {
+        title: title ? title : null,
+        description: description ? description : null,
+        content: content ? content : null,
+        slug: slug ? slug || slugify(req.body.name) : null,
+        postImg: isFile ? file : null,
+        category: category || null,
+      }
 
-				if (!fileLength && typeof postImg === 'string') {
-					file = await handleDownloadFile(postImg);
-					file = [file];
-				} else file = file.postImg;
-			}
+      const { ..._updateObject } = new PostModel(_updated)
 
-			let _updated = {
-				title: title ? title : null,
-				description: description ? description : null,
-				content: content ? content : null,
-				slug: slug ? slug || slugify(req.body.name) : null,
-				postImg: isFile ? file : null,
-				category: category || null,
-			};
+      let data = await Post.updateOne({ _id }, _updateObject, { new: true })
 
-			const { ..._updateObject } = new PostModel(_updated);
+      return new Response().updated({ data }, res)
+    } catch (error) {
+      return new Response().error(error, res)
+    }
+  }
 
-			let data = await Post.updateOne({ _id }, _updateObject, { new: true });
+  getSinglePost = async (req, res) => {
+    try {
+      let { slug } = req.params
 
-			return res.status(200).json({
-				message: MESSAGE.UPDATED(),
-				data,
-			});
-		} catch (error) {
-			return res.status(400).json({
-				message: error?.message || MESSAGE.ERROR_ADMIN('Bài viết'),
-			});
-		}
-	};
+      let _post = await Post.findOne({
+        slug,
+      }).select('-__v -createdAt -updatedAt')
 
-	getSinglePost = async (req, res) => {
-		try {
-			let { slug } = req.params;
+      const settings = {
+        structuredData: true,
+        androidChromeIcons: true,
+        msTags: true,
+        safariTags: true,
+        appleTags: true,
+        openGraphTags: true,
+        twitterTags: true,
+        facebookTags: true,
+      }
+      const generator = new MetadataGenerator()
 
-			let _post = await Post.findOne({
-				slug,
-			}).select('-__v -createdAt -updatedAt');
+      const seoFromPost = {
+        title: _post.title,
+        description: _post.description,
+        url: process.env.CANONICAL,
+        image: `/public/${_post.postImg?.[0]?.filename}`,
+        keywords: 'mobile, app mobile, kha mobile, khamobile post',
+        locale: 'vi_VI',
+      }
+      const preparedData = generator
+        .configure(settings)
+        .setRobots('index, follow')
+        .setProjectMeta({
+          name: process.env.APP_NAME,
+          url: process.env.CANONICAL,
+          logo: process.env.LOGO,
+          primaryColor: '#333333',
+          backgroundColor: '#ffffff',
+        })
+        .setPageMeta(seoFromPost)
+        .setCanonical(process.env.CANONICAL)
+        .setFacebookMeta(5233)
+        .build()
 
-			const settings = {
-				structuredData: true,
-				androidChromeIcons: true,
-				msTags: true,
-				safariTags: true,
-				appleTags: true,
-				openGraphTags: true,
-				twitterTags: true,
-				facebookTags: true,
-			};
-			const generator = new MetadataGenerator();
+      return new Response().fetched({ data: _post, seo: [preparedData.head, preparedData.body] }, res)
+    } catch (error) {
+      console.log('getSinglePost', error)
+      return new Response().error(error, res)
+    }
+  }
 
-			const seoFromPost = {
-				title: _post.title,
-				description: _post.description,
-				url: process.env.CANONICAL,
-				image: `/public/${_post.postImg?.[0]?.filename}`,
-				keywords: 'mobile, app mobile, kha mobile, khamobile post',
-				locale: 'vi_VI',
-			};
-			const preparedData = generator
-				.configure(settings)
-				.setRobots('index, follow')
-				// .setShortLink('https://bit.ly/1ahy')
-				// .setLocalVersion('en_US', 'https://example.com', true)
-				// .setAlternateHandheld('https://m.example.com')
-				.setProjectMeta({
-					name: process.env.APP_NAME,
-					url: process.env.CANONICAL,
-					logo: process.env.LOGO,
-					primaryColor: '#333333',
-					backgroundColor: '#ffffff',
-				})
-				.setPageMeta(seoFromPost)
-				// .openGraphData('video.movie')
-				.setCanonical(process.env.CANONICAL)
-				// .breadcrumb('')
-				// .setIcons(icons)
-				// .setTwitterMeta({
-				// 	card: 'summary_large_image',
-				// 	site: '@nytimesbits',
-				// 	creator: '@nickbilton',
-				// })
-				.setFacebookMeta(5233)
-				.build();
+  getPost = async (req, res) => {
+    try {
+      console.log('get Post')
 
-			return res.status(200).json({
-				data: _post,
-				seo: [preparedData.head, preparedData.body],
-				message: MESSAGE.FETCHED(),
-			});
-		} catch (error) {
-			console.log('getSinglePost', error);
-			return res.status(400).json({
-				message: MESSAGE.SYSTEM_ERROR(),
-			});
-		}
-	};
+      const data = await Post.find({})
 
-	getPost = async (req, res) => {
-		try {
-			console.log('get Post');
+      return new Response().fetched({ data }, res)
+    } catch (error) {
+      return new Response().error(error, res)
+    }
+  }
 
-			const data = await Post.find({});
+  filterCate = (cateList, parentCategory = null) => {
+    try {
+      let category
 
-			return res.status(200).json({
-				message: MESSAGE.FETCHED(),
-				data: data || [],
-			});
-		} catch (error) {
-			return res.status(400).json({
-				message: MESSAGE.ERROR_ADMIN('Post'),
-			});
-		}
-	};
+      if (parentCategory == null) {
+        category = cateList.filter((cat) => cat.parentCategory == undefined)
+      } else {
+        category = cateList.filter((cat) => cat.parentCategory?.equals(parentCategory))
+      }
+      for (let cate of category) {
+        categoryList.push({
+          ...cate._doc,
+          children: this.filterCate(cateList, cate._id),
+        })
+      }
 
-	filterCate = (cateList, parentCategory = null) => {
-		try {
-			let category;
-
-			if (parentCategory == null) {
-				category = cateList.filter((cat) => cat.parentCategory == undefined);
-			} else {
-				category = cateList.filter((cat) => cat.parentCategory?.equals(parentCategory));
-			}
-			for (let cate of category) {
-				categoryList.push({
-					...cate._doc,
-					children: this.filterCate(cateList, cate._id),
-				});
-			}
-
-			return categoryList.length > 0 ? categoryList : null;
-		} catch (error) {
-			console.log('filterCate', error);
-			throw error;
-		}
-	};
+      return categoryList.length > 0 ? categoryList : null
+    } catch (error) {
+      console.log('filterCate', error)
+      throw error
+    }
+  }
 }
 
-const { ...PostControl } = new PostController();
+const { ...PostControl } = new PostController()
 
-export default PostControl;
+export default PostControl

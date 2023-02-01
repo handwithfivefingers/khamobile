@@ -1,7 +1,5 @@
 import { ProductAttribute, ProductAttributeTerm } from '#server/model'
-import { MESSAGE } from '#server/constant/message'
-import ProductVariableModel from './Model'
-import { Success, Error } from '#server/common/responseStatus'
+import Response from '#server/response'
 import mongoose from 'mongoose'
 
 export default class ProductAttributeController {
@@ -35,10 +33,10 @@ export default class ProductAttributeController {
         },
       ])
 
-      return Success({ res, message: 'Get Attribute Success', data: _attr })
+      return new Response().fetched({ data: _attr }, res)
     } catch (error) {
       console.log('getAttribute error: ' + error)
-      return Error({ res, message: 'Something went wrong', error })
+      return new Response().error(error, res)
     }
   }
 
@@ -46,12 +44,10 @@ export default class ProductAttributeController {
     try {
       let _attr = await ProductAttributeTerm.find({ parentId: req.params._id }).select('_id name parentId')
 
-      return res.status(200).json({
-        data: _attr,
-      })
+      return new Response().fetched({ data: _attr }, res)
     } catch (error) {
       console.log('getAttribute error: ' + error)
-      return Error({ res, message: 'Something went wrong', error })
+      return new Response().error(error, res)
     }
   }
 
@@ -75,9 +71,10 @@ export default class ProductAttributeController {
           )
         }
       }
-      return Success({ res, message: 'Modify Attribute Success', data: [] })
+
+      return new Response().updated({}, res)
     } catch (error) {
-      return Error({ res, message: error?.message || 'Something went wrong', error })
+      return new Response().error(error, res)
     }
   }
 
@@ -91,18 +88,18 @@ export default class ProductAttributeController {
 
       await _attribute.save()
 
-      return Success({ res, message: 'Attribute saved successfully', data: [] })
+      return new Response().created({}, res)
     } catch (error) {
-      return Error({ res, message: 'Something went wrong', error })
+      return new Response().error(error, res)
     }
   }
 
   getAttribute = async (req, res) => {
     try {
       const _attr = await ProductAttribute.find({})
-      return Success({ res, message: 'Get Attribute Success', data: _attr })
+      return new Response().fetched({ data: _attr }, res)
     } catch (error) {
-      return Error({ res, message: 'Something went wrong', error })
+      return new Response().error(error, res)
     }
   }
 }

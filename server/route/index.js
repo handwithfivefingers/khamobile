@@ -24,24 +24,32 @@ const UploadRouter = (req, res, next) => {
 
 AppRouter.use('/service', ServiceRouter)
 
+// AppRouter.use(
+//   '/admin',
+//   authenticating,
+//   adminMiddleware,
+//   AdminRouter.UserRouter,
+//   AdminRouter.CateRouter,
+//   AdminRouter.PostRouter,
+//   AdminRouter.ProductAttributeRoute,
+//   AdminRouter.ProductRouter,
+//   AdminRouter.OrderRouter,
+//   AdminRouter.PageRouter,
+// )
+
 AppRouter.use(
   '/admin',
   authenticating,
   adminMiddleware,
-  AdminRouter.UserRouter,
-  AdminRouter.CateRouter,
-  AdminRouter.PostRouter,
-  AdminRouter.ProductAttributeRoute,
-  AdminRouter.ProductRouter,
-  AdminRouter.OrderRouter,
-)
-AppRouter.post(
-  '/upload',
-  authenticating,
-  userMiddleware,
-  upload.fields([{ name: 'upload', maxCount: 1 }]),
-  UploadRouter,
-)
+  Object.keys(AdminRouter).map((routerName) => AdminRouter[routerName]),
+),
+  AppRouter.post(
+    '/upload',
+    authenticating,
+    userMiddleware,
+    upload.fields([{ name: 'upload', maxCount: 1 }]),
+    UploadRouter,
+  )
 
 AppRouter.use(
   '/',

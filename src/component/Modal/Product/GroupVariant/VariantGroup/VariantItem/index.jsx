@@ -58,7 +58,7 @@ const Select = forwardRef(({ attributes, name, position, ...props }, ref) => {
 
   const item = ref.current[position]
 
-  const optiosnMemoiz = (selectOptions) => selectOptions?.value?.map((_val) => ({ label: _val, value: _val }))
+  const optionMemoiz = (selectOptions) => selectOptions?.value?.map((_val) => ({ label: _val, value: _val }))
 
   const handleSelect = (value) => {
     item.attributes[name] = value
@@ -69,7 +69,7 @@ const Select = forwardRef(({ attributes, name, position, ...props }, ref) => {
 
   return (
     <SelectPicker
-      data={optiosnMemoiz(optionTarget)}
+      data={optionMemoiz(optionTarget)}
       placeholder={name}
       className={styles.selectItem}
       value={item.attributes[name] || ''}

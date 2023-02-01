@@ -128,17 +128,26 @@ export default function KMSidebar() {
               </Nav.Item>
             </Link>
 
-            <Link href="/admin/email" passHref>
-              <Nav.Item eventKey="/admin/email" icon={<MessageIcon />}>
-                Email
+            <Link href="/admin/file-manager" passHref>
+              <Nav.Item eventKey="/admin/file-manager" icon={<DetailIcon />}>
+                Quản lý file
               </Nav.Item>
             </Link>
 
-            <Link href="/admin/setting" passHref>
-              <Nav.Item eventKey="/admin/setting" icon={<GearIcon />}>
-                Setting
-              </Nav.Item>
-            </Link>
+            <Nav.Menu eventKey="/admin/setting" icon={<GearIcon />} title="Tùy chỉnh">
+              {/* Products */}
+              <Link href="/admin/product" passHref>
+                <Nav.Item eventKey="/admin/setting" icon={<GearIcon />}>
+                  Setting
+                </Nav.Item>
+              </Link>
+
+              <Link href="/admin/setting/email" passHref>
+                <Nav.Item eventKey="/admin/setting/email" icon={<MessageIcon />}>
+                  Email
+                </Nav.Item>
+              </Link>
+            </Nav.Menu>
 
             <Nav.Item eventKey="4" icon={<OffIcon />} onClick={logout}>
               Logout

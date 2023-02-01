@@ -216,7 +216,7 @@ export default class PaymentController {
       const url =
         process.env.NODE_ENV === 'development'
           ? `http://localhost:3002/checkout/${vnp_Params['vnp_OrderInfo']}?`
-          : `https://khamobile.truyenmai.com/checkout/${vnp_Params['vnp_OrderInfo']}?`
+          : `https://khamobile.vn/checkout/${vnp_Params['vnp_OrderInfo']}?`
 
       // http://localhost:3005/api/service/payment/url_return?vnp_Amount=3760000000&vnp_BankCode=NCB&vnp_BankTranNo=VNP13916831&vnp_CardType=ATM&vnp_OrderInfo=63abc7c2b12084687be9fa6e&vnp_PayDate=20221228113712&vnp_ResponseCode=00&vnp_TmnCode=KHAMOBIL&vnp_TransactionNo=13916831&vnp_TransactionStatus=00&vnp_TxnRef=113619&vnp_SecureHash=a7bb99edb41900f46328f57ce1e0c8b2b5aef936cdc5d49ab6df501df16ba2b5b15c49ab20e77d0c931c64b3b48bf13d3b8430f010891c1af1b53d46ae1103f5
 
@@ -264,10 +264,17 @@ export default class PaymentController {
 
       var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest('hex')
 
-      let url =
+      const orderId = vnp_Params['vnp_OrderInfo']
+
+      // let url =
+      //   process.env.NODE_ENV === 'development'
+      //     ? `http://localhost:3003/user/result?`
+      //     : `https://app.thanhlapcongtyonline.vn/user/result?`
+
+      const url =
         process.env.NODE_ENV === 'development'
-          ? `http://localhost:3003/user/result?`
-          : `https://app.thanhlapcongtyonline.vn/user/result?`
+          ? `http://localhost:3002/checkout/${orderId}?`
+          : `https://khamobile.vn/checkout/${orderId}?`
 
       if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
@@ -280,27 +287,31 @@ export default class PaymentController {
         if (code === '00') {
           // Success
           const _update = {
-            payment: Number(1),
+            status: 'completed',
           }
 
-          await Order.updateOne({ _id: req.query.vnp_OrderInfo }, _update, {
+          const _order = await Order.updateOne({ _id: req.query.vnp_OrderInfo }, _update, {
             new: true,
           })
 
-          let _order = await Order.findOne({
-            _id: req.query.vnp_OrderInfo,
-          }).populate('orderOwner', '_id name email')
+          // let _order = await Order.findOne({
+          //   _id: req.query.vnp_OrderInfo,
+          // })
 
-          let [{ subject, content }] = await Setting.find().populate('mailPaymentSuccess')
+          const { userInformation } = _order
 
-          let params = {
-            email: _order.orderOwner.email || 'handgd1995@gmail.com',
-            subject,
-            content,
-            type: 'any',
-          }
+          // .populate('orderOwner', '_id name email')
 
-          await sendmailWithAttachments(req, res, params)
+          // let [{ subject, content }] = await Setting.find().populate('mailPaymentSuccess')
+
+          // let params = {
+          //   email: _order.orderOwner.email || 'handgd1995@gmail.com',
+          //   subject,
+          //   content,
+          //   type: 'any',
+          // }
+
+          // await sendmailWithAttachments(req, res, params)
 
           return res.redirect(url + query)
         }
