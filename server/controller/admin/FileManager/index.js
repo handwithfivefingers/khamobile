@@ -24,7 +24,7 @@
 // }
 import fs from 'fs'
 import path from 'path'
-import Response from '#server/Response'
+import Response from '#server/response'
 export default class FileManagerController {
   getListfile = async (req, res) => {
     try {
