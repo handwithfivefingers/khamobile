@@ -199,14 +199,14 @@ export default function Checkout() {
       <div className="col-12 p-0 py-2 border-top">
         <div className="container">
           <div className="row gx-4 gy-4">
-            <div className="col-12 col-md-6 col-lg-4 col-xl-3">
+            <div className="col-12 col-md-6 col-lg-6 col-xl-6">
               <div className="row gy-4">
-                {renderInformationBlock()}
+                {/* {renderInformationBlock()} */}
                 {renderUserInformationByCondition(authenticate)}
               </div>
             </div>
 
-            <div className="col-12 col-md-6 col-lg-8 col-xl-9">
+            <div className="col-12 col-md-6 col-lg-6 col-xl-6">
               <div className="row gx-4 gy-4">
                 <div className="col-12">
                   <h5 className="text-secondary">Thông tin giao nhận</h5>

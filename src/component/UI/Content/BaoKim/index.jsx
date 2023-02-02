@@ -19,6 +19,11 @@ export default function BaoKim(props) {
 
     script.src = '/assets/script/baokim.js'
 
+    script.onload = () => {
+      document.querySelector(
+        '.bk-btn-paynow',
+      ).innerHTML = `<strong>Mua ngay (Bảo Kim)</strong><span>Giao tận nơi hoặc nhận tại cửa hàng</span>`
+    }
     document.body.appendChild(script)
   }
 
