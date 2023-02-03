@@ -46,7 +46,8 @@ export default class FileManagerController {
         })
       } else {
         let folder = fs.readdirSync(folderName)
-        const isDirectory = (item) => fs.statSync(`${folderName}\\${item}`)?.isDirectory()
+
+        const isDirectory = (item) => fs.statSync(folderName + '/' + item)?.isDirectory()
 
         const getSrc = (item) => {
           const asPath = req.query.folder
