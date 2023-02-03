@@ -1,5 +1,5 @@
 import { generateSeoTag } from '#common/helper'
-import { Product, ProductCategory } from '#server/model'
+import { Product, ProductCategory, ProductVariant } from '#server/model'
 import _ from 'lodash'
 import mongoose from 'mongoose'
 import Response from '#server/response'
@@ -262,7 +262,7 @@ export default class ProductController {
 
   getProduct = async (req, res) => {
     try {
-      let { price, createdAt, feature, activePage, pageSize, maxPrice, stock_status, all } = req.query
+      let { price, createdAt, feature, activePage, pageSize, maxPrice, stock_status, all, type } = req.query
 
       let pageS = pageSize || 10
 
@@ -275,6 +275,7 @@ export default class ProductController {
       const MAXPRICE = Number(maxPrice) * UNIT_PRICE || 999 * UNIT_PRICE
 
       let count
+
       if (all) {
         _prod = await Product.find().select('-content -_id -createdAt -updatedAt -__v')
       } else {
@@ -313,6 +314,7 @@ export default class ProductController {
           }).count()
         }
       }
+
       return new Response().fetched(
         {
           length: _prod.length,
@@ -404,6 +406,52 @@ export default class ProductController {
         res,
       )
     } catch (error) {
+      return new Response().error(error, res)
+    }
+  }
+
+  getProductFeed = async (req, res) => {
+    try {
+      let _prod = []
+      _prod = await ProductVariant.find({
+        purchasable: true,
+      })
+        .populate({
+          path: 'parentId',
+          select: 'title image.src slug category -_id',
+          populate: {
+            path: 'category',
+            select: 'name -_id',
+          },
+        })
+        .select('price parentId stock_status attributes -_id')
+
+      _prod = _prod.map(({ parentId, price, stock_status, attributes }, index) => {
+        let { title, slug, image, category } = parentId
+
+        for (let keys in attributes) {
+          const currentAttribute = attributes[keys]
+          if (!title.includes(currentAttribute)) title += ` - ${currentAttribute}`
+        }
+
+        return {
+          name: title,
+          url: process.env.HOST + '/product/' + slug,
+          price,
+          stock_status,
+          category: category?.map(({ name }) => name),
+          imageUrls: image.map(({ src }) => process.env.API + src),
+        }
+      })
+
+      return new Response().fetched(
+        {
+          data: _prod,
+        },
+        res,
+      )
+    } catch (error) {
+      console.log(error)
       return new Response().error(error, res)
     }
   }
