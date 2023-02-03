@@ -438,7 +438,7 @@ export default class ProductController {
           name: title,
           url: process.env.HOST + '/product/' + slug,
           price,
-          stock_status,
+          stock_status: stock_status === 'instock' ? 1 : 0,
           category: category?.map(({ name }) => name),
           imageUrls: image.map(({ src }) => process.env.API + src),
         }
