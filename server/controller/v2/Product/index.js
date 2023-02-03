@@ -444,12 +444,7 @@ export default class ProductController {
         }
       })
 
-      return new Response().fetched(
-        {
-          data: _prod,
-        },
-        res,
-      )
+      return new Response().fetched(_prod, res, true)
     } catch (error) {
       console.log(error)
       return new Response().error(error, res)
