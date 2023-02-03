@@ -1,3 +1,4 @@
 export const TYPE_CAROUSEL = {
-	MUTI: 'mutiple',
-};
+  MUTI: 'mutiple',
+  SING: 'single',
+}

@@ -6,6 +6,7 @@ import ProductRouter from './product'
 import OrderRouter from './order'
 import PageRouter from './page'
 import FileManagerRouter from './file_manager'
+import SettingRouter from './setting'
 
 const Router = {
   CateRouter,
@@ -16,5 +17,6 @@ const Router = {
   OrderRouter,
   PageRouter,
   FileManagerRouter,
+  SettingRouter,
 }
 export default Router

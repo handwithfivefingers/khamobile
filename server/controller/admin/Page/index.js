@@ -4,7 +4,10 @@ import mongoose from 'mongoose'
 export default class PageController {
   getAllPages = async (req, res) => {
     try {
-      const _page = await Page.find({})
+      let _page = await Page.find({})
+
+      _page = _page?.map(({ _doc }) => ({ ..._doc, dynamicRef: 'Page' }))
+
       return new Response().fetched({ data: _page }, res)
     } catch (error) {
       return new Response().error(error, res)

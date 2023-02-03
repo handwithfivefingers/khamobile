@@ -7,11 +7,36 @@ import shortid from 'shortid'
 export default class ProductCategoryController {
   getCategory = async (req, res) => {
     try {
-      // let _category = await ProductCategory.find({ parent: { $exists: false } }).select('-createdAt -updatedAt -__v')
-      let _category = await ProductCategory.find({}).select('-createdAt -updatedAt -__v')
+      const { type } = req.query
+
+      let _category = []
+
+      //   _category = await ProductCategory.find({ parent: { $exists: false } }).select('-createdAt -updatedAt -__v')
+      // } else {
+
+      if (type === 'parent') {
+        _category = await ProductCategory.aggregate([
+          {
+            $match: {
+              parent: { $exists: false },
+            },
+          },
+          {
+            $lookup: {
+              from: 'productcategories',
+              localField: '_id',
+              foreignField: 'parent',
+              as: 'children',
+            },
+          },
+        ])
+      } else {
+        _category = await ProductCategory.find({}).select('-createdAt -updatedAt -__v')
+      }
 
       return new Response().fetched({ data: _category }, res)
     } catch (error) {
+      console.log(error)
       return new Response().error(error, res)
     }
   }
@@ -68,6 +93,33 @@ export default class ProductCategoryController {
       console.log('this.createCategory error: ' + error)
 
       return new Response().error(error, res)
+    }
+  }
+
+  filterCategoryWithParentId = (data = []) => {
+    try {
+      const parentCategories = data.filter((cate) => cate.parent)
+      const childCategories = data.filter((cate) => !cate.parent)
+      const result = []
+      console.log(childCategories)
+      for (let parentCate of parentCategories) {
+        // parentCate
+        const newParent = { ...parentCate._doc, children: [] }
+
+        const item = childCategories.filter((child) => child.parent.toString() === newParent._id.toString())
+
+        if (item) {
+          newParent.children = item
+        }
+        result.push(newParent)
+      }
+
+      console.log('result ::::::::::::::::')
+      console.log(result)
+      return result
+    } catch (error) {
+      console.log(error)
+      throw error
     }
   }
 }

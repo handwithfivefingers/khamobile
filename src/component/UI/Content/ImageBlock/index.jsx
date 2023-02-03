@@ -5,7 +5,7 @@ import { Modal } from 'rsuite'
 import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
 
-export default function ImageBlock({ src, alt, className, bordered, height, engine }) {
+export default function ImageBlock({ src, alt, className, bordered, height, engine, modal = false }) {
   const [state, setState] = useState(false)
 
   const imgClass = clsx([
@@ -22,13 +22,11 @@ export default function ImageBlock({ src, alt, className, bordered, height, engi
 
   return (
     <div className={imgClass} style={{ '--height-offset': height ? height : '100%' }}>
-      {/* <img src={src} alt={alt} onClick={() => openImageViewer(true)} /> */}
       <Image
         alt={alt}
         onClick={() => openImageViewer(true)}
         layout="fill"
         src={src}
-        // className={styles.img}
         blurDataURL={
           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
         }
@@ -38,11 +36,13 @@ export default function ImageBlock({ src, alt, className, bordered, height, engi
           return engine ? process.env.API + src + `?w=${width}&q=${quality || 75}` : src
         }}
       />
-      <Modal open={state} onClose={() => setState(false)} size="md" style={{ background: 'transparent' }}>
-        <Modal.Body>
-          <img src={engine ? process.env.API + src : src} alt={alt} style={{ width: '100%', maxWidth: '1024px' }} />
-        </Modal.Body>
-      </Modal>
+      {modal && (
+        <Modal open={state} onClose={() => setState(false)} size="md" style={{ background: 'transparent' }}>
+          <Modal.Body>
+            <img src={engine ? process.env.API + src : src} alt={alt} style={{ width: '100%', maxWidth: '1024px' }} />
+          </Modal.Body>
+        </Modal>
+      )}
     </div>
   )
 }

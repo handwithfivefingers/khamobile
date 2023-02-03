@@ -135,10 +135,9 @@ export default function KMSidebar() {
             </Link>
 
             <Nav.Menu eventKey="/admin/setting" icon={<GearIcon />} title="Tùy chỉnh">
-              {/* Products */}
-              <Link href="/admin/product" passHref>
-                <Nav.Item eventKey="/admin/setting" icon={<GearIcon />}>
-                  Setting
+              <Link href="/admin/setting/menu" passHref>
+                <Nav.Item eventKey="/admin/setting/menu" icon={<GearIcon />}>
+                  Menu
                 </Nav.Item>
               </Link>
 

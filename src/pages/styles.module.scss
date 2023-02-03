@@ -10,6 +10,10 @@
     display: grid;
     gap: 12px;
   }
+  .serviceBanner {
+    width: 100%;
+    height: 51%;
+  }
   @media (min-width: 1140px) {
     .mainBanner {
       grid-template-rows: 1fr 1fr;

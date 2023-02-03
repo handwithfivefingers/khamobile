@@ -36,3 +36,20 @@
     bottom: 0;
   }
 }
+
+.single-slider {
+  .slick-track {
+    &:before {
+      padding: 0;
+    }
+    &::after {
+      padding: 0;
+    }
+    .slick-slide {
+      padding: 0;
+      img {
+        border-radius: 4px;
+      }
+    }
+  }
+}

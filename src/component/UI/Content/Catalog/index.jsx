@@ -21,8 +21,6 @@ const Catalog = (props) => {
     return router.push('/category/' + group.slug + '?page=1')
   }
 
-  console.log('Catalog', props.data?.name)
-  console.log('Catalog', props.data)
   return (
     <div className={className}>
       <div className={clsx(styles.col, styles.firstCol)}>

@@ -1,9 +1,4 @@
 import CommonLayout from 'component/UI/Layout'
-import Head from 'next/head'
-import Homebanner_1 from 'assets/img/dai-hoi-thu-cu-doi-moi5.webp'
-import Homebanner_2 from 'assets/img/iphone-13-pro-max.webp'
-import Homebanner_3 from 'assets/img/iphone-14-san-hang.webp'
-import Homebanner_4 from 'assets/img/macbook-m2-gia-soc.jpg'
 import Card from 'component/UI/Content/Card'
 import Heading from 'component/UI/Content/Heading'
 
@@ -19,6 +14,7 @@ import CardBlock from 'component/UI/Content/CardBlock'
 import axios from 'axios'
 import PostHelmet from 'component/PostHelmet'
 import { SiteLinksSearchBoxJsonLd } from 'next-seo'
+import SingleSlider from 'component/UI/Content/Slider/SingleItem'
 const Home = (props) => {
   const [data, setData] = useState([])
 
@@ -86,18 +82,6 @@ const Home = (props) => {
                   <SelfCarousel />
                 </div>
                 <div className={styles.mainBanner}>
-                  {/* <ImageBlock
-                    src={process.env.API + '/public/wp/2022' + '/10' + '/banner-moi-4.png'}
-                    className={styles.banner}
-                    alt="..."
-                    height={'calc(50% - 12px)'}
-                  />
-                  <ImageBlock
-                    src={process.env.API + '/public/wp/2022' + '/10' + '/banner-moi-5.png'}
-                    className={styles.banner}
-                    alt="..."
-                    height={'calc(50% - 12px)'}
-                  /> */}
                   <ImageBlock
                     src={'/slide/banner-small-1.png'}
                     className={styles.banner}
@@ -113,6 +97,51 @@ const Home = (props) => {
                 </div>
               </div>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="container">
+        <div className="row">
+          <div className="col-3">
+            <ImageBlock
+              engine
+              src={'/public/service/service-1.jpg'}
+              className={styles.serviceBanner}
+              alt="..."
+              width={'390px'}
+              height="52%"
+            />
+          </div>
+          <div className="col-3">
+            <ImageBlock
+              engine
+              src={'/public/service/service-2.jpg'}
+              className={styles.serviceBanner}
+              alt="..."
+              width={'390px'}
+              height="52%"
+            />
+          </div>
+          <div className="col-3">
+            <ImageBlock
+              engine
+              src={'/public/service/service-3.jpg'}
+              className={styles.serviceBanner}
+              alt="..."
+              width={'390px'}
+              height="52%"
+            />
+          </div>
+          <div className="col-3">
+            <ImageBlock
+              engine
+              src={'/public/service/service-4.jpg'}
+              className={styles.serviceBanner}
+              alt="..."
+              width={'390px'}
+              height="52%"
+            />
           </div>
         </div>
       </section>
@@ -328,11 +357,18 @@ const SelfCarousel = () => {
     },
   ])
   return (
-    <Carousel placement={'bottom'} shape={'bar'} className="custom-slider" autoplayInterval={3000} autoplay>
+    <SingleSlider
+      placement={'bottom'}
+      shape={'bar'}
+      className="single-slider"
+      autoplayInterval={3000}
+      autoplay
+      slidesToShow={1}
+    >
       {images.map((item, index) => (
-        <img src={item.itemImageSrc} key={index} />
+        <img src={item.itemImageSrc} key={index} height={'53%'} width={'100%'} />
       ))}
-    </Carousel>
+    </SingleSlider>
   )
 }
 

@@ -9,6 +9,8 @@ import page from './page'
 import productCategory from './product_category'
 import post from './post'
 import order from './order'
+import setting from './setting'
+
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
 
@@ -34,6 +36,8 @@ const orderSchema = new Schema({ ...order }, { timestamps: true })
 
 const pageSchema = new Schema({ ...page }, { timestamps: true })
 
+const settingSchema = new Schema({ ...setting }, { timestamps: true })
+
 // Add method, Virtual
 
 userSchema.method({
@@ -48,7 +52,6 @@ productVariantSchema.virtual('attr', {
   localField: 'attributes',
   foreignField: '_id',
 })
-
 
 productVariantSchema.set('toObject', { virtuals: true })
 
@@ -75,4 +78,18 @@ const Order = model('Order', orderSchema)
 
 const Page = model('Page', pageSchema)
 
-export { Category, Product, User, Post, ProductAttribute, ProductVariant, ProductCategory, ProductAttributeTerm, Order , Page}
+const Setting = model('Setting', settingSchema)
+
+export {
+  Category,
+  Product,
+  User,
+  Post,
+  ProductAttribute,
+  ProductVariant,
+  ProductCategory,
+  ProductAttributeTerm,
+  Order,
+  Page,
+  Setting,
+}
