@@ -1,5 +1,4 @@
 import dotenv from 'dotenv'
-import next from 'next'
 import express from 'express'
 import ConfigDatabase from './server/configs/db'
 import { envInit } from '#server/configs/environment'

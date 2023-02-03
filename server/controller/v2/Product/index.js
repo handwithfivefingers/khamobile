@@ -426,23 +426,25 @@ export default class ProductController {
         })
         .select('price parentId stock_status attributes -_id')
 
-      _prod = _prod.map(({ parentId, price, stock_status, attributes }, index) => {
-        let { title, slug, image, category } = parentId
+      _prod = _prod
+        // ?.filter(({ parentId }) => parentId.purchasable)
+        ?.map(({ parentId, price, stock_status, attributes }, index) => {
+          let { title, slug, image, category } = parentId
 
-        for (let keys in attributes) {
-          const currentAttribute = attributes[keys]
-          if (!title.includes(currentAttribute)) title += ` - ${currentAttribute}`
-        }
+          for (let keys in attributes) {
+            const currentAttribute = attributes[keys]
+            if (!title.includes(currentAttribute)) title += ` - ${currentAttribute}`
+          }
 
-        return {
-          name: title,
-          url: process.env.HOST + '/product/' + slug,
-          price,
-          stock_status: stock_status === 'instock' ? 1 : 0,
-          category: category?.map(({ name }) => name),
-          imageUrls: image.map(({ src }) => process.env.API + src),
-        }
-      })
+          return {
+            name: title,
+            url: process.env.HOST + '/product/' + slug,
+            price,
+            stock_status: stock_status === 'instock' ? 1 : 0,
+            category: category?.map(({ name }) => name),
+            imageUrls: image.map(({ src }) => process.env.API + src),
+          }
+        })
 
       return new Response().fetched(_prod, res, true)
     } catch (error) {

@@ -146,3 +146,8 @@ export const adminMiddleware = async (req, res, next) => {
     })
   }
 }
+
+export const cacheControl = async (req, res, next) => {
+  res.set('Cache-control', 'public, max-age=300')
+  next()
+}

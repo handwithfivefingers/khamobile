@@ -1,5 +1,5 @@
 import express from 'express'
-import { upload, userMiddleware, adminMiddleware, authenticating } from '#middleware'
+import { upload, userMiddleware, adminMiddleware, authenticating, cacheControl } from '#middleware'
 import AdminRouter from './admin'
 import WebRouter from './web'
 import ServiceRouter from './service'
@@ -53,6 +53,7 @@ AppRouter.use(
 
 AppRouter.use(
   '/',
+  cacheControl,
   WebRouter.productRouter,
   WebRouter.productCategoryRouter,
   WebRouter.orderRouter,
