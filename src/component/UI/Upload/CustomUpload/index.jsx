@@ -11,7 +11,6 @@ function previewFile(file, callback) {
 }
 
 const UploadMutiple = forwardRef((props, ref) => {
-  console.log(props.value)
   return (
     <Uploader
       {...props}
@@ -33,41 +32,29 @@ const UploadMutiple = forwardRef((props, ref) => {
 })
 
 const SingleUpload = forwardRef((props, ref) => {
-  const [file, setFile] = useState()
-
-  const [fileInfo, setFileInfo] = useState()
+  const [src, setSrc] = useState('')
 
   useEffect(() => {
-    if (props?.value && typeof props.value?.src === 'string') {
-      setFileInfo(props?.value?.src)
-    } else if (props?.value && props.value.blobFile instanceof Blob) {
-      previewFile(props.value.blobFile, (value) => {
-        setFileInfo(value)
-      })
+    if (props.value?.src) {
+      setSrc(props.value?.src)
     }
-  }, [props?.value])
-
-  console.log('props change', props.value)
+  }, [props.value])
+  console.log('SingleUpload', props)
   return (
     <Uploader
       ref={ref}
       listType="picture"
       {...props}
-      onChange={(file) => {
-        const [newFiles] = file.slice(-1)
-        setFile(newFiles)
-        props.onChange(newFiles)
+      onSuccess={(response, file) => {
+        if (response.url) {
+          setSrc(response.url)
+        }
+        if (props.onSuccess) props.onSuccess(response, file)
       }}
       fileListVisible={false}
     >
       <button style={{ width: 120, height: 120 }}>
-        {fileInfo ? (
-          <img
-            src={`${(typeof props.value?.src === 'string' && process.env.API) || ''}${fileInfo}`}
-            width="100%"
-            height="100%"
-          />
-        ) : (
+        {(src && <img src={process.env.API + src} width="100%" height="100%" />) || (
           <AvatarIcon style={{ fontSize: 80, borderRadius: 8 }} />
         )}
       </button>

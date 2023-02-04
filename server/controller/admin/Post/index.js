@@ -12,30 +12,19 @@ const equals = mongoose.equals
 class PostController {
   createPost = async (req, res) => {
     try {
-      let { title, slug, description, content, postImg, category } = req.body
+      let { title, slug, description, content, image, category } = req.body
 
       let _post = await Post.findOne({ slug })
 
       if (_post) slug = slugify(name.toLowerCase() + '-' + shortid())
 
-      let file = req.files
-
-      let fileLength = Object.keys(file).length
-
-      if (!fileLength && postImg && typeof postImg === 'string') {
-        file = await handleDownloadFile(postImg)
-
-        file = [{ ...file, filename: '/public/' + file.filename }]
-      } else file = file.postImg
-
-      let _created = {
+      let _created = new PostModel({
         title,
         slug: slug || slugify(req.body.title.toLowerCase()),
         description,
         content,
-        postImg: file || null,
-        category: category || null,
-      }
+        image,
+      })
 
       const { ..._createObject } = new PostModel(_created)
 
@@ -95,10 +84,10 @@ class PostController {
 
   getSinglePost = async (req, res) => {
     try {
-      let { slug } = req.params
+      let { _id } = req.params
 
       let _post = await Post.findOne({
-        slug,
+        _id,
       }).select('-__v -createdAt -updatedAt')
 
       const settings = {
@@ -111,6 +100,7 @@ class PostController {
         twitterTags: true,
         facebookTags: true,
       }
+
       const generator = new MetadataGenerator()
 
       const seoFromPost = {
@@ -145,11 +135,9 @@ class PostController {
 
   getPost = async (req, res) => {
     try {
-      console.log('get Post')
-
       const data = await Post.find({})
 
-      return new Response().fetched({ data }, res)
+      return new Response().fetched({ data: data?.map(({ _doc }) => ({ ..._doc, dynamicRef: 'Post' })) }, res)
     } catch (error) {
       return new Response().error(error, res)
     }

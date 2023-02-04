@@ -4,7 +4,6 @@ import ConfigDatabase from './server/configs/db'
 import { envInit } from '#server/configs/environment'
 
 import appConfigs from '#server/configs/defaultConfig'
-
 process.setMaxListeners(0)
 
 dotenv.config()

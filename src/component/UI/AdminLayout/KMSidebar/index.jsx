@@ -85,12 +85,12 @@ export default function KMSidebar() {
             </Link>
 
             <Nav.Menu eventKey="/admin/posts" icon={<TextImageIcon />} title="Post">
-              <Link href="/admin/post" passHref>
+              <Link href="/admin/posts" passHref>
                 <Nav.Item eventKey="3-1" icon={<TextImageIcon />}>
                   Posts
                 </Nav.Item>
               </Link>
-              <Link href="/admin/post/category" passHref>
+              <Link href="/admin/posts/category" passHref>
                 <Nav.Item eventKey="3-2" icon={<ListIcon />}>
                   Danh mục
                 </Nav.Item>

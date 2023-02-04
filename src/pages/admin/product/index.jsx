@@ -92,11 +92,6 @@ const Products = () => {
 
   const [loading, setLoading] = useState(false)
 
-  const [modal, setModal] = useState({
-    open: false,
-    component: null,
-  })
-
   const toaster = useToaster()
 
   const [limit, setLimit] = useState(10)
@@ -109,10 +104,10 @@ const Products = () => {
 
   const [categorySelector, setCategorySelector] = useState([])
 
-  const handleChangeLimit = (dataKey) => {
-    setPage(1)
-    setLimit(dataKey)
-  }
+  const [modal, setModal] = useState({
+    open: false,
+    component: null,
+  })
 
   useEffect(() => {
     changeTitle('Page Products')
@@ -130,8 +125,6 @@ const Products = () => {
       setFilterData(product)
     }
   }, [filter])
-
-  const handleClose = () => setModal({ open: false, component: null })
 
   const getCategory = async () => {
     const resp = await CategoryService.getProdCate()
@@ -221,8 +214,6 @@ const Products = () => {
     }
   }
 
-  const message = (type, header) => <Message showIcon type={type} header={header} closable />
-
   const handleDelete = async (rowData, event) => {
     try {
       let resp = await ProductService.deleteProduct({ _id: rowData._id, type: rowData.type })
@@ -270,7 +261,14 @@ const Products = () => {
     })
   }
 
-  console.log(filterData)
+  const message = (type, header) => <Message showIcon type={type} header={header} closable />
+
+  const handleClose = () => setModal({ open: false, component: null })
+
+  const handleChangeLimit = (dataKey) => {
+    setPage(1)
+    setLimit(dataKey)
+  }
   return (
     <>
       <Stack spacing={10} className="py-2">

@@ -4,29 +4,13 @@ import { forwardRef, useState } from 'react'
 import { Form, Input, InputGroup, MaskedInput, SelectPicker } from 'rsuite'
 import dynamic from 'next/dynamic'
 import { NumericFormat } from 'react-number-format'
-
 const Textarea = dynamic(() => import('component/UI/Editor'))
 
 const CustomInput = forwardRef((props, ref) => {
-  console.log(props.type, props.rows)
   if (props.type) {
     return <Input style={props?.style} onChange={props?.onChange} ref={ref} {...props} as={props.type} />
   }
-
   return <Input style={props?.style} onChange={props?.onChange} ref={ref} {...props} />
-})
-
-const CustomSelect = forwardRef(({ value, placeholder, data, name, ...props }, ref) => {
-  return (
-    <SelectPicker
-      value={value}
-      placeholder={placeholder}
-      data={data}
-      onChange={(value) => handleChange(value, name)}
-      style={{ width: '100%' }}
-      {...props}
-    />
-  )
 })
 
 const InputPassword = forwardRef((props, ref) => {
@@ -89,10 +73,14 @@ const KMSelect = ({ name, label, ...props }) => {
 }
 
 const KMEditor = ({ name, label, ...props }) => {
+  const handleChange = (value) => {
+    if (props.onChange) props?.onChange(value)
+  }
+
   return (
     <Form.Group controlId={name}>
       {label && <Form.ControlLabel>{label}</Form.ControlLabel>}
-      <Form.Control name={name} accepter={Textarea} {...props} onChange={(v) => props?.onChange(v)} />
+      <Form.Control name={name} accepter={Textarea} {...props} onChange={handleChange} />
     </Form.Group>
   )
 }
@@ -111,8 +99,7 @@ const KMPrice = ({ name, label, onChange, ...props }) => {
   )
 }
 
-const Pricing = forwardRef(({ value, onChange, ...props }, ref) => {
-  console.log(value)
+const Pricing = forwardRef(({ value, onChange, placeholder, ...props }, ref) => {
   const handleChange = ({ formattedValue, value, floatValue }) => {
     if (onChange) {
       return onChange(value)

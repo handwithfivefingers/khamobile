@@ -1,5 +1,4 @@
 import expressValidator from 'express-validator'
-import fs from 'fs'
 
 const { check, validationResult } = expressValidator
 

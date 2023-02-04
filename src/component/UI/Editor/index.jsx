@@ -2,8 +2,8 @@ import clsx from 'clsx'
 import React, { useEffect, useRef, useState } from 'react'
 import MyUploadAdapter from './UploadAdapter'
 import styles from './styles.module.scss'
-function CKeditor({ onChange, editorLoaded, name, value, className }) {
-  const [editorValue, setEditorValue] = useState()
+function CKeditorComponent({ onChange, editorLoaded, name, value, className }) {
+  const [editorValue, setEditorValue] = useState(value)
 
   const editorRef = useRef()
 
@@ -45,6 +45,9 @@ function CKeditor({ onChange, editorLoaded, name, value, className }) {
             const data = editor.getData()
             onChange(data)
           }}
+          onReady={() => {
+            setEditorValue(value)
+          }}
         />
       ) : (
         <div>Editor loading</div>
@@ -65,7 +68,8 @@ const Textarea = React.forwardRef((props, ref) => {
   useEffect(() => {
     setEditorLoaded(true)
   }, [])
-  return <CKeditor ref={ref} name="description" editorLoaded={editorLoaded} {...props} />
+
+  return <CKeditorComponent ref={ref} name="description" editorLoaded={editorLoaded} {...props} />
 })
 
 export default Textarea

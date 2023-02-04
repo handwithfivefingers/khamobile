@@ -30,8 +30,11 @@ export default class ProductCategoryController {
             },
           },
         ])
+
+        _category = _category.map((item) => ({ ...item, dynamicRef: 'ProductCategory' }))
       } else {
         _category = await ProductCategory.find({}).select('-createdAt -updatedAt -__v')
+        _category = _category.map((item) => ({ ...item._doc, dynamicRef: 'ProductCategory' }))
       }
 
       return new Response().fetched({ data: _category }, res)

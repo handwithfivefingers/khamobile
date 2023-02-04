@@ -6,6 +6,7 @@ import CloseIcon from '@rsuite/icons/Close'
 import { NumericFormat } from 'react-number-format'
 
 const VariantItem = forwardRef(({ data, attributes, attributesItem, position, ...props }, ref) => {
+  console.log('VariantItem', data)
   return (
     <div className={styles.groupItem}>
       <Form.Group controlId={['instock', position]} style={{ width: 'calc(50% - 4px)' }}>
@@ -28,7 +29,7 @@ const VariantItem = forwardRef(({ data, attributes, attributesItem, position, ..
           position={position}
           name={'purchasable'}
           value={data?.purchasable}
-          checkValue={data?.purchasable}
+          checkValue={true}
           unCheckValue={false}
         />
       </Form.Group>
@@ -125,6 +126,7 @@ const CheckboxVariant = forwardRef(
       }
       setRender(!_render)
     }
+
 
     return (
       <Toggle

@@ -1,22 +1,15 @@
-import clsx from 'clsx'
 import AdminLayout from 'component/UI/AdminLayout'
-import Select from 'component/UI/Content/MutiSelect'
-import Textarea from 'component/UI/Editor'
-import CustomUpload from 'component/UI/Upload/CustomUpload'
 import { useEffect, useRef, useState } from 'react'
-import {
-	Avatar,
-	Button,
-	Content, Form, Header, Panel, Placeholder, Table, Tree
-} from 'rsuite'
+import { Avatar, Content, IconButton, Input, Modal, Pagination, Stack, Table, useToaster } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import { useCommonStore } from 'src/store/commonStore'
-import { useLoaderStore } from 'src/store/loaderStore'
-import styles from './styles.module.scss'
+// import styles from './styles.module.scss'
+import PlusIcon from '@rsuite/icons/Plus'
+import Category from 'component/Modal/Category'
+
 const { Column, HeaderCell, Cell } = Table
 
 const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
-  console.log(rowData[dataKey])
   return (
     <Cell {...props} style={{ padding: 0 }}>
       <div
@@ -28,7 +21,7 @@ const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
           justifyContent: 'center',
         }}
       >
-        <Avatar src={`/public/${rowData[dataKey]?.[0]?.filename}`} />
+        <Avatar src={`${process.env.API}${rowData[dataKey]?.src}`} />
       </div>
     </Cell>
   )
@@ -37,22 +30,27 @@ const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
 const PostCategory = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
 
-  // const pushMessage = useMessageStore((state) => state.pushMessage);
-
-  const { loading, setLoading } = useLoaderStore((state) => state)
-
-  const [data, setData] = useState()
+  const [data, setData] = useState([])
 
   const treeRef = useRef()
 
-  const [form, setForm] = useState({
-    name: '',
-    description: '',
-    slug: '',
-    categoryImg: [],
-    parentCategory: '',
-    type: 'post',
+  const [filterData, setFilterData] = useState([])
+
+  const [limit, setLimit] = useState(10)
+
+  const [page, setPage] = useState(1)
+
+  const [loading, setLoading] = useState(false)
+
+  const [modal, setModal] = useState({
+    size: 'lg',
+    open: false,
+    component: null,
   })
+
+  const [filter, setFilter] = useState('')
+
+  const toaster = useToaster()
 
   useEffect(() => {
     getCateData()
@@ -91,111 +89,105 @@ const PostCategory = () => {
     }
   }
 
-  const handleSubmit = async () => {
-    try {
-      setLoading(true)
-      const formdata = new FormData()
-      for (let key in form) {
-        if (key === 'categoryImg') {
-          formdata.append(key, form[key]?.[0]?.blobFile || null)
-        } else formdata.append(key, form?.[key])
-      }
+  const getData = () => []
 
-      await CategoryService.createCate(formdata)
-    } catch (error) {
-      console.log('error', error)
-    } finally {
-      setLoading(false)
-    }
+  const handleOpenCategory = async (rowData) => {
+    let data = await getCategoryById(rowData._id)
+    setModal({
+      open: true,
+      component: <Category data={data} onSubmit={onUpdate} />,
+    })
   }
 
-  const onHandleEdit = async (v) => {
-    return getCateById(v)
+  const handleChangeLimit = () => {}
+
+  const handleClose = () => {
+    setModal((prev) => ({ ...prev, open: false }))
   }
 
+  const onCreate = (v) => console.log('onCreate', v)
   return (
     <>
-      <Content className={clsx('bg-w')}>
-        <div className={styles.content}>
-          {!loading ? (
-            <Form
-              formValue={form}
-              onCheck={(error) => console.log('checked')}
-              onChange={(formVal) => {
-                console.log('changeing')
-                setForm(formVal)
-              }}
-              className={'row'}
-              fluid
-            >
-              <div className="col-12">
-                <Panel>
-                  <Form.Group controlId="name">
-                    <Form.ControlLabel>Title</Form.ControlLabel>
-                    <Form.Control name="name" />
-                  </Form.Group>
-                  <Form.Group controlId="slug">
-                    <Form.ControlLabel>Đường dẫn</Form.ControlLabel>
-                    <Form.Control name="slug" />
-                  </Form.Group>
-                  <Form.Group controlId="categoryImg">
-                    <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
-                    <Form.Control
-                      rows={5}
-                      name="categoryImg"
-                      accepter={CustomUpload}
-                      action="#"
-                      file={form['categoryImg']?.slice(-1)}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="parentCategory">
-                    <Form.ControlLabel>Danh mục cha</Form.ControlLabel>
-                    <Form.Control
-                      name="parentCategory"
-                      accepter={Select}
-                      data={data || []}
-                      labelKey={'name'}
-                      valueKey={'_id'}
-                    />
-                  </Form.Group>
-                  <Form.Group controlId="description">
-                    <Form.ControlLabel>Nội dung</Form.ControlLabel>
-                    <Form.Control rows={5} name="description" accepter={Textarea} />
-                  </Form.Group>
-                </Panel>
-              </div>
-            </Form>
-          ) : (
-            <Placeholder.Graph active className={styles.loader} />
-          )}
-          <Panel>
-            <Header>
-              <h2>Danh mục</h2>
-            </Header>
-            <Tree
-              data={data || []}
-              ref={treeRef}
-              defaultExpandAll
-              virtualized
-              showIndentLine
-              labelKey="name"
-              valueKey="_id"
-              onChange={(v) => onHandleEdit(v)}
-            />
-          </Panel>
+      <Stack spacing={10} className="py-2">
+        <span>Tìm kiếm: </span>
+        <Input placeholder="Tên danh mục" onChange={(v) => setFilter(v)} />
+      </Stack>
+
+      <Content className={'bg-w'}>
+        <Table data={getData()} onRowClick={handleOpenCategory} loading={loading} height={60 * (10 + 1)} rowHeight={60}>
+          <Column width={150}>
+            <HeaderCell></HeaderCell>
+            <CustomRenderCell dataKey="image" />
+          </Column>
+
+          <Column width={150} flexGrow={1}>
+            <HeaderCell>Danh mục</HeaderCell>
+            <Cell dataKey="name" />
+          </Column>
+
+          <Column width={150} flexGrow={1}>
+            <HeaderCell>Mô tả</HeaderCell>
+            <Cell dataKey="description" />
+          </Column>
+          <Column width={100} flexGrow={1}>
+            <HeaderCell>Đường dẫn </HeaderCell>
+            <Cell dataKey="slug" />
+          </Column>
+
+          <Column width={80} fixed="right">
+            <HeaderCell>
+              <IconButton
+                icon={<PlusIcon />}
+                size="xs"
+                color="blue"
+                appearance="primary"
+                onClick={() =>
+                  setModal({
+                    open: true,
+                    size: 'md',
+                    component: <Category onSubmit={onCreate} listCategory={[]} />,
+                  })
+                }
+              />
+            </HeaderCell>
+
+            <Cell>
+              {(rowData) => (
+                <span>
+                  <a onClick={() => alert(`id:${rowData.id}`)}> Edit </a>
+                </span>
+              )}
+            </Cell>
+          </Column>
+        </Table>
+
+        <div style={{ padding: 20 }}>
+          <Pagination
+            prev
+            next
+            first
+            last
+            ellipsis
+            boundaryLinks
+            maxButtons={5}
+            size="xs"
+            layout={['total', '-', 'limit', '|', 'pager', 'skip']}
+            total={filterData.length}
+            limitOptions={[10, 30, 50]}
+            limit={limit}
+            activePage={page}
+            onChangePage={setPage}
+            onChangeLimit={handleChangeLimit}
+          />
         </div>
-        <Panel className={styles.btnAction}>
-          {form._id ? (
-            <Button onClick={handleSubmit} appearance="primary">
-              Edit
-            </Button>
-          ) : (
-            <Button onClick={handleSubmit} appearance="primary">
-              Create
-            </Button>
-          )}
-        </Panel>
       </Content>
+
+      <Modal size={modal.size} open={modal.open} onClose={handleClose} keyboard={false} backdrop={'static'}>
+        <Modal.Header>
+          <Modal.Title>Create</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>{modal?.component}</Modal.Body>
+      </Modal>
     </>
   )
 }

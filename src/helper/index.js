@@ -1,4 +1,5 @@
 import currencyFormat from 'currency-formatter'
+import { Message } from 'rsuite'
 
 const formatCurrency = (str, options) => {
   //   let result;
@@ -17,4 +18,6 @@ const imageLoader = ({ src, width, quality }) => {
   return process.env.API + src + `?w=${width}&q=${quality || 75}`
 }
 
-export { formatCurrency, imageLoader }
+const message = (type, header) => <Message showIcon type={type} header={header} closable />
+
+export { formatCurrency, imageLoader, message }

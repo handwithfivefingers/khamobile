@@ -19,7 +19,7 @@ export default {
         type: mongoose.Schema.Types.ObjectId,
         refPath: 'menu.dynamicRef',
       },
-      
+
       dynamicRef: {
         type: String,
         enum: ['Page', 'Post', 'Product', 'ProductVariant', 'ProductCategory', 'Category'],
@@ -29,7 +29,6 @@ export default {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'menu.dynamicRef',
       },
-
     },
   ],
 

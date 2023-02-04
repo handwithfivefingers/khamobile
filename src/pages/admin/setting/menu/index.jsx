@@ -56,15 +56,16 @@ export default function SettingMenu() {
     try {
       const resp = await SettingService.getSetting()
       const screenData = resp.data?.data
-      let menuData = [...screenData.menu]
+      // let menuData = [...screenData.menu]
 
-      menuData = menuData.map((item) => ({
-        dynamicRef: item.dynamicRef,
-        name: item._id?.title || item._id?.name,
-        slug: item._id?.slug,
-        _id: item._id._id,
-      }))
-      screenData.menu = menuData
+      // menuData = menuData.map((item) => ({
+      //   dynamicRef: item.dynamicRef,
+      //   name: item._id?.title || item._id?.name,
+      //   slug: item._id?.slug,
+      //   _id: item._id._id,
+      // }))
+
+      // screenData.menu = menuData
       setData(screenData)
     } catch (error) {
       console.log(error)
@@ -212,6 +213,7 @@ export default function SettingMenu() {
             showIndentLine
             labelKey="name"
             valueKey="_id"
+            childrenKey="children"
             onDrop={({ createUpdateDataFunction }) => {
               let dropData = createUpdateDataFunction(data?.menu)
               setData((prev) => {

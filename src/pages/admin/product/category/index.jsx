@@ -1,8 +1,9 @@
 import ProductCategory from 'component/Modal/ProductCategory'
 import AdminLayout from 'component/UI/AdminLayout'
-import { useEffect, useRef, useState } from 'react'
-import { Avatar, Content, Input, Message, Modal, Pagination, SelectPicker, Stack, Table, useToaster } from 'rsuite'
+import { useEffect, useState } from 'react'
+import { Avatar, Content, Input, Modal, Pagination, Stack, Table, useToaster } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
+import { message } from 'src/helper'
 import { useCommonStore } from 'src/store/commonStore'
 
 const { Column, HeaderCell, Cell } = Table
@@ -42,8 +43,6 @@ const Products = () => {
   })
 
   const [filter, setFilter] = useState('')
-
-  const nodeRef = useRef()
 
   const toaster = useToaster()
 
@@ -86,19 +85,6 @@ const Products = () => {
     }
   }
 
-  const handleOpenCategory = async (rowData) => {
-    let data = await getCategoryById(rowData._id)
-    setModal({
-      open: true,
-      component: <ProductCategory data={data} onSubmit={onUpdate} />,
-    })
-  }
-
-  const handleClose = () => setModal({ ...modal, open: false })
-
-  const message = (type, header) => <Message showIcon type={type} header={header} closable />
-
-
   const onUpdate = async ({ _id, ...val }) => {
     try {
       const resp = await CategoryService.updateProdCateById(_id, val)
@@ -115,8 +101,20 @@ const Products = () => {
         placement: 'topEnd',
       })
       console.log('error updating category', error)
+    } finally {
+      getCateData()
     }
   }
+
+  const handleOpenCategory = async (rowData) => {
+    let data = await getCategoryById(rowData._id)
+    setModal({
+      open: true,
+      component: <ProductCategory data={data} onSubmit={onUpdate} />,
+    })
+  }
+
+  const handleClose = () => setModal({ ...modal, open: false })
 
   const getData = () => {
     return filterData.filter((v, i) => {
@@ -133,7 +131,7 @@ const Products = () => {
         <Input placeholder="Tên danh mục" onChange={(v) => setFilter(v)} />
       </Stack>
 
-      <Content className={'bg-w'} ref={nodeRef}>
+      <Content className={'bg-w'}>
         <Table data={getData()} onRowClick={handleOpenCategory} loading={loading} height={60 * (10 + 1)} rowHeight={60}>
           <Column width={150}>
             <HeaderCell></HeaderCell>
@@ -197,6 +195,7 @@ const Products = () => {
     </>
   )
 }
+
 Products.Admin = AdminLayout
 
 export default Products

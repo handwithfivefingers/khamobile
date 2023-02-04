@@ -21,8 +21,6 @@ export default class SettingController {
       let formData = req.body
       const { _id } = req.params
 
-      console.log(formData)
-
       let _update = { ...formData }
 
       let menu = _update.menu
@@ -31,16 +29,20 @@ export default class SettingController {
 
       //  format menu;
 
-      for (let i = 0; i < menu.length; i) {
-        const menuItem = menu[i]
+      // for (let i = 0; i < menu.length; i) {
+      //   const menuItem = menu[i]
 
-        const menuChild = []
+      //   const menuChild = []
 
-        if (menuItem.children.length > 0) {
-        }
-      }
+      //   if (menuItem.children.length > 0) {
+      //   }
+      // }
+      menu = this.onBringChildrenItemToParent(menu)
 
-      await Setting.updateOne({ _id: mongoose.Types.ObjectId(_id) }, formData, { new: true })
+      _update.menu = menu
+      // console.log(menu)
+
+      await Setting.updateOne({ _id: mongoose.Types.ObjectId(_id) }, _update, { new: true })
 
       return new Response().updated({}, res)
     } catch (error) {
@@ -51,10 +53,13 @@ export default class SettingController {
 
   getSetting = async (req, res) => {
     try {
-      const [_setting] = await Setting.find({}).populate({ path: 'menu._id', select: '_id title slug' })
-      console.log(_setting)
+      const [_setting] = await Setting.find({}).populate({ path: 'menu._id', select: '_id title slug name' })
 
-      return new Response().fetched({ data: _setting }, res)
+      const _menu = _setting.menu
+
+      const newMenu = this.onBringParentItemToChildren(_menu)
+
+      return new Response().fetched({ data: { ..._setting._doc, menu: newMenu } }, res)
     } catch (error) {
       return new Response().error(error, res)
     }
@@ -65,19 +70,57 @@ export default class SettingController {
    * @param {* String '' } _id
    * @return { * Array }
    */
-  onBringChildrenItemToParent = (data, _id) => {
+  onBringChildrenItemToParent = (data, parentId = null) => {
     const result = []
-
     for (let child of data) {
-      if (child.children.length) {
-        let newResult = []
-        newResult = onBringChildrenItemToParent(child.children, _id)
-        result = [...result, newResult]
-      } else {
-        result.push(child)
+      let childResult = []
+
+      if (child.children?.length) {
+        childResult = this.onBringChildrenItemToParent(child.children, child._id)
+      }
+
+      if (parentId) {
+        child.parentId = parentId
+      }
+
+      result.push(child)
+
+      if (childResult.length) {
+        result.push(...childResult)
       }
     }
 
     return result
+  }
+
+  onBringParentItemToChildren = (data, parentId = null) => {
+    try {
+      const result = []
+
+      let list
+
+      if (!parentId) {
+        list = data.filter((item) => !item.parentId)
+      } else {
+        list = data.filter((item) => JSON.stringify(item.parentId) === JSON.stringify(parentId))
+      }
+
+      // console.log('list', parentId, list)
+
+      for (let child of list) {
+        console.log('child', child._id)
+
+        result.push({
+          ...child._doc,
+          name: child._id?.title || child?._id?.name || '',
+          _id: child._id?._id,
+          children: this.onBringParentItemToChildren(data, child._id?._id),
+        })
+      }
+
+      return result.length > 0 ? result : null
+    } catch (error) {
+      throw error
+    }
   }
 }

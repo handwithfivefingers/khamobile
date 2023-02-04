@@ -271,10 +271,8 @@ export default class ProductController {
       }
 
       if (!result) throw result.error
-      // return res.status(200).json({
-      //   message: 'Updated thành công',
-      // })
-      return new Response().fetched({}, res)
+
+      return new Response().updated({}, res)
     } catch (error) {
       console.log('update Product error: ', error)
       return new Response().error(error, res)

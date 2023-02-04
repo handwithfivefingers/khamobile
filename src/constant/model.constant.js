@@ -24,4 +24,10 @@ const ProductModel = Schema.Model({
   quantity: Schema.Types.StringType().isRequired('Số lượng không chính xác, vui lòng thử lại').minLength(1),
   price: Schema.Types.StringType().isRequired('Giá tiền không chính xác, vui lòng reload lại page'),
 })
-export { CheckoutModel, AttributeModel, DeliveryModel, UserInformationModel, ProductModel }
+
+const CategoryModel = Schema.Model({
+  name: Schema.Types.StringType().isRequired('Tên danh mục là bắt buộc').minLength(3, 'Tên danh mục thấp hơn 3 kí tự'),
+  slug: Schema.Types.StringType().isRequired('Đường dẫn là bắt buộc'),
+})
+
+export { CheckoutModel, AttributeModel, DeliveryModel, UserInformationModel, ProductModel, CategoryModel }
