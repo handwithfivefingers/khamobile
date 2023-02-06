@@ -12,6 +12,9 @@ import { TbSquareRotated } from 'react-icons/tb'
 import SettingService from 'service/admin/Setting.service'
 import { CloseOutline } from '@rsuite/icons'
 import { CgArrowsExpandDownRight, CgArrowsExpandUpLeft, CgArrowsExpandUpRight } from 'react-icons/cg'
+import PostService from 'service/admin/Post.service'
+import styles from './styles.module.scss'
+import { AiOutlinePlus } from 'react-icons/ai'
 const defaultData = [
   { text: 'Roses are red' },
   { text: 'Violets are blue' },
@@ -56,16 +59,6 @@ export default function SettingMenu() {
     try {
       const resp = await SettingService.getSetting()
       const screenData = resp.data?.data
-      // let menuData = [...screenData.menu]
-
-      // menuData = menuData.map((item) => ({
-      //   dynamicRef: item.dynamicRef,
-      //   name: item._id?.title || item._id?.name,
-      //   slug: item._id?.slug,
-      //   _id: item._id._id,
-      // }))
-
-      // screenData.menu = menuData
       setData(screenData)
     } catch (error) {
       console.log(error)
@@ -83,7 +76,14 @@ export default function SettingMenu() {
     }
   }
 
-  const getPostData = async () => {}
+  const getPostData = async () => {
+    try {
+      const res = await PostService.getPosts()
+      setPostData(res.data.data)
+    } catch (error) {
+      console.log('error', error, error?.response?.data?.message)
+    }
+  }
 
   const getProdCateData = async () => {
     try {
@@ -100,13 +100,33 @@ export default function SettingMenu() {
       html = (
         <Tree
           data={pageData}
+          className="km"
           labelKey="name"
           valueKey="_id"
           showIndentLine
+          // renderTreeNode={(node) => {
+          //   return (
+          //     <>
+          //       {node.children ? <FolderFillIcon /> : <PageIcon />} {node.name} <IconButton icon={<AiOutlinePlus />} />
+          //     </>
+          //   )
+          // }}
           renderTreeNode={(node) => {
             return (
               <>
-                {node.children ? <FolderFillIcon /> : <PageIcon />} {node.name}
+                <div className="d-flex km-node-item">
+                  {node.children ? <BiCategory /> : <TbSquareRotated />}
+                  <span> {node.name}</span>
+                  <div className="d-flex" style={{ gap: 4 }}>
+                    <IconButton
+                      appearance="subtle"
+                      color="red"
+                      icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
+                      size="md"
+                      onClick={() => handleAddItem(node)}
+                    />
+                  </div>
+                </div>
               </>
             )
           }}
@@ -116,16 +136,31 @@ export default function SettingMenu() {
     } else if (tabsKey === 2) {
       html = (
         <Tree
-          data={pageData?.map((page) => ({ label: page.title, value: page._id }))}
+          data={postData}
+          className="km"
+          labelKey="title"
+          valueKey="_id"
           showIndentLine
           renderTreeNode={(node) => {
             return (
               <>
-                {node.children ? <FolderFillIcon /> : <PageIcon />} {node.label}
+                <div className="d-flex km-node-item">
+                  {node.children ? <BiCategory /> : <TbSquareRotated />}
+                  <span> {node.title}</span>
+                  <div className="d-flex" style={{ gap: 4 }}>
+                    <IconButton
+                      appearance="subtle"
+                      color="red"
+                      icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
+                      size="md"
+                      onClick={() => handleAddItem(node)}
+                    />
+                  </div>
+                </div>
               </>
             )
           }}
-          onChange={(v) => (pageRef.current = v)}
+          onChange={(v) => (pageRef.current[tabsKey] = v)}
         />
       )
     } else if (tabsKey === 3) {
@@ -133,12 +168,25 @@ export default function SettingMenu() {
         <Tree
           data={prodCateData}
           labelKey="name"
+          className="km"
           valueKey="_id"
           showIndentLine
           renderTreeNode={(node) => {
             return (
               <>
-                {node.children ? <BiCategory /> : <TbSquareRotated />} {node.name}
+                <div className="d-flex km-node-item">
+                  {node.children ? <BiCategory /> : <TbSquareRotated />}
+                  <span> {node.name}</span>
+                  <div className="d-flex" style={{ gap: 4 }}>
+                    <IconButton
+                      appearance="subtle"
+                      color="red"
+                      icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
+                      size="md"
+                      onClick={() => handleAddItem(node)}
+                    />
+                  </div>
+                </div>
               </>
             )
           }}
@@ -150,18 +198,14 @@ export default function SettingMenu() {
     return html
   }
 
-  const handleAddItem = (tabs) => {
-    let selectItem = pageRef.current?.[tabs]
-    const dataMutation = tabs === 1 ? pageData : tabs === 2 ? postData : prodCateData
-
-    let item = dataMutation.find((dataFilter) => dataFilter._id === selectItem)
-
-    if (item) {
-      setData((prev) => ({
-        ...prev,
-        menu: [...prev.menu, { name: item.name, _id: item._id, slug: item.slug, dynamicRef: item.dynamicRef }],
-      }))
-    }
+  const handleAddItem = (nodeItem) => {
+    setData((prev) => ({
+      ...prev,
+      menu: [
+        ...prev.menu,
+        { name: nodeItem.name, _id: nodeItem._id, slug: nodeItem.slug, dynamicRef: nodeItem.dynamicRef },
+      ],
+    }))
   }
 
   const handleSave = async () => {
@@ -190,7 +234,6 @@ export default function SettingMenu() {
     return result
   }
 
-  console.log(data.menu)
   return (
     <div className="row gy-2">
       <div className="col-12 d-flex" style={{ gap: 12 }}>
@@ -204,10 +247,11 @@ export default function SettingMenu() {
           Product
         </Button>
       </div>
-      <div className="col-4">
-        <CardBlock>
+      <div className="col-12 col-md-6">
+        <CardBlock className="border-0">
           <Tree
             data={data?.menu}
+            className={'km'}
             draggable
             defaultExpandAll
             showIndentLine
@@ -223,7 +267,7 @@ export default function SettingMenu() {
             }}
             renderTreeNode={(node) => {
               return (
-                <div className="d-flex justify-content-between align-items-center">
+                <div className="d-flex km-node-item">
                   <span> {node.name}</span>
                   <div className="d-flex" style={{ gap: 4 }}>
                     <IconButton
@@ -244,15 +288,9 @@ export default function SettingMenu() {
           />
         </CardBlock>
       </div>
-      <div className="col-8">
-        <div className="row">
-          <div className="col-12">
-            <Button appearance="primary" onClick={() => handleAddItem(tabsKey)}>
-              Thêm
-            </Button>
-          </div>
-          <div className="col-12">{renderTabs()}</div>
-        </div>
+      <div className="col-12 col-md-6">
+        <h5>Danh sách</h5>
+        {renderTabs()}
       </div>
       <div className="col-12">
         <Button appearance="primary" onClick={handleSave}>

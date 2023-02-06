@@ -16,23 +16,7 @@ import PostService from 'service/admin/Post.service'
 const PostEdit = ({ slug }) => {
   const router = useRouter()
 
-  // const { loading, setLoading } = useLoaderStore((state) => state)
-
-  // const [form, setForm] = useState({
-  //   title: '',
-  //   slug: '',
-  //   description: '',
-  //   postImg: [],
-  //   category: '',
-  // })
-
-  const [data, setData] = useState({
-    title: '',
-    slug: '',
-    description: '',
-    postImg: [],
-    category: '',
-  })
+  const [postData, setPostData] = useState()
 
   const [categoryData, setCategoryData] = useState()
 
@@ -56,7 +40,7 @@ const PostEdit = ({ slug }) => {
   const getPostData = async () => {
     try {
       const resp = await PostService.getSinglePost(slug)
-      setData(resp.data.data)
+      setPostData(resp.data.data)
     } catch (error) {
       console.log(error)
     }
@@ -73,17 +57,32 @@ const PostEdit = ({ slug }) => {
 
   return (
     <Content className={'bg-w'}>
-      <PostForm postData={data} onSubmit={onSubmit} router={router} />
+      {postData && <PostForm postData={postData} onSubmit={onSubmit} router={router} />}
     </Content>
   )
 }
 
 export const getServerSideProps = async (ctx) => {
   const { slug } = ctx.query
+
+  // const resp = await PostService.getSinglePost(slug)
+  // if (resp.status === 200) {
+  //   const { data } = resp.data
+  //   return {
+  //     props: {
+  //       slug,
+  //       // data,
+  //     },
+  //   }
+  // }
   return {
     props: {
       slug,
+      // data,
     },
+  }
+  return {
+    notFound: true,
   }
 }
 
