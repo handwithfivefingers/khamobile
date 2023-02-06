@@ -54,12 +54,14 @@ AppRouter.use(
 AppRouter.use(
   '/',
   cacheControl,
-  WebRouter.productRouter,
-  WebRouter.productCategoryRouter,
-  WebRouter.orderRouter,
-  WebRouter.userRouter,
-  WebRouter.seoRouter,
-  WebRouter.provinceRouter,
+  Object.keys(WebRouter).map((routerName) => WebRouter[routerName]),
+  // WebRouter.productRouter,
+  // WebRouter.productCategoryRouter,
+  // WebRouter.orderRouter,
+  // WebRouter.userRouter,
+  // WebRouter.seoRouter,
+  // WebRouter.provinceRouter,
+  // WebRouter.postRouter,
 )
 
 export default AppRouter

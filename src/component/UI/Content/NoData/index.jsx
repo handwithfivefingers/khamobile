@@ -5,9 +5,7 @@ import styles from './styles.module.scss'
 export default function NoData(props) {
   return (
     <Panel bodyFill className={styles.noItem} style={props.style}>
-      <span className={clsx('text-secondary', styles.desc)}>
-        {props?.description || 'Không có sản phẩm phù hợp với tiêu chí bạn tìm'}
-      </span>
+      <span className={clsx('text-secondary', styles.desc)}>{props?.description || 'Nothing here'}</span>
       <BsInboxes className={styles.icon} style={{ fontSize: 36, color: 'var(--rs-blue-800)' }} />
     </Panel>
   )

@@ -1,4 +1,4 @@
-import React, { useState, forwardRef, useEffect, memo } from 'react'
+import React, { useState, forwardRef, useEffect, memo, useRef } from 'react'
 import { Button, Uploader } from 'rsuite'
 import AvatarIcon from '@rsuite/icons/legacy/Avatar'
 import { isEqual } from 'lodash'
@@ -40,6 +40,7 @@ const SingleUpload = forwardRef((props, ref) => {
     }
   }, [props.value])
   console.log('SingleUpload', props)
+  const imgRef = useRef()
   return (
     <Uploader
       ref={ref}
@@ -54,9 +55,15 @@ const SingleUpload = forwardRef((props, ref) => {
       fileListVisible={false}
     >
       <button style={{ width: 120, height: 120 }}>
-        {(src && <img src={process.env.API + src} width="100%" height="100%" />) || (
-          <AvatarIcon style={{ fontSize: 80, borderRadius: 8 }} />
-        )}
+        {(src && (
+          <img
+            src={process.env.API + src}
+            width="100%"
+            height="100%"
+            onError={() => (imgRef.current.src = '/400.png')}
+            ref={imgRef}
+          />
+        )) || <AvatarIcon style={{ fontSize: 80, borderRadius: 8 }} />}
       </button>
     </Uploader>
   )

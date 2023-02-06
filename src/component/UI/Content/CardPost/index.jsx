@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import demoImg from 'assets/img/demo-phone.png'
 import styles from './styles.module.scss'
 import clsx from 'clsx'
@@ -22,14 +22,15 @@ function Card({ title, description, imgSrc, shadow, border, hover, cover }) {
     },
   ])
 
+  const imgRef = useRef(imgSrc)
+
   return (
     <div className={classCard}>
       <div className={clsx('card-img-top', styles.cardImg)}>
         <img
-          src={
-            imgSrc ||
-            'https://www.journal-theme.com/1/image/cache/catalog/journal3/gallery/aiony-haust-667702-unsplash-300x225w.jpg.webp'
-          }
+          ref={imgRef}
+          src={imgSrc}
+          onError={() => (imgRef.current.src = '/400.png')}
           className={styles.img}
           alt="..."
         />
