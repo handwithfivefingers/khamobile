@@ -22,15 +22,12 @@ export default function Footer() {
       <div id="fb-root"></div>
 
       <div className={styles.contact}>
-        <div className={styles.contactExpand} onClick={() => setExpand(!expand)}>
-          {/* <div className={styles.icon}>
-            <FcCustomerSupport />
-          </div> */}
+        {/* <div className={styles.contactExpand} onClick={() => setExpand(!expand)}>
           <div className={styles.icon}>
             <img src="/support-icon.png" />
           </div>
-        </div>
-        <div className={clsx(styles.listExpand, { [styles.activeExpand]: expand })}>
+        </div> */}
+        <div className={clsx(styles.activeExpand)}>
           <a className={styles.contactItem} href="tel:+84777999966">
             <div className={styles.icon}>
               <BsTelephoneFill />
