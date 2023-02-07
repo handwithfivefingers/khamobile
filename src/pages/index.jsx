@@ -15,12 +15,25 @@ import axios from 'axios'
 import PostHelmet from 'component/PostHelmet'
 import { SiteLinksSearchBoxJsonLd } from 'next-seo'
 import SingleSlider from 'component/UI/Content/Slider/SingleItem'
+import PageService from 'service/global/Page.service'
+import { useRouter } from 'next/router'
 const Home = (props) => {
   const [data, setData] = useState([])
-
+  const [content, setContent] = useState([])
+  const router = useRouter()
   useEffect(() => {
     getHomeProd()
+    getHomeSection()
   }, [])
+
+  const getHomeSection = async () => {
+    try {
+      const resp = await PageService.getPage(router.pathname)
+      setContent(resp.data.data.content)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   const getHomeProd = async () => {
     try {
@@ -60,6 +73,7 @@ const Home = (props) => {
     }
   }
 
+  console.log(content)
   return (
     <>
       <PostHelmet seo={props?.seo} />
@@ -79,7 +93,7 @@ const Home = (props) => {
             <div className="container" style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
               <div className={styles.grid}>
                 <div className={styles.mainCarousel}>
-                  <SelfCarousel />
+                  <SelfCarousel content={content?.['section_1']} />
                 </div>
                 <div className={styles.mainBanner}>
                   <ImageBlock
@@ -338,26 +352,27 @@ const Home = (props) => {
 
 Home.Layout = CommonLayout
 
-const SelfCarousel = () => {
-  const [images, setImages] = useState([
-    {
-      itemImageSrc: `/slide/banner-1.png`,
-      thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
-    },
+const SelfCarousel = ({ content, ...props }) => {
+  // const [images, setImages] = useState([
+  //   {
+  //     itemImageSrc: `/slide/banner-1.png`,
+  //     thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
+  //   },
 
-    {
-      itemImageSrc: `/slide/banner-2.png`,
-      thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
-    },
-    {
-      itemImageSrc: `/slide/banner-3.png`,
-      thumbnailImageSrc: 'IPHONE 13 ProMax',
-    },
-    {
-      itemImageSrc: `/slide/banner-4.png`,
-      thumbnailImageSrc: 'IPHONE 13 ProMax',
-    },
-  ])
+  //   {
+  //     itemImageSrc: `/slide/banner-2.png`,
+  //     thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
+  //   },
+  //   {
+  //     itemImageSrc: `/slide/banner-3.png`,
+  //     thumbnailImageSrc: 'IPHONE 13 ProMax',
+  //   },
+  //   {
+  //     itemImageSrc: `/slide/banner-4.png`,
+  //     thumbnailImageSrc: 'IPHONE 13 ProMax',
+  //   },
+  // ])
+
   return (
     <SingleSlider
       placement={'bottom'}
@@ -367,8 +382,8 @@ const SelfCarousel = () => {
       autoplay
       slidesToShow={1}
     >
-      {images.map((item, index) => (
-        <img src={item.itemImageSrc} key={index} height={'53%'} width={'100%'} />
+      {content?.data?.map((item, index) => (
+        <img src={process.env.API + item} key={index} height={'53%'} width={'100%'} />
       ))}
     </SingleSlider>
   )

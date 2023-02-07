@@ -12,6 +12,7 @@ import {
   Panel,
   Button,
   PanelGroup,
+  useToaster,
 } from 'rsuite'
 import MinusIcon from '@rsuite/icons/Minus'
 import PlusIcon from '@rsuite/icons/Plus'
@@ -24,6 +25,7 @@ import { BsDashLg } from 'react-icons/bs'
 import { useRouter } from 'next/router'
 import PageService from 'service/admin/Page.service'
 import { useCommonStore } from 'src/store/commonStore'
+import { message } from 'src/helper'
 
 export default function SinglePage(props) {
   const [customerShow, setCustomerShow] = useState([])
@@ -32,7 +34,7 @@ export default function SinglePage(props) {
   const [data, setData] = useState()
   const [pageData, setPageData] = useState({})
   const changeTitle = useCommonStore((state) => state.changeTitle)
-
+  const toaster = useToaster()
   useEffect(() => {
     const { _id } = router.query
     if (_id) {
@@ -56,6 +58,22 @@ export default function SinglePage(props) {
     }
   }
 
+  const handleSubmit = async (sectionName, sectionData) => {
+    try {
+      const nextState = JSON.parse(JSON.stringify(pageData))
+      nextState[sectionName].data = sectionData
+      const resp = await PageService.updatePage(data._id, { content: nextState })
+      toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
+    } catch (error) {
+      console.log(error)
+      toaster.push(message('error', error.response?.data?.message || error.response?.message), {
+        placement: 'topEnd',
+      })
+    } finally {
+      getScreenData(router.query._id)
+    }
+  }
+
   return (
     <Content className="rounded">
       <PanelGroup>
@@ -65,7 +83,12 @@ export default function SinglePage(props) {
             return (
               <Panel header={currentSection.title} collapsible defaultExpanded={index === 0 ? true : false}>
                 <CardBlock className={'border-0'}>
-                  <DynamicInput data={{ pageData, setPageData }} sectionName={key} key={[key, index].join('_')} />
+                  <DynamicInput
+                    data={{ pageData, setPageData }}
+                    sectionName={key}
+                    key={[key, index].join('_')}
+                    onSubmit={handleSubmit}
+                  />
                 </CardBlock>
               </Panel>
             )
@@ -76,7 +99,7 @@ export default function SinglePage(props) {
   )
 }
 
-const DynamicInput = ({ data, sectionName }) => {
+const DynamicInput = ({ data, sectionName, onSubmit }) => {
   const { pageData, setPageData } = data
 
   const currentSection = pageData[sectionName]
@@ -102,6 +125,11 @@ const DynamicInput = ({ data, sectionName }) => {
     })
 
   console.log(sectionData)
+  // /public/wp/2022/01/iphone-13-1536x810.png
+
+  const handleSubmit = () => {
+    onSubmit(sectionName, sectionData)
+  }
 
   return (
     <Form formValue={sectionData}>
@@ -128,7 +156,9 @@ const DynamicInput = ({ data, sectionName }) => {
         })}
       </div>
       <div className="d-flex justify-content-end">
-        <Button appearance="primary">Save Section</Button>
+        <Button appearance="primary" onClick={handleSubmit}>
+          Save Section
+        </Button>
       </div>
     </Form>
   )

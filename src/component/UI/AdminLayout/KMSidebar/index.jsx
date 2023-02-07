@@ -38,7 +38,7 @@ export default function KMSidebar() {
 
   const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
   const router = useRouter()
-  const [active, setActive] = useState('/admin')
+  const [active, setActive] = useState('')
 
   const logout = async () => {
     await AuthenticateService.logout()
@@ -63,17 +63,16 @@ export default function KMSidebar() {
         </Link>
       </Sidenav.Header>
 
-      <Sidenav
-        expanded={expand}
-        defaultOpenKeys={['3']}
-        appearance="subtle"
-        className={'position-sticky top-0'}
-        onOpenChange={(e) => console.log('openChange', e)}
-      >
+      <Sidenav expanded={expand} appearance="subtle" className={'position-sticky top-0'}>
         <Sidenav.Body>
-          <Nav>
+          <Nav
+            onSelect={(eventKey) => {
+              eventKey && setActive(eventKey)
+            }}
+            activeKey={active}
+          >
             <Link href={'/admin'} passHref>
-              <Nav.Item eventKey="/admin" active icon={<DashboardIcon />}>
+              <Nav.Item eventKey="/admin" icon={<DashboardIcon />}>
                 Dashboard
               </Nav.Item>
             </Link>
@@ -84,21 +83,20 @@ export default function KMSidebar() {
               </Nav.Item>
             </Link>
 
-            <Nav.Menu eventKey="/admin/posts" icon={<TextImageIcon />} title="Post">
+            <Nav.Menu icon={<TextImageIcon />} title="Post">
               <Link href="/admin/posts" passHref>
-                <Nav.Item eventKey="3-1" icon={<TextImageIcon />}>
+                <Nav.Item eventKey="/admin/posts" icon={<TextImageIcon />}>
                   Posts
                 </Nav.Item>
               </Link>
               <Link href="/admin/posts/category" passHref>
-                <Nav.Item eventKey="3-2" icon={<ListIcon />}>
+                <Nav.Item eventKey="/admin/posts/category" icon={<ListIcon />}>
                   Danh mục
                 </Nav.Item>
               </Link>
             </Nav.Menu>
 
-            <Nav.Menu eventKey="/admin/products" icon={<MobileIcon />} title="Products">
-              {/* Products */}
+            <Nav.Menu icon={<MobileIcon />} title="Products">
               <Link href="/admin/product" passHref>
                 <Nav.Item eventKey="/admin/product" icon={<DeviceOtherIcon />}>
                   Products
@@ -134,7 +132,7 @@ export default function KMSidebar() {
               </Nav.Item>
             </Link>
 
-            <Nav.Menu eventKey="/admin/setting" icon={<GearIcon />} title="Tùy chỉnh">
+            <Nav.Menu icon={<GearIcon />} title="Tùy chỉnh">
               <Link href="/admin/setting/menu" passHref>
                 <Nav.Item eventKey="/admin/setting/menu" icon={<GearIcon />}>
                   Menu

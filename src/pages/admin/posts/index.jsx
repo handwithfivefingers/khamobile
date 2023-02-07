@@ -74,7 +74,7 @@ const Posts = () => {
     limit: 10,
   })
   useEffect(() => {
-    changeTitle('Page Posts')
+    changeTitle('Bài viết')
     getPostData()
   }, [])
 

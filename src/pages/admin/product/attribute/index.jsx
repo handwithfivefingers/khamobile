@@ -2,17 +2,32 @@ import AdminLayout from 'component/UI/AdminLayout'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { KMInput } from 'component/UI/Content/KMInput'
 import { useEffect, useState, useRef } from 'react'
-import { Badge, Button, Col, Content, Form, Grid, IconButton, Modal, Popover, Row, Table, Whisper } from 'rsuite'
+import {
+  Badge,
+  Button,
+  Col,
+  Content,
+  Form,
+  Grid,
+  IconButton,
+  Modal,
+  Popover,
+  Row,
+  Table,
+  useToaster,
+  Whisper,
+} from 'rsuite'
 import ProductService from 'service/admin/Product.service'
 import { AttributeModel } from 'src/constant/model.constant'
 import { useCommonStore } from 'src/store/commonStore'
 import TrashIcon from '@rsuite/icons/Trash'
 import VariableModal from 'component/Modal/Variable/create'
+import { message } from 'src/helper'
 const { Column, HeaderCell, Cell } = Table
 
 const ProductVariable = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
-
+  const toaster = useToaster()
   const [attribute, setAttribute] = useState([])
   const [form, setForm] = useState({
     key: '',
@@ -42,8 +57,21 @@ const ProductVariable = () => {
 
   const handleClose = () => setModal({ ...modal, open: false, component: null })
 
-  const handleDelete = (rowData) => {
+  const handleDelete = async (rowData) => {
     console.log(rowData)
+    try {
+      const resp = await ProductService.deleteAttribute(rowData._id)
+
+      if (resp.status === 200) {
+        toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
+      }
+    } catch (error) {
+      toaster.push(message('error', error.response?.data?.message || error.response?.message), {
+        placement: 'topEnd',
+      })
+    } finally {
+      getAttributes()
+    }
   }
 
   const onCreateAttributes = async () => {

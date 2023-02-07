@@ -29,6 +29,8 @@ const ProductService = {
 
   createAttribute: async (form) => await axios.post(path.attribute, form),
 
+  deleteAttribute: async (_id) => await axios.delete(path.attribute + '/' + _id),
+
   searchProduct: async (form) => await axios.post(path.searchProduct, form),
 }
 

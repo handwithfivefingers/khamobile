@@ -11,6 +11,7 @@ const Pages = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const router = useRouter()
   const [page, setPage] = useState([])
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     changeTitle('Page Pages')
     getScreenData()
@@ -18,10 +19,13 @@ const Pages = () => {
 
   const getScreenData = async () => {
     try {
+      setLoading(true)
       const resp = await PageService.getPages()
       setPage(resp.data.data)
     } catch (error) {
       console.log(error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -52,6 +56,7 @@ const Pages = () => {
           onRowClick={(rowData) => {
             router.push(`./pages/${rowData._id}`)
           }}
+          loading={loading}
         >
           <Column width={60} align="center" fixed>
             <HeaderCell>Id</HeaderCell>

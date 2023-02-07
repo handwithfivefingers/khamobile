@@ -124,3 +124,14 @@ p + p {
     // }
   }
 }
+
+// Menu
+
+.rs-dropdown-selected-within {
+  .rs-sidenav-item {
+    color: var(--rs-blue-800);
+    &:hover {
+      color: var(--rs-blue-800);
+    }
+  }
+}

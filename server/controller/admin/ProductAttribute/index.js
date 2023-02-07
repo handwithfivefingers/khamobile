@@ -54,7 +54,7 @@ export default class ProductAttributeController {
   handleSaveAttributesTerm = async (req, res) => {
     try {
       const data = req.body
-      const _id = req.params
+      const { _id } = req.params
 
       if (!_id) throw { message: 'Invalid attribute' }
 
@@ -98,6 +98,19 @@ export default class ProductAttributeController {
     try {
       const _attr = await ProductAttribute.find({})
       return new Response().fetched({ data: _attr }, res)
+    } catch (error) {
+      return new Response().error(error, res)
+    }
+  }
+  deleteAttributes = async (req, res) => {
+    try {
+      const { _id } = req.params
+
+      await ProductAttribute.deleteOne({ _id: _id }, { new: true })
+
+      await ProductAttributeTerm.deleteMany({ parentId: _id })
+
+      return new Response().deleted({}, res)
     } catch (error) {
       return new Response().error(error, res)
     }

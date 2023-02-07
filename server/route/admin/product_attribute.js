@@ -10,6 +10,8 @@ router.get('/product_attribute_list', new ProductAttributeController().getAttrib
 
 router.post('/product_attribute', new ProductAttributeController().createAttributes)
 
+router.delete('/product_attribute/:_id', new ProductAttributeController().deleteAttributes)
+
 router.get('/product_attribute/:_id', new ProductAttributeController().getAttributeWithTermById)
 
 router.post('/product_attribute/:_id', new ProductAttributeController().handleSaveAttributesTerm)
