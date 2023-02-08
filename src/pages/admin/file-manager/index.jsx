@@ -5,10 +5,11 @@ import React, { useState } from 'react'
 import { useEffect } from 'react'
 import { BsClipboard } from 'react-icons/bs'
 import { FcFolder } from 'react-icons/fc'
-import { IconButton, Placeholder } from 'rsuite'
+import { IconButton, Placeholder, Uploader } from 'rsuite'
 import FileManagerService from 'service/admin/FileManager.service'
 import styles from './styles.module.scss'
 import ReactDOM from 'react-dom'
+import CustomUpload from 'component/UI/Upload/CustomUpload'
 export default function FileManger() {
   const [listFile, setListFile] = useState([])
   const [loading, setLoading] = useState(false)
@@ -46,7 +47,11 @@ export default function FileManger() {
   }
   return (
     <>
-      <CardBlock>
+      <div className="d-flex justify-content-center">
+        <CustomUpload action={process.env.API + '/api/upload'} withCredentials={true} />
+      </div>
+
+      <CardBlock className="border-0">
         <div className={styles.grid}>
           {loading &&
             [...Array(18).keys()].map((item) => {
@@ -61,7 +66,7 @@ export default function FileManger() {
               </div>
             ) : (
               <div className={styles.gridItem}>
-                <ImageBlock src={src} engine />
+                <ImageBlock src={src} engine height="75%" objectFit="contain" />
                 <ul className={styles.fileInformation}>
                   <li>
                     <span>Đường dẫn: </span>

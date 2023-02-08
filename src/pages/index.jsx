@@ -207,66 +207,9 @@ const Home = (props) => {
 
           <div className="col-12">
             <CustomSlider type={TYPE_CAROUSEL.MUTI}>
-              <CardBlock>
-                <figure className="text-center">
-                  <blockquote className="blockquote">
-                    <p>A well-known quote, contained in a blockquote element.</p>
-                  </blockquote>
-                  <figcaption className="blockquote-footer">
-                    Someone famous in <cite title="Source Title">Source Title</cite>
-                  </figcaption>
-                </figure>
-              </CardBlock>
-              <CardBlock>
-                <figure className="text-center">
-                  <blockquote className="blockquote">
-                    <p>A well-known quote, contained in a blockquote element.</p>
-                  </blockquote>
-                  <figcaption className="blockquote-footer">
-                    Someone famous in <cite title="Source Title">Source Title</cite>
-                  </figcaption>
-                </figure>
-              </CardBlock>
-              <CardBlock>
-                <figure className="text-center">
-                  <blockquote className="blockquote">
-                    <p>A well-known quote, contained in a blockquote element.</p>
-                  </blockquote>
-                  <figcaption className="blockquote-footer">
-                    Someone famous in <cite title="Source Title">Source Title</cite>
-                  </figcaption>
-                </figure>
-              </CardBlock>
-              <CardBlock>
-                <figure className="text-center">
-                  <blockquote className="blockquote">
-                    <p>A well-known quote, contained in a blockquote element.</p>
-                  </blockquote>
-                  <figcaption className="blockquote-footer">
-                    Someone famous in <cite title="Source Title">Source Title</cite>
-                  </figcaption>
-                </figure>
-              </CardBlock>
-              <CardBlock>
-                <figure className="text-center">
-                  <blockquote className="blockquote">
-                    <p>A well-known quote, contained in a blockquote element.</p>
-                  </blockquote>
-                  <figcaption className="blockquote-footer">
-                    Someone famous in <cite title="Source Title">Source Title</cite>
-                  </figcaption>
-                </figure>
-              </CardBlock>
-              <CardBlock>
-                <figure className="text-center">
-                  <blockquote className="blockquote">
-                    <p>A well-known quote, contained in a blockquote element.</p>
-                  </blockquote>
-                  <figcaption className="blockquote-footer">
-                    Someone famous in <cite title="Source Title">Source Title</cite>
-                  </figcaption>
-                </figure>
-              </CardBlock>
+              {content?.['section_2']?.data?.map((customer, index) => (
+                <ImageBlock src={process.env.API + customer} key={index} height={'75%'} width={'100%'} modal/>
+              ))}
             </CustomSlider>
           </div>
         </div>
@@ -353,26 +296,6 @@ const Home = (props) => {
 Home.Layout = CommonLayout
 
 const SelfCarousel = ({ content, ...props }) => {
-  // const [images, setImages] = useState([
-  //   {
-  //     itemImageSrc: `/slide/banner-1.png`,
-  //     thumbnailImageSrc: 'MACBOOK M2 GIÁ SỐC',
-  //   },
-
-  //   {
-  //     itemImageSrc: `/slide/banner-2.png`,
-  //     thumbnailImageSrc: 'IPHONE 14 SẴN HÀNG',
-  //   },
-  //   {
-  //     itemImageSrc: `/slide/banner-3.png`,
-  //     thumbnailImageSrc: 'IPHONE 13 ProMax',
-  //   },
-  //   {
-  //     itemImageSrc: `/slide/banner-4.png`,
-  //     thumbnailImageSrc: 'IPHONE 13 ProMax',
-  //   },
-  // ])
-
   return (
     <SingleSlider
       placement={'bottom'}

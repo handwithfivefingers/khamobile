@@ -110,11 +110,13 @@ export default function Card({
               <h5>{title}</h5>
             </div>
             <p className={clsx(styles.cardText, 'm-0')}>{getPrice(price)}</p>
+
             {underlinePrice && (
               <p className={styles.cardText}>
                 <s>{formatCurrency(underlinePrice)}</s>
               </p>
             )}
+
             {wishList && (
               <div className={styles.wishList}>
                 <IconButton

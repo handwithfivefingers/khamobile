@@ -1,28 +1,16 @@
 import clsx from 'clsx'
-import dynamic from 'next/dynamic'
 import Card from 'component/UI/Content/Card'
-import CardBlock from 'component/UI/Content/CardBlock'
 import Divider from 'component/UI/Content/Divider'
-import Heading from 'component/UI/Content/Heading'
-
-// import SideFilter from 'component/UI/Content/SideFilter'
-
+import dynamic from 'next/dynamic'
 import CommonLayout from 'component/UI/Layout'
-
 import Link from 'next/link'
-
-import { useEffect, useState, useMemo, useRef } from 'react'
-
-import { Button, Col, Drawer, IconButton, Pagination, Row, SelectPicker } from 'rsuite'
-
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { Col, Pagination, Row } from 'rsuite'
 import GlobalProductService from 'service/global/Product.service'
-
 import styles from './styles.module.scss'
-
 import PageHeader from 'component/UI/Content/PageHeader'
-
-import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
 import PostHelmet from 'component/PostHelmet'
+import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
 import GlobalHomeService from 'service/global/Home.service'
 
 const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
@@ -35,8 +23,6 @@ export default function Product(props) {
   const [loading, setLoading] = useState(false)
 
   const [filter, setFilter] = useState({})
-
-  const cardRef = useRef()
 
   useEffect(() => {
     getProducts()
@@ -109,7 +95,7 @@ export default function Product(props) {
                 </Row>
                 <Divider />
 
-                <Row gutter={12} ref={cardRef}>
+                <Row gutter={12}>
                   <Col md={24}>
                     <div className={styles.grid}>
                       {loading && renderSkeleton}

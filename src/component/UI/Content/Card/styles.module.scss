@@ -1,7 +1,6 @@
 .card {
   border-color: transparent;
   // box-shadow: var(--main-box-shadow);
-
   cursor: pointer;
 
   .cardImg {
@@ -32,15 +31,16 @@
   .cardBody {
     padding: 6px 12px;
     .cardTitle {
-      height: 50px;
+      height: 75px;
       position: relative;
+
       h5 {
         font-size: 16px;
         font-weight: 500;
         overflow: hidden;
         white-space: normal;
         display: -webkit-box;
-        -webkit-line-clamp: 2;
+        -webkit-line-clamp: 3;
         -webkit-box-orient: vertical;
         color: #333;
         text-shadow: none;
@@ -53,8 +53,13 @@
       font-size: 14px;
       font-weight: 300;
       direction: ltr;
+      color: #333;
+      margin-bottom: 0;
+
       .price {
         font-size: 16px;
+        font-weight: bold;
+        color: var(--rs-red-800);
       }
     }
     .wishList {
@@ -84,6 +89,19 @@
   .cardImg {
     .img {
       object-fit: cover;
+    }
+  }
+}
+
+@media (max-width: 768px) {
+  .card {
+    .cardBody {
+      .cardTitle {
+        h5 {
+          font-size: 14px;
+          line-height: 18px;
+        }
+      }
     }
   }
 }

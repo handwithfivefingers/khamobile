@@ -5,7 +5,16 @@ import { Modal } from 'rsuite'
 import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
 
-export default function ImageBlock({ src, alt, className, bordered, height, engine, modal = false }) {
+export default function ImageBlock({
+  src,
+  alt,
+  className,
+  bordered,
+  height,
+  engine,
+  objectFit = 'cover',
+  modal = false,
+}) {
   const [state, setState] = useState(false)
 
   const imgClass = clsx([
@@ -35,6 +44,7 @@ export default function ImageBlock({ src, alt, className, bordered, height, engi
         loader={({ src, width, quality }) => {
           return engine ? process.env.API + src + `?w=${width}&q=${quality || 75}` : src
         }}
+        objectFit={objectFit}
       />
       {modal && (
         <Modal open={state} onClose={() => setState(false)} size="md" style={{ background: 'transparent' }}>

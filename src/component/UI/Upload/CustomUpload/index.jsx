@@ -41,6 +41,32 @@ const SingleUpload = forwardRef((props, ref) => {
   }, [props.value])
   console.log('SingleUpload', props)
   const imgRef = useRef()
+
+  const renderIconPreview = () => {
+    let html = null
+    if (props.icon) {
+      html = <AvatarIcon style={{ fontSize: 80, borderRadius: 8 }} />
+    } else {
+      html = 'Upload'
+    }
+    return html
+  }
+  const renderImagePreview = () => {
+    let html = null
+    if (src) {
+      html = (
+        <img
+          src={process.env.API + src}
+          width="100%"
+          height="100%"
+          onError={() => (imgRef.current.src = '/400.png')}
+          ref={imgRef}
+        />
+      )
+    }
+    return html
+  }
+
   return (
     <Uploader
       ref={ref}
@@ -54,17 +80,7 @@ const SingleUpload = forwardRef((props, ref) => {
       }}
       fileListVisible={false}
     >
-      <button style={{ width: 120, height: 120 }}>
-        {(src && (
-          <img
-            src={process.env.API + src}
-            width="100%"
-            height="100%"
-            onError={() => (imgRef.current.src = '/400.png')}
-            ref={imgRef}
-          />
-        )) || <AvatarIcon style={{ fontSize: 80, borderRadius: 8 }} />}
-      </button>
+      <button style={{ width: 120, height: 120 }}>{renderImagePreview() || renderIconPreview()}</button>
     </Uploader>
   )
 })
