@@ -130,7 +130,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
 
   const calculatePrice = () => {
     let html = null
-    html = formatCurrency(form?.price * form?.quantity || 0)
+    html = formatCurrency(form?.price * form?.quantity || 0, { symbol: 'đ' })
     return html
   }
 
@@ -225,7 +225,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
   return (
     <CardBlock className="border-0">
       <Form ref={formRef} model={ProductModel}>
-        <Panel style={{ paddingBottom: 0, paddingTop: 24 }}>
+        <Panel style={{ paddingBottom: 0 }}>
           <div className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)} style={{ gap: 4 }}>
             <div className={'row w-100 '} ref={pricingRef}>
               <div className="col-12">
@@ -252,7 +252,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
             </div>
           </div>
 
-          <Divider />
+          <Divider className="my-2" />
 
           <div className={clsx(styles.groupVariant)}>
             <input type="hidden" value={form.quantity} className="bk-product-qty" />

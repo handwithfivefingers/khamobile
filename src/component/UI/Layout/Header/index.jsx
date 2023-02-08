@@ -26,6 +26,7 @@ import clsx from 'clsx'
 import { HEADER_MENU } from 'src/constant/header.constant.jsx'
 import { useAuthorizationStore } from 'src/store/authenticateStore'
 import UserChangeIcon from '@rsuite/icons/UserChange'
+import GlobalHomeService from 'service/global/Home.service'
 const NavLink = forwardRef((props, ref) => {
   const { href, as, ...rest } = props
   return (
@@ -44,18 +45,32 @@ const CustomNavbar = ({ ...props }) => {
   const [cateMenu, setCateMenu] = useState([])
   const [drawer, setDrawer] = useState(false)
   const [activeKey, setActiveKey] = useState(null)
+  const [menu, setMenu] = useState([])
   const { authenticate, isAdmin } = useAuthorizationStore((state) => state)
   const nodeRef = useRef()
   const router = useRouter()
 
   useEffect(() => {
     let item = JSON.parse(localStorage.getItem('khaMobileCart'))
-
     if (item) {
       setCartLength(item.length)
     }
     getCateData()
+    getMenu()
   }, [])
+
+  const getMenu = async () => {
+    try {
+      const resp = await GlobalHomeService.getMenu()
+
+      console.log(resp)
+      const { data } = resp.data
+      const { menu } = data
+      setMenu(menu)
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     if (router.pathname.includes('/product')) {
@@ -100,29 +115,6 @@ const CustomNavbar = ({ ...props }) => {
     html = (
       <>
         <Nav pullRight className={styles.ham}>
-          {/* <Dropdown renderToggle={renderIconButton} placement="bottomEnd">
-            <Dropdown.Item as={NavLink} href="/cart" icon={<FaShoppingBasket />}>
-              <Badge content={cartLength}>Giỏ hàng</Badge>
-            </Dropdown.Item>
-
-            {!authenticate && (
-              <Dropdown.Item as={NavLink} href="/login" icon={<UserChangeIcon />}>
-                Đăng nhập
-              </Dropdown.Item>
-            )}
-
-            {authenticate && (
-              <Dropdown.Item as={NavLink} href="/user" icon={<UserInfoIcon />}>
-                User
-              </Dropdown.Item>
-            )}
-
-            {authenticate && isAdmin && (
-              <Dropdown.Item as={NavLink} href={`/admin`} icon={<CogIcon />}>
-                Admin
-              </Dropdown.Item>
-            )}
-          </Dropdown> */}
           <Dropdown.Item as={NavLink} href="/cart" icon={<FaShoppingBasket />}>
             <Badge content={cartLength}>Giỏ hàng</Badge>
           </Dropdown.Item>
@@ -213,15 +205,98 @@ const CustomNavbar = ({ ...props }) => {
     return html
   }
 
+  const getHref = (item) => {
+    // menuItem.dynamicRef === 'Page' ? menuItem.slug : '/' + menuItem.slug
+
+    switch (item.dynamicRef) {
+      case 'Page':
+        return item.slug
+      case 'ProductCategory':
+        return '/category/' + item.slug
+    }
+  }
+
+  const renderListMenu = (menuData) => {
+    let html = null
+    html = menuData.map((menuItem, index) => {
+      if (menuItem.children && menuItem.children?.length) {
+        return (
+          <Nav.Menu
+            title={menuItem.name}
+            key={[menuItem._id, index].join('_')}
+            active={activeKey === getHref(menuItem)}
+          >
+            <Nav.Item
+              as={NavLink}
+              href={getHref(menuItem)}
+              eventKey={getHref(menuItem)}
+              active={activeKey === getHref(menuItem)}
+            >
+              {menuItem.name}
+            </Nav.Item>
+            {renderListMenu(menuItem.children)}
+          </Nav.Menu>
+        )
+      } else {
+        return (
+          <Nav.Item
+            as={NavLink}
+            href={getHref(menuItem)}
+            key={[menuItem._id, index].join('_')}
+            eventKey={getHref(menuItem)}
+            active={activeKey === getHref(menuItem)}
+          >
+            {menuItem.name}
+          </Nav.Item>
+        )
+      }
+    })
+
+    return html
+    // menu.map((menuItem, index) => {
+    //   if (menuItem.children.length) {
+    //     return (
+    //       <Dropdown title="Sản phẩm" trigger="click" icon={<PcIcon />}>
+    //         <Dropdown.Item as={NavLink} href="/product" icon={<DeviceOtherIcon />}>
+    //           Tất cả sản phẩm
+    //         </Dropdown.Item>
+    //         <Dropdown.Item as={NavLink} href="/category" icon={<MobileIcon />}>
+    //           Danh mục
+    //         </Dropdown.Item>
+
+    //         {renderDropdownMenu(cateMenu)}
+    //       </Dropdown>
+    //     )
+    //   }
+    //   return (
+    //     <Nav.Item
+    //       as={NavLink}
+    //       href={menuItem.dynamicRef === 'Page' ? menuItem.slug : '/' + menuItem.slug}
+    //       icon={<HomeIcon />}
+    //     >
+    //       {menuItem.name}
+    //     </Nav.Item>
+    //   )
+    // })
+  }
+
   return (
-    <Navbar {...props} className={styles.nav} ref={nodeRef}>
+    <Navbar {...props} className={clsx(styles.nav, 'shadow')} ref={nodeRef}>
       <Navbar.Brand className={styles.brand} href="#" style={{ maxWidth: 200 }}>
         <Link href="/" passHref>
           <Image src={LOGO} alt="Kha mobile" priority />
         </Link>
       </Navbar.Brand>
 
-      {renderMenuLeft()}
+      <IconButton
+        icon={<GridIcon />}
+        onClick={() => setDrawer(!drawer)}
+        className={clsx(styles.hamLeft, 'ml-2 shadow')}
+      />
+
+      <Nav onSelect={(v) => setActiveKey(v)} activeKey={activeKey} className={styles.navLeft}>
+        {renderListMenu(menu)}
+      </Nav>
 
       {renderMenuRight}
 
@@ -234,10 +309,21 @@ const CustomNavbar = ({ ...props }) => {
         <Drawer.Body style={{ padding: 0 }}>
           <Sidenav>
             <Sidenav.Body>
-              <Nav className={styles.sideMenu}>
+              <Nav
+                onSelect={(v) => {
+                  setActiveKey(v)
+                  v && setDrawer(false)
+                }}
+                activeKey={activeKey}
+                className={clsx(styles.sideMenu)}
+              >
+                {renderListMenu(menu)}
+              </Nav>
+              {/* 
                 <Nav.Item as={NavLink} href="/" icon={<HomeIcon />}>
                   Trang chủ
                 </Nav.Item>
+
                 <Nav.Item as={NavLink} href="/about-us" icon={<PeoplesIcon />}>
                   Về chúng tôi
                 </Nav.Item>
@@ -260,10 +346,10 @@ const CustomNavbar = ({ ...props }) => {
                 <Dropdown.Item as={NavLink} href="/user" icon={<UserInfoIcon />}>
                   User
                 </Dropdown.Item>
+
                 <Dropdown.Item as={NavLink} href="/admin" icon={<CogIcon />}>
                   Admin
-                </Dropdown.Item>
-              </Nav>
+                </Dropdown.Item> */}
             </Sidenav.Body>
           </Sidenav>
         </Drawer.Body>

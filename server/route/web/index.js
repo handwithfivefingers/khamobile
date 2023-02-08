@@ -6,7 +6,18 @@ import seoRouter from './seo'
 import provinceRouter from './province'
 import postRouter from './post'
 import pageRouter from './page'
+import settingRouter from './setting'
 
-const router = { productRouter, productCategoryRouter, orderRouter, userRouter, seoRouter, provinceRouter, postRouter, pageRouter }
+const router = {
+  productRouter,
+  productCategoryRouter,
+  orderRouter,
+  userRouter,
+  seoRouter,
+  provinceRouter,
+  postRouter,
+  pageRouter,
+  settingRouter,
+}
 
 export default router

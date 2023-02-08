@@ -54,7 +54,7 @@ export default class SettingController {
   getSetting = async (req, res) => {
     try {
       const [_setting] = await Setting.find({}).populate({ path: 'menu._id', select: '_id title slug name' })
-
+      console.log('setting', _setting)
       const _menu = _setting.menu
 
       const newMenu = this.onBringParentItemToChildren(_menu)
@@ -113,6 +113,7 @@ export default class SettingController {
         result.push({
           ...child._doc,
           name: child._id?.title || child?._id?.name || '',
+          slug: child._id?.slug,
           _id: child._id?._id,
           children: this.onBringParentItemToChildren(data, child._id?._id),
         })

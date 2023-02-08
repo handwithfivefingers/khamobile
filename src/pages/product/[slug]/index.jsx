@@ -44,7 +44,7 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
                     <ProductForm data={data} _relationProd={_relationProd} slug={slug} />
 
                     <CardBlock className="border-0 mt-4">
-                      <TabsList data={data} />
+                      {data?.description && <TabsList data={data?.description} />}
                     </CardBlock>
                   </div>
                 </div>
@@ -117,11 +117,11 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
   )
 }
 
-const TabsList = (props) => {
+const TabsList = ({ data }) => {
   return (
     <div className={styles.tabs}>
       <h6>Khuyến mãi</h6>
-      <div className={styles.tabsContent}>{parser(props?.data?.description || '')}</div>
+      <div className={styles.tabsContent}>{parser(data || '')}</div>
     </div>
   )
 }

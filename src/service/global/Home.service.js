@@ -7,6 +7,7 @@ const path = {
   categorySeo: '/seo-category',
   postSeo: '/seo-post',
   productSeo: '/seo-product',
+  menu: '/menu',
 }
 
 const GlobalHomeService = {
@@ -16,5 +17,6 @@ const GlobalHomeService = {
   getCategorySeo: async () => await axios.get(path.categorySeo),
   getPostSeo: async () => await axios.get(path.postSeo),
   getProductSeo: async () => await axios.get(path.productSeo),
+  getMenu: async () => await axios.get(path.menu),
 }
 export default GlobalHomeService

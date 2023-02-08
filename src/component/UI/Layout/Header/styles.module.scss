@@ -71,14 +71,14 @@
   }
 }
 .navItem {
-  transition:all 0.2s;
+  transition: all 0.2s;
   &:hover,
   &:active,
   &:focus,
   &.active {
     &:not(ul) {
       background-color: var(--rs-blue-800) !important;
-      color: #fff !important; 
+      color: #fff !important;
     }
   }
   &.navSubMenu {
