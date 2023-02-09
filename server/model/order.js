@@ -47,7 +47,7 @@ export default {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'ProductVariant',
       },
-      productId: {
+      _id: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Product',
       },
@@ -55,8 +55,13 @@ export default {
         type: Number,
         default: 1,
       },
+      image: {
+        src: String,
+      },
     },
   ],
+  
+  orderInfo: {},
 
   createDate: String,
 

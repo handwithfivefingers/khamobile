@@ -1,13 +1,10 @@
-import { MESSAGE } from '#server/constant/message'
-import { Order, User } from '#server/model'
-import isEqual from 'lodash/isEqual'
-import mongoose, { mongo } from 'mongoose'
-import MailServer from '#controller/Service/MailServer'
 import { formatCurrency } from '#common/helper'
 import TEMPLATE_MAIL from '#constant/templateMail'
-import shortid from 'shortid'
-import moment from 'moment'
+import MailServer from '#controller/Service/MailServer'
 import PaymentController from '#controller/Service/Payment'
+import { Order } from '#server/model'
+import moment from 'moment'
+import mongoose from 'mongoose'
 export default class OrderController {
   handleCreateOrder = async (req, res) => {
     try {
@@ -105,6 +102,26 @@ export default class OrderController {
   }) => {
     try {
       const orderId = new mongoose.Types.ObjectId()
+      let _prod = product.map(({ _id, variantId, quantity, image }) => {
+        if (variantId) {
+          return {
+            variantId: variantId,
+            quantity: quantity,
+            _id,
+            image: {
+              src: image?.src,
+            },
+          }
+        } else {
+          return {
+            _id,
+            quantity: quantity,
+            image: {
+              src: image?.src,
+            },
+          }
+        }
+      })
 
       let order = new Order({
         _id: orderId,
@@ -115,19 +132,7 @@ export default class OrderController {
         paymentType,
         amount,
         status,
-        product: product.map((item) => {
-          if (item.variantId) {
-            return {
-              variantId: item.variantId,
-              quantity: item.quantity,
-            }
-          } else {
-            return {
-              productId: item._id,
-              quantity: item.quantity,
-            }
-          }
-        }),
+        product: _prod,
         createDate,
       })
 
@@ -144,6 +149,8 @@ export default class OrderController {
     try {
       let { _id } = req.params
 
+      console.log('coming here', _id)
+
       let _order = await Order.findOne({
         _id: mongoose.Types.ObjectId(_id),
       })
@@ -152,7 +159,7 @@ export default class OrderController {
           select: 'firstName lastName phone email username createdDate -_id',
         })
         .populate({
-          path: 'product.productId',
+          path: 'product._id',
           select: 'title slug price -_id',
         })
         .populate({
@@ -226,11 +233,16 @@ export default class OrderController {
           title: _prodItem.title,
           price: formatCurrency(_prodItem.price, { symbol: '' }),
           image: {
-            // src: `${process.env.API}${_prodItem.image.src}`, // for server
-            src: `https://api.truyenmai.com${_prodItem.image.src}`,
+            src:
+              process.env.NODE_ENV !== 'development'
+                ? 'https://app.khamobile.vn' + _prodItem.image.src
+                : process.env.API + _prodItem.image.src, // for server
+            // src: `https://api.truyenmai.com${_prodItem.image.src}`,
           },
         }
       })
+
+      console.log(_prod)
 
       const mailObject = {
         Subject: 'Tạo đơn hàng thành công',

@@ -1,26 +1,25 @@
-import CommonLayout from 'component/UI/Layout'
 import Card from 'component/UI/Content/Card'
 import Heading from 'component/UI/Content/Heading'
-
-import CustomSlider from 'component/UI/Content/Slider'
-import { Panel, Carousel } from 'rsuite'
+import CommonLayout from 'component/UI/Layout'
+import PostHelmet from 'component/PostHelmet'
 import Catalog from 'component/UI/Content/Catalog'
 import ImageBlock from 'component/UI/Content/ImageBlock'
-import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
-import GlobalHomeService from 'service/global/Home.service'
-import { useEffect, useState } from 'react'
-import styles from './styles.module.scss'
-import CardBlock from 'component/UI/Content/CardBlock'
-import axios from 'axios'
-import PostHelmet from 'component/PostHelmet'
-import { SiteLinksSearchBoxJsonLd } from 'next-seo'
+import CustomSlider from 'component/UI/Content/Slider'
 import SingleSlider from 'component/UI/Content/Slider/SingleItem'
-import PageService from 'service/global/Page.service'
+import { SiteLinksSearchBoxJsonLd } from 'next-seo'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import GlobalHomeService from 'service/global/Home.service'
+import PageService from 'service/global/Page.service'
+import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
+import styles from './styles.module.scss'
+
 const Home = (props) => {
   const [data, setData] = useState([])
   const [content, setContent] = useState([])
+
   const router = useRouter()
+
   useEffect(() => {
     getHomeProd()
     getHomeSection()
@@ -73,7 +72,6 @@ const Home = (props) => {
     }
   }
 
-  console.log(content)
   return (
     <>
       <PostHelmet seo={props?.seo} />
@@ -176,7 +174,7 @@ const Home = (props) => {
 
                 <div className="col-12">
                   <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
-                    {data?.[6]?.child?.map((item) => {
+                    {data?.[6]?.child?.map((item, index) => {
                       return (
                         <Card
                           imgSrc={(item.image?.[0]?.src && item.image?.[0]?.src) || ''}
@@ -186,6 +184,9 @@ const Home = (props) => {
                           type={item.type}
                           slug={`/product/${item.slug}`}
                           _id={item._id}
+                          key={[Math.random(), item._id, index]}
+                          border
+                          hover
                         />
                       )
                     })}
@@ -208,7 +209,13 @@ const Home = (props) => {
           <div className="col-12">
             <CustomSlider type={TYPE_CAROUSEL.MUTI}>
               {content?.['section_2']?.data?.map((customer, index) => (
-                <ImageBlock src={process.env.API + customer} key={index} height={'75%'} width={'100%'} modal/>
+                <ImageBlock
+                  src={process.env.API + customer}
+                  height={'75%'}
+                  width={'100%'}
+                  modal
+                  key={[Math.random(), customer?._id, index]}
+                />
               ))}
             </CustomSlider>
           </div>
@@ -306,7 +313,7 @@ const SelfCarousel = ({ content, ...props }) => {
       slidesToShow={1}
     >
       {content?.data?.map((item, index) => (
-        <img src={process.env.API + item} key={index} height={'53%'} width={'100%'} />
+        <img src={process.env.API + item} key={[Math.random(), index]} height={'53%'} width={'100%'} />
       ))}
     </SingleSlider>
   )

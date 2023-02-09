@@ -10,20 +10,25 @@ import '../assets/css/style.scss'
 import CommonLayout from '../component/UI/Layout'
 import AuthenticateService from 'service/authenticate/Authenticate.service'
 import { useAuthorizationStore } from 'src/store/authenticateStore'
+import { useCartStore } from 'store/cartStore'
 
 export default function MyApp({ Component, pageProps }) {
   const Layout = Component.Layout || CommonLayout
 
-  const data = useDevStore((state) => state.data)
-  const { authenticate, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
-  const [drawer, setDrawer] = useState({
-    open: false,
-  })
+  const { cart, addToCart } = useCartStore()
+
+  const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
 
   useEffect(() => {
     authenticateUser()
+    getCartItem()
   }, [])
-
+  const getCartItem = () => {
+    let cartItemFromLocal = JSON.parse(localStorage.getItem('khaMobileCart'))
+    if (cartItemFromLocal && cartItemFromLocal.length) {
+      addToCart(cartItemFromLocal)
+    }
+  }
   const authenticateUser = async () => {
     try {
       const resp = await AuthenticateService.isAuthenticate()

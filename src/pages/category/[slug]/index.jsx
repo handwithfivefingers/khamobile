@@ -43,42 +43,40 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
     let html = null
     if (data?.product?.items?.length) {
       html = (
-        <>
-          <Row gutter={12} ref={cardRef}>
-            <Col md={24}>
-              <div className={styles.grid}>
-                {data?.product?.items?.map((item) => {
-                  return (
-                    <Card
-                      key={item._id}
-                      imgSrc={item.image?.[0]?.src || ''}
-                      title={item.title}
-                      price={item.price}
-                      underlinePrice={item?.underlinePrice || null}
-                      type={item.type}
-                      variable={item.variable}
-                      slug={`/product/${item.slug}`}
-                      hover
-                    />
-                  )
-                })}
-              </div>
-            </Col>
-            <div className={styles.pagi}>
-              <Pagination
-                prev
-                last
-                next
-                first
-                size="sm"
-                total={data?.total}
-                limit={20}
-                activePage={+query?.page}
-                onChangePage={onChangePage}
-              />
+        <Row gutter={12} ref={cardRef}>
+          <Col md={24}>
+            <div className={styles.grid}>
+              {data?.product?.items?.map((item) => {
+                return (
+                  <Card
+                    key={item._id}
+                    imgSrc={item.image?.[0]?.src || ''}
+                    title={item.title}
+                    price={item.price}
+                    underlinePrice={item?.underlinePrice || null}
+                    type={item.type}
+                    variable={item.variable}
+                    slug={`/product/${item.slug}`}
+                    hover
+                  />
+                )
+              })}
             </div>
-          </Row>
-        </>
+          </Col>
+          <div className={styles.pagi}>
+            <Pagination
+              prev
+              last
+              next
+              first
+              size="sm"
+              total={data?.total}
+              limit={20}
+              activePage={+query?.page}
+              onChangePage={onChangePage}
+            />
+          </div>
+        </Row>
       )
     } else {
       html = (

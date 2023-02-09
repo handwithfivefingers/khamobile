@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 import { FlexboxGrid, List, Panel, InputGroup, InputNumber, Table, Button, Form } from 'rsuite'
 import GlobalProductService from 'service/global/Product.service'
 import { formatCurrency } from 'src/helper'
+import { useCartStore } from 'store/cartStore'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
 
@@ -21,15 +22,13 @@ export default function Cart(props) {
     total: 0,
     subTotal: 0,
   })
+  const { cart, addToCart } = useCartStore()
 
   const router = useRouter()
 
   useEffect(() => {
     try {
       let cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
-
-      console.log(cartItem)
-
       let isValidData = cartItem?.some((attr) => !attr.quantity || !attr.price || !attr._id)
 
       if (!isValidData) handleGetListItemPrice(cartItem)
@@ -46,30 +45,26 @@ export default function Cart(props) {
 
   useEffect(() => {
     if (data.length > 0) {
-      try {
-        const totalPrice = data.reduce((prev, current) => {
-          prev += +current?.price * +current?.quantity
-          return prev
-        }, 0)
-
-        setPrice({
-          total: totalPrice,
-          subTotal: totalPrice,
-        })
-
-        let itemOnLocal = data?.map((item) => ({
-          _id: item?._id,
-          quantity: item?.quantity,
-          price: item.price,
-          variantId: item?.variantId,
-        }))
-
-        localStorage.setItem('khaMobileCart', JSON.stringify(itemOnLocal))
-      } catch (error) {
-        console.log('setCart error', error)
-      }
+      handleCartItemChange()
     }
   }, [data])
+
+  const handleCartItemChange = () => {
+    try {
+      let itemOnLocal = data?.map((item) => ({
+        _id: item?._id,
+        quantity: item?.quantity,
+        price: item.price,
+        variantId: item?.variantId,
+      }))
+      
+      updatePrice()
+      updateStore(itemOnLocal)
+
+    } catch (error) {
+      console.log('setCart error', error)
+    }
+  }
 
   const handleGetListItemPrice = async (item) => {
     try {
@@ -95,9 +90,32 @@ export default function Cart(props) {
   }
 
   const handleMinus = (row, key, rest) => {
-    let newData = [...data]
-    newData[rest.rowIndex].quantity = --newData[rest.rowIndex].quantity || 1
-    setData(newData)
+    let nextState = [...data]
+
+    if (nextState[rest.rowIndex].quantity <= 1) {
+      nextState.splice(rest.rowIndex, 1)
+    } else {
+      nextState[rest.rowIndex].quantity = --nextState[rest.rowIndex].quantity
+    }
+    updateStore(nextState)
+    setData(nextState)
+  }
+
+  const updateStore = (dataUpdate) => {
+    addToCart(dataUpdate)
+    localStorage.setItem('khaMobileCart', JSON.stringify(dataUpdate))
+  }
+  
+  const updatePrice = () => {
+    const totalPrice = data.reduce((prev, current) => {
+      prev += +current?.price * +current?.quantity
+      return prev
+    }, 0)
+
+    setPrice({
+      total: totalPrice,
+      subTotal: totalPrice,
+    })
   }
 
   const handlePlus = (row, key, rest) => {

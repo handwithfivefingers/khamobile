@@ -173,16 +173,12 @@ import Response from '#server/response'
 
 export default class PaymentController {
   constructor() {}
+
   createLinkPayment = async ({ createDate, orderId, amount, orderInfo, ip }) => {
     try {
       let vnp_Params = this.getVpnParams({ createDate, orderId, amount: +amount * 100, orderInfo, ip })
-
       var vnpUrl = process.env.VNPAY_URL_PAYMENT
-
       vnpUrl += '?' + qs.stringify(vnp_Params, { encode: false })
-
-      // Start Transaction
-
       return { url: vnpUrl, status: true }
     } catch (err) {
       console.log('paymentOrder', err)
@@ -240,15 +236,17 @@ export default class PaymentController {
         })
         return res.redirect(url + query)
       }
-    } catch (error) {}
+    } catch (error) {
+      return res.redirect(process.env.HOST + '/404')
+    }
   }
 
   getUrlIpn = async (req, res) => {
     // console.log(req.query, " Get URL Return");
     try {
-      var vnp_Params = req.query
+      let vnp_Params = req.query
 
-      var secureHash = vnp_Params['vnp_SecureHash']
+      let secureHash = vnp_Params['vnp_SecureHash']
 
       delete vnp_Params['vnp_SecureHash']
 
@@ -256,22 +254,17 @@ export default class PaymentController {
 
       vnp_Params = this.sortObject(vnp_Params)
 
-      var tmnCode = process.env.VNPAY_TMNCODE
+      let tmnCode = process.env.VNPAY_TMNCODE
 
-      var secretKey = process.env.VNPAY_SECRET
+      let secretKey = process.env.VNPAY_SECRET
 
-      var signData = qs.stringify(vnp_Params, { encode: false })
+      let signData = qs.stringify(vnp_Params, { encode: false })
 
-      var hmac = crypto.createHmac('sha512', secretKey)
+      let hmac = crypto.createHmac('sha512', secretKey)
 
-      var signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest('hex')
+      let signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest('hex')
 
       const orderId = vnp_Params['vnp_OrderInfo']
-
-      // let url =
-      //   process.env.NODE_ENV === 'development'
-      //     ? `http://localhost:3003/user/result?`
-      //     : `https://app.thanhlapcongtyonline.vn/user/result?`
 
       const url =
         process.env.NODE_ENV === 'development'
@@ -281,50 +274,36 @@ export default class PaymentController {
       if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
         let code = vnp_Params['vnp_ResponseCode']
-        const query = qs.stringify({
-          code,
-          text: ResponseCode[code],
-        })
 
-        if (code === '00') {
+        let _order = await Order.findOne({
+          _id: vnp_Params.vnp_OrderInfo,
+        })
+        // FIRST STEP - Order Exists
+
+        if (!_order) return res.status(200).json({ RspCode: '01', Message: ResponseCode['01'] })
+
+        let isMatchAmount = +_order.amount * 100 === +vnp_Params.vnp_Amount
+
+        if (!isMatchAmount) return res.status(200).json({ RspCode: '04', Message: ResponseCode['04'] })
+
+        if (_order.status === 'completed') return res.status(200).json({ RspCode: '02', Message: ResponseCode['02'] })
+
+        if (code === '00' && vnp_Params['vnp_TransactionStatus'] === '00') {
           // Success
           const _update = {
             status: 'completed',
+            orderInfo: vnp_Params,
           }
 
-          const _order = await Order.updateOne({ _id: req.query.vnp_OrderInfo }, _update, {
+          await Order.updateOne({ _id: req.query.vnp_OrderInfo }, _update, {
             new: true,
           })
 
-          console.log('order updated successfully', _order)
-          // let _order = await Order.findOne({
-          //   _id: req.query.vnp_OrderInfo,
-          // })
-
-          // const { userInformation } = _order
-
-          // .populate('orderOwner', '_id name email')
-
-          // let [{ subject, content }] = await Setting.find().populate('mailPaymentSuccess')
-
-          // let params = {
-          //   email: _order.orderOwner.email || 'handgd1995@gmail.com',
-          //   subject,
-          //   content,
-          //   type: 'any',
-          // }
-
-          // await sendmailWithAttachments(req, res, params)
-
-          return res.redirect(url + query)
+          // console.log('order updated successfully', _order)
         }
-        return res.redirect(url + query)
-      } else {
-        const query = qs.stringify({
-          code: ResponseCode[97],
-        })
-        return res.redirect(url + query)
+        return res.status(200).json({ Message: 'Confirm Success', RspCode: '00' })
       }
+      return res.status(400).json({ Message: 'Order Not Found', RspCode: '01' })
     } catch (err) {
       console.log('getUrlReturn', err)
 

@@ -1,8 +1,8 @@
-import create from 'zustand';
+import { create } from 'zustand'
 
 const useCommonStore = create((set) => ({
-	title: '',
-	changeTitle: (title) => set((state) => ({ title })),
-}));
+  title: '',
+  changeTitle: (title) => set((state) => ({ title })),
+}))
 
-export { useCommonStore };
+export { useCommonStore }

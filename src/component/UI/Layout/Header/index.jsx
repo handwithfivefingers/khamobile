@@ -1,69 +1,45 @@
+import GridIcon from '@rsuite/icons/Grid'
 import CogIcon from '@rsuite/icons/legacy/Cog'
-import { Badge, Drawer, Dropdown, IconButton, Nav, Navbar, Sidenav } from 'rsuite'
-
+import ListIcon from '@rsuite/icons/List'
 import LOGO from 'assets/img/logo.png'
+import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
-import { forwardRef, useEffect, useMemo, useState } from 'react'
-import GlobalCategoryService from 'service/global/Category.service'
+import { useRouter } from 'next/router'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
+import { FaShoppingBasket } from 'react-icons/fa'
+import { Badge, Drawer, Dropdown, IconButton, Nav, Navbar, Sidenav } from 'rsuite'
+import GlobalHomeService from 'service/global/Home.service'
+import { useAuthorizationStore } from 'src/store/authenticateStore'
+import { useCartStore } from 'store/cartStore'
 import styles from './styles.module.scss'
 
-import DeviceOtherIcon from '@rsuite/icons/DeviceOther'
-import GridIcon from '@rsuite/icons/Grid'
-import AlignRightIcon from '@rsuite/icons/legacy/AlignRight'
-import HomeIcon from '@rsuite/icons/legacy/Home'
-import ListIcon from '@rsuite/icons/List'
-import MobileIcon from '@rsuite/icons/Mobile'
-import PcIcon from '@rsuite/icons/Pc'
-import PeoplesIcon from '@rsuite/icons/Peoples'
-import TextImageIcon from '@rsuite/icons/TextImage'
-import { useRef } from 'react'
-import { FaShoppingBasket } from 'react-icons/fa'
-
-import UserInfoIcon from '@rsuite/icons/UserInfo'
-import { useRouter } from 'next/router'
-import clsx from 'clsx'
-import { HEADER_MENU } from 'src/constant/header.constant.jsx'
-import { useAuthorizationStore } from 'src/store/authenticateStore'
-import UserChangeIcon from '@rsuite/icons/UserChange'
-import GlobalHomeService from 'service/global/Home.service'
-const NavLink = forwardRef((props, ref) => {
+const NavLink = (props) => {
   const { href, as, ...rest } = props
   return (
     <Link href={href} as={as} passHref>
-      <a ref={ref} {...rest} />
+      <a {...rest} />
     </Link>
   )
-})
-
-const renderIconButton = ({ placement, ...props }, ref) => {
-  return <IconButton {...props} ref={ref} icon={<AlignRightIcon />} />
 }
 
 const CustomNavbar = ({ ...props }) => {
-  const [cartLength, setCartLength] = useState(null)
-  const [cateMenu, setCateMenu] = useState([])
   const [drawer, setDrawer] = useState(false)
   const [activeKey, setActiveKey] = useState(null)
   const [menu, setMenu] = useState([])
   const { authenticate, isAdmin } = useAuthorizationStore((state) => state)
+  const { cart } = useCartStore()
+
   const nodeRef = useRef()
   const router = useRouter()
 
   useEffect(() => {
-    let item = JSON.parse(localStorage.getItem('khaMobileCart'))
-    if (item) {
-      setCartLength(item.length)
-    }
-    getCateData()
     getMenu()
   }, [])
 
   const getMenu = async () => {
     try {
       const resp = await GlobalHomeService.getMenu()
-
-      console.log(resp)
       const { data } = resp.data
       const { menu } = data
       setMenu(menu)
@@ -82,128 +58,15 @@ const CustomNavbar = ({ ...props }) => {
     }
   }, [router])
 
-  const getCateData = async () => {
-    try {
-      let resp = await GlobalCategoryService.getProdCate()
-
-      setCateMenu(resp.data.data)
-    } catch (error) {
-      console.log('error', error?.response?.data?.message)
-    }
-  }
-
-  const renderDropdownMenu = (cateList, trigger) => {
-    let html = null
-    // console.log(trigger)
-    html = cateList?.map((item) => {
-      return item.child?.length ? (
-        <Dropdown.Menu title={item.name} trigger={trigger || 'hover'} icon={<ListIcon />}>
-          {renderDropdownMenu(item.child, trigger)}
-        </Dropdown.Menu>
-      ) : (
-        <Dropdown.Item as={NavLink} href={`/category/${item.slug}`} icon={<GridIcon />}>
-          {item.name}
-        </Dropdown.Item>
-      )
-    })
-
-    return html
-  }
-
-  const renderMenuRight = useMemo(() => {
-    let html = null
-    html = (
-      <>
-        <Nav pullRight className={styles.ham}>
-          <Dropdown.Item as={NavLink} href="/cart" icon={<FaShoppingBasket />}>
-            <Badge content={cartLength}>Giỏ hàng</Badge>
-          </Dropdown.Item>
-        </Nav>
-
-        <Nav pullRight className={styles.navLinkHL}>
-          <Link href="/cart" passHref>
-            <Nav.Item icon={<FaShoppingBasket />} eventKey="7">
-              <Badge content={cartLength}>Giỏ hàng</Badge>
-            </Nav.Item>
-          </Link>
-
-          {!authenticate && (
-            <Link href="/login" passHref>
-              <Nav.Item icon={<UserChangeIcon />} eventKey="8">
-                Đăng nhập
-              </Nav.Item>
-            </Link>
-          )}
-
-          {authenticate && (
-            <Link href="/user" passHref>
-              <Nav.Item icon={<UserInfoIcon />} eventKey="8">
-                User
-              </Nav.Item>
-            </Link>
-          )}
-
-          {authenticate && isAdmin && (
-            <Link href="/admin" passHref>
-              <Nav.Item icon={<CogIcon />} eventKey="9">
-                Admin
-              </Nav.Item>
-            </Link>
-          )}
-        </Nav>
-      </>
+  const renderCart = useMemo(() => {
+    return (
+      <Link href="/cart" passHref>
+        <Nav.Item icon={<FaShoppingBasket />} eventKey="/cart">
+          <Badge content={cart?.length}>Giỏ hàng</Badge>
+        </Nav.Item>
+      </Link>
     )
-
-    return html
-  }, [authenticate, isAdmin])
-
-  const renderMenuLeft = () => {
-    let html = null
-
-    html = (
-      <>
-        <IconButton icon={<GridIcon />} onClick={() => setDrawer(!drawer)} className={styles.hamLeft} />
-
-        <Nav activeKey={activeKey} className={styles.navLeft}>
-          {HEADER_MENU.map((navItem) => {
-            if (navItem.subMenu) {
-              return (
-                <Dropdown
-                  title={navItem.label}
-                  trigger="hover"
-                  icon={navItem.icon}
-                  key={navItem.path}
-                  className={clsx(styles.navItem, styles.navSubMenu, { [styles.active]: activeKey === navItem.path })}
-                >
-                  <Dropdown.Item as={NavLink} href="/product" icon={<DeviceOtherIcon />}>
-                    Tất cả sản phẩm
-                  </Dropdown.Item>
-                  <Dropdown.Item as={NavLink} href="/category" icon={<MobileIcon />}>
-                    Danh mục
-                  </Dropdown.Item>
-
-                  {renderDropdownMenu(cateMenu, 'click')}
-                </Dropdown>
-              )
-            } else {
-              return (
-                <Nav.Item
-                  as={NavLink}
-                  href={navItem.path}
-                  icon={navItem.icon}
-                  key={navItem.path}
-                  className={clsx(styles.navItem, { [styles.active]: activeKey === navItem.path })}
-                >
-                  {navItem.label}
-                </Nav.Item>
-              )
-            }
-          })}
-        </Nav>
-      </>
-    )
-    return html
-  }
+  }, [cart])
 
   const getHref = (item) => {
     // menuItem.dynamicRef === 'Page' ? menuItem.slug : '/' + menuItem.slug
@@ -253,40 +116,15 @@ const CustomNavbar = ({ ...props }) => {
     })
 
     return html
-    // menu.map((menuItem, index) => {
-    //   if (menuItem.children.length) {
-    //     return (
-    //       <Dropdown title="Sản phẩm" trigger="click" icon={<PcIcon />}>
-    //         <Dropdown.Item as={NavLink} href="/product" icon={<DeviceOtherIcon />}>
-    //           Tất cả sản phẩm
-    //         </Dropdown.Item>
-    //         <Dropdown.Item as={NavLink} href="/category" icon={<MobileIcon />}>
-    //           Danh mục
-    //         </Dropdown.Item>
-
-    //         {renderDropdownMenu(cateMenu)}
-    //       </Dropdown>
-    //     )
-    //   }
-    //   return (
-    //     <Nav.Item
-    //       as={NavLink}
-    //       href={menuItem.dynamicRef === 'Page' ? menuItem.slug : '/' + menuItem.slug}
-    //       icon={<HomeIcon />}
-    //     >
-    //       {menuItem.name}
-    //     </Nav.Item>
-    //   )
-    // })
   }
 
   return (
     <Navbar {...props} className={clsx(styles.nav, 'shadow')} ref={nodeRef}>
-      <Navbar.Brand className={styles.brand} href="#" style={{ maxWidth: 200 }}>
-        <Link href="/" passHref>
+      <Link href="/" passHref>
+        <Navbar.Brand className={styles.brand} style={{ maxWidth: 200 }}>
           <Image src={LOGO} alt="Kha mobile" priority />
-        </Link>
-      </Navbar.Brand>
+        </Navbar.Brand>
+      </Link>
 
       <IconButton
         icon={<GridIcon />}
@@ -298,7 +136,17 @@ const CustomNavbar = ({ ...props }) => {
         {renderListMenu(menu)}
       </Nav>
 
-      {renderMenuRight}
+      <Nav pullRight className={styles.navLinkHL}>
+        {renderCart}
+
+        {authenticate && isAdmin && (
+          <Link href="/admin" passHref>
+            <Nav.Item icon={<CogIcon />} eventKey="9">
+              Admin
+            </Nav.Item>
+          </Link>
+        )}
+      </Nav>
 
       <Drawer open={drawer} onClose={() => setDrawer(false)} size={'xs'} style={{ width: 250 }} placement="left">
         <Drawer.Header>
@@ -319,37 +167,6 @@ const CustomNavbar = ({ ...props }) => {
               >
                 {renderListMenu(menu)}
               </Nav>
-              {/* 
-                <Nav.Item as={NavLink} href="/" icon={<HomeIcon />}>
-                  Trang chủ
-                </Nav.Item>
-
-                <Nav.Item as={NavLink} href="/about-us" icon={<PeoplesIcon />}>
-                  Về chúng tôi
-                </Nav.Item>
-
-                <Dropdown title="Sản phẩm" trigger="click" icon={<PcIcon />}>
-                  <Dropdown.Item as={NavLink} href="/product" icon={<DeviceOtherIcon />}>
-                    Tất cả sản phẩm
-                  </Dropdown.Item>
-                  <Dropdown.Item as={NavLink} href="/category" icon={<MobileIcon />}>
-                    Danh mục
-                  </Dropdown.Item>
-
-                  {renderDropdownMenu(cateMenu)}
-                </Dropdown>
-
-                <Nav.Item as={NavLink} href="/tin-tuc" icon={<TextImageIcon />}>
-                  Tin tức
-                </Nav.Item>
-
-                <Dropdown.Item as={NavLink} href="/user" icon={<UserInfoIcon />}>
-                  User
-                </Dropdown.Item>
-
-                <Dropdown.Item as={NavLink} href="/admin" icon={<CogIcon />}>
-                  Admin
-                </Dropdown.Item> */}
             </Sidenav.Body>
           </Sidenav>
         </Drawer.Body>

@@ -9,6 +9,7 @@ import { BiCart } from 'react-icons/bi'
 import { Button, Divider, Form, IconButton, InputNumber, Panel } from 'rsuite'
 import { ProductModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
+import { useCartStore } from 'store/cartStore'
 import ProductOptions from '../ProductOption'
 import styles from './styles.module.scss'
 
@@ -24,7 +25,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
   const [attributeSelect, setAttributeSelect] = useState({})
 
   const [productFilter, setProductFilter] = useState([])
-
+  const { addToCart } = useCartStore()
   const [form, setForm] = useState({
     quantity: 1,
     image: data?.image,
@@ -66,18 +67,17 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     const cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
 
     let listItem = []
-
     if (cartItem?.length) {
       listItem = [...cartItem]
     }
-
     let index = listItem.findIndex((item) => item._id === form._id && item?.variantId === form?.variantId)
-
     if (index !== -1) {
       listItem[index].quantity = listItem[index].quantity + +form.quantity
     } else {
       listItem.push(form)
     }
+    
+    addToCart(listItem)
 
     localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
   }

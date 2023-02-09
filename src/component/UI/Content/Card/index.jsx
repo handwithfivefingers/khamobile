@@ -86,7 +86,7 @@ export default function Card({
   if (slug) {
     return (
       <Link href={slug} passHref>
-        <a className={classCard}>
+        <a className={classCard} style={{ textDecoration: 'none' }}>
           <div className={clsx('card-img-top', styles.cardImg)}>
             {imgSrc ? (
               <NextImage

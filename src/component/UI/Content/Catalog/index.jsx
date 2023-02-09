@@ -89,6 +89,8 @@ const Catalog = (props) => {
                   slug={`/product/${item.slug}`}
                   key={[index, item._id]}
                   _id={item._id}
+                  border
+                  hover
                 />
               )
             })}

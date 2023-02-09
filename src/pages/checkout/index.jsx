@@ -39,14 +39,14 @@ export default function Checkout() {
     }
   }, [])
 
-  useEffect(() => {
-    if (authenticate && user) {
-      deliveryRef.current = user.delivery
-      informationRef.current = user
-      formRef.current.deliveryInformation = user.delivery
-      setRender(!render)
-    }
-  }, [authenticate, user])
+  // useEffect(() => {
+  //   if (authenticate && user) {
+  //     deliveryRef.current = user.delivery
+  //     informationRef.current = user
+  //     formRef.current.deliveryInformation = user.delivery
+  //     setRender(!render)
+  //   }
+  // }, [authenticate, user])
 
   const handleGetListItemPrice = async (item) => {
     try {
@@ -97,70 +97,18 @@ export default function Checkout() {
         userId: authenticate ? _id : null,
       }
 
-      console.log(formRef.current)
+      // return
       console.log(params)
-
       const resp = await GlobalOrderService.createOrder(params)
 
       if (resp.data.orderId) {
         localStorage.setItem('khaMobileCart', null)
-        if (resp.data.urlPayment && form.paymentType === 'vnpay') window.open(resp.data.urlPayment)
+        if (resp.data.urlPayment && restForm.paymentType === 'vnpay') window.open(resp.data.urlPayment)
         else router.push(`/checkout/${resp.data.orderId}`)
       }
     } catch (error) {
       console.log('handleSaveOrder', error)
     }
-  }
-
-  const renderInformationBlock = () => {
-    let html = null
-    if (authenticate) {
-      html = (
-        <div className="col-12">
-          <h5 className="text-secondary">Tài khoản</h5>
-          <CardBlock className="border-0">
-            <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
-              <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-                <span className="t-primary">Tên tài khoản: {user.fullName || ''} </span>
-              </FlexboxGrid.Item>
-              <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-                <span className="t-primary">Email: {user.email} </span>
-              </FlexboxGrid.Item>
-              <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-                <span className="t-primary">Phone: {user.phone} </span>
-              </FlexboxGrid.Item>
-            </FlexboxGrid>
-          </CardBlock>
-        </div>
-      )
-    } else {
-      html = (
-        <div className="col-12">
-          <CardBlock className="border-0">
-            <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
-              <FlexboxGrid.Item style={{ width: '100%' }}>
-                <h5>Tài khoản</h5>
-              </FlexboxGrid.Item>
-
-              <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
-                <Form.Group controlId="userType">
-                  <RadioGroup
-                    name="userType"
-                    onChange={(val) => setForm({ ...form, userType: val })}
-                    value={formRef.current?.userType}
-                    inline
-                  >
-                    <Radio value="anonymous">Khách</Radio>
-                    <Radio value="login">Đăng nhập</Radio>
-                  </RadioGroup>
-                </Form.Group>
-              </FlexboxGrid.Item>
-            </FlexboxGrid>
-          </CardBlock>
-        </div>
-      )
-    }
-    return html
   }
 
   const renderUserInformationByCondition = (condition) => {
@@ -183,12 +131,6 @@ export default function Checkout() {
     }
     return html
   }
-
-  const handleLogin = (value) => {
-    // console.log(form)
-    console.log(value)
-  }
-
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -200,10 +142,7 @@ export default function Checkout() {
         <div className="container">
           <div className="row gx-4 gy-4">
             <div className="col-12 col-md-6 col-lg-6 col-xl-6">
-              <div className="row gy-4">
-                {/* {renderInformationBlock()} */}
-                {renderUserInformationByCondition(authenticate)}
-              </div>
+              <div className="row gy-4">{renderUserInformationByCondition()}</div>
             </div>
 
             <div className="col-12 col-md-6 col-lg-6 col-xl-6">
@@ -548,35 +487,3 @@ const TableInformation = ({ product, price }) => {
     </CardBlock>
   )
 }
-
-const LoginForm = forwardRef((props, ref) => {
-  const [state, setState] = useState({})
-
-  return (
-    <CardBlock className="border" style={{ background: 'transparent', boxShadow: 'unset' }}>
-      <Form formValue={state} onChange={(val) => setState(val)}>
-        <h5>Đăng nhập</h5>
-        <Form.Group controlId="username">
-          <Form.ControlLabel>
-            Tên tài khoản <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="username" className="d-flex flex-1" />
-        </Form.Group>
-
-        <Form.Group controlId="password">
-          <Form.ControlLabel>
-            Mật khẩu <span style={{ color: 'var(--rs-red-500)' }}>*</span>
-          </Form.ControlLabel>
-          <Form.Control name="password" />
-        </Form.Group>
-        <Button
-          onClick={() => props?.handleLogin(state)}
-          color="blue"
-          style={{ background: 'var(--rs-blue-800)', color: '#fff', display: 'flex', marginLeft: 'auto' }}
-        >
-          Đăng nhập
-        </Button>
-      </Form>
-    </CardBlock>
-  )
-})

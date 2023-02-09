@@ -17,37 +17,20 @@
 // Ngân hàng: Ngân Hàng SCB
 // Số tài khoản: 28601259966
 
-import React from 'react'
-import axios from 'configs/axiosInstance'
-import styles from './styles.module.scss'
-import PageHeader from 'component/UI/Content/PageHeader'
-import {
-  Button,
-  ButtonGroup,
-  Form,
-  IconButton,
-  Input,
-  List,
-  Panel,
-  Placeholder,
-  Radio,
-  RadioGroup,
-  Stack,
-  Table,
-  Tag,
-} from 'rsuite'
-import { useEffect, useState } from 'react'
 import CharacterAuthorizeIcon from '@rsuite/icons/CharacterAuthorize'
-import { formatCurrency } from 'src/helper'
+import MessageIcon from '@rsuite/icons/Message'
+import PhoneIcon from '@rsuite/icons/Phone'
+import clsx from 'clsx'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { KMInput } from 'component/UI/Content/KMInput'
-import { BsInboxes } from 'react-icons/bs'
+import PageHeader from 'component/UI/Content/PageHeader'
+import axios from 'configs/axiosInstance'
 import { useRouter } from 'next/router'
-import clsx from 'clsx'
-import { FaCcVisa, FaCcPaypal, FaCcStripe, FaCcJcb } from 'react-icons/fa'
-import { BsCashCoin } from 'react-icons/bs'
-import PhoneIcon from '@rsuite/icons/Phone'
-import MessageIcon from '@rsuite/icons/Message'
+import { useState } from 'react'
+import { BsInboxes } from 'react-icons/bs'
+import { Button, Form, IconButton, List, Radio, RadioGroup, Stack, Table, Tag } from 'rsuite'
+import { formatCurrency } from 'src/helper'
+import styles from './styles.module.scss'
 
 const { HeaderCell, Cell, Column } = Table
 
@@ -138,7 +121,7 @@ export default function OrderReceived({ data }) {
         break
 
       case 'vnpay':
-        html = <></>
+        html = <>{router.query?.text}</>
     }
 
     return html
@@ -151,6 +134,7 @@ export default function OrderReceived({ data }) {
         <p className="text-secondary">Không có sản phẩm phù hợp với tiêu chí bạn tìm</p>
       </div>
     )
+  console.log('data', data)
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -177,10 +161,14 @@ export default function OrderReceived({ data }) {
                   <h5 className="text-secondary">Địa chỉ giao hàng/ thanh toán</h5>
 
                   <CardBlock className="border-0">
-                    <KMInput name="city" label="Công ty" value={data?.['deliveryInformation']?.['city']} />
-                    <KMInput name="district" label="Địa chỉ 1" value={data?.['deliveryInformation']?.['district']} />
-                    <KMInput name="wards" label="Địa chỉ 2" value={data?.['deliveryInformation']?.['wards']} />
-                    <KMInput name="address" label="Tỉnh/ Thành phố" value={data?.['deliveryInformation']?.['address']} />
+                    <KMInput name="city" label="Thành phố" value={data?.['deliveryInformation']?.['city']} />
+                    <KMInput name="district" label="Quận/Huyện" value={data?.['deliveryInformation']?.['district']} />
+                    <KMInput name="wards" label="Phường/Xã" value={data?.['deliveryInformation']?.['wards']} />
+                    <KMInput
+                      name="address"
+                      label="Địa chỉ"
+                      value={data?.['deliveryInformation']?.['address']}
+                    />
                   </CardBlock>
                 </div>
 
@@ -301,15 +289,23 @@ export default function OrderReceived({ data }) {
 
 export const getServerSideProps = async (ctx) => {
   const { slug } = ctx.query
+
+  console.log(ctx.query)
   ctx.res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
+  try {
+    const resp = await axios.get('/order' + '/' + slug)
 
-  const resp = await axios.get('/order' + '/' + slug)
-
-  const { data } = resp.data
-  // console.log(data)
-  return {
-    props: {
-      data,
-    },
+    const { data } = resp.data
+    // console.log(data)
+    return {
+      props: {
+        data,
+      },
+    }
+  } catch (error) {
+    console.log(error)
+    return {
+      notFound: true,
+    }
   }
 }
