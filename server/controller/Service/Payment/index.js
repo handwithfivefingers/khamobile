@@ -169,6 +169,8 @@ import { Order } from '#model'
 import qs from 'query-string'
 import crypto from 'crypto'
 import { ResponseCode } from '#common/ResponseCode'
+import Response from '#server/response'
+
 export default class PaymentController {
   constructor() {}
   createLinkPayment = async ({ createDate, orderId, amount, orderInfo, ip }) => {
@@ -252,7 +254,7 @@ export default class PaymentController {
 
       delete vnp_Params['vnp_SecureHashType']
 
-      vnp_Params = sortObject(vnp_Params)
+      vnp_Params = this.sortObject(vnp_Params)
 
       var tmnCode = process.env.VNPAY_TMNCODE
 
@@ -325,7 +327,8 @@ export default class PaymentController {
       }
     } catch (err) {
       console.log('getUrlReturn', err)
-      return errHandler(err, res)
+
+      return new Response().error(err, res)
     }
   }
 
