@@ -47,9 +47,9 @@ export default class OrderController {
       }
       if (userId) orderObject.userId = userId
 
-      const response = await this.createOrder(orderObject)
+      const orderCreated = await this.createOrder(orderObject)
 
-      if (!response.status) throw { message: 'Create order failed' }
+      if (!orderCreated.status) throw { message: 'Create order failed' }
 
       const responseMailSending = await this.sendMail({
         email: userInformation.email,
@@ -66,17 +66,22 @@ export default class OrderController {
           createDate: createDate,
           orderId: moment().format('HHmmss'),
           amount,
-          orderInfo: response.orderId,
+          orderInfo: orderCreated.orderId,
           ip:
             req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
             req.connection.socket.remoteAddress,
         })
+        
+        orderCreated.orderInfo = paymentResp.orderInfo
+
+        await orderCreated.save()
+
         urlPayment = paymentResp.url
       }
 
-      result.orderId = response.orderId
+      result.orderId = orderCreated.orderId
       result.urlPayment = urlPayment
 
       return res.status(200).json(result)
