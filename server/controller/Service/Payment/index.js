@@ -294,11 +294,12 @@ export default class PaymentController {
             new: true,
           })
 
+          console.log('order updated successfully', _order)
           // let _order = await Order.findOne({
           //   _id: req.query.vnp_OrderInfo,
           // })
 
-          const { userInformation } = _order
+          // const { userInformation } = _order
 
           // .populate('orderOwner', '_id name email')
 
