@@ -281,6 +281,7 @@ export default class PaymentController {
           'orderInfo.vnp_TxnRef': vnp_Params.vnp_TxnRef,
         })
         // FIRST STEP - Order Exists
+        console.log(_order);
 
         if (!_order) return res.status(200).json({ RspCode: '01', Message: ResponseCode['01'] })
 

@@ -55,7 +55,7 @@ export default class OrderController {
         email: userInformation.email,
         username: userInformation.fullName,
         firstName: userInformation.fullName,
-        orderId: response.orderId,
+        orderId: orderCreated._id,
         product,
       })
 
@@ -66,14 +66,14 @@ export default class OrderController {
           createDate: createDate,
           orderId: moment().format('HHmmss'),
           amount,
-          orderInfo: orderCreated.orderId,
+          orderInfo: orderCreated._id,
           ip:
             req.headers['x-forwarded-for'] ||
             req.connection.remoteAddress ||
             req.socket.remoteAddress ||
             req.connection.socket.remoteAddress,
         })
-        
+
         orderCreated.orderInfo = paymentResp.orderInfo
 
         await orderCreated.save()
@@ -81,7 +81,7 @@ export default class OrderController {
         urlPayment = paymentResp.url
       }
 
-      result.orderId = orderCreated.orderId
+      result.orderId = orderCreated._id
       result.urlPayment = urlPayment
 
       return res.status(200).json(result)
@@ -143,7 +143,7 @@ export default class OrderController {
 
       await order.save()
 
-      return { orderId, status: true }
+      return order
     } catch (error) {
       console.log('createOrder error', error)
       throw error
