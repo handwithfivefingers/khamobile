@@ -132,9 +132,6 @@ export default class ProductController {
         process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
       }/public/wp/`
       _prod.content = _prod.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
-
-      console.log(_prod)
-
       return new Response().fetched({ data: _prod }, res)
     } catch (error) {
       console.log(error)
@@ -253,13 +250,11 @@ export default class ProductController {
 
   updateProduct = async (req, res) => {
     try {
-      console.log(req.body)
 
       if (!req.body._id) throw { message: 'Product doesnt exists' }
 
       let { ...formData } = req.body
 
-      console.log('formData', formData)
 
       let result
 
@@ -359,7 +354,6 @@ export default class ProductController {
         attributes,
       }
 
-      console.log('prodUpdate ..........', JSON.stringify(formData, null, 4))
 
       await Product.updateOne(
         {

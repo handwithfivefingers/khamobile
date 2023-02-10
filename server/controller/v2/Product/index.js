@@ -47,8 +47,6 @@ export default class ProductController {
         },
       ])
 
-      let primaryKey = parentItem.primary
-
       _relationProd = _relationProd
         .map((item) => {
           let obj = { ...item }
@@ -59,6 +57,15 @@ export default class ProductController {
         })
         ?.filter((item) => item.purchasable)
 
+      const pathImg = `${
+        process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
+      }/public/wp/`
+
+      parentItem.content = parentItem.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+
+      parentItem.description = parentItem.description.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+
+      
       const seoTags = await generateSeoTag({
         title: parentItem.title,
         description: parentItem.description,
@@ -440,7 +447,7 @@ export default class ProductController {
             name: title,
             url: process.env.HOST + '/product/' + slug,
             price,
-            instock : stock_status === 'instock' ? 1 : 0,
+            instock: stock_status === 'instock' ? 1 : 0,
             category: category?.map(({ name }) => name),
             imageUrls: image.map(({ src }) => process.env.API + src),
           }
