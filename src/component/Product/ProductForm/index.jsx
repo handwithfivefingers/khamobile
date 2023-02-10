@@ -164,8 +164,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       }
       if (selectedItem) {
         productFiltered = [..._relationProd]
-        const [{ _id, ...rest }] = productFiltered
-        // console.log(productFiltered)
+        const { _id, ...rest } = selectedItem
         setForm((prev) => ({ ...prev, ...rest, image: data?.image, variantId: _id }))
       } else {
         setForm({ quantity: 1, image: data?.image, _id: data?._id })
@@ -310,7 +309,9 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
                     </div>
                     {renderAttributes()}
                   </>
-                ) : ''}
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </div>
