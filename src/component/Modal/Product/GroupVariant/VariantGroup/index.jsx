@@ -1,12 +1,12 @@
 import { forwardRef, lazy, useEffect, useMemo, useRef, useState, Suspense } from 'react'
-import { Button, ButtonGroup, Loader, Panel, PanelGroup, SelectPicker, Stack } from 'rsuite'
+import { Button, ButtonGroup, IconButton, Loader, Panel, PanelGroup, SelectPicker, Stack } from 'rsuite'
 import styles from './styles.module.scss'
-
+import { GrFormClose } from 'react-icons/gr'
 // import VariantItem from './VariantItem'
 
 const VariantItem = lazy(() => import('./VariantItem'))
 
-const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props }, ref) => {
+const VariantGroup = forwardRef(({ variableData, variation, attribute, deleteVariation, ...props }, ref) => {
   const { attributes } = attribute
   const { variations, setVariations } = variation
   const [_trigger, setTrigger] = useState(false)
@@ -33,14 +33,24 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props 
   }, [])
 
   useEffect(() => {
-    console.log('trigger rendered variation')
     if (variations?.length) {
-      console.log('trigger rendered 1')
-
       groupVariantRef.current = variations
       setTrigger(!_trigger)
     }
   }, [])
+
+  const onHandleRemoveVariantPosition = (position) => {
+    let nextState = [...groupVariantRef.current]
+    const itemToDelete = groupVariantRef.current[position]
+
+    if (itemToDelete._id) {
+      if (!deleteVariation.delete.includes(itemToDelete._id)) deleteVariation.setDeleteVariation(itemToDelete._id)
+    }
+
+    nextState.splice(position, 1)
+    groupVariantRef.current = nextState
+    setVariations(nextState)
+  }
 
   const handleAddVariant = () => {
     let nextState = [...groupVariantRef.current]
@@ -156,7 +166,14 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props 
                 .map((key) => attributesItem[key])
                 ?.join(' - ')}
             </span>
-            <ButtonGroup className="pe-4"></ButtonGroup>
+            <IconButton
+              icon={<GrFormClose />}
+              className="p-1 mx-4"
+              style={{ fontSize: 16 }}
+              appearance="subtle"
+              color="red"
+              onClick={() => onHandleRemoveVariantPosition(position)}
+            />
           </Stack>
         }
         bordered

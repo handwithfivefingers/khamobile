@@ -65,6 +65,15 @@ export default function MyApp({ Component, pageProps }) {
           </Layout>
         )}
       </CustomProvider>
+
+      <div id="fb-root"></div>
+      <Script
+        async
+        defer
+        crossorigin="anonymous"
+        src="https://connect.facebook.net/vi_VN/sdk.js#xfbml=1&version=v16.0&appId=1263039330945343&autoLogAppEvents=1"
+        nonce="E02nYVYz"
+      />
     </>
   )
 }

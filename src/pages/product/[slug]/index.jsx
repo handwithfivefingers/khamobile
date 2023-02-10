@@ -18,9 +18,19 @@ const { Column, HeaderCell, Cell } = Table
 
 export default function ProductDetail({ data, _relationProd, seo, slug, ...props }) {
   const [toggleContent, setToggleContent] = useState(false)
-
   const router = useRouter()
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      console.log('parse')
+      if (!window.FB) return
+      else {
+        window.FB.XFBML.parse()
+        clearTimeout(timeout)
+      }
+    }, 1000)
+    return () => clearTimeout(timeout)
+  }, [])
   return (
     <>
       <PostHelmet seo={seo} />
@@ -94,7 +104,7 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
                   {process.env.NODE_ENV !== 'production' ? (
                     <div
                       class="fb-comments"
-                      data-href={'https://khamobile.truyenmai.com' + router.asPath}
+                      data-href={'https://khamobile.vn' + router.asPath}
                       data-width="100%"
                       data-numposts="5"
                     />
@@ -203,7 +213,11 @@ export const getServerSideProps = async (ctx) => {
         notFound: true,
       }
     }
+
     const { data, _relationProd, seo } = resp.data
+
+    // console.log(data)
+
     return {
       props: {
         data,

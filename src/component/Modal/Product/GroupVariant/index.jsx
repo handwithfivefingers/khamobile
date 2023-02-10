@@ -25,7 +25,7 @@ const GroupVariant = (props) => {
         html = <AttributeGroup {...props} ref={formRef} />
         break
       case 3:
-        html = <VariantGroup {...props} ref={formRef} />
+        html = <VariantGroup {...props} ref={formRef}  />
         break
       case 4:
         break

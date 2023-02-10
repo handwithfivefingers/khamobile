@@ -39,7 +39,6 @@ const SingleUpload = forwardRef((props, ref) => {
       setSrc(props.value?.src)
     }
   }, [props.value])
-  console.log('SingleUpload', props)
   const imgRef = useRef()
 
   const renderIconPreview = () => {
@@ -47,7 +46,15 @@ const SingleUpload = forwardRef((props, ref) => {
     if (props.icon) {
       html = <AvatarIcon style={{ fontSize: 80, borderRadius: 8 }} />
     } else {
-      html = 'Upload'
+      html = (
+        <div>
+          <p>Upload</p>
+          <code>
+            <i>Kích thước tối đa </i> <br />
+            <i>2Mb</i>
+          </code>
+        </div>
+      )
     }
     return html
   }
@@ -80,7 +87,7 @@ const SingleUpload = forwardRef((props, ref) => {
       }}
       fileListVisible={false}
     >
-      <button style={{ width: 120, height: 120 }}>{renderImagePreview() || renderIconPreview()}</button>
+      <button style={{ width: 160, height: 160 }}>{renderImagePreview() || renderIconPreview()}</button>
     </Uploader>
   )
 })

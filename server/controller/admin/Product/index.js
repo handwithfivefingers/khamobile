@@ -8,16 +8,26 @@ export default class ProductController {
     try {
       let _prod = await Product.find({})
         .populate('category')
-        .select('_id title price slug category stock_status type image attributes createdAt updatedAt')
-      console.log(_prod)
-      // return res.status(200).json({
-      //   data: _prod,
+        .select(
+          '_id title price slug category stock_status type image attributes createdAt updatedAt description content',
+        )
+      // console.log(_prod)
+
+      // let listProduct = _prod.map((prod, index) => {
+      //   if (index === 59) {
+      //     prod.content = prod.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, `${process.env.API}/public/`)
+      //     console.log(prod.content)
+      //   }
+
+      //   return {
+      //     ...prod._doc,
+      //   }
       // })
+
+      // console.log(listProduct)
+
       return new Response().fetched({ data: _prod }, res)
     } catch (error) {
-      // return res.status(400).json({
-      //   error,
-      // })0
       return new Response().error(error, res)
     }
   }
@@ -118,10 +128,16 @@ export default class ProductController {
         _prod = _prodAggregate
       }
 
+      const pathImg = `${
+        process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
+      }/public/wp/`
+      _prod.content = _prod.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+
+      console.log(_prod)
+
       return new Response().fetched({ data: _prod }, res)
     } catch (error) {
       console.log(error)
-
       return new Response().error(error, res)
     }
   }
@@ -313,7 +329,20 @@ export default class ProductController {
 
       session.startTransaction()
 
-      const { _id, type, title, slug, description, content, primary, variations, category, image , attributes} = formData
+      const {
+        _id,
+        type,
+        title,
+        slug,
+        description,
+        content,
+        primary,
+        variations,
+        category,
+        image,
+        attributes,
+        delete: listVariantDelete,
+      } = formData
 
       const minPrice = variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
 
@@ -327,7 +356,7 @@ export default class ProductController {
         primary,
         category,
         image,
-        attributes
+        attributes,
       }
 
       console.log('prodUpdate ..........', JSON.stringify(formData, null, 4))
@@ -366,6 +395,12 @@ export default class ProductController {
         )
 
         // console.log('prodUpdate ..........', varsId, JSON.stringify(variant, null, 4))
+      }
+
+      // for(let )
+
+      if (listVariantDelete?.length) {
+        await ProductVariant.deleteMany({ _id: { $in: listVariantDelete.map((id) => mongoose.Types.ObjectId(id)) } })
       }
 
       await session.commitTransaction()

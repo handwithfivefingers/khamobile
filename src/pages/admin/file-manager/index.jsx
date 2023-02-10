@@ -45,9 +45,10 @@ export default function FileManger() {
     document.body.removeChild(el)
     alert('Text copied to clipboard successfully!')
   }
+
   return (
     <>
-      <div className="d-flex justify-content-center">
+      <div className="d-flex justify-content-center mb-5">
         <CustomUpload action={process.env.API + '/api/upload'} withCredentials={true} />
       </div>
 

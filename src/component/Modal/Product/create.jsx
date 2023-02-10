@@ -24,6 +24,7 @@ const ProductCreateModal = (props) => {
     parentId: '',
     variations: [],
     category: [],
+    delete: [],
     ...props?.data,
   })
 
@@ -103,6 +104,10 @@ const ProductCreateModal = (props) => {
       [name]: value,
     }
     setRender(!_render)
+  }
+
+  const handleDeleteVariation = (_id) => {
+    formDataRef.current?.delete.push(_id)
   }
 
   return (
@@ -186,6 +191,10 @@ const ProductCreateModal = (props) => {
                           variations: formDataRef.current?.variations || [],
                           setVariations: handleVariations,
                         }}
+                        deleteVariation={{
+                          delete: formDataRef.current?.delete || [],
+                          setDeleteVariation: handleDeleteVariation,
+                        }}
                       />
                     </FlexboxGrid.Item>
                   )}
@@ -234,7 +243,7 @@ const ProductCreateModal = (props) => {
                 </Panel>
                 <Panel>
                   <Button appearance="primary" onClick={onSubmit}>
-                    Tạo
+                    {props?.data ? 'Cập nhật' : 'Tạo'}
                   </Button>
                 </Panel>
               </PanelGroup>

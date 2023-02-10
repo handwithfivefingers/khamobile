@@ -1,26 +1,10 @@
 import Head from 'next/head'
-import { useState } from 'react'
+import { Container, Content, Footer } from 'rsuite'
 import PageFooter from './Footer'
 import CustomNavbar from './Header'
-import { Container, Header, Content, Footer, Navbar, Nav, IconButton, Drawer, Button } from 'rsuite'
-import { useRouter } from 'next/router'
 import styles from './styles.module.scss'
-import Script from 'next/script'
-import GearIcon from '@rsuite/icons/Gear'
-import JsonViewer from '../JsonViewer'
-import { useDevStore } from 'src/store/devStore'
 
 const CommonLayout = ({ children }) => {
-  const [activeKey, setActiveKey] = useState(null)
-
-  const router = useRouter()
-
-  const handleSelect = (e) => {
-    if (e == 1) router.push('/')
-
-    if (e == 7) router.push('/admin')
-  }
-
   return (
     <>
       <Head>
