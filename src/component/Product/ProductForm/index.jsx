@@ -164,9 +164,9 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       }
       if (selectedItem) {
         productFiltered = [..._relationProd]
-
-        const [{ _id, ...rest }] = productFilter
-        setForm((prev) => ({ ...prev, ...rest, variantId: _id }))
+        const [{ _id, ...rest }] = productFiltered
+        // console.log(productFiltered)
+        setForm((prev) => ({ ...prev, ...rest, image: data?.image, variantId: _id }))
       } else {
         setForm({ quantity: 1, image: data?.image, _id: data?._id })
         // currentAttributeSelect = { [attributeName]: value }
@@ -297,7 +297,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
                 <p className={clsx(styles.productPricing, 'bk-product-price')}>{calculatePrice()}</p>
               </div>
               <div className="col-12 position-relative">
-                {_relationProd.length && (
+                {_relationProd.length ? (
                   <>
                     <div className="position-absolute" style={{ top: 0, right: 0 }}>
                       <IconButton
@@ -310,7 +310,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
                     </div>
                     {renderAttributes()}
                   </>
-                )}
+                ) : ''}
               </div>
             </div>
           </div>
