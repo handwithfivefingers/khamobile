@@ -24,7 +24,7 @@ const ProductOptions = ({ attributeName, listAttribute, selectValue, onChange })
       {/* Attribute Value */}
 
       {listAttribute?.map(({ v, active }) => (
-        <Radio value={v} disabled={!active}>
+        <Radio value={(active && v) || null} disabled={!active}>
           <span
             className={clsx('p-2 bg-light', {
               'bk-product-property': selectValue === v,

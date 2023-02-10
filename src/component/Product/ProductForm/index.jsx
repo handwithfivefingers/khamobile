@@ -6,11 +6,12 @@ import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { BiCart } from 'react-icons/bi'
-import { Button, Divider, Form, IconButton, InputNumber, Panel } from 'rsuite'
+import { Button, Cascader, Divider, Form, IconButton, InputNumber, Panel, SelectPicker } from 'rsuite'
 import { ProductModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
 import { useCartStore } from 'store/cartStore'
 import ProductOptions from '../ProductOption'
+import _ from 'lodash'
 import styles from './styles.module.scss'
 
 const ProductForm = ({ data, _relationProd, ...props }) => {
@@ -25,6 +26,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
   const [attributeSelect, setAttributeSelect] = useState({})
 
   const [productFilter, setProductFilter] = useState([])
+
   const { addToCart } = useCartStore()
   const [form, setForm] = useState({
     quantity: 1,
@@ -41,12 +43,13 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     }
   }, [])
 
-  useEffect(() => {
-    if (Object.keys(attributeSelect).length === data.attributes?.length && productFilter.length === 1) {
-      const [{ _id, ...rest }] = productFilter
-      setForm((prev) => ({ ...prev, ...rest, variantId: _id }))
-    }
-  }, [attributeSelect])
+  // useEffect(() => {
+  //   console.log(productFilter)
+  //   if (Object.keys(attributeSelect).length === data.attributes?.length && productFilter.length === 1) {
+  //     const [{ _id, ...rest }] = productFilter
+  //     setForm((prev) => ({ ...prev, ...rest, variantId: _id }))
+  //   }
+  // }, [attributeSelect])
 
   const getDefaultOptions = () => {
     if (_relationProd.length) {
@@ -76,7 +79,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     } else {
       listItem.push(form)
     }
-    
+
     addToCart(listItem)
 
     localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
@@ -137,22 +140,75 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
   const handleAttributeChange = ({ value, name: attributeName }) => {
     const lastAttributeSelect = { ...attributeSelect }
 
+    const currentSelected = { [attributeName]: value }
+
     const currentAttributeSelect = { ...lastAttributeSelect, [attributeName]: value }
 
     const map = attributeMap
 
+    let selectedItem
+
+    let productFiltered = []
+
     if (Object.keys(currentAttributeSelect).length < data?.attributes.length) {
-      // setForm((prev) => ({ ...prev, quantity: prev.quantity || 1 }))
+      productFiltered = filterProductByAttributeName(currentAttributeSelect)
     } else {
-      if (Object.keys(lastAttributeSelect).length === data?.attributes.length) {
-        currentAttributeSelect = { [attributeName]: value }
+      for (let item of _relationProd) {
+        const attributeItem = item.attribute
+        const matchItem = Object.keys(attributeItem).every(
+          (attributeName) => attributeItem[attributeName] === currentAttributeSelect[attributeName],
+        )
+        if (matchItem) {
+          selectedItem = item
+        }
+      }
+      if (selectedItem) {
+        productFiltered = [..._relationProd]
+
+        const [{ _id, ...rest }] = productFilter
+        setForm((prev) => ({ ...prev, ...rest, variantId: _id }))
+      } else {
+        setForm({ quantity: 1, image: data?.image, _id: data?._id })
+        // currentAttributeSelect = { [attributeName]: value }
+
+        // let resultByKey = filterByKey({ key: attributeName, value, productList: _relationProd })
+
+        // console.log(resultByKey)
+
+        // for(let key in resultByKey.attribute) {
+
+        //   if(resultByKey.attribute[key]) {
+
+        //   }
+        //  }
+
+        // let availableAttributes = resultByKey.reduce((prev, current) => {
+        //   for (let attrKey in current.attribute) {
+        //     if (prev.get(attrKey)) {
+        //       value = [...prev.get(attrKey), { active: true, v: current.attribute[attrKey] }]
+        //       prev.set(attrKey, value)
+        //     } else {
+        //       prev.set(attrKey, [{ active: true, v: current.attribute[attrKey] }])
+        //     }
+        //   }
+        //   return prev
+        // }, new Map())
+
+        // for (let [key, value] of [...map]) {
+        //   value = value.map((item) => ({
+        //     ...item,
+        //     active: resultByKey.some((_item) => _item.attribute[key] === item.v),
+        //   }))
+        //   map.set(key, value)
+        // }
+
+        // console.log(map)
+        productFiltered = filterProductByAttributeName({ [attributeName]: value })
       }
     }
 
-    const productFiltered = filterProductByAttributeName(currentAttributeSelect)
-
     for (let [key, value] of [...map]) {
-      if (!currentAttributeSelect[key]) {
+      if (!currentSelected[key]) {
         const isActive = (attrValue) => productFiltered.some((_item) => _item.attribute[key] === attrValue)
 
         value = value.map((item) => ({
@@ -169,6 +225,16 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     setAttributeMap(map)
 
     setAttributeSelect(currentAttributeSelect)
+  }
+
+  const filterByKey = ({ key, value, productList }) => {
+    const result = []
+    for (let item of productList) {
+      if (item.attribute[key] === value) {
+        result.push(item)
+      }
+    }
+    return result
   }
 
   /**
@@ -221,7 +287,6 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     return html
   }, [form])
 
-  console.log(form)
   return (
     <CardBlock className="border-0">
       <Form ref={formRef} model={ProductModel}>
@@ -232,7 +297,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
                 <p className={clsx(styles.productPricing, 'bk-product-price')}>{calculatePrice()}</p>
               </div>
               <div className="col-12 position-relative">
-                {_relationProd.length ? (
+                {_relationProd.length && (
                   <>
                     <div className="position-absolute" style={{ top: 0, right: 0 }}>
                       <IconButton
@@ -245,8 +310,6 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
                     </div>
                     {renderAttributes()}
                   </>
-                ) : (
-                  ''
                 )}
               </div>
             </div>

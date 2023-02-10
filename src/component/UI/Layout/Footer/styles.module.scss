@@ -56,15 +56,44 @@
 }
 
 .contactItem {
-  display: block;
-  width: 32px;
-  font-size: 32px;
   color: var(--rs-blue-800);
-  img {
+  --delay: 0.2;
+  div {
     width: 32px;
+    height: 32px;
+    position: relative;
+    &:before {
+      top: -4px;
+      left: -4px;
+      position: absolute;
+      border-radius: 99px;
+      background-color: #fff;
+      width: 40px;
+      height: 40px;
+      content: '';
+      z-index: -1;
+      box-shadow: var(--main-box-shadow-hover);
+      border: 1px solid var(--rs-red-200);
+      transition: all 0.2s;
+      // animation-name: borderExpand;
+      // animation-duration: 1s;
+      // animation-iteration-count: infinite;
+    }
+    svg {
+      font-size: 32px;
+    }
+    img {
+      width: 100%;
+    }
   }
+
   &:hover {
     color: var(--rs-red-800);
+    div {
+      &:before {
+        transform: scale(1.5);
+      }
+    }
   }
 }
 
@@ -72,4 +101,16 @@
   opacity: 1;
   visibility: visible;
   bottom: 54px;
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+}
+
+@keyframes borderExpand {
+  from {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1.5);
+  }
 }

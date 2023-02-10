@@ -95,11 +95,11 @@ function baokimScript() {
       merchantLogo: t.logo,
       productProperty: b,
     }
-    console.log(M)
+    // console.log(M)
     var I = O('POST', d + 'api/v1/order-temporary/store', JSON.stringify(M))
     I && (n = I.token)
   }
-  console.log(c)
+  // console.log(c)
   ;(function () {
     var n = O('GET', 'https://pc.baokim.vn/api/plus/get-merchant?domain=' + c, null)
     if (!n) return

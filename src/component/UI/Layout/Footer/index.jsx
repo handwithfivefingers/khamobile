@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { BsCashCoin, BsTelephoneFill } from 'react-icons/bs'
 import { FaCcJcb, FaCcPaypal, FaCcStripe, FaCcVisa } from 'react-icons/fa'
+import { FcIphone } from 'react-icons/fc'
 import { IconButton, Panel } from 'rsuite'
 import styles from './styles.module.scss'
 export default function Footer() {
@@ -22,15 +23,10 @@ export default function Footer() {
       <div id="fb-root"></div>
 
       <div className={styles.contact}>
-        {/* <div className={styles.contactExpand} onClick={() => setExpand(!expand)}>
-          <div className={styles.icon}>
-            <img src="/support-icon.png" />
-          </div>
-        </div> */}
         <div className={clsx(styles.activeExpand)}>
           <a className={styles.contactItem} href="tel:+84777999966">
             <div className={styles.icon}>
-              <BsTelephoneFill />
+              <FcIphone />
             </div>
           </a>
           <a className={styles.contactItem} href="https://zalo.me/0777999966" target="_blank">
@@ -40,9 +36,6 @@ export default function Footer() {
           </a>
 
           <a className={styles.contactItem} href="https://www.messenger.com/t/104893688607812" target="_blank">
-            {/* <div className={styles.icon}>
-              <BsMessenger />
-            </div> */}
             <div className={styles.icon}>
               <img src="/messenger-icon.webp" />
             </div>

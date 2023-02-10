@@ -262,3 +262,23 @@
     cursor: not-allowed;
   }
 }
+
+.attribute {
+  display: flex;
+  gap: 12px;
+  flex-direction: column;
+
+  .attributeItem {
+    width: 100%;
+    display: flex;
+    gap: 12px;
+    span {
+      // width: 120px;
+      flex: 1;
+    }
+    div {
+      flex: 1;
+      margin-left: auto;
+    }
+  }
+}
