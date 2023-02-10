@@ -179,7 +179,8 @@ export default class PaymentController {
       let vnp_Params = this.getVpnParams({ createDate, orderId, amount: +amount * 100, orderInfo, ip })
       var vnpUrl = process.env.VNPAY_URL_PAYMENT
       vnpUrl += '?' + qs.stringify(vnp_Params, { encode: false })
-      return { url: vnpUrl, status: true }
+
+      return { url: vnpUrl, status: true, orderInfo: vnp_Params }
     } catch (err) {
       console.log('paymentOrder', err)
       throw {
@@ -277,8 +278,10 @@ export default class PaymentController {
 
         let _order = await Order.findOne({
           _id: vnp_Params.vnp_OrderInfo,
+          'orderInfo.vnp_TxnRef': vnp_Params.vnp_TxnRef,
         })
         // FIRST STEP - Order Exists
+        console.log(_order);
 
         if (!_order) return res.status(200).json({ RspCode: '01', Message: ResponseCode['01'] })
 
@@ -288,26 +291,23 @@ export default class PaymentController {
 
         if (_order.status === 'completed') return res.status(200).json({ RspCode: '02', Message: ResponseCode['02'] })
 
-        if (code === '00' && vnp_Params['vnp_TransactionStatus'] === '00') {
-          // Success
-          const _update = {
-            status: 'completed',
-            orderInfo: vnp_Params,
-          }
-
-          await Order.updateOne({ _id: req.query.vnp_OrderInfo }, _update, {
-            new: true,
-          })
-
-          // console.log('order updated successfully', _order)
+        if (vnp_Params['vnp_ResponseCode'] === '00' && vnp_Params['vnp_TransactionStatus'] === '00') {
+          _order.status = 'completed'
+          _order.orderInfo = vnp_Params
+          await _order.save()
         }
         return res.status(200).json({ Message: 'Confirm Success', RspCode: '00' })
       }
-      return res.status(400).json({ Message: 'Order Not Found', RspCode: '01' })
+
+      return res.status(200).json({ Message: 'Invalid Checksum', RspCode: '97' })
     } catch (err) {
       console.log('getUrlReturn', err)
 
-      return new Response().error(err, res)
+      return res.status(400).json({
+        RspCode: '99',
+        Message: ResponseCode['99'],
+        error,
+      })
     }
   }
 

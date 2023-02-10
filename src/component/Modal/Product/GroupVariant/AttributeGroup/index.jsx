@@ -1,12 +1,8 @@
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
-import {
-  Button, Input, Panel, SelectPicker,
-  Stack, TagPicker
-} from 'rsuite'
+import { Button, Input, Panel, PanelGroup, SelectPicker, Stack, TagPicker } from 'rsuite'
 import styles from './styles.module.scss'
 
 const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) => {
-
   const { attributes, setAttributes } = attribute
   const [groupAttr, setGroupAttr] = useState([])
 
@@ -109,7 +105,9 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
           Thêm
         </Button>
       </div>
-      <div className={styles.contentAttr}>{groupAttr.map((_item, index) => renderAccordion(_item, index))}</div>
+      <div className={styles.contentAttr}>
+        <PanelGroup>{groupAttr.map((_item, index) => renderAccordion(_item, index))}</PanelGroup>
+      </div>
     </div>
   )
 })
@@ -130,6 +128,5 @@ const AttributeSelection = forwardRef(({ options, groupAttr }, ref) => {
     />
   )
 })
-
 
 export default AttributeGroup
