@@ -1,5 +1,5 @@
 import { forwardRef, lazy, useEffect, useMemo, useRef, useState, Suspense } from 'react'
-import { Button, ButtonGroup, Loader, Panel, SelectPicker, Stack } from 'rsuite'
+import { Button, ButtonGroup, Loader, Panel, PanelGroup, SelectPicker, Stack } from 'rsuite'
 import styles from './styles.module.scss'
 
 // import VariantItem from './VariantItem'
@@ -191,7 +191,9 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, ...props 
           Thêm
         </Button>
       </div>
-      <div className={styles.contentAttr}>{getVariant}</div>
+      <div className={styles.contentAttr}>
+        <PanelGroup>{getVariant}</PanelGroup>
+      </div>
     </div>
   )
 })

@@ -37,6 +37,7 @@ const Catalog = (props) => {
             engine={props?.data?.image?.src}
             height={'200px'}
             className={styles.imgCatalog}
+            objectFit="contain"
           />
 
           <div className={styles.listLink}>

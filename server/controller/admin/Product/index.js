@@ -118,27 +118,10 @@ export default class ProductController {
         _prod = _prodAggregate
       }
 
-      // for (let prod of _prod) {
-      //   if (prod._doc.attributes.length) {
-      //     prod._doc.attributes = prod._doc.attributes.map((item) => {
-      //       return {
-      //         key: item?.parentId?.key,
-      //         value: item?.name,
-      //       }
-      //     })
-      //   }
-      //   data.push(prod)
-      // }
-
-      // return res.status(200).json({
-      //   data: _prod,
-      // })
       return new Response().fetched({ data: _prod }, res)
     } catch (error) {
       console.log(error)
-      // return res.status(400).json({
-      //   error,
-      // })
+
       return new Response().error(error, res)
     }
   }
@@ -330,7 +313,7 @@ export default class ProductController {
 
       session.startTransaction()
 
-      const { _id, type, title, slug, description, content, primary, variations, category, image } = formData
+      const { _id, type, title, slug, description, content, primary, variations, category, image , attributes} = formData
 
       const minPrice = variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
 
@@ -344,7 +327,10 @@ export default class ProductController {
         primary,
         category,
         image,
+        attributes
       }
+
+      console.log('prodUpdate ..........', JSON.stringify(formData, null, 4))
 
       await Product.updateOne(
         {
@@ -361,9 +347,13 @@ export default class ProductController {
       )
 
       for (let { _id: varsId, ...variant } of variations) {
+        if (!varsId) {
+          varsId = new mongoose.Types.ObjectId()
+          variant.parentId = _id
+        }
         await ProductVariant.updateOne(
           {
-            _id: mongoose.Types.ObjectId(varsId),
+            _id: varsId,
           },
           {
             ...variant,
@@ -374,6 +364,8 @@ export default class ProductController {
             session,
           },
         )
+
+        // console.log('prodUpdate ..........', varsId, JSON.stringify(variant, null, 4))
       }
 
       await session.commitTransaction()
