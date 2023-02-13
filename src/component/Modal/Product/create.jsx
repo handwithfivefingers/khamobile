@@ -25,6 +25,7 @@ const ProductCreateModal = (props) => {
     variations: [],
     category: [],
     delete: [],
+    deleteAll: false,
     ...props?.data,
   })
 
@@ -106,8 +107,15 @@ const ProductCreateModal = (props) => {
     setRender(!_render)
   }
 
-  const handleDeleteVariation = (_id) => {
-    formDataRef.current?.delete.push(_id)
+  const handleDeleteVariation = (_id = null, deleteAll = false) => {
+    if(_id) {
+      formDataRef.current?.delete.push(_id)
+    }
+
+    if(deleteAll) {
+      formDataRef.current.deleteAll = deleteAll
+    }
+    
   }
 
   return (
