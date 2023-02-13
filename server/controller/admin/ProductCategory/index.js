@@ -31,10 +31,18 @@ export default class ProductCategoryController {
           },
         ])
 
-        _category = _category.map((item) => ({ ...item, dynamicRef: 'ProductCategory' }))
+        _category = _category.map((item) => ({
+          ...item,
+          dynamicRef: 'ProductCategory',
+          children: item.children.length && this.addField(item.children),
+        }))
       } else {
         _category = await ProductCategory.find({}).select('-createdAt -updatedAt -__v')
-        _category = _category.map((item) => ({ ...item._doc, dynamicRef: 'ProductCategory' }))
+        _category = _category.map((item) => ({
+          ...item._doc,
+          dynamicRef: 'ProductCategory',
+          children: item.children?.length && this.addField(item.children),
+        }))
       }
 
       return new Response().fetched({ data: _category }, res)
@@ -124,5 +132,9 @@ export default class ProductCategoryController {
       console.log(error)
       throw error
     }
+  }
+
+  addField = (data) => {
+    return data.map((item) => ({ ...item, dynamicRef: 'ProductCategory' }))
   }
 }

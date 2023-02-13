@@ -1,16 +1,13 @@
-import GearIcon from '@rsuite/icons/Gear'
-import JsonViewer from 'component/UI/JsonViewer'
 import Head from 'next/head'
 import Script from 'next/script'
-import { useEffect, useState } from 'react'
-import { Button, CustomProvider, Drawer, IconButton } from 'rsuite'
+import { useEffect } from 'react'
+import { CustomProvider } from 'rsuite'
 import 'rsuite/dist/rsuite.min.css'
-import { useDevStore } from 'src/store/devStore'
-import '../assets/css/style.scss'
-import CommonLayout from '../component/UI/Layout'
 import AuthenticateService from 'service/authenticate/Authenticate.service'
 import { useAuthorizationStore } from 'src/store/authenticateStore'
 import { useCartStore } from 'store/cartStore'
+import '../assets/css/style.scss'
+import CommonLayout from '../component/UI/Layout'
 
 export default function MyApp({ Component, pageProps }) {
   const Layout = Component.Layout || CommonLayout

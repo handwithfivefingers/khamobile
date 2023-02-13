@@ -1,17 +1,17 @@
 import clsx from 'clsx'
+import PostHelmet from 'component/PostHelmet'
 import Card from 'component/UI/Content/Card'
+import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
 import Divider from 'component/UI/Content/Divider'
-import dynamic from 'next/dynamic'
+import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
+import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Col, Pagination, Row } from 'rsuite'
+import GlobalHomeService from 'service/global/Home.service'
 import GlobalProductService from 'service/global/Product.service'
 import styles from './styles.module.scss'
-import PageHeader from 'component/UI/Content/PageHeader'
-import PostHelmet from 'component/PostHelmet'
-import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
-import GlobalHomeService from 'service/global/Home.service'
 
 const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
 

@@ -199,6 +199,7 @@ export default function SettingMenu() {
   }
 
   const handleAddItem = (nodeItem) => {
+    console.log(nodeItem)
     setData((prev) => ({
       ...prev,
       menu: [

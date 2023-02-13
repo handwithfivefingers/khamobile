@@ -60,6 +60,7 @@ export default class SettingController {
 
       return new Response().fetched({ data: { ..._setting._doc, menu: newMenu } }, res)
     } catch (error) {
+      console.log(error)
       return new Response().error(error, res)
     }
   }
@@ -97,23 +98,28 @@ export default class SettingController {
       const result = []
 
       let list
-
       if (!parentId) {
         list = data.filter((item) => !item.parentId)
       } else {
-        list = data.filter((item) => JSON.stringify(item.parentId) === JSON.stringify(parentId))
+        list = data.filter((item) => item._id && JSON.stringify(item.parentId) === JSON.stringify(parentId))
       }
 
-      // console.log('list', parentId, list)
+      // if (parentId) {
+      //   console.log('data', data)
+      //   console.log('list', list, parentId)
+      //   return []
+      // }
 
-      for (let child of list) {
-        result.push({
-          ...child._doc,
-          name: child._id?.title || child?._id?.name || '',
-          slug: child._id?.slug,
-          _id: child._id?._id,
-          children: this.onBringParentItemToChildren(data, child._id?._id),
-        })
+      if (list.length) {
+        for (let child of list) {
+          result.push({
+            ...child._doc,
+            name: child._id?.title || child?._id?.name || '',
+            slug: child._id?.slug,
+            _id: child._id?._id,
+            children: this.onBringParentItemToChildren(data, child._id?._id) || null,
+          })
+        }
       }
 
       return result.length > 0 ? result : null

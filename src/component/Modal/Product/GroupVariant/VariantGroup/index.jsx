@@ -83,6 +83,7 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, deleteVar
         break
       case 3: // Clear all variants
         groupVariantRef.current = []
+        deleteVariation.setDeleteVariation(null, true)
         break
     }
     setVariations(groupVariantRef.current)
@@ -220,6 +221,7 @@ const VariantTypeSelection = forwardRef(({ options }, ref) => {
 
   const handleSelect = (value) => {
     ref.current = value
+    console.log(ref.current)
     setRender(!_render)
   }
 

@@ -56,6 +56,13 @@ export default class ProductController {
               localField: '_id',
               foreignField: 'parentId',
               as: 'variations',
+              pipeline: [
+                {
+                  $match: {
+                    parentId: { $exists: true },
+                  },
+                },
+              ],
             },
           },
           {
@@ -126,12 +133,20 @@ export default class ProductController {
         ])
 
         _prod = _prodAggregate
+
+        if (!_prod) {
+          _prod = await Product.findOne({
+            _id: mongoose.Types.ObjectId(_id),
+          })
+        }
       }
 
-      const pathImg = `${
-        process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
-      }/public/wp/`
-      _prod.content = _prod.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+      if (_prod) {
+        const pathImg = `${
+          process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
+        }/public/wp/`
+        _prod.content = _prod?.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+      }
       return new Response().fetched({ data: _prod }, res)
     } catch (error) {
       console.log(error)
@@ -250,11 +265,9 @@ export default class ProductController {
 
   updateProduct = async (req, res) => {
     try {
-
       if (!req.body._id) throw { message: 'Product doesnt exists' }
 
       let { ...formData } = req.body
-
 
       let result
 
@@ -337,9 +350,11 @@ export default class ProductController {
         image,
         attributes,
         delete: listVariantDelete,
+        deleteAll,
       } = formData
 
-      const minPrice = variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
+      const minPrice =
+        variations?.length && variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
 
       const prodUpdate = {
         title,
@@ -347,13 +362,12 @@ export default class ProductController {
         description,
         content,
         type,
-        price: minPrice.price,
+        price: minPrice.price || 0,
         primary,
         category,
         image,
         attributes,
       }
-
 
       await Product.updateOne(
         {
@@ -368,34 +382,36 @@ export default class ProductController {
           session,
         },
       )
-
-      for (let { _id: varsId, ...variant } of variations) {
-        if (!varsId) {
-          varsId = new mongoose.Types.ObjectId()
-          variant.parentId = _id
+      if (deleteAll) {
+        await ProductVariant.deleteMany({ parentId: mongoose.Types.ObjectId(_id) })
+        console.log('delete alll success')
+      } else {
+        for (let { _id: varsId, ...variant } of variations) {
+          if (!varsId) {
+            varsId = new mongoose.Types.ObjectId()
+            variant.parentId = _id
+          }
+          await ProductVariant.updateOne(
+            {
+              _id: varsId,
+            },
+            {
+              ...variant,
+            },
+            {
+              upsert: true,
+              new: true,
+              session,
+            },
+          )
         }
-        await ProductVariant.updateOne(
-          {
-            _id: varsId,
-          },
-          {
-            ...variant,
-          },
-          {
-            upsert: true,
-            new: true,
-            session,
-          },
-        )
-
-        // console.log('prodUpdate ..........', varsId, JSON.stringify(variant, null, 4))
       }
-
-      // for(let )
 
       if (listVariantDelete?.length) {
         await ProductVariant.deleteMany({ _id: { $in: listVariantDelete.map((id) => mongoose.Types.ObjectId(id)) } })
       }
+
+      // for(let )
 
       await session.commitTransaction()
 
