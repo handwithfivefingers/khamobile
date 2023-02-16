@@ -11,9 +11,7 @@ import {
   ButtonGroup,
   Content,
   IconButton,
-  Input,
-  InputPicker,
-  Message,
+  Input, Message,
   Modal,
   Pagination,
   Popover,
@@ -21,10 +19,10 @@ import {
   Stack,
   Table,
   useToaster,
-  Whisper,
+  Whisper
 } from 'rsuite'
-import ProductService from 'service/admin/Product.service'
 import CategoryService from 'service/admin/Category.service'
+import ProductService from 'service/admin/Product.service'
 import { formatCurrency } from 'src/helper'
 import { useCommonStore } from 'src/store/commonStore'
 

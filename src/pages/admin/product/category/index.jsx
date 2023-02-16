@@ -1,10 +1,30 @@
 import ProductCategory from 'component/Modal/ProductCategory'
 import AdminLayout from 'component/UI/AdminLayout'
-import { useEffect, useState } from 'react'
-import { Avatar, Content, Input, Modal, Pagination, Stack, Table, useToaster } from 'rsuite'
+import { useEffect, useState, forwardRef, useRef } from 'react'
+import {
+  Avatar,
+  Content,
+  IconButton,
+  Input,
+  Modal,
+  Pagination,
+  Popover,
+  Stack,
+  Table,
+  useToaster,
+  Whisper,
+  Message,
+  ButtonGroup,
+} from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import { message } from 'src/helper'
 import { useCommonStore } from 'src/store/commonStore'
+import CheckIcon from '@rsuite/icons/Check'
+import CloseIcon from '@rsuite/icons/Close'
+import EditIcon from '@rsuite/icons/Edit'
+import PlusIcon from '@rsuite/icons/Plus'
+import TrashIcon from '@rsuite/icons/Trash'
+import Category from 'component/Modal/Category'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -22,6 +42,54 @@ const CustomRenderCell = ({ rowData, dataKey, ...props }) => {
       >
         <Avatar src={`${process.env.API}${rowData[dataKey]?.src}`} />
       </div>
+    </Cell>
+  )
+}
+
+const RenderAlert = forwardRef(({ right, top, className, ...props }, ref) => {
+  return (
+    <Popover ref={ref} className={className} full>
+      <Message showIcon type="warning" header="Bạn có muốn xóa?">
+        <ButtonGroup>
+          <IconButton
+            icon={<CloseIcon />}
+            size="sm"
+            appearance="default"
+            color="blue"
+            onClick={(event) => {
+              props?.closeRef.current.close()
+            }}
+          />
+          <IconButton
+            icon={<CheckIcon />}
+            size="sm"
+            appearance="primary"
+            color="blue"
+            onClick={() => props.onClick()}
+          />
+        </ButtonGroup>
+      </Message>
+    </Popover>
+  )
+})
+const ActionCell = ({ rowData, dataKey, onEdit, ...props }) => {
+  const whisperRef = useRef()
+  const onProgress = (event) => {
+    props?.onDelete(rowData, event)
+  }
+  return (
+    <Cell {...props} className="link-group">
+      <Stack spacing={8}>
+        <IconButton onClick={() => onEdit(rowData)} size="sm" appearance="primary" icon={<EditIcon />} color="blue" />
+        <Whisper
+          placement="leftStart"
+          trigger="click"
+          speaker={<RenderAlert {...props} onClick={onProgress} closeRef={whisperRef} />}
+          ref={whisperRef}
+        >
+          <IconButton size="sm" appearance="primary" icon={<TrashIcon />} color="red" />
+        </Whisper>
+      </Stack>
     </Cell>
   )
 }
@@ -63,11 +131,14 @@ const Products = () => {
 
   const getCateData = async () => {
     try {
+      setLoading(true)
       let resp = await CategoryService.getProdCate()
       setData(resp.data.data)
       setFilterData(resp.data.data)
     } catch (error) {
       console.log('error', error?.response?.data?.message)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -82,6 +153,28 @@ const Products = () => {
       return resp.data.data
     } catch (error) {
       console.log('getProductById', error)
+    }
+  }
+
+  const onCreate = async (value) => {
+    try {
+      setLoading(true)
+      const resp = await CategoryService.createProdCate(value)
+      if (resp.status === 200) {
+        toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
+        handleClose()
+      }
+    } catch (error) {
+      toaster.push(
+        message(
+          'error',
+          error.response?.data?.message || error.message || 'Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên',
+        ),
+        { placement: 'topEnd' },
+      )
+      handleClose()
+    } finally {
+      getCateData()
     }
   }
 
@@ -124,6 +217,26 @@ const Products = () => {
     })
   }
 
+  const handleDelete = async (rowData) => {
+    try {
+      const resp = await CategoryService.deleteProdCateById(rowData._id)
+      if (resp.status === 200) {
+        console.log('update success')
+        if (resp.status === 200) {
+          toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
+          handleClose()
+        }
+      } else throw resp
+    } catch (error) {
+      toaster.push(message('error', error.response?.data?.message || error.response?.message), {
+        placement: 'topEnd',
+      })
+      console.log('error updating category', error)
+    } finally {
+      getCateData()
+    }
+  }
+
   return (
     <>
       <Stack spacing={10} className="py-2">
@@ -132,7 +245,7 @@ const Products = () => {
       </Stack>
 
       <Content className={'bg-w'}>
-        <Table data={getData()} onRowClick={handleOpenCategory} loading={loading} height={60 * (10 + 1)} rowHeight={60}>
+        <Table data={getData()} loading={loading} height={60 * (10 + 1)} rowHeight={60}>
           <Column width={150}>
             <HeaderCell></HeaderCell>
             <CustomRenderCell dataKey="image" />
@@ -152,16 +265,23 @@ const Products = () => {
             <Cell dataKey="slug" />
           </Column>
 
-          <Column width={80} fixed="right">
-            <HeaderCell>...</HeaderCell>
+          <Column fixed="right" align="center">
+            <HeaderCell>
+              <IconButton
+                icon={<PlusIcon />}
+                size="xs"
+                color="blue"
+                appearance="primary"
+                onClick={() =>
+                  setModal({
+                    open: true,
+                    component: <ProductCategory onSubmit={onCreate} />,
+                  })
+                }
+              />
+            </HeaderCell>
 
-            <Cell>
-              {(rowData) => (
-                <span>
-                  <a onClick={() => alert(`id:${rowData.id}`)}> Edit </a>
-                </span>
-              )}
-            </Cell>
+            <ActionCell onDelete={handleDelete} onEdit={handleOpenCategory} right={0} />
           </Column>
         </Table>
 

@@ -11,9 +11,6 @@ export default class ProductCategoryController {
 
       let _category = []
 
-      //   _category = await ProductCategory.find({ parent: { $exists: false } }).select('-createdAt -updatedAt -__v')
-      // } else {
-
       if (type === 'parent') {
         _category = await ProductCategory.aggregate([
           {
@@ -37,7 +34,9 @@ export default class ProductCategoryController {
           children: item.children.length && this.addField(item.children),
         }))
       } else {
-        _category = await ProductCategory.find({}).select('-createdAt -updatedAt -__v')
+        _category = await ProductCategory.find({})
+          .select('-createdAt -updatedAt -__v')
+          .sort({ createdAt: -1, updatedAt: -1 })
         _category = _category.map((item) => ({
           ...item._doc,
           dynamicRef: 'ProductCategory',
@@ -63,6 +62,20 @@ export default class ProductCategoryController {
       if (!_cate) throw { message: MESSAGE.RESULT_NOT_FOUND() }
 
       return new Response().fetched({ data: _cate }, res)
+    } catch (error) {
+      return new Response().error(error, res)
+    }
+  }
+
+  deleteCategoryById = async (req, res) => {
+    try {
+      const { _id } = req.params
+
+      let _cate = await ProductCategory.deleteOne({ _id: mongoose.Types.ObjectId(_id) })
+
+      if (!_cate) throw { message: MESSAGE.RESULT_NOT_FOUND() }
+
+      return new Response().deleted({}, res)
     } catch (error) {
       return new Response().error(error, res)
     }

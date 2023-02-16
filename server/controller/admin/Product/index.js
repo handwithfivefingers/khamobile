@@ -172,7 +172,7 @@ export default class ProductController {
       // return res.status(200).json({
       //   message: 'ok',
       // })
-      return new Response().create({}, res)
+      return new Response().created({}, res)
     } catch (error) {
       console.log('create error', error)
       return new Response().error(error, res)
@@ -223,7 +223,12 @@ export default class ProductController {
 
       const parentId = new mongoose.Types.ObjectId()
 
-      let minPrice = variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
+      let minPrice = variations?.reduce((prev, current) => {
+        if (prev > current.price) {
+          return current.price
+        }
+        return prev
+      }, 0)
 
       let baseProd = new Product({
         _id: parentId,

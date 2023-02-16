@@ -11,6 +11,8 @@ const CategoryService = {
   createCate: async (form) => await axios.post(path.category, form),
   getProdCate: async (params) => await axios.get(path.prodCategory, { params }),
   getProdCateById: async (_id) => await axios.get(path.prodCategory + '/' + _id),
+  deleteProdCateById: async (_id) => await axios.delete(path.prodCategory + '/' + _id),
+  createProdCate: async (form) => await axios.post(path.prodCategory, form),
   updateProdCateById: async (_id, params) => await axios.post(path.prodCategory + '/' + _id, params),
 }
 

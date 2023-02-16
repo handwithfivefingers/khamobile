@@ -1,5 +1,4 @@
 import express from 'express'
-import { upload } from '#middleware'
 
 import ProductAttributeController from '#controller/admin/ProductAttribute'
 const router = express.Router()

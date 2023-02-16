@@ -1,7 +1,5 @@
 import ProductController from '#controller/admin/Product'
-import PuppeteerController from '#controller/Service/Puppeteer'
-import { upload } from '#middleware'
-import express, { Router } from 'express'
+import express from 'express'
 // import ProductCategoryController from '#controller/admin/ProductCategory'
 
 const router = express.Router()

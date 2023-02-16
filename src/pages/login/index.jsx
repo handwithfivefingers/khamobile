@@ -14,7 +14,7 @@ export default function LoginPage() {
   const router = useRouter()
 
   const formRef = useRef()
-
+  const [loading, setLoading] = useState(false)
   const [form, setForm] = useState({
     username: '',
     password: '',
@@ -37,6 +37,7 @@ export default function LoginPage() {
     }
 
     try {
+      setLoading(true)
       const resp = await AuthenticateService.login(form)
 
       const data = resp?.data
@@ -50,6 +51,14 @@ export default function LoginPage() {
       }
     } catch (error) {
       console.log('handleSubmit', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const handleEnter = (e) => {
+    if (e.which === 13) {
+      return handleSubmit()
     }
   }
 
@@ -75,9 +84,13 @@ export default function LoginPage() {
                 <CardBlock>
                   <KMInput name="username" label="Tên đăng nhập" />
 
-                  <KMInputPassword name="password" label="Password" />
+                  <KMInputPassword name="password" label="Password" onKeyPress={handleEnter} />
 
-                  <Button style={{ backgroundColor: 'var(--rs-blue-800)', color: '#fff' }} onClick={handleSubmit}>
+                  <Button
+                    style={{ backgroundColor: 'var(--rs-blue-800)', color: '#fff' }}
+                    onClick={handleSubmit}
+                    loading={loading}
+                  >
                     Submit
                   </Button>
                 </CardBlock>
