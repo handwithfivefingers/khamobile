@@ -9,35 +9,16 @@ import styles from './styles.module.scss'
 const pricingFilter = [
   {
     label: 'Từ thấp đến cao',
-    value: ['price', -1],
+    value: ['price', 1],
     icon: <FaSortAmountDownAlt />,
   },
   {
     label: 'Từ cao đến đến',
-    value: ['price', 1],
+    value: ['price', -1],
     icon: <FaSortAmountDown />,
   },
-  {
-    label: 'Dung lượng',
-    value: ['Dung lượng', 1],
-    icon: <FaSortAmountDown />,
-  },
-  {
-    label: 'Dung lượng',
-    value: ['Dung lượng', -1],
-    icon: <FaSortAmountDownAlt />,
-  },
-
-  // {
-  //   label: 'Mới nhất',
-  //   value: ['feature', '-1'],
-  // },
-  // {
-  //   label: 'Hot nhất',
-  //   value: ['createdAt', '-1'],
-  // },
 ]
-const SideFilter = (props) => {
+const SideFilter = ({ withMemory = false, ...props }) => {
   const [drawer, setDrawer] = useState({
     open: false,
     placement: 'left',
@@ -49,20 +30,39 @@ const SideFilter = (props) => {
 
   const productCategory = useCommonStore((state) => state.productCategory)
 
+  const memoryFilter = [
+    {
+      label: 'Dung lượng',
+      value: ['Dung lượng', 1],
+      icon: <FaSortAmountDown />,
+    },
+    {
+      label: 'Dung lượng',
+      value: ['Dung lượng', -1],
+      icon: <FaSortAmountDownAlt />,
+    },
+  ]
+
   const renderButtonSort = useMemo(() => {
-    return pricingFilter.map((item) => {
+    const ListFilter = [...pricingFilter]
+    if (withMemory) {
+      ListFilter.push(...memoryFilter)
+    }
+
+    return ListFilter.map((item) => {
       return (
         <Button
           onClick={() => props?.onChange({ [item.value[0]]: item.value[1] })}
           className={clsx(styles.btn, {
             [styles.active]: props?.filter?.[item.value[0]] === item.value[1],
           })}
+          key={Math.random()}
         >
           {item.icon} {item.label}
         </Button>
       )
     })
-  }, [props.filter])
+  }, [props.filter, withMemory])
 
   const setParentChange = () => {
     props?.onChange(filter)
@@ -96,10 +96,9 @@ const SideFilter = (props) => {
         <TagGroup className={styles.tagGroup}>
           {cate_2.map((item, index) => {
             return (
-              <div className={styles.tagItem}>
+              <div className={styles.tagItem} key={Math.random() * 6}>
                 <Tag
                   color={color[(Math.random() * 6).toFixed(0)]}
-                  key={Math.random() * 6}
                   className="shadow-sm"
                   onClick={() => handleTagClick(item)}
                 >

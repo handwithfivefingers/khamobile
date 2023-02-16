@@ -135,7 +135,7 @@ export default function SingleCategory({ seo, slug, page, ...props }) {
                 </p>
               </div>
               <div className="col-24">
-                <SideFilter onChange={onFilterChange} filter={filter} tagClick={tagClick} />
+                <SideFilter onChange={onFilterChange} filter={filter} tagClick={tagClick} withMemory />
               </div>
               <Divider />
 

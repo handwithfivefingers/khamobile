@@ -297,10 +297,6 @@ export default class ProductController {
         sortPipe.push(['createdAt', createdAt])
       }
 
-      // if (req.query['Dung lượng']) {
-      //   sortPipe.push(['title', -1])
-      // }
-
       if (all) {
         _prod = await Product.find().select('-content -_id -createdAt -updatedAt -__v')
       } else {
@@ -338,60 +334,8 @@ export default class ProductController {
         }
       }
 
-      // if (req.query['Dung lượng']) {
-      //   _prod = _prod.sort((a, b) => {
+      // _prod.sort((a, b) => b.price - a.price)
 
-      //     // if (a.title.toLowerCase().includes('32')) {
-      //     //   return 1
-      //     // }
-
-      //     // if (a.title.toLowerCase().includes('64')) {
-      //     //   return 1
-      //     // }
-
-      //     // if (a.title.toLowerCase().includes('128')) {
-      //     //   return 1
-      //     // }
-      //     // if (a.title.toLowerCase().includes('256')) {
-      //     //   return 1
-      //     // }
-
-      //     // if (a.title.toLowerCase().includes('512')) {
-      //     //   return 1
-      //     // }
-      //     // if (a.title.toLowerCase().includes('1tb')) {
-      //     //   return 1
-      //     // }
-      //     // if (b.title.toLowerCase().includes('32')) {
-      //     //   return 1
-      //     // }
-
-      //     // if (b.title.toLowerCase().includes('64')) {
-      //     //   return 1
-      //     // }
-
-      //     // if (b.title.toLowerCase().includes('128')) {
-      //     //   return 1
-      //     // }
-      //     // if (b.title.toLowerCase().includes('256')) {
-      //     //   return 1
-      //     // }
-
-      //     // if (b.title.toLowerCase().includes('512')) {
-      //     //   return 1
-      //     // }
-      //     // if (b.title.toLowerCase().includes('1tb')) {
-      //     //   return 1
-      //     // }
-      //     // return 0
-      //   })
-      // }
-      // console.log(_prod)
-      _prod.sort((a, b) => b.title.toLowerCase().localeCompare(a.title.toLowerCase()))
-
-      for (let item of _prod) {
-        console.log(item.title)
-      }
       return new Response().fetched(
         {
           length: _prod.length,

@@ -8,6 +8,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { FaSortAmountDown, FaSortAmountDownAlt } from 'react-icons/fa'
 import { Pagination } from 'rsuite'
 import { GlobalHomeService, GlobalProductService } from 'service/global'
 import styles from './styles.module.scss'
@@ -22,6 +23,7 @@ export default function Product(props) {
   const [loading, setLoading] = useState(false)
 
   const [filter, setFilter] = useState({})
+
   const router = useRouter()
 
   useEffect(() => {
@@ -56,7 +58,7 @@ export default function Product(props) {
   const renderSkeleton = useMemo(() => {
     return [...Array(20).keys()].map((item) => {
       return (
-        <div className={styles.gridItem}>
+        <div className={styles.gridItem} key={Math.random()}>
           <CardSkeletonProduct />
         </div>
       )
@@ -70,7 +72,7 @@ export default function Product(props) {
   const tagClick = useCallback((v) => {
     router.push(`/category/${v.slug}`)
   }, [])
-  
+
   return (
     <>
       <PostHelmet seo={props.seo} />
@@ -84,12 +86,6 @@ export default function Product(props) {
         <div className="col-12 p-0 py-2 border-top">
           <div className="container">
             <div className="row">
-              {/* <div className="col-12">
-                <p>
-                  The category description can be positioned anywhere on the page via the layout page builder inside the
-                </p>
-              </div> */}
-
               <div className="col-12">
                 <SideFilter onChange={onFilterChange} filter={filter} tagClick={tagClick} />
               </div>
@@ -103,7 +99,7 @@ export default function Product(props) {
                   {!loading &&
                     product?.data?.map((prod) => {
                       return (
-                        <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
+                        <Link href={`/product/${prod.slug}`} passHref>
                           <a className={styles.gridItem}>
                             <Card
                               imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}

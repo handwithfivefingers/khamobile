@@ -117,8 +117,6 @@ export default class ProductCategoryController {
         // },
       ]
 
-      // const [total] = await ProductCategory.aggregate([...pipeAggregate, { $count: 'total' }])
-
       pipeAggregate.push(
         {
           $project: {
@@ -162,8 +160,6 @@ export default class ProductCategoryController {
 
       let sortMemory = req.query['Dung lượng']
 
-      // console.log(_cateProd)
-
       if (sortMemory) {
         _cateProd?.items?.sort((a, b) => {
           if (sortMemory == 1) {
@@ -181,16 +177,16 @@ export default class ProductCategoryController {
       }
 
       if (price) {
-        console.log(_cateProd)
         _cateProd?.items?.sort((a, b) => {
-          if (price == 1) {
+          if (price == -1) {
             return b.price - a.price
           }
-          if (price == -1) {
+          if (price == 1) {
             return a.price - b.price
           }
         })
       }
+
       return new Response().fetched(
         {
           data: { cate: _cate, product: _cateProd },
