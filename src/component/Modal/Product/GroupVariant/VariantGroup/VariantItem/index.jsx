@@ -108,7 +108,7 @@ const PInput = forwardRef(({ name, position, value, price, ...props }, ref) => {
 })
 
 const InputProxy = (props) => {
-  return <input class="rs-input" type="text" id="price,0" value="" {...props} />
+  return <input className="rs-input" type="text" id="price,0" value="" {...props} />
 }
 
 const CheckboxVariant = forwardRef(

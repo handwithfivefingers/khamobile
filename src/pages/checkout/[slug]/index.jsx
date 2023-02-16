@@ -135,7 +135,7 @@ export default function OrderReceived({ data }) {
               {data.status == 'completed' ? (
                 <BiCheck style={{ fontSize: 36 }} />
               ) : (
-                <div class="spinner-border text-light" role="status">
+                <div className="spinner-border text-light" role="status">
                   <span className="visually-hidden">Loading...</span>
                 </div>
               )}

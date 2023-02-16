@@ -20,7 +20,7 @@ const UploadMutiple = forwardRef((props, ref) => {
       renderThumbnail={(file, fileElement) => {
         if (file.src) {
           return (
-            <div class="rs-uploader-file-item-preview">
+            <div className="rs-uploader-file-item-preview">
               <img role="presentation" src={process.env.API + file.src} />
             </div>
           )

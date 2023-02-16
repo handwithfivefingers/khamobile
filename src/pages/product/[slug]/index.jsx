@@ -101,16 +101,16 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
 
               <div className="col-12">
                 <CardBlock className="border-0">
-                  {process.env.NODE_ENV !== 'production' ? (
+                  {process.env.NODE_ENV === 'development' ? (
                     <div
-                      class="fb-comments"
+                      className="fb-comments"
                       data-href={'https://khamobile.vn' + router.asPath}
                       data-width="100%"
                       data-numposts="5"
                     />
                   ) : (
                     <div
-                      class="fb-comments"
+                      className="fb-comments"
                       data-href={process.env.CANONICAL + router.asPath}
                       data-width="100%"
                       data-numposts="5"

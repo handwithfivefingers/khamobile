@@ -8,12 +8,12 @@ import { useCommonStore } from 'src/store'
 import styles from './styles.module.scss'
 const pricingFilter = [
   {
-    label: 'Từ thấp đến cao',
+    label: 'Giá tăng dần',
     value: ['price', 1],
     icon: <FaSortAmountDownAlt />,
   },
   {
-    label: 'Từ cao đến đến',
+    label: 'Giá giảm dần',
     value: ['price', -1],
     icon: <FaSortAmountDown />,
   },
@@ -32,14 +32,14 @@ const SideFilter = ({ withMemory = false, ...props }) => {
 
   const memoryFilter = [
     {
-      label: 'Dung lượng',
+      label: 'Dung lượng tăng dần',
       value: ['Dung lượng', 1],
-      icon: <FaSortAmountDown />,
+      icon: <FaSortAmountDownAlt />,
     },
     {
-      label: 'Dung lượng',
+      label: 'Dung lượng giảm dần',
       value: ['Dung lượng', -1],
-      icon: <FaSortAmountDownAlt />,
+      icon: <FaSortAmountDown />,
     },
   ]
 

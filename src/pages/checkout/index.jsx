@@ -17,7 +17,7 @@ export default function Checkout() {
   const router = useRouter()
 
   const { authenticate } = useAuthorizationStore((state) => state)
-  const { cart } = useCartStore((state) => state.cart)
+  const { cart } = useCartStore((state) => state)
 
   const [price, setPrice] = useState(0)
 
@@ -117,7 +117,7 @@ export default function Checkout() {
     }
     return html
   }
-
+  console.log(cart)
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -126,14 +126,14 @@ export default function Checkout() {
         </PageHeader>
       </div>
       <div className="col-12 p-0 py-2 border-top">
-        <div className="container">
-          <div className="row gx-4 gy-4">
-            <div className="col-12 col-md-6 col-lg-6 col-xl-6">
-              <div className="row gy-4">{renderUserInformationByCondition()}</div>
-            </div>
+        {!cart?.length && <NoData description={'Sản phẩm không tồn tại, vui lòng thử lại'} />}
 
-            {!cart?.length && <NoData />}
-            {cart.length && (
+        {cart.length && (
+          <div className="container">
+            <div className="row gx-4 gy-4">
+              <div className="col-12 col-md-6 col-lg-6 col-xl-6">
+                <div className="row gy-4">{renderUserInformationByCondition()}</div>
+              </div>
               <div className="col-12 col-md-6 col-lg-6 col-xl-6">
                 <div className="row gx-4 gy-4">
                   <div className="col-12">
@@ -190,9 +190,9 @@ export default function Checkout() {
                   </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   )
