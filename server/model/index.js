@@ -10,6 +10,7 @@ import productCategory from './product_category'
 import post from './post'
 import order from './order'
 import setting from './setting'
+import log from './log'
 
 import mongoose from 'mongoose'
 import bcrypt from 'bcryptjs'
@@ -38,6 +39,7 @@ const pageSchema = new Schema({ ...page }, { timestamps: true })
 
 const settingSchema = new Schema({ ...setting }, { timestamps: true })
 
+const logSchema = new Schema({ ...log }, { timestamps: true })
 // Add method, Virtual
 
 userSchema.method({
@@ -80,6 +82,8 @@ const Page = model('Page', pageSchema)
 
 const Setting = model('Setting', settingSchema)
 
+const Log = mongoose.model('Log', logSchema)
+
 export {
   Category,
   Product,
@@ -92,4 +96,5 @@ export {
   Order,
   Page,
   Setting,
+  Log,
 }

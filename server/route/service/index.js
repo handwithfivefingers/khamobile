@@ -1,5 +1,4 @@
-import ProductController from '#controller/v2/Product'
-import { upload } from '#middleware'
+import { upload, validateIPNVnpay } from '#middleware'
 import express from 'express'
 import ConvertController from '#controller/Service/Convert'
 import MailServer from '#controller/Service/MailServer'
@@ -20,6 +19,6 @@ router.post('/mail', upload.none(), new MailServer().sendMail)
 
 router.get('/payment/url_return', new PaymentController().onHandleReturnUrl)
 
-router.get('/payment/ipn', new PaymentController().getUrlIpn)
+router.get('/payment/ipn', validateIPNVnpay, new PaymentController().getUrlIpn)
 
 export default router

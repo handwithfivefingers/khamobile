@@ -12,7 +12,7 @@ import multer from 'multer'
 import fs from 'fs'
 import axios from 'axios'
 import moment from 'moment'
-import { User } from '#model'
+import { User, Log } from '#model'
 
 const storage = multer.diskStorage({
   limits: { fileSize: 1 * Math.pow(1024, 2 /* MBs*/) },
@@ -32,9 +32,9 @@ const storage = multer.diskStorage({
   },
 })
 
-export const upload = multer({ storage })
+const upload = multer({ storage })
 
-export const TrackingApi = async (req, res, next) => {
+const TrackingApi = async (req, res, next) => {
   try {
     let host = req.headers['host']
     let remoteAddress = req.socket['remoteAddress']
@@ -51,7 +51,7 @@ export const TrackingApi = async (req, res, next) => {
  * @returns { object } { filename, name }
  */
 
-export const handleDownloadFile = async (url) => {
+const handleDownloadFile = async (url) => {
   try {
     console.log(url)
 
@@ -77,7 +77,7 @@ export const handleDownloadFile = async (url) => {
   }
 }
 
-export const authenticating = async (req, res, next) => {
+const authenticating = async (req, res, next) => {
   try {
     let token = req.cookies['sessionId']
 
@@ -119,7 +119,7 @@ export const authenticating = async (req, res, next) => {
   }
 }
 
-export const userMiddleware = async (req, res, next) => {
+const userMiddleware = async (req, res, next) => {
   try {
     if (!req.id || !req.role) throw { message: 'Authorization required' }
 
@@ -133,7 +133,7 @@ export const userMiddleware = async (req, res, next) => {
   }
 }
 
-export const adminMiddleware = async (req, res, next) => {
+const adminMiddleware = async (req, res, next) => {
   try {
     console.log(req.role, req.id)
     if (req.role === 'admin') next()
@@ -147,7 +147,49 @@ export const adminMiddleware = async (req, res, next) => {
   }
 }
 
-export const cacheControl = async (req, res, next) => {
+const cacheControl = async (req, res, next) => {
   res.set('Cache-control', 'public, max-age=300')
   next()
+}
+
+const validateIPNVnpay = async (req, res, next) => {
+  let WHITE_LIST = VNPWHITELIST // Put your IP whitelist in this array
+
+  if (process.env.NODE_ENV === 'development') {
+    WHITE_LIST = [...WHITE_LIST, '127.0.0.1']
+  }
+
+  let remoteAddress =
+    req.headers['x-forwarded-for'] ||
+    req.id ||
+    req.connection.remoteAddress ||
+    req.socket.remoteAddress ||
+    req.connection.socket.remoteAddress
+
+  let _logObject = {
+    ip: remoteAddress,
+    data: {
+      ...req.query,
+    },
+  }
+
+  if (WHITE_LIST.includes(remoteAddress)) {
+    let _log = new Log(_logObject)
+    await _log.save()
+    next()
+  } else {
+    console.log('Bad IP: ' + remoteAddress)
+    return res.status(403).json({ message: 'You are not allowed to access' })
+  }
+}
+
+export {
+  upload,
+  TrackingApi,
+  handleDownloadFile,
+  authenticating,
+  userMiddleware,
+  adminMiddleware,
+  cacheControl,
+  validateIPNVnpay,
 }
