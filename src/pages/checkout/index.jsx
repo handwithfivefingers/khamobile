@@ -1,6 +1,7 @@
 import clsx from 'clsx'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { KMInput, KMSelect } from 'component/UI/Content/KMInput'
+import NoData from 'component/UI/Content/NoData'
 import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
 import { forwardRef, useEffect, useRef, useState } from 'react'
@@ -8,7 +9,7 @@ import { Button, ButtonGroup, FlexboxGrid, Form, List, Radio, RadioGroup, Table,
 import { GlobalOrderService, GlobalProductService, ProvinceService } from 'service/global'
 import { DeliveryModel, UserInformationModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
-import { useAuthorizationStore } from 'src/store'
+import { useAuthorizationStore, useCartStore } from 'src/store'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
 
@@ -16,6 +17,7 @@ export default function Checkout() {
   const router = useRouter()
 
   const { authenticate } = useAuthorizationStore((state) => state)
+  const { cart } = useCartStore((state) => state.cart)
 
   const [price, setPrice] = useState(0)
 
@@ -83,14 +85,12 @@ export default function Checkout() {
         userId: authenticate ? _id : null,
       }
 
-      // return
-      console.log(params)
       const resp = await GlobalOrderService.createOrder(params)
 
       if (resp.data.orderId) {
         localStorage.setItem('khaMobileCart', null)
         if (resp.data.urlPayment && restForm.paymentType === 'vnpay') window.open(resp.data.urlPayment)
-        else router.push(`/checkout/${resp.data.orderId}`)
+        router.push(`/checkout/${resp.data.orderId}`)
       }
     } catch (error) {
       console.log('handleSaveOrder', error)
@@ -117,6 +117,7 @@ export default function Checkout() {
     }
     return html
   }
+
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -131,62 +132,65 @@ export default function Checkout() {
               <div className="row gy-4">{renderUserInformationByCondition()}</div>
             </div>
 
-            <div className="col-12 col-md-6 col-lg-6 col-xl-6">
-              <div className="row gx-4 gy-4">
-                <div className="col-12">
-                  <h5 className="text-secondary">Thông tin giao nhận</h5>
+            {!cart?.length && <NoData />}
+            {cart.length && (
+              <div className="col-12 col-md-6 col-lg-6 col-xl-6">
+                <div className="row gx-4 gy-4">
+                  <div className="col-12">
+                    <h5 className="text-secondary">Thông tin giao nhận</h5>
 
-                  <CardBlock className="border-0">
-                    <Form.Group controlId="radioList">
-                      <RadioGroup
-                        name="radioList"
-                        onChange={(val) => (formRef.current = { ...formRef.current, deliveryType: val })}
-                        defaultValue={formRef.current?.deliveryType}
-                      >
-                        <Radio value="onStore">Nhận tại cửa hàng</Radio>
-                        <Radio value="onAddress">Giao hàng tại nhà</Radio>
-                      </RadioGroup>
-                    </Form.Group>
-                  </CardBlock>
-                </div>
+                    <CardBlock className="border-0">
+                      <Form.Group controlId="radioList">
+                        <RadioGroup
+                          name="radioList"
+                          onChange={(val) => (formRef.current = { ...formRef.current, deliveryType: val })}
+                          defaultValue={formRef.current?.deliveryType}
+                        >
+                          <Radio value="onStore">Nhận tại cửa hàng</Radio>
+                          <Radio value="onAddress">Giao hàng tại nhà</Radio>
+                        </RadioGroup>
+                      </Form.Group>
+                    </CardBlock>
+                  </div>
 
-                <div className="col-12">
-                  <h5 className="text-secondary">Thông tin đơn hàng</h5>
+                  <div className="col-12">
+                    <h5 className="text-secondary">Thông tin đơn hàng</h5>
 
-                  <TableInformation product={formRef.current?.product} price={price} />
-                </div>
-                <div className="col-12">
-                  <h5 className="text-secondary">Hình thức thanh toán</h5>
-                  <CardBlock className="border-0">
-                    <Form.Group controlId="radioList">
-                      <RadioGroup
-                        name="radioList"
-                        onChange={(val) => (formRef.current = { ...formRef.current, paymentType: val })}
-                        defaultValue={formRef.current?.paymentType}
-                      >
-                        <Radio value="transfer">Chuyển khoản</Radio>
-                        <Radio value="vnpay">Qua Vn-Pay</Radio>
-                      </RadioGroup>
-                    </Form.Group>
-                  </CardBlock>
-                </div>
+                    <TableInformation product={formRef.current?.product} price={price} />
+                  </div>
+                  <div className="col-12">
+                    <h5 className="text-secondary">Hình thức thanh toán</h5>
+                    <CardBlock className="border-0">
+                      <Form.Group controlId="radioList">
+                        <RadioGroup
+                          name="radioList"
+                          onChange={(val) => (formRef.current = { ...formRef.current, paymentType: val })}
+                          defaultValue={formRef.current?.paymentType}
+                        >
+                          <Radio value="transfer">Chuyển khoản</Radio>
+                          <Radio value="vnpay">Qua Vn-Pay</Radio>
+                        </RadioGroup>
+                      </Form.Group>
+                    </CardBlock>
+                  </div>
 
-                <div className="col-12">
-                  <div className={styles.action}>
-                    <ButtonGroup>
-                      <Button
-                        color="red"
-                        appearance="primary"
-                        className={clsx(styles.btnIcon, 'bg-primary text-white')}
-                        onClick={handleSaveOrder}
-                      >
-                        Thanh toán
-                      </Button>
-                    </ButtonGroup>
+                  <div className="col-12">
+                    <div className={styles.action}>
+                      <ButtonGroup>
+                        <Button
+                          color="red"
+                          appearance="primary"
+                          className={clsx(styles.btnIcon, 'bg-primary text-white')}
+                          onClick={handleSaveOrder}
+                        >
+                          Thanh toán
+                        </Button>
+                      </ButtonGroup>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
+            )}
           </div>
         </div>
       </div>

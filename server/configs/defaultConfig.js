@@ -25,7 +25,6 @@ const URL_PERMISSIONS = [
   'http://localhost:3003',
   'http://localhost:3004',
   'http://10.0.14.235:3003',
-  'https://khamobile.truyenmai.com',
   'https://khamobile.vn',
 ]
 
@@ -56,7 +55,8 @@ class ConfigApp {
   }
 
   onLoadUploadConfigs = () => {
-    this.app.use('/public', cors(corsOptions), express.static(path.join(global.__basedir, 'uploads')))
+    let publicPath = path.join(global.__basedir, 'uploads')
+    this.app.use('/public', cors(corsOptions), express.static(publicPath, { etag: false }))
     return this
   }
 

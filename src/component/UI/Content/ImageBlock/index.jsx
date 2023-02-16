@@ -42,7 +42,7 @@ export default function ImageBlock({
         placeholder="blur"
         loading={'lazy'}
         loader={({ src, width, quality }) => {
-          return engine ? process.env.API + src + `?w=${width}&q=${quality || 75}` : src
+          return engine ? process.env.API + src + `?w=${width}&q=${quality || 50}` : src
         }}
         objectFit={objectFit}
       />

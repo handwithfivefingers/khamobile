@@ -70,4 +70,21 @@ const generateSeoTag = (data) => {
   return preparedData
 }
 
-export { formatCurrency, generateSeoTag }
+const sortString = (strArray) => {
+  var i = 0
+  var j
+  while (i < strArray.length) {
+    j = i + 1
+    while (j < strArray.length) {
+      if (strArray[j].title.toLowerCase() > strArray[i].title.toLowerCase()) {
+        var tempStr = strArray[i].title
+        strArray[i].title = strArray[j].title
+        strArray[j].title = tempStr
+      }
+      j++
+    }
+    i++
+  }
+}
+
+export { formatCurrency, generateSeoTag, sortString }

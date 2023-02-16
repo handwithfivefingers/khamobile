@@ -57,6 +57,7 @@ export default class OrderController {
         firstName: userInformation.fullName,
         orderId: orderCreated._id,
         product,
+        checkoutLink: `${process.env.HOST}/checkout/${orderCreated._id}`,
       })
 
       if (!responseMailSending.status) throw { message: 'Cant send mail' }
@@ -176,12 +177,13 @@ export default class OrderController {
             select: 'title -_id',
           },
         })
+        .select('-orderInfo')
       // .populate({
       //   path: 'product.variantId.parentId',
       //   select: 'title',
       // })
 
-      console.log(JSON.stringify(_order, null, 4))
+      // console.log(JSON.stringify(_order, null, 4))
 
       return res.status(200).json({
         message: 'Get Order successfully',
@@ -228,12 +230,11 @@ export default class OrderController {
     }
   }
 
-  sendMail = async ({ email, username, firstName, orderId, product }) => {
+  sendMail = async ({ email, username, firstName, orderId, product, checkoutLink }) => {
     try {
       let subTotal = 0
       const _prod = product?.map((_prodItem) => {
         subTotal += +_prodItem.price
-
         return {
           title: _prodItem.title,
           price: formatCurrency(_prodItem.price, { symbol: '' }),
@@ -242,12 +243,9 @@ export default class OrderController {
               process.env.NODE_ENV !== 'development'
                 ? 'https://app.khamobile.vn' + _prodItem.image.src
                 : process.env.API + _prodItem.image.src, // for server
-            // src: `https://api.truyenmai.com${_prodItem.image.src}`,
           },
         }
       })
-
-      console.log(_prod)
 
       const mailObject = {
         Subject: 'Tạo đơn hàng thành công',
@@ -259,10 +257,12 @@ export default class OrderController {
           order_id: orderId,
           product: _prod,
           subTotal: formatCurrency(subTotal, { symbol: ' đ' }),
+          checkoutLink,
         },
       }
 
       await new MailServer().sendMailOnly(mailObject)
+
       return { status: true }
     } catch (error) {
       console.log('sendMail error', error)
