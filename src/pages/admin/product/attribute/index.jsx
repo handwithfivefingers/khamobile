@@ -1,28 +1,14 @@
+import TrashIcon from '@rsuite/icons/Trash'
+import VariableModal from 'component/Modal/Variable/create'
 import AdminLayout from 'component/UI/AdminLayout'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { KMInput } from 'component/UI/Content/KMInput'
-import { useEffect, useState, useRef } from 'react'
-import {
-  Badge,
-  Button,
-  Col,
-  Content,
-  Form,
-  Grid,
-  IconButton,
-  Modal,
-  Popover,
-  Row,
-  Table,
-  useToaster,
-  Whisper,
-} from 'rsuite'
+import { useEffect, useRef, useState } from 'react'
+import { Button, Col, Content, Form, Grid, IconButton, Modal, Popover, Row, Table, useToaster, Whisper } from 'rsuite'
 import ProductService from 'service/admin/Product.service'
 import { AttributeModel } from 'src/constant/model.constant'
-import { useCommonStore } from 'src/store/commonStore'
-import TrashIcon from '@rsuite/icons/Trash'
-import VariableModal from 'component/Modal/Variable/create'
 import { message } from 'src/helper'
+import { useCommonStore } from 'src/store'
 const { Column, HeaderCell, Cell } = Table
 
 const ProductVariable = () => {

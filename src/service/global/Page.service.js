@@ -8,4 +8,4 @@ const PageService = {
   getPage: async (slug) => await axios.post(path.page, { slug }),
 }
 
-export default PageService
+export { PageService }

@@ -1,17 +1,12 @@
-import FilmIcon from '@rsuite/icons/legacy/Film'
-import ImageIcon from '@rsuite/icons/legacy/Image'
-import UserCircleIcon from '@rsuite/icons/legacy/UserCircleO'
 import CardBlock from 'component/UI/Content/CardBlock'
-import Divider from 'component/UI/Content/Divider'
-import Heading from 'component/UI/Content/Heading'
 import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
 import { useRouter } from 'next/router'
-import React, { useEffect, useState } from 'react'
-import { FlexboxGrid, List, Panel, InputGroup, InputNumber, Table, Button, Form } from 'rsuite'
-import GlobalProductService from 'service/global/Product.service'
+import { useEffect, useState } from 'react'
+import { Button, Form, InputGroup, InputNumber, List, Panel, Table } from 'rsuite'
+import { GlobalProductService } from 'service/global'
 import { formatCurrency } from 'src/helper'
-import { useCartStore } from 'store/cartStore'
+import { useCartStore } from 'src/store'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
 
@@ -57,10 +52,9 @@ export default function Cart(props) {
         price: item.price,
         variantId: item?.variantId,
       }))
-      
+
       updatePrice()
       updateStore(itemOnLocal)
-
     } catch (error) {
       console.log('setCart error', error)
     }
@@ -105,7 +99,7 @@ export default function Cart(props) {
     addToCart(dataUpdate)
     localStorage.setItem('khaMobileCart', JSON.stringify(dataUpdate))
   }
-  
+
   const updatePrice = () => {
     const totalPrice = data.reduce((prev, current) => {
       prev += +current?.price * +current?.quantity

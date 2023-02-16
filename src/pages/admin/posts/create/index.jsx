@@ -1,15 +1,11 @@
 import AdminLayout from 'component/UI/AdminLayout'
-import { KMEditor, KMInput } from 'component/UI/Content/KMInput'
-import Select from 'component/UI/Content/MutiSelect'
 import PostForm from 'component/UI/Form/PostForm'
-import CustomUpload from 'component/UI/Upload/CustomUpload'
-import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
-import { Button, ButtonToolbar, Content, Form, Panel, PanelGroup, useToaster } from 'rsuite'
+import { useEffect, useState } from 'react'
+import { Content, useToaster } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import PostService from 'service/admin/Post.service'
 import { message } from 'src/helper'
-import { useCommonStore } from 'src/store/commonStore'
+import { useCommonStore } from 'src/store'
 
 const PostCreate = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
@@ -48,7 +44,7 @@ const PostCreate = () => {
 
   return (
     <Content className={'bg-w p-2 shadow'}>
-      <PostForm onSubmit={onSubmit} categoryData={categoryData} router={router}/>
+      <PostForm onSubmit={onSubmit} categoryData={categoryData} router={router} />
 
       {/* <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row'} fluid ref={formDataRef}>
         <div className="col-12">

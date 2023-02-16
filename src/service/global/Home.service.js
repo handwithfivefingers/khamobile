@@ -19,4 +19,4 @@ const GlobalHomeService = {
   getProductSeo: async () => await axios.get(path.productSeo),
   getMenu: async () => await axios.get(path.menu),
 }
-export default GlobalHomeService
+export { GlobalHomeService }

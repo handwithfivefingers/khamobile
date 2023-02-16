@@ -25,4 +25,4 @@ const GlobalProductService = {
   createVariable: async (form) => await axios.post(path.variable, form),
 }
 
-export default GlobalProductService
+export { GlobalProductService }

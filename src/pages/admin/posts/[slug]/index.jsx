@@ -1,17 +1,9 @@
 import AdminLayout from 'component/UI/AdminLayout'
-import { KMInput } from 'component/UI/Content/KMInput'
-import Select from 'component/UI/Content/MutiSelect'
-import Textarea from 'component/UI/Editor'
 import PostForm from 'component/UI/Form/PostForm'
-import CustomUpload from 'component/UI/Upload/CustomUpload'
-import axios from 'configs/axiosInstance'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
-import { Button, ButtonToolbar, Content, Form } from 'rsuite'
+import { useEffect, useState } from 'react'
+import { Content } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
-import { useCommonStore } from 'src/store/commonStore'
-import { useLoaderStore } from 'src/store/loaderStore'
-import styles from './styles.module.scss'
 import PostService from 'service/admin/Post.service'
 const PostEdit = ({ slug }) => {
   const router = useRouter()
@@ -20,7 +12,7 @@ const PostEdit = ({ slug }) => {
 
   const [categoryData, setCategoryData] = useState()
 
-  const [loading, setLoading] = useState()
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     getCateData()
@@ -65,20 +57,9 @@ const PostEdit = ({ slug }) => {
 export const getServerSideProps = async (ctx) => {
   const { slug } = ctx.query
 
-  // const resp = await PostService.getSinglePost(slug)
-  // if (resp.status === 200) {
-  //   const { data } = resp.data
-  //   return {
-  //     props: {
-  //       slug,
-  //       // data,
-  //     },
-  //   }
-  // }
   return {
     props: {
       slug,
-      // data,
     },
   }
   return {

@@ -57,15 +57,21 @@ export default class ProductController {
         })
         ?.filter((item) => item.purchasable)
 
-      const pathImg = `${
-        process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
-      }/public/wp/`
+      if (parentItem.content) {
+        const pathImg = `${
+          process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
+        }/public/wp/`
 
-      parentItem.content = parentItem.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+        if (parentItem.content?.match(/https:\/\/khamobile.vn\/wp-content\/uploads\//g)) {
+          parentItem.content = parentItem.content?.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
 
-      parentItem.description = parentItem.description.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+          parentItem.description = parentItem.description?.replace(
+            /https:\/\/khamobile.vn\/wp-content\/uploads\//g,
+            pathImg,
+          )
+        }
+      }
 
-      
       const seoTags = await generateSeoTag({
         title: parentItem.title,
         description: parentItem.description,

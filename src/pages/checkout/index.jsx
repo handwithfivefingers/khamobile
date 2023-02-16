@@ -5,24 +5,19 @@ import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
 import { forwardRef, useEffect, useRef, useState } from 'react'
 import { Button, ButtonGroup, FlexboxGrid, Form, List, Radio, RadioGroup, Table, Tag } from 'rsuite'
-import GlobalOrderService from 'service/global/Order.service'
-import GlobalProductService from 'service/global/Product.service'
-import ProvinceService from 'service/global/Province.service'
+import { GlobalOrderService, GlobalProductService, ProvinceService } from 'service/global'
 import { DeliveryModel, UserInformationModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
-import { useAuthorizationStore } from 'src/store/authenticateStore'
+import { useAuthorizationStore } from 'src/store'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
 
 export default function Checkout() {
   const router = useRouter()
 
-  const { authenticate, user, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
+  const { authenticate } = useAuthorizationStore((state) => state)
 
   const [price, setPrice] = useState(0)
-
-  const [render, setRender] = useState(false)
-  const deliveryRef = useRef()
 
   const informationRef = useRef()
 
@@ -38,15 +33,6 @@ export default function Checkout() {
       handleGetListItemPrice(item)
     }
   }, [])
-
-  // useEffect(() => {
-  //   if (authenticate && user) {
-  //     deliveryRef.current = user.delivery
-  //     informationRef.current = user
-  //     formRef.current.deliveryInformation = user.delivery
-  //     setRender(!render)
-  //   }
-  // }, [authenticate, user])
 
   const handleGetListItemPrice = async (item) => {
     try {

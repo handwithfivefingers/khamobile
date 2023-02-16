@@ -8,8 +8,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { Col, Divider, Pagination, Row } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
-import GlobalHomeService from 'service/global/Home.service'
-import PostService from 'service/global/Post.service'
+import { GlobalHomeService, PostService } from 'service/global'
 import styles from './styles.module.scss'
 export default function Category(props) {
   const [activePage, setActivePage] = useState(1)

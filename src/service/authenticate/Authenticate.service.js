@@ -20,4 +20,4 @@ const AuthenticateService = {
   changeInformation: async (form) => await axios.post(path.information, form),
   changePassword: async (form) => await axios.post(path.password, form),
 }
-export default AuthenticateService
+export { AuthenticateService }

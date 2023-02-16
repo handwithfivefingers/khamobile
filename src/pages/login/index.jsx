@@ -1,14 +1,12 @@
 import clsx from 'clsx'
 import CardBlock from 'component/UI/Content/CardBlock'
-import CardPost from 'component/UI/Content/CardPost'
 import { KMInput, KMInputPassword } from 'component/UI/Content/KMInput'
 import PageHeader from 'component/UI/Content/PageHeader'
-import Link from 'next/link'
 import { useRouter } from 'next/router'
-import React, { useState, useRef, useEffect } from 'react'
-import { Button, Form, Pagination, Schema } from 'rsuite'
-import AuthenticateService from 'service/authenticate/Authenticate.service'
-import { useAuthorizationStore } from 'src/store/authenticateStore'
+import { useEffect, useRef, useState } from 'react'
+import { Button, Form, Schema } from 'rsuite'
+import { AuthenticateService } from 'service/authenticate'
+import { useAuthorizationStore } from 'src/store'
 import styles from './styles.module.scss'
 export default function LoginPage() {
   const router = useRouter()
@@ -32,7 +30,7 @@ export default function LoginPage() {
 
   const handleSubmit = async () => {
     if (!formRef.current.check()) {
-      console.error('Form Error')
+      console.log('Form Error')
       return
     }
 
@@ -49,6 +47,7 @@ export default function LoginPage() {
           isAdmin: data?.data?.role === 'admin',
         })
       }
+      console.log('logged')
     } catch (error) {
       console.log('handleSubmit', error)
     } finally {

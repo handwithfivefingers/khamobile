@@ -9,9 +9,8 @@ import { useRouter } from 'next/router'
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { FaShoppingBasket } from 'react-icons/fa'
 import { Badge, Drawer, Dropdown, IconButton, Nav, Navbar, Sidenav } from 'rsuite'
-import GlobalHomeService from 'service/global/Home.service'
-import { useAuthorizationStore } from 'src/store/authenticateStore'
-import { useCartStore } from 'store/cartStore'
+import { GlobalHomeService } from 'service/global'
+import { useAuthorizationStore, useCartStore } from 'src/store'
 import styles from './styles.module.scss'
 
 const NavLink = (props) => {

@@ -47,37 +47,6 @@ export default function PostDetail(props) {
       </div>
     </>
   )
-  return (
-    <>
-      <PostHelmet seo={seo} />
-
-      <div className="container-fluid">
-        <div className="row">
-          <div className="col-12">
-            <div className={styles.heading} style={{ backgroundImage: `url(${process.env.API}${data?.image?.src})` }}>
-              <Heading type="h3" left divideClass={styles.divideLeft}>
-                {data?.title}
-              </Heading>
-            </div>
-          </div>
-
-          <div className="col-12">
-            <div className="container">
-              <div className="row">
-                <div className={clsx([styles.vr, 'col-lg-8 col-md-12'])}>
-                  <CardBlock style={{ minHeight: '50vh' }}>{parse(data?.content)}</CardBlock>
-                </div>
-
-                <div className={clsx([styles.vr, 'col-lg-4 col-md-12'])}>
-                  <CardBlock>....</CardBlock>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
-  )
 }
 
 export const getServerSideProps = async (ctx) => {

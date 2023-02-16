@@ -3,16 +3,14 @@ import PlusIcon from '@rsuite/icons/Plus'
 import TrashIcon from '@rsuite/icons/Trash'
 import CloseIcon from '@rsuite/icons/Close'
 import CheckIcon from '@rsuite/icons/Check'
-
 import AdminLayout from 'component/UI/AdminLayout'
 import moment from 'moment'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState, forwardRef } from 'react'
 import { ButtonGroup, Content, IconButton, Input, Message, Pagination, Popover, Stack, Table, Whisper } from 'rsuite'
-import PostService from 'service/global/Post.service'
+import { PostService } from 'service/global'
 import { formatCurrency } from 'src/helper'
-import { useCommonStore } from 'src/store/commonStore'
-import { useLoaderStore } from 'src/store/loaderStore'
+import { useCommonStore } from 'src/store'
 const { Column, HeaderCell, Cell } = Table
 
 const RenderAlert = forwardRef(({ right, top, className, ...props }, ref) => {
@@ -65,7 +63,7 @@ const ActionCell = ({ rowData, dataKey, onEdit, ...props }) => {
 
 const Posts = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
-  const { loading, setLoading } = useLoaderStore((state) => state)
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
   const [posts, setPosts] = useState([])
 
@@ -89,7 +87,6 @@ const Posts = () => {
       setLoading(false)
     }
   }
-  
 
   const handleDelete = async (rowData, event) => {
     try {

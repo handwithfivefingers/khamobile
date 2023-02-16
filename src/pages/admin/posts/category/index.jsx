@@ -32,8 +32,6 @@ const PostCategory = () => {
 
   const [data, setData] = useState([])
 
-  const treeRef = useRef()
-
   const [filterData, setFilterData] = useState([])
 
   const [limit, setLimit] = useState(10)

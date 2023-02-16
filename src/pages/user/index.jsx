@@ -4,28 +4,24 @@ import Heading from 'component/UI/Content/Heading'
 import { KMInput } from 'component/UI/Content/KMInput'
 import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { Avatar, Button, Form, Nav, Sidenav, Stack, Table, Tag } from 'rsuite'
-import AuthenticateService from 'service/authenticate/Authenticate.service'
-import GlobalOrderService from 'service/global/Order.service'
+import { AuthenticateService } from 'service/authenticate'
+import { GlobalOrderService } from 'service/global'
 import { formatCurrency } from 'src/helper'
-import { useAuthorizationStore } from 'src/store/authenticateStore'
+import { useAuthorizationStore } from 'src/store'
 import styles from './styles.module.scss'
 const { HeaderCell, Cell, Column } = Table
 
 export default function MyOrder() {
   const router = useRouter()
-  const [data, setData] = useState()
   const { authenticate, user, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
   const [render, setRender] = useState(false)
-  const userData = useRef()
   const orderData = useRef([])
   const userDelivery = useRef()
 
   const userInformation = useRef()
 
-  const deliveryForm = useRef()
-  const informationForm = useRef()
   useEffect(() => {
     if (!authenticate) router.push('/')
     else {

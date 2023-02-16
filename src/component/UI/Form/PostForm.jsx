@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react'
-import { Form, Button, PanelGroup, Panel, Select } from 'rsuite'
+import { useEffect, useState } from 'react'
+import { Button, Form, Panel, PanelGroup, SelectPicker } from 'rsuite'
 import { KMEditor, KMInput } from '../Content/KMInput'
 import CustomUpload from '../Upload/CustomUpload'
 
@@ -71,7 +71,7 @@ export default function PostForm({ postData, onSubmit, router, ...props }) {
           <Form.ControlLabel>Danh mục</Form.ControlLabel>
           <Form.Control
             name="category"
-            accepter={Select}
+            accepter={SelectPicker}
             data={[]}
             labelKey={'name'}
             valueKey={'_id'}

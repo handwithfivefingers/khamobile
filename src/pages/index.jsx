@@ -9,17 +9,14 @@ import SingleSlider from 'component/UI/Content/Slider/SingleItem'
 import { SiteLinksSearchBoxJsonLd } from 'next-seo'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import GlobalHomeService from 'service/global/Home.service'
-import PageService from 'service/global/Page.service'
+import { GlobalHomeService, PageService } from 'service/global'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import styles from './styles.module.scss'
 
 const Home = (props) => {
   const [data, setData] = useState([])
   const [content, setContent] = useState([])
-
   const router = useRouter()
-
   useEffect(() => {
     getHomeProd()
     getHomeSection()

@@ -1,7 +1,6 @@
 import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
 import Card from 'component/UI/Content/Card'
-import CardBlock from 'component/UI/Content/CardBlock'
 import NoData from 'component/UI/Content/NoData'
 import PageHeader from 'component/UI/Content/PageHeader'
 import SideFilter from 'component/UI/Content/SideFilter'
@@ -10,7 +9,7 @@ import { useRouter } from 'next/router'
 import { useRef, useState } from 'react'
 import { BsInboxes } from 'react-icons/bs'
 import { Button, Col, Divider, Drawer, Pagination, Row } from 'rsuite'
-import GlobalCategoryService from 'service/global/Category.service'
+import { GlobalCategoryService } from 'service/global'
 import styles from './styles.module.scss'
 
 export default function SingleCategory({ data, query, seo, ...rest }) {

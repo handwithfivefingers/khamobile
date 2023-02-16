@@ -24,7 +24,6 @@ import CloseIcon from '@rsuite/icons/Close'
 import EditIcon from '@rsuite/icons/Edit'
 import PlusIcon from '@rsuite/icons/Plus'
 import TrashIcon from '@rsuite/icons/Trash'
-import Category from 'component/Modal/Category'
 
 const { Column, HeaderCell, Cell } = Table
 

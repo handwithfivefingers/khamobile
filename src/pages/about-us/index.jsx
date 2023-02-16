@@ -1,9 +1,8 @@
 import PostHelmet from 'component/PostHelmet'
 import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
-import { useState } from 'react'
 import { Placeholder } from 'rsuite'
-import GlobalHomeService from 'service/global/Home.service'
+import { GlobalHomeService } from 'service/global'
 
 export default function AboutUs(props) {
   return (

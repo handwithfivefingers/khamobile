@@ -8,4 +8,4 @@ const ProvinceService = {
   getCity: (params) => axios.get(path.province, { params }),
 }
 
-export default ProvinceService
+export { ProvinceService }

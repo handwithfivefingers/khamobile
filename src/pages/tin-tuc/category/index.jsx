@@ -1,5 +1,5 @@
-import React from 'react';
+import React from 'react'
 
 export default function Category() {
-	return <div>Category</div>;
+  return <div>Category</div>
 }

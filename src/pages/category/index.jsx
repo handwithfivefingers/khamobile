@@ -5,8 +5,7 @@ import CommonLayout from 'component/UI/Layout'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { Col, Grid, Panel, Placeholder, Row } from 'rsuite'
-import GlobalCategoryService from 'service/global/Category.service'
-import GlobalHomeService from 'service/global/Home.service'
+import { GlobalHomeService, GlobalCategoryService } from 'service/global'
 import styles from './styles.module.scss'
 
 const Card = (props) => {

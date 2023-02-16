@@ -1,6 +1,7 @@
-import GlobalProductService from 'service/global/Product.service'
-import GlobalCategoryService from 'service/global/Category.service'
+import { GlobalProductService, GlobalCategoryService } from 'service/global'
+
 const EXTERNAL_DATA_URL = process.env.CANONICAL
+
 function generateSiteMap(posts) {
   return `<?xml version="1.0" encoding="UTF-8"?>
    <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
@@ -32,28 +33,28 @@ export async function getServerSideProps({ res }) {
 
   const categories = categoriesResponse.data.data
 
-  const formatProduct = products.map(({ slug }) => ({ slug: process.env.CANONICAL + '/product/' + slug }))
+  const formatProduct = products.map(({ slug }) => ({ slug: EXTERNAL_DATA_URL + '/product/' + slug }))
 
-  const formatCategories = categories.map(({ slug }) => ({ slug: process.env.CANONICAL + '/category/' + slug }))
+  const formatCategories = categories.map(({ slug }) => ({ slug: EXTERNAL_DATA_URL + '/category/' + slug }))
 
   const baseSiteMap = [
     {
-      slug: process.env.CANONICAL,
+      slug: EXTERNAL_DATA_URL,
     },
     {
-      slug: process.env.CANONICAL + '/about-us',
+      slug: EXTERNAL_DATA_URL + '/about-us',
     },
     {
-      slug: process.env.CANONICAL + '/tin-tuc',
+      slug: EXTERNAL_DATA_URL + '/tin-tuc',
     },
     {
-      slug: process.env.CANONICAL + '/tin-tuc/category',
+      slug: EXTERNAL_DATA_URL + '/tin-tuc/category',
     },
     {
-      slug: process.env.CANONICAL + '/category',
+      slug: EXTERNAL_DATA_URL + '/category',
     },
     {
-      slug: process.env.CANONICAL + '/chinh-sach',
+      slug: EXTERNAL_DATA_URL + '/chinh-sach',
     },
   ]
 

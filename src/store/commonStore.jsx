@@ -1,8 +1,16 @@
 import { create } from 'zustand'
 
-const useCommonStore = create((set) => ({
+const initState = {
   title: '',
-  changeTitle: (title) => set((state) => ({ title })),
+  productCategory: [],
+}
+
+const useCommonStore = create((set) => ({
+  ...initState,
+
+  changeTitle: (title) => set((state) => ({ ...state, title })),
+
+  changeProductCategory: (listCategory) => set((state) => ({ ...state, productCategory: [...listCategory] })),
 }))
 
 export { useCommonStore }

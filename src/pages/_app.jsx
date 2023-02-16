@@ -1,31 +1,44 @@
 import Head from 'next/head'
+
 import Script from 'next/script'
+
 import { useEffect } from 'react'
+
 import { CustomProvider } from 'rsuite'
-import 'rsuite/dist/rsuite.min.css'
-import AuthenticateService from 'service/authenticate/Authenticate.service'
-import { useAuthorizationStore } from 'src/store/authenticateStore'
-import { useCartStore } from 'store/cartStore'
-import '../assets/css/style.scss'
+
+import { AuthenticateService } from 'service/authenticate'
+
+import { GlobalCategoryService } from 'service/global'
+
+import { useAuthorizationStore, useCommonStore, useCartStore } from 'src/store'
+
 import CommonLayout from '../component/UI/Layout'
+
+import 'rsuite/dist/rsuite.min.css'
+
+import '../assets/css/style.scss'
 
 export default function MyApp({ Component, pageProps }) {
   const Layout = Component.Layout || CommonLayout
 
-  const { cart, addToCart } = useCartStore()
+  const { addToCart } = useCartStore()
 
   const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
+  const changeProductCategory = useCommonStore((state) => state.changeProductCategory)
 
   useEffect(() => {
     authenticateUser()
     getCartItem()
+    loadCategory()
   }, [])
+
   const getCartItem = () => {
     let cartItemFromLocal = JSON.parse(localStorage.getItem('khaMobileCart'))
     if (cartItemFromLocal && cartItemFromLocal.length) {
       addToCart(cartItemFromLocal)
     }
   }
+
   const authenticateUser = async () => {
     try {
       const resp = await AuthenticateService.isAuthenticate()
@@ -37,12 +50,22 @@ export default function MyApp({ Component, pageProps }) {
         })
       }
     } catch (error) {
-      // console.log('authenticate failed', error)
       changeAuthenticateStatus({
         authenticate: false,
         user: {},
         isAdmin: false,
       })
+    }
+  }
+
+  const loadCategory = async () => {
+    try {
+      const resp = await GlobalCategoryService.getProdCate()
+      if (resp.status === 200) {
+        changeProductCategory(resp.data.data)
+      }
+    } catch (error) {
+      console.log('fetch category failed', error.message)
     }
   }
 

@@ -267,11 +267,6 @@ export default class PaymentController {
 
       const orderId = vnp_Params['vnp_OrderInfo']
 
-      const url =
-        process.env.NODE_ENV === 'development'
-          ? `http://localhost:3002/checkout/${orderId}?`
-          : `https://khamobile.vn/checkout/${orderId}?`
-
       if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
         let code = vnp_Params['vnp_ResponseCode']
@@ -281,7 +276,7 @@ export default class PaymentController {
           'orderInfo.vnp_TxnRef': vnp_Params.vnp_TxnRef,
         })
         // FIRST STEP - Order Exists
-        console.log(_order);
+        console.log(_order)
 
         if (!_order) return res.status(200).json({ RspCode: '01', Message: ResponseCode['01'] })
 

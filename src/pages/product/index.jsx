@@ -9,8 +9,7 @@ import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { Col, Pagination, Row } from 'rsuite'
-import GlobalHomeService from 'service/global/Home.service'
-import GlobalProductService from 'service/global/Product.service'
+import { GlobalHomeService, GlobalProductService } from 'service/global'
 import styles from './styles.module.scss'
 
 const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
@@ -61,7 +60,7 @@ export default function Product(props) {
         </div>
       )
     })
-  }, [])
+  }, [loading])
 
   const onFilterChange = (val) => {
     setFilter(val)
@@ -80,53 +79,47 @@ export default function Product(props) {
         <div className="col-12 p-0 py-2 border-top">
           <div className="container">
             <div className="row">
-              <div className={clsx([styles.vr, 'col-12'])}>
-                <Row gutter={12}>
-                  <Col md={24}>
-                    <p>
-                      The category description can be positioned anywhere on the page via the layout page builder inside
-                      the
-                    </p>
-                  </Col>
+              {/* <div className="col-12">
+                <p>
+                  The category description can be positioned anywhere on the page via the layout page builder inside the
+                </p>
+              </div> */}
 
-                  <Col md={24}>
-                    <SideFilter onChange={onFilterChange} filter={filter} />
-                  </Col>
-                </Row>
-                <Divider />
+              <div className="col-12">
+                <SideFilter onChange={onFilterChange} filter={filter} />
+              </div>
 
-                <Row gutter={12}>
-                  <Col md={24}>
-                    <div className={styles.grid}>
-                      {loading && renderSkeleton}
+              <Divider />
 
-                      {!loading &&
-                        product?.data?.map((prod) => {
-                          return (
-                            <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
-                              <a className={styles.gridItem}>
-                                <Card
-                                  imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
-                                  title={prod.title}
-                                  price={prod.price}
-                                  underlinePrice={prod?.underlinePrice || null}
-                                  type={prod.type}
-                                  variable={prod.variable}
-                                  hover
-                                />
-                              </a>
-                            </Link>
-                          )
-                        })}
-                    </div>
-                  </Col>
-                </Row>
+              <div className="col-12">
+                <div className={styles.grid}>
+                  {loading && renderSkeleton}
+
+                  {!loading &&
+                    product?.data?.map((prod) => {
+                      return (
+                        <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
+                          <a className={styles.gridItem}>
+                            <Card
+                              imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
+                              title={prod.title}
+                              price={prod.price}
+                              underlinePrice={prod?.underlinePrice || null}
+                              type={prod.type}
+                              variable={prod.variable}
+                              hover
+                            />
+                          </a>
+                        </Link>
+                      )
+                    })}
+                </div>
+              </div>
+              <div className="col-12">
                 <div className={styles.pagi}>
                   <Pagination
                     prev
-                    last
                     next
-                    first
                     size="sm"
                     total={product?.total}
                     limit={20}

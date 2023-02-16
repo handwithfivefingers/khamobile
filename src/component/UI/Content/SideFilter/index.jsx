@@ -1,33 +1,11 @@
-import clsx from 'clsx'
-import React, { useMemo, useState } from 'react'
-import { NumericFormat } from 'react-number-format'
-import {
-  Button,
-  ButtonGroup,
-  Checkbox,
-  CheckboxGroup,
-  Col,
-  Drawer,
-  Form,
-  IconButton,
-  InputGroup,
-  InputNumber,
-  Radio,
-  RadioGroup,
-  RangeSlider,
-  Row,
-  SelectPicker,
-  Stack,
-  Tag,
-  TagGroup,
-} from 'rsuite'
-import { formatCurrency } from 'src/helper'
-import ImageBlock from '../ImageBlock'
-import { Pricing } from '../KMInput'
-import styles from './styles.module.scss'
-import FunnelIcon from '@rsuite/icons/Funnel'
-import { FaSortAmountDown, FaSortAmountDownAlt, FaSearch } from 'react-icons/fa'
 import CloseIcon from '@rsuite/icons/Close'
+import FunnelIcon from '@rsuite/icons/Funnel'
+import clsx from 'clsx'
+import { useMemo, useState } from 'react'
+import { FaSearch, FaSortAmountDown, FaSortAmountDownAlt } from 'react-icons/fa'
+import { Button, ButtonGroup, Checkbox, CheckboxGroup, Drawer, IconButton, Stack } from 'rsuite'
+import { useCommonStore } from 'src/store'
+import styles from './styles.module.scss'
 const pricingFilter = [
   {
     label: 'Từ thấp đến cao',
@@ -58,6 +36,8 @@ const SideFilter = (props) => {
 
   const openFilter = (placement) => setDrawer({ open: true, placement })
 
+  const productCategory = useCommonStore((state) => state.productCategory)
+
   const renderButtonSort = useMemo(() => {
     return pricingFilter.map((item) => {
       return (
@@ -86,17 +66,25 @@ const SideFilter = (props) => {
     setParentChange()
   }
 
+  console.log(productCategory)
   return (
     <div className={'row gy-2'}>
       <div className="col-12">
         <div className={clsx(styles.filter, styles.showOnMD)}>
-          <h5 style={{ color: 'var(--rs-gray-800)' }}>Chọn theo tiêu chí</h5>
+          {/* <h5 style={{ color: 'var(--rs-gray-800)' }}>Chọn theo tiêu chí</h5> */}
 
           <Button onClick={() => openFilter('left')}>
             <FunnelIcon /> Bộ lọc
           </Button>
         </div>
       </div>
+      <div className="col-12">
+        <div className={clsx(styles.filter, styles.showOnMD)}>
+          <h5 style={{ color: 'var(--rs-gray-800)' }}>Danh mục</h5>
+          {/* <Button onClick={() => openFilter('left')}></Button> */}
+        </div>
+      </div>
+
       <div className="col-12">
         <div className={styles.sort}>
           <h5 style={{ color: 'var(--rs-gray-800)' }}>Sắp xếp theo</h5>

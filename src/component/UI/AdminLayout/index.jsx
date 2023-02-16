@@ -4,9 +4,7 @@ import clsx from 'clsx'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Container, Header, Loader, Placeholder } from 'rsuite'
-import { useAuthorizationStore } from 'src/store/authenticateStore'
-import { useCommonStore } from 'src/store/commonStore'
-import { useLoaderStore } from 'src/store/loaderStore'
+import { useCommonStore, useAuthorizationStore } from 'src/store'
 import KMBreadcrumb from '../Content/Breadcrumb'
 import KMSidebar from './KMSidebar'
 import LoaderAdmin from './LoaderAdmin'
@@ -14,10 +12,8 @@ import styles from './styles.module.scss'
 
 const AdminLayout = ({ children }) => {
   const title = useCommonStore((state) => state.title)
-  const { loading, setLoading } = useLoaderStore((state) => state)
   const router = useRouter()
   const authenticate = useAuthorizationStore((state) => state.authenticate)
-
   const [firstRender, setFirstRender] = useState(false)
 
   useEffect(() => {
@@ -54,7 +50,7 @@ const AdminLayout = ({ children }) => {
               </div>
 
               <div className={clsx('col-12  position-relative', styles.content)}>
-                <LoaderAdmin loading={loading} />
+                <LoaderAdmin />
                 {children}
               </div>
             </div>

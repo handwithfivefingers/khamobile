@@ -141,12 +141,24 @@ export default class ProductController {
         }
       }
 
-      if (_prod) {
+      // if (_prod) {
+      //   const pathImg = `${
+      //     process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
+      //   }/public/wp/`
+      //   _prod.content = _prod?.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+      // }
+      if (_prod.content) {
         const pathImg = `${
           process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
         }/public/wp/`
-        _prod.content = _prod?.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+
+        if (_prod.content?.match(/https:\/\/khamobile.vn\/wp-content\/uploads\//g)) {
+          _prod.content = _prod.content?.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+
+          _prod.description = _prod.description?.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+        }
       }
+
       return new Response().fetched({ data: _prod }, res)
     } catch (error) {
       console.log(error)
