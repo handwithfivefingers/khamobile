@@ -288,6 +288,18 @@ export default class ProductController {
       const MAXPRICE = Number(maxPrice) * UNIT_PRICE || 999 * UNIT_PRICE
 
       let count
+      let sortPipe = []
+
+      if (price) {
+        sortPipe.push(['price', price])
+      }
+      if (createdAt) {
+        sortPipe.push(['createdAt', createdAt])
+      }
+
+      // if (req.query['Dung lượng']) {
+      //   sortPipe.push(['title', -1])
+      // }
 
       if (all) {
         _prod = await Product.find().select('-content -_id -createdAt -updatedAt -__v')
@@ -299,10 +311,7 @@ export default class ProductController {
             },
           })
             .select('-content -_id -createdAt -updatedAt -__v')
-            .sort([
-              ['price', price || 1],
-              ['createdAt', createdAt || 1],
-            ])
+            .sort(sortPipe)
             .skip(activeP * pageS - pageS)
             .limit(pageS)
 
@@ -318,6 +327,7 @@ export default class ProductController {
             },
           })
             .select('-content -_id -createdAt -updatedAt -__v')
+            .sort(sortPipe)
             .skip(activeP * pageS - pageS)
             .limit(pageS)
           count = await Product.find({
@@ -328,6 +338,60 @@ export default class ProductController {
         }
       }
 
+      // if (req.query['Dung lượng']) {
+      //   _prod = _prod.sort((a, b) => {
+
+      //     // if (a.title.toLowerCase().includes('32')) {
+      //     //   return 1
+      //     // }
+
+      //     // if (a.title.toLowerCase().includes('64')) {
+      //     //   return 1
+      //     // }
+
+      //     // if (a.title.toLowerCase().includes('128')) {
+      //     //   return 1
+      //     // }
+      //     // if (a.title.toLowerCase().includes('256')) {
+      //     //   return 1
+      //     // }
+
+      //     // if (a.title.toLowerCase().includes('512')) {
+      //     //   return 1
+      //     // }
+      //     // if (a.title.toLowerCase().includes('1tb')) {
+      //     //   return 1
+      //     // }
+      //     // if (b.title.toLowerCase().includes('32')) {
+      //     //   return 1
+      //     // }
+
+      //     // if (b.title.toLowerCase().includes('64')) {
+      //     //   return 1
+      //     // }
+
+      //     // if (b.title.toLowerCase().includes('128')) {
+      //     //   return 1
+      //     // }
+      //     // if (b.title.toLowerCase().includes('256')) {
+      //     //   return 1
+      //     // }
+
+      //     // if (b.title.toLowerCase().includes('512')) {
+      //     //   return 1
+      //     // }
+      //     // if (b.title.toLowerCase().includes('1tb')) {
+      //     //   return 1
+      //     // }
+      //     // return 0
+      //   })
+      // }
+      // console.log(_prod)
+      _prod.sort((a, b) => b.title.toLowerCase().localeCompare(a.title.toLowerCase()))
+
+      for (let item of _prod) {
+        console.log(item.title)
+      }
       return new Response().fetched(
         {
           length: _prod.length,

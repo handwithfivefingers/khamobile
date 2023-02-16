@@ -60,7 +60,7 @@ export default function MyApp({ Component, pageProps }) {
 
   const loadCategory = async () => {
     try {
-      const resp = await GlobalCategoryService.getProdCate()
+      const resp = await GlobalCategoryService.getProdCate({ all: true })
       if (resp.status === 200) {
         changeProductCategory(resp.data.data)
       }

@@ -2,6 +2,7 @@ import { TYPE_VARIANT } from '#constant/type'
 import { Product, ProductVariant } from '#model'
 import mongoose, { startSession } from 'mongoose'
 import Response from '#server/response'
+import shortid from 'shortid'
 
 export default class ProductController {
   getProduct = async (req, res) => {
@@ -141,12 +142,6 @@ export default class ProductController {
         }
       }
 
-      // if (_prod) {
-      //   const pathImg = `${
-      //     process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
-      //   }/public/wp/`
-      //   _prod.content = _prod?.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
-      // }
       if (_prod.content) {
         const pathImg = `${
           process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
@@ -170,8 +165,6 @@ export default class ProductController {
     try {
       let { ...formData } = req.body
 
-      console.log('formData', formData)
-
       let result
 
       if (TYPE_VARIANT.VARIANT === req.body.type) {
@@ -180,10 +173,8 @@ export default class ProductController {
         result = await this.createSimpleProduct(formData)
       }
 
-      if (!result) throw result.error
-      // return res.status(200).json({
-      //   message: 'ok',
-      // })
+      if (!result.status) throw result.error
+
       return new Response().created({}, res)
     } catch (error) {
       console.log('create error', error)
@@ -231,16 +222,20 @@ export default class ProductController {
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, content, primary, variations, image, attributes, category } = formData
+      let { type, title, slug, description, variations, content, primary, image, attributes, category } = formData
 
       const parentId = new mongoose.Types.ObjectId()
 
-      let minPrice = variations?.reduce((prev, current) => {
-        if (prev > current.price) {
-          return current.price
-        }
-        return prev
-      }, 0)
+      let minPrice = 0
+
+      if (variations) {
+        minPrice = formData.variations?.reduce((prev, current) => {
+          if (prev > current.price) {
+            return current.price
+          }
+          return prev
+        }, 0)
+      }
 
       let baseProd = new Product({
         _id: parentId,
@@ -249,7 +244,7 @@ export default class ProductController {
         description,
         content,
         type,
-        price: minPrice.price,
+        price: minPrice,
         primary,
         image,
         attributes,
@@ -258,13 +253,15 @@ export default class ProductController {
 
       await Product.create([baseProd], { session })
 
-      for (let { _id, ...variant } of variations) {
-        let _variantItem = new ProductVariant({
-          ...variant,
-          parentId: parentId,
-        })
+      if (variations) {
+        for (let { _id, ...variant } of variations) {
+          let _variantItem = new ProductVariant({
+            ...variant,
+            parentId: parentId,
+          })
 
-        await _variantItem.save()
+          await _variantItem.save()
+        }
       }
 
       await session.commitTransaction()
@@ -369,9 +366,15 @@ export default class ProductController {
         delete: listVariantDelete,
         deleteAll,
       } = formData
-
-      const minPrice =
-        variations?.length && variations?.reduce((prev, current) => (prev.price > +current.price ? current : prev))
+      let minPrice = 0
+      if (variations) {
+        minPrice = variations?.reduce((prev, current) => {
+          if (prev > current.price) {
+            return current.price
+          }
+          return prev
+        }, 0)
+      }
 
       const prodUpdate = {
         title,
@@ -379,7 +382,7 @@ export default class ProductController {
         description,
         content,
         type,
-        price: minPrice.price || 0,
+        price: minPrice || 0,
         primary,
         category,
         image,
@@ -403,32 +406,32 @@ export default class ProductController {
         await ProductVariant.deleteMany({ parentId: mongoose.Types.ObjectId(_id) })
         console.log('delete alll success')
       } else {
-        for (let { _id: varsId, ...variant } of variations) {
-          if (!varsId) {
-            varsId = new mongoose.Types.ObjectId()
-            variant.parentId = _id
+        if (variations) {
+          for (let { _id: varsId, ...variant } of variations) {
+            if (!varsId) {
+              varsId = new mongoose.Types.ObjectId()
+              variant.parentId = _id
+            }
+            await ProductVariant.updateOne(
+              {
+                _id: varsId,
+              },
+              {
+                ...variant,
+              },
+              {
+                upsert: true,
+                new: true,
+                session,
+              },
+            )
           }
-          await ProductVariant.updateOne(
-            {
-              _id: varsId,
-            },
-            {
-              ...variant,
-            },
-            {
-              upsert: true,
-              new: true,
-              session,
-            },
-          )
         }
       }
 
       if (listVariantDelete?.length) {
         await ProductVariant.deleteMany({ _id: { $in: listVariantDelete.map((id) => mongoose.Types.ObjectId(id)) } })
       }
-
-      // for(let )
 
       await session.commitTransaction()
 
@@ -483,6 +486,55 @@ export default class ProductController {
     } catch (error) {
       console.log('deleteVariantProduct error', error)
       return { status: false, error }
+    }
+  }
+
+  duplicateProduct = async (req, res) => {
+    try {
+      const { _id } = req.body
+      let parentProd = await Product.findOne({ _id: _id })
+      let childProd
+      let result
+      let formData = {
+        type: parentProd.type,
+        title: parentProd.title + ' (copy)' + shortid(),
+        slug: parentProd.slug + ' (copy)' + shortid(),
+        description: parentProd.description,
+        content: parentProd.content,
+        image: parentProd.image,
+        category: parentProd.category,
+      }
+
+      if (parentProd.type === TYPE_VARIANT.VARIANT) {
+        childProd = await ProductVariant.find({ parentId: _id })
+
+        const variations = childProd.map(({ _doc }) => {
+          _doc
+          let newObject = { ..._doc }
+          delete newObject._id
+          delete newObject.updatedAt
+          delete newObject.createdAt
+          delete newObject.__v
+          delete newObject.parentId
+          return newObject
+        })
+
+        formData.variations = variations || []
+        formData.primary = parentProd?.primary
+        formData.attributes = parentProd?.attributes
+      }
+
+      if (TYPE_VARIANT.VARIANT === parentProd.type) {
+        result = await this.createVariantProduct(formData)
+      } else if (TYPE_VARIANT.SIMPLE === parentProd.type) {
+        result = await this.createSimpleProduct(formData)
+      }
+      if (!result.status) throw result.error
+
+      return new Response().created({}, res)
+    } catch (error) {
+      console.log('create error', error)
+      return new Response().error(error, res)
     }
   }
 }

@@ -15,6 +15,7 @@ import { CgArrowsExpandDownRight, CgArrowsExpandUpLeft, CgArrowsExpandUpRight } 
 import PostService from 'service/admin/Post.service'
 import styles from './styles.module.scss'
 import { AiOutlinePlus } from 'react-icons/ai'
+import * as ReactIcon from 'react-icons/fa'
 const defaultData = [
   { text: 'Roses are red' },
   { text: 'Violets are blue' },
@@ -94,6 +95,8 @@ export default function SettingMenu() {
     }
   }
 
+  console.log(ReactIcon)
+
   const renderTabs = () => {
     let html = null
     if (tabsKey === 1) {
@@ -104,13 +107,6 @@ export default function SettingMenu() {
           labelKey="name"
           valueKey="_id"
           showIndentLine
-          // renderTreeNode={(node) => {
-          //   return (
-          //     <>
-          //       {node.children ? <FolderFillIcon /> : <PageIcon />} {node.name} <IconButton icon={<AiOutlinePlus />} />
-          //     </>
-          //   )
-          // }}
           renderTreeNode={(node) => {
             return (
               <>

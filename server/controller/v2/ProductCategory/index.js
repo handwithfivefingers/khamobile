@@ -73,17 +73,12 @@ export default class ProductCategoryController {
   getCategoryBySlug = async (req, res) => {
     try {
       let { slug } = req.params
-      // let _cate = await ProductCategory.findOne({ slug })
 
-      let { price, createdAt, activePage, pageSize, maxPrice, stock_status } = req.query
-
-      let pageS = pageSize || 10
-
-      let activeP = (activePage > 0 && activePage) || 1
+      let { price, createdAt, maxPrice } = req.query
 
       const UNIT_PRICE = 1000000
 
-      const MAXPRICE = Number(maxPrice) * UNIT_PRICE || 999 * UNIT_PRICE
+      // const MAXPRICE = Number(maxPrice) * UNIT_PRICE || 999 * UNIT_PRICE
 
       const _cate = await ProductCategory.findOne({
         slug: slug,
@@ -108,20 +103,21 @@ export default class ProductCategoryController {
         },
         {
           $sort: {
-            price: price || 1,
-            createdAt: createdAt || 1,
+            title: -1,
+            price: +price || -1,
+            createdAt: +createdAt || -1,
           },
         },
-        {
-          $match: {
-            'child.price': {
-              $lt: MAXPRICE,
-            },
-          },
-        },
+        // {
+        //   $match: {
+        //     price: {
+        //       $lt: MAXPRICE,
+        //     },
+        //   },
+        // },
       ]
 
-      const [total] = await ProductCategory.aggregate([...pipeAggregate, { $count: 'total' }])
+      // const [total] = await ProductCategory.aggregate([...pipeAggregate, { $count: 'total' }])
 
       pipeAggregate.push(
         {
@@ -141,12 +137,7 @@ export default class ProductCategoryController {
             'child.attributes': '$child.attributes',
           },
         },
-        {
-          $skip: +activeP * +pageS - +pageS,
-        },
-        {
-          $limit: +pageS,
-        },
+
         {
           $group: {
             _id: null,
@@ -169,15 +160,40 @@ export default class ProductCategoryController {
 
       let [_cateProd] = await ProductCategory.aggregate(pipeAggregate)
 
-      const seoTags = await generateSeoTag({
-        title: `${_cate.name} mới nhất giá rẻ - Khamobile`,
-        description: `${_cate.name} mới nhất giá rẻ - Khamobile`,
-        url: `${process.env.HOSTNAME}/product/${_cate.slug}`,
-      })
+      let sortMemory = req.query['Dung lượng']
 
+      // console.log(_cateProd)
+
+      if (sortMemory) {
+        _cateProd?.items?.sort((a, b) => {
+          if (sortMemory == 1) {
+            if (a.title.toLowerCase().includes('1tb') && b.title.toLowerCase().includes('1tb')) return 1
+            if (a.title.toLowerCase().includes('1tb')) return 1
+            if (b.title.toLowerCase().includes('1tb')) return -1
+            return a.title.toLowerCase().localeCompare(b.title.toLowerCase())
+          } else if (sortMemory == -1) {
+            if (b.title.toLowerCase().includes('1tb') && a.title.toLowerCase().includes('1tb')) return 0
+            if (b.title.toLowerCase().includes('1tb')) return 1
+            if (a.title.toLowerCase().includes('1tb')) return -1
+            return b.title.toLowerCase().localeCompare(a.title.toLowerCase())
+          }
+        })
+      }
+
+      if (price) {
+        console.log(_cateProd)
+        _cateProd?.items?.sort((a, b) => {
+          if (price == 1) {
+            return b.price - a.price
+          }
+          if (price == -1) {
+            return a.price - b.price
+          }
+        })
+      }
       return new Response().fetched(
         {
-          data: { cate: _cate, product: _cateProd, total: total?.total, seo: [seoTags.head, seoTags.body] },
+          data: { cate: _cate, product: _cateProd },
         },
         res,
       )

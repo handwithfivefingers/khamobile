@@ -15,6 +15,7 @@ const GlobalHomeService = {
   getHomeSeo: async () => await axios.get(path.homeSeo),
   getAboutUsSeo: async () => await axios.get(path.aboutSeo),
   getCategorySeo: async () => await axios.get(path.categorySeo),
+  getSingleCategorySeo: async (slug) => await axios.get(path.categorySeo + '/' + slug),
   getPostSeo: async () => await axios.get(path.postSeo),
   getProductSeo: async () => await axios.get(path.productSeo),
   getMenu: async () => await axios.get(path.menu),

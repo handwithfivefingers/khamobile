@@ -7,7 +7,9 @@ import AdminLayout from 'component/UI/AdminLayout'
 import moment from 'moment'
 import dynamic from 'next/dynamic'
 import { forwardRef, useEffect, useRef, useState } from 'react'
+import { FaClone } from 'react-icons/fa'
 import {
+  Button,
   ButtonGroup,
   Content,
   IconButton,
@@ -24,7 +26,7 @@ import {
 } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import ProductService from 'service/admin/Product.service'
-import { formatCurrency } from 'src/helper'
+import { formatCurrency, message } from 'src/helper'
 import { useCommonStore } from 'src/store'
 
 const ProductCreateModal = dynamic(() => import('component/Modal/Product/create'))
@@ -58,7 +60,7 @@ const RenderAlert = forwardRef(({ right, top, className, ...props }, ref) => {
   )
 })
 
-const ActionCell = ({ rowData, dataKey, onEdit, ...props }) => {
+const ActionCell = ({ rowData, dataKey, onEdit, onDuplicate, ...props }) => {
   const whisperRef = useRef()
   const onProgress = (event) => {
     props?.onDelete(rowData, event)
@@ -66,14 +68,48 @@ const ActionCell = ({ rowData, dataKey, onEdit, ...props }) => {
   return (
     <Cell {...props} className="link-group">
       <Stack spacing={8}>
+        <IconButton
+          onClick={() => onDuplicate(rowData)}
+          size="sm"
+          appearance="primary"
+          icon={<FaClone />}
+          color="blue"
+        />
         <IconButton onClick={() => onEdit(rowData)} size="sm" appearance="primary" icon={<EditIcon />} color="blue" />
+
         <Whisper
           placement="leftStart"
           trigger="click"
-          speaker={<RenderAlert {...props} onClick={onProgress} closeRef={whisperRef} />}
+          speaker={
+            <Popover arrow={false} className="d-flex" style={{ width: '200px' }} onClick={(e) => e.stopPropagation()}>
+              <span className="m-2" style={{ fontSize: 16, fontWeight: 500 }}>
+                Bạn có muốn xóa ?
+              </span>
+
+              <Button
+                className="m-2"
+                size="sm"
+                appearance="primary"
+                color="red"
+                onClick={(e) => {
+                  onProgress(rowData)
+                  whisperRef.current.close()
+                }}
+                style={{ background: 'var(--rs-red-800)' }}
+              >
+                Xác nhận
+              </Button>
+            </Popover>
+          }
           ref={whisperRef}
         >
-          <IconButton size="sm" appearance="primary" icon={<TrashIcon />} color="red" />
+          <IconButton
+            icon={<TrashIcon />}
+            size="sm"
+            color="red"
+            appearance="primary"
+            onClick={(e) => e.stopPropagation()}
+          />
         </Whisper>
       </Stack>
     </Cell>
@@ -217,9 +253,13 @@ const Products = () => {
     try {
       let resp = await ProductService.deleteProduct({ _id: rowData._id, type: rowData.type })
       if (resp.status === 200) {
+        toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
       }
     } catch (error) {
       console.log('deleteProduct', error, error?.response?.data)
+      toaster.push(message('error', error.message || 'Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên'), {
+        placement: 'topEnd',
+      })
     } finally {
       getProducts()
     }
@@ -260,7 +300,17 @@ const Products = () => {
     })
   }
 
-  const message = (type, header) => <Message showIcon type={type} header={header} closable />
+  const handleDuplicate = async ({ _id, ...data }) => {
+    try {
+      const resp = await ProductService.duplicateProduct({ _id })
+      toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
+    } catch (error) {
+      toaster.push(message('error', error.message || 'Đã có lỗi xảy ra, vui lòng liên hệ quản trị viên'), {
+        placement: 'topEnd',
+      })
+      console.log(error)
+    }
+  }
 
   const handleClose = () => setModal({ open: false, component: null })
 
@@ -268,6 +318,7 @@ const Products = () => {
     setPage(1)
     setLimit(dataKey)
   }
+
   return (
     <>
       <Stack spacing={10} className="py-2">
@@ -281,7 +332,6 @@ const Products = () => {
       </Stack>
       <Content className={'bg-w'}>
         <Table
-          // fillHeight={!loading}
           height={60 * (limit + 1)}
           rowHeight={60}
           data={getData()}
@@ -319,7 +369,7 @@ const Products = () => {
             <Cell dataKey="price">{(rowData) => <span>{formatCurrency(rowData.price, { symbol: ' đ' })}</span>}</Cell>
           </Column>
 
-          <Column width={100} align="center">
+          <Column width={120} align="center">
             <HeaderCell>
               <IconButton
                 icon={<PlusIcon />}
@@ -335,7 +385,7 @@ const Products = () => {
               />
             </HeaderCell>
 
-            <ActionCell onDelete={handleDelete} onEdit={handleOpenProduct} right={0} />
+            <ActionCell onDelete={handleDelete} onEdit={handleOpenProduct} onDuplicate={handleDuplicate} right={0} />
           </Column>
         </Table>
         <div style={{ padding: 20 }}>

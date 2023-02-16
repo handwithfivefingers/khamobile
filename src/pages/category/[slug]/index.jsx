@@ -1,18 +1,20 @@
 import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
 import Card from 'component/UI/Content/Card'
+import ImageBlock from 'component/UI/Content/ImageBlock'
 import NoData from 'component/UI/Content/NoData'
 import PageHeader from 'component/UI/Content/PageHeader'
 import SideFilter from 'component/UI/Content/SideFilter'
 import CommonLayout from 'component/UI/Layout'
 import { useRouter } from 'next/router'
-import { useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { BsInboxes } from 'react-icons/bs'
 import { Button, Col, Divider, Drawer, Pagination, Row } from 'rsuite'
-import { GlobalCategoryService } from 'service/global'
+import { GlobalCategoryService, GlobalHomeService } from 'service/global'
 import styles from './styles.module.scss'
 
-export default function SingleCategory({ data, query, seo, ...rest }) {
+const PAGE_SIZE = 20
+export default function SingleCategory({ seo, slug, page, ...props }) {
   const [drawer, setDrawer] = useState({
     open: false,
     placement: 'left',
@@ -21,18 +23,41 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
 
   const router = useRouter()
 
+  const [data, setData] = useState([])
+
+  const [activePage, setActivePage] = useState(+page)
+
   const [filter, setFilter] = useState({})
+
+  useEffect(() => {
+    getScreenData()
+  }, [filter, slug])
 
   const onFilterChange = (val) => {
     setFilter(val)
   }
+
+  const getScreenData = async () => {
+    try {
+      const resp = await GlobalCategoryService.getProdByCategorySlug(slug, { ...filter })
+      setData(resp.data.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   const onChangePage = (page) => {
-    const { slug, ...qs } = query
+    setActivePage(page)
     router.push({
       pathname: `/category/${slug}`,
-      query: { ...qs, page },
+      query: { page },
     })
   }
+
+  const tagClick = useCallback((v) => {
+    router.push(`/category/${v.slug}`)
+    setFilter({})
+  }, [])
 
   if (!data) {
     return <NoData />
@@ -41,11 +66,12 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
   const renderProduct = () => {
     let html = null
     if (data?.product?.items?.length) {
+      let currentData = data?.product?.items?.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE)
       html = (
-        <Row gutter={12} ref={cardRef}>
-          <Col md={24}>
+        <div className="row">
+          <div className="col-12">
             <div className={styles.grid}>
-              {data?.product?.items?.map((item) => {
+              {currentData?.map((item) => {
                 return (
                   <Card
                     key={item._id}
@@ -61,21 +87,21 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
                 )
               })}
             </div>
-          </Col>
-          <div className={styles.pagi}>
-            <Pagination
-              prev
-              last
-              next
-              first
-              size="sm"
-              total={data?.total}
-              limit={20}
-              activePage={+query?.page}
-              onChangePage={onChangePage}
-            />
           </div>
-        </Row>
+          <div className="col-12">
+            <div className={styles.pagi}>
+              <Pagination
+                prev
+                next
+                size="sm"
+                total={data.product.items?.length}
+                limit={PAGE_SIZE}
+                activePage={+activePage}
+                onChangePage={onChangePage}
+              />
+            </div>
+          </div>
+        </div>
       )
     } else {
       html = (
@@ -90,7 +116,7 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
 
   return (
     <>
-      <PostHelmet seo={data?.seo} />
+      <PostHelmet seo={seo} />
       <div className="row p-0">
         <div className="col-12 p-0">
           <PageHeader type="h3" left divideClass={styles.divideLeft}>
@@ -100,22 +126,20 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
         <div className="col-12 p-0 py-2 border-top">
           <div className="container product_detail">
             <div className="row gy-4">
-              <div className={clsx([styles.vr, 'col-12'])}>
-                <Row gutter={12}>
-                  <Col md={24}>
-                    <p>
-                      The category description can be positioned anywhere on the page via the layout page builder inside
-                      the
-                    </p>
-                  </Col>
-
-                  <Col md={24}>
-                    <SideFilter onChange={onFilterChange} filter={filter} />
-                  </Col>
-                </Row>
-                <Divider />
-                {renderProduct()}
+              <div className="col-3">
+                <ImageBlock src={data?.cate?.image || ''} engine />
               </div>
+              <div className="col-9">
+                <p>
+                  The category description can be positioned anywhere on the page via the layout page builder inside the
+                </p>
+              </div>
+              <div className="col-24">
+                <SideFilter onChange={onFilterChange} filter={filter} tagClick={tagClick} />
+              </div>
+              <Divider />
+
+              {renderProduct()}
             </div>
           </div>
         </div>
@@ -144,18 +168,16 @@ export default function SingleCategory({ data, query, seo, ...rest }) {
 }
 
 export const getServerSideProps = async (ctx) => {
-  const { slug, page, pageSize, maxPrice, price, createdAt } = ctx.query
+  const { slug, page } = ctx.query
 
-  const resp = await GlobalCategoryService.getProdByCategorySlug(slug, {
-    pageSize: pageSize || 20,
-    activePage: page,
-    maxPrice,
-    price,
-    createdAt,
-  })
-  const data = resp.data
+  const resp = await GlobalHomeService.getSingleCategorySeo(slug)
+
   return {
-    props: { ...data, query: ctx.query },
+    props: {
+      seo: resp.data.seo,
+      slug: slug,
+      page: page || 1,
+    },
   }
 }
 

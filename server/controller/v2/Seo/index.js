@@ -1,6 +1,7 @@
 // const { Product, Category } = require('@model')
 
 import { generateSeoTag } from '#common/helper'
+import { ProductCategory } from '#model'
 
 export default class SeoController {
   getHomeSeo = async (req, res) => {
@@ -85,6 +86,28 @@ export default class SeoController {
         title: `Danh sách Điện thoại mới nhất giá rẻ - Khamobile`,
         description: 'Danh sách Điện thoại mới nhất giá rẻ - Khamobile',
         url: `${process.env.HOSTNAME}/product`,
+      })
+
+      return res.status(200).json({
+        seo: [seoTags.head, seoTags.body],
+      })
+    } catch (error) {
+      return res.status(400).json({
+        message: 'something went wrong',
+      })
+    }
+  }
+
+  getSingleProductCategorySeo = async (req, res) => {
+    try {
+      const { slug } = req.params
+
+      let _cate = await ProductCategory.findOne({ slug: slug })
+
+      const seoTags = await generateSeoTag({
+        title: `Danh mục ${_cate?.name} mới nhất - Khamobile`,
+        description: `Danh mục ${_cate?.name} mới nhất - Khamobile`,
+        url: `${process.env.HOSTNAME}/category/${_cate?.slug}`,
       })
 
       return res.status(200).json({

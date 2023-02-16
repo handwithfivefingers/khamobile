@@ -1,5 +1,4 @@
 import ProductCategoryController from '#controller/v2/ProductCategory'
-import { upload } from '#middleware'
 import express from 'express'
 
 const router = express.Router()

@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
 import Card from 'component/UI/Content/Card'
 import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
@@ -7,8 +6,9 @@ import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
-import { useEffect, useMemo, useState } from 'react'
-import { Col, Pagination, Row } from 'rsuite'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Pagination } from 'rsuite'
 import { GlobalHomeService, GlobalProductService } from 'service/global'
 import styles from './styles.module.scss'
 
@@ -22,6 +22,7 @@ export default function Product(props) {
   const [loading, setLoading] = useState(false)
 
   const [filter, setFilter] = useState({})
+  const router = useRouter()
 
   useEffect(() => {
     getProducts()
@@ -66,6 +67,10 @@ export default function Product(props) {
     setFilter(val)
   }
 
+  const tagClick = useCallback((v) => {
+    router.push(`/category/${v.slug}`)
+  }, [])
+  
   return (
     <>
       <PostHelmet seo={props.seo} />
@@ -86,7 +91,7 @@ export default function Product(props) {
               </div> */}
 
               <div className="col-12">
-                <SideFilter onChange={onFilterChange} filter={filter} />
+                <SideFilter onChange={onFilterChange} filter={filter} tagClick={tagClick} />
               </div>
 
               <Divider />

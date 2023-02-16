@@ -94,7 +94,11 @@ p + p {
 }
 
 // Tree data
-
+.rs-tree {
+  max-height: 100vh;
+  overflow: overlay;
+  min-height: calc(100vh - 88px - 56px - 38px - 48px);
+}
 .rs-tree-km {
   .rs-tree-nodes {
     div[role='treeitem'] {
@@ -115,6 +119,9 @@ p + p {
             }
           }
         }
+      }
+      & ~ .rs-tree-children {
+        padding-left: 20px;
       }
     }
 
