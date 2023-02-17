@@ -13,7 +13,7 @@ import fs from 'fs'
 import axios from 'axios'
 import moment from 'moment'
 import { User, Log } from '#model'
-import { VNPAY_WHITELIST } from 'server/constant/vnpay'
+import { VNPAY_WHITELIST } from '#constant/vnpay'
 
 const storage = multer.diskStorage({
   limits: { fileSize: 1 * Math.pow(1024, 2 /* MBs*/) },
