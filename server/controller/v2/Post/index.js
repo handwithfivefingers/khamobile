@@ -53,4 +53,20 @@ export default class PostController {
       return new Response().error(error, res)
     }
   }
+
+  getPosts = async (req, res) => {
+    try {
+      const _post = await Post.find({})
+
+      return new Response().fetched(
+        {
+          data: _post,
+        },
+        res,
+      )
+    } catch (error) {
+      return new Response().error(error, res)
+    }
+  }
+
 }

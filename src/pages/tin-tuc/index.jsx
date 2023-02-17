@@ -38,7 +38,8 @@ export default function Category(props) {
     try {
       setLoading(true)
       const res = await PostService.getPosts()
-      setPosts(res.data.data)
+      const postData = res.data.data
+      setPosts([...postData, ...postData, ...postData])
     } catch (error) {
       console.log('error', error?.response?.data?.message)
     } finally {
@@ -53,41 +54,30 @@ export default function Category(props) {
     } else {
       html = (
         <>
-          <div className="row">
-            {posts?.map((post) => {
+          <div className={styles.grid}>
+            {posts?.map((post, index) => {
               return (
-                <div className="col-12 py-2">
-                  <Link href={`/tin-tuc/${post.slug}`} passHref>
-                    <div className="col-12">
-                      <CardPost
-                        border
-                        hover
-                        shadow
-                        imgSrc={`${process.env.API}${post.image?.src}`}
-                        title={post?.title}
-                        description={post?.description}
-                      />
-                    </div>
-                  </Link>
-                </div>
+                <Link href={`/tin-tuc/${post.slug}`} passHref key={post._id}>
+                  <article
+                    className={clsx('col-12', styles.gridItem, {
+                      [styles.firstItem]: index === 0,
+                      [styles.secondItem]: index === 1,
+                      [styles.thirdItem]: index === 2,
+                    })}
+                  >
+                    <CardPost
+                      border
+                      hover
+                      shadow
+                      imgSrc={`${process.env.API}${post.image?.src}`}
+                      title={post?.title}
+                      description={post?.description}
+                      cardType={index <= 2 ? 'horizontal' : 'vertical'}
+                    />
+                  </article>
+                </Link>
               )
             })}
-
-            <div className="col-12">
-              <div className={styles.pagi}>
-                <Pagination
-                  prev
-                  last
-                  next
-                  first
-                  size="sm"
-                  total={posts.length}
-                  limit={10}
-                  activePage={activePage}
-                  onChangePage={(page) => setActivePage(page)}
-                />
-              </div>
-            </div>
           </div>
         </>
       )
@@ -96,8 +86,6 @@ export default function Category(props) {
     return html
   }
 
-  const onFilterChange = (v) => console.log(v)
-  let filter = null
   return (
     <>
       <PostHelmet seo={props.seo} />
@@ -124,6 +112,22 @@ export default function Category(props) {
                 <Divider />
 
                 {renderPost()}
+
+                <div className="col-12">
+                  <div className={styles.pagi}>
+                    <Pagination
+                      prev
+                      last
+                      next
+                      first
+                      size="sm"
+                      total={posts.length}
+                      limit={10}
+                      activePage={activePage}
+                      onChangePage={(page) => setActivePage(page)}
+                    />
+                  </div>
+                </div>
               </div>
             </div>
           </div>

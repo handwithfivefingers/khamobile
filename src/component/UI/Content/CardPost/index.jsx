@@ -10,7 +10,7 @@ export default function CardPost({ loading = false, ...props }) {
   return <Card {...props} />
 }
 
-function Card({ title, description, imgSrc, shadow, border, hover, cover }) {
+function Card({ title, description, imgSrc, shadow, border, hover, cover, cardType }) {
   const classCard = clsx([
     'card',
     styles.card,
@@ -19,6 +19,8 @@ function Card({ title, description, imgSrc, shadow, border, hover, cover }) {
       [styles.border]: border,
       [styles.hover]: hover,
       [styles.cover]: cover,
+      [styles.horizontal]: cardType === 'horizontal',
+      [styles.vertical]: cardType === 'vertical',
     },
   ])
 
