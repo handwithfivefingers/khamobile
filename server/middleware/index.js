@@ -13,6 +13,7 @@ import fs from 'fs'
 import axios from 'axios'
 import moment from 'moment'
 import { User, Log } from '#model'
+import { VNPAY_WHITELIST } from 'server/constant/vnpay'
 
 const storage = multer.diskStorage({
   limits: { fileSize: 1 * Math.pow(1024, 2 /* MBs*/) },
@@ -153,7 +154,7 @@ const cacheControl = async (req, res, next) => {
 }
 
 const validateIPNVnpay = async (req, res, next) => {
-  let WHITE_LIST = VNPWHITELIST // Put your IP whitelist in this array
+  let WHITE_LIST = VNPAY_WHITELIST // Put your IP whitelist in this array
 
   if (process.env.NODE_ENV === 'development') {
     WHITE_LIST = [...WHITE_LIST, '127.0.0.1']
