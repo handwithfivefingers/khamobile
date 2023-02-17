@@ -154,33 +154,37 @@ const cacheControl = async (req, res, next) => {
 }
 
 const validateIPNVnpay = async (req, res, next) => {
-  let WHITE_LIST = VNPAY_WHITELIST // Put your IP whitelist in this array
+  try {
+    let WHITE_LIST = VNPAY_WHITELIST // Put your IP whitelist in this array
 
-  if (process.env.NODE_ENV === 'development') {
-    WHITE_LIST = [...WHITE_LIST, '127.0.0.1']
-  }
+    if (process.env.NODE_ENV === 'development') {
+      WHITE_LIST = [...WHITE_LIST, '127.0.0.1']
+    }
 
-  let remoteAddress =
-    req.headers['x-forwarded-for'] ||
-    req.id ||
-    req.connection.remoteAddress ||
-    req.socket.remoteAddress ||
-    req.connection.socket.remoteAddress
+    let remoteAddress =
+      req.headers['x-forwarded-for'] ||
+      req.id ||
+      req.connection.remoteAddress ||
+      req.socket.remoteAddress ||
+      req.connection.socket.remoteAddress
 
-  let _logObject = {
-    ip: remoteAddress,
-    data: {
-      ...req.query,
-    },
-  }
+    let _logObject = {
+      ip: remoteAddress,
+      data: {
+        ...req.query,
+      },
+    }
 
-  if (WHITE_LIST.includes(remoteAddress)) {
-    let _log = new Log(_logObject)
-    await _log.save()
-    next()
-  } else {
-    console.log('Bad IP: ' + remoteAddress)
-    return res.status(403).json({ message: 'You are not allowed to access' })
+    if (WHITE_LIST.includes(remoteAddress)) {
+      let _log = new Log(_logObject)
+      await _log.save()
+      next()
+    } else {
+      console.log('Bad IP: ' + remoteAddress)
+      throw new Error('You are not allowed to access')
+    }
+  } catch (error) {
+    return res.status(403).json({ ...error })
   }
 }
 
