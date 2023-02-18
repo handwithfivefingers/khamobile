@@ -73,6 +73,7 @@ export default function Category(props) {
                       title={post?.title}
                       description={post?.description}
                       cardType={index <= 2 ? 'horizontal' : 'vertical'}
+                      imgHeight={index > 2 ? '75%' : index > 0 ? '200px' : '50%'}
                     />
                   </article>
                 </Link>

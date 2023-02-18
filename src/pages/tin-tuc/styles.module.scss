@@ -88,3 +88,17 @@
     }
   }
 }
+
+.firstItem {
+  // display: flex;
+  // height: 100%;
+  // flex: 1;
+  // width: 100%;
+  display: block;
+}
+
+.secondItem,
+.thirdItem {
+  // max-height: 200px;
+  height: 100%;
+}

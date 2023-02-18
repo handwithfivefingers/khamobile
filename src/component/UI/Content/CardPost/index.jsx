@@ -4,13 +4,14 @@ import styles from './styles.module.scss'
 import clsx from 'clsx'
 import { ButtonGroup, Panel, Placeholder, Stack, Button } from 'rsuite'
 import parse from 'html-react-parser'
+import ImageBlock from '../ImageBlock'
 
 export default function CardPost({ loading = false, ...props }) {
   if (loading) return <CardSkeleton {...props} />
   return <Card {...props} />
 }
 
-function Card({ title, description, imgSrc, shadow, border, hover, cover, cardType }) {
+function Card({ title, description, imgSrc, shadow, border, hover, cover, cardType, imgHeight = '250px' }) {
   const classCard = clsx([
     'card',
     styles.card,
@@ -29,13 +30,7 @@ function Card({ title, description, imgSrc, shadow, border, hover, cover, cardTy
   return (
     <div className={classCard}>
       <div className={clsx('card-img-top', styles.cardImg)}>
-        <img
-          ref={imgRef}
-          src={imgSrc}
-          onError={() => (imgRef.current.src = '/400.png')}
-          className={styles.img}
-          alt="..."
-        />
+        <ImageBlock className={styles.img} src={imgSrc} ref={imgRef} objectFit={'cover'} height={imgHeight} />
       </div>
 
       <div className={styles.content}>

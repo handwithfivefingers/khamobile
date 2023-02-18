@@ -1,6 +1,6 @@
 import clsx from 'clsx'
 import Image from 'next/image'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import { Modal } from 'rsuite'
 import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
@@ -14,7 +14,10 @@ export default function ImageBlock({
   engine,
   objectFit = 'cover',
   modal = false,
+  ...props
 }) {
+  const imageRef = useRef(src)
+
   const [state, setState] = useState(false)
 
   const imgClass = clsx([
@@ -35,7 +38,7 @@ export default function ImageBlock({
         alt={alt}
         onClick={() => openImageViewer(true)}
         layout="fill"
-        src={src}
+        src={imageRef.current}
         blurDataURL={
           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
         }
@@ -45,6 +48,9 @@ export default function ImageBlock({
           return engine ? process.env.API + src + `?w=${width}&q=${quality || 50}` : src
         }}
         objectFit={objectFit}
+        ref={imageRef}
+        onError={() => (imageRef.current = '/400.png')}
+        // {...props}
       />
       {modal && (
         <Modal open={state} onClose={() => setState(false)} size="md" style={{ background: 'transparent' }}>

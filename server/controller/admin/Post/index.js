@@ -43,33 +43,10 @@ class PostController {
   updatePost = async (req, res) => {
     try {
       let { _id } = req.params
-
-      let { title, slug, description, content, postImg, category } = req.body
-
-      let isFile = false
-
-      let file = null
-      console.log('coming ??', req.files, typeof req.body.postImg, req.body.postImg !== 'null')
-
-      if (req.files || typeof req.body.postImg === 'string') {
-        console.log('come in ??')
-        isFile = true
-        file = req.files
-        let fileLength = Object.keys(file).length
-
-        if (!fileLength && typeof postImg === 'string') {
-          file = await handleDownloadFile(postImg)
-          file = [file]
-        } else file = file.postImg
-      }
-
       let _updated = {
-        title: title ? title : null,
-        description: description ? description : null,
-        content: content ? content : null,
-        slug: slug ? slug || slugify(req.body.name) : null,
-        postImg: isFile ? file : null,
-        category: category || null,
+        ...req.body,
+        slug: req.body.slug || slugify(req.body.title) + shortid(),
+        image: req.body.image,
       }
 
       const { ..._updateObject } = new PostModel(_updated)
