@@ -49,6 +49,7 @@ class ConfigApp {
 
   onLoadConfig = () => {
     // this.app.use(multiMiddleware);
+    this.app.set('trust proxy', true)
     this.app.use(express.json())
     this.app.use(cookieParser())
     return this

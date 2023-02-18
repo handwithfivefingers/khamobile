@@ -4,7 +4,6 @@ import { User } from '#model'
 const APIKEY = '23f7d544800315b66201a18b3ed7e847'
 const SECRETKEY = '7e2277246dc637ebc2d03ce9d0f0e60a'
 export default class MailServer {
-  
   mailjet = new Mailjet({
     apiKey: APIKEY,
     apiSecret: SECRETKEY,

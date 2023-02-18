@@ -60,6 +60,7 @@ export default class OrderController {
         checkoutLink: `${process.env.HOST}/checkout/${orderCreated._id}`,
       })
 
+      console.log('responseMailSending ', responseMailSending)
       if (!responseMailSending.status) throw { message: 'Cant send mail' }
 
       if (paymentType === 'vnpay') {
@@ -239,10 +240,7 @@ export default class OrderController {
           title: _prodItem.title,
           price: formatCurrency(_prodItem.price, { symbol: '' }),
           image: {
-            src:
-              process.env.NODE_ENV !== 'development'
-                ? 'https://app.khamobile.vn' + _prodItem.image.src
-                : process.env.API + _prodItem.image.src, // for server
+            src: 'https://app.khamobile.vn' + _prodItem.image.src,
           },
         }
       })
@@ -261,6 +259,7 @@ export default class OrderController {
         },
       }
 
+      // console.log(JSON.stringify(mailObject))
       await new MailServer().sendMailOnly(mailObject)
 
       return { status: true }
