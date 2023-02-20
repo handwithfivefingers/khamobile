@@ -7,6 +7,7 @@ import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
 import axios from 'configs/axiosInstance'
 import parser from 'html-react-parser'
+import { ProductJsonLd } from 'next-seo'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
@@ -29,12 +30,55 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
         clearTimeout(timeout)
       }
     }, 1000)
+    console.log(process.env.host + router.asPath)
     return () => clearTimeout(timeout)
   }, [])
+  console.log(data)
   return (
     <>
       <PostHelmet seo={seo} />
 
+      <ProductJsonLd
+        productName="Executive Anvil"
+        images={
+          data?.image?.map(({ src }) =>
+            process.env.NODE_ENV !== 'development' ? process.env.API + src : 'https://app.khamobile.vn' + src,
+          ) || []
+        }
+        description={data?.description}
+        brand="ACME"
+        color={data?.attribute?.['Màu sắc']}
+        reviews={[
+          {
+            author: 'Jim',
+            datePublished: '2017-01-06T03:37:40Z',
+            reviewBody: 'This is my favorite product yet! Thanks Nate for the example products and reviews.',
+            name: 'So awesome!!!',
+            reviewRating: {
+              bestRating: '5',
+              ratingValue: '5',
+              worstRating: '1',
+            },
+            publisher: {
+              type: 'Organization',
+              name: 'TwoVit',
+            },
+          },
+        ]}
+        aggregateRating={{
+          ratingValue: '4.4',
+          reviewCount: '89',
+        }}
+        offers={_relationProd?.map((_relationItem) => ({
+          price: _relationItem.price,
+          priceCurrency: 'VND',
+          itemCondition: 'https://schema.org/UsedCondition',
+          availability: _relationItem.stock_status ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+          url: process.env.host + router.asPath,
+        }))}
+        lowPrice={data?.price}
+        priceCurrency={'VND'}
+      />
       <div className="row p-0">
         <div className="col-12 p-0">
           <PageHeader type="h1" left divideClass={styles.divideLeft}>

@@ -36,7 +36,7 @@ export default {
 
   status: {
     type: String,
-    enum: ['pending', 'completed'],
+    enum: ['pending', 'failed', 'completed'],
     default: 'pending',
     require: true,
   },
@@ -60,7 +60,7 @@ export default {
       },
     },
   ],
-  
+
   orderInfo: {},
 
   createDate: String,

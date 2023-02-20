@@ -1,22 +1,14 @@
 import Head from 'next/head'
-
 import Script from 'next/script'
-
 import { useEffect } from 'react'
-
 import { CustomProvider } from 'rsuite'
-
 import { AuthenticateService } from 'service/authenticate'
-
 import { GlobalCategoryService } from 'service/global'
-
 import { useAuthorizationStore, useCommonStore, useCartStore } from 'src/store'
-
 import CommonLayout from '../component/UI/Layout'
-
 import 'rsuite/dist/rsuite.min.css'
-
 import '../assets/css/style.scss'
+import { LocalBusinessJsonLd } from 'next-seo'
 
 export default function MyApp({ Component, pageProps }) {
   const Layout = Component.Layout || CommonLayout

@@ -33,33 +33,6 @@ const ProductCreateModal = dynamic(() => import('component/Modal/Product/create'
 
 const { Column, HeaderCell, Cell } = Table
 
-const RenderAlert = forwardRef(({ right, top, className, ...props }, ref) => {
-  return (
-    <Popover ref={ref} className={className} full>
-      <Message showIcon type="warning" header="Bạn có muốn xóa?">
-        <ButtonGroup>
-          <IconButton
-            icon={<CloseIcon />}
-            size="sm"
-            appearance="default"
-            color="blue"
-            onClick={(event) => {
-              props?.closeRef.current.close()
-            }}
-          />
-          <IconButton
-            icon={<CheckIcon />}
-            size="sm"
-            appearance="primary"
-            color="blue"
-            onClick={() => props.onClick()}
-          />
-        </ButtonGroup>
-      </Message>
-    </Popover>
-  )
-})
-
 const ActionCell = ({ rowData, dataKey, onEdit, onDuplicate, ...props }) => {
   const whisperRef = useRef()
   const onProgress = (event) => {
@@ -199,7 +172,7 @@ const Products = () => {
       )
       handleClose()
     } finally {
-      setLoading(false)
+      getProducts()
     }
   }
 
@@ -300,7 +273,7 @@ const Products = () => {
     })
   }
 
-  const handleDuplicate = async ({ _id, ...data }) => {
+  const handleDuplicate = async ({ _id }) => {
     try {
       const resp = await ProductService.duplicateProduct({ _id })
       toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
@@ -309,6 +282,8 @@ const Products = () => {
         placement: 'topEnd',
       })
       console.log(error)
+    } finally {
+      getProducts()
     }
   }
 
