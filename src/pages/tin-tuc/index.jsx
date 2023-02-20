@@ -14,7 +14,6 @@ export default function Category(props) {
   const [activePage, setActivePage] = useState(1)
   const [data, setData] = useState([])
   const [posts, setPosts] = useState([])
-
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
@@ -39,7 +38,7 @@ export default function Category(props) {
       setLoading(true)
       const res = await PostService.getPosts()
       const postData = res.data.data
-      setPosts([...postData, ...postData, ...postData])
+      setPosts([...postData])
     } catch (error) {
       console.log('error', error?.response?.data?.message)
     } finally {
@@ -50,7 +49,7 @@ export default function Category(props) {
   const renderPost = () => {
     let html = null
     if (!posts.length) {
-      html = <NoData />
+      html = <NoData description="Hiện chưa có bài viết nào" />
     } else {
       html = (
         <>
@@ -113,22 +112,25 @@ export default function Category(props) {
                 <Divider />
 
                 {renderPost()}
-
-                <div className="col-12">
-                  <div className={styles.pagi}>
-                    <Pagination
-                      prev
-                      last
-                      next
-                      first
-                      size="sm"
-                      total={posts.length}
-                      limit={10}
-                      activePage={activePage}
-                      onChangePage={(page) => setActivePage(page)}
-                    />
+                {posts.length ? (
+                  <div className="col-12">
+                    <div className={styles.pagi}>
+                      <Pagination
+                        prev
+                        last
+                        next
+                        first
+                        size="sm"
+                        total={posts.length}
+                        limit={10}
+                        activePage={activePage}
+                        onChangePage={(page) => setActivePage(page)}
+                      />
+                    </div>
                   </div>
-                </div>
+                ) : (
+                  ''
+                )}
               </div>
             </div>
           </div>

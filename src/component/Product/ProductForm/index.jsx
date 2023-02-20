@@ -137,6 +137,17 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
     return html
   }
 
+  const calculateRegularPrice = () => {
+    console.log(form)
+
+    let html = null
+
+    if (form.regular_price !== form.price) {
+      html = formatCurrency(form?.regular_price * form?.quantity || 0, { symbol: 'đ' })
+    }
+    return html
+  }
+
   const handleAttributeChange = ({ value, name: attributeName }) => {
     const lastAttributeSelect = { ...attributeSelect }
 
@@ -293,7 +304,11 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
           <div className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)} style={{ gap: 4 }}>
             <div className={'row w-100 '} ref={pricingRef}>
               <div className="col-12">
-                <p className={clsx(styles.productPricing, 'bk-product-price')}>{calculatePrice()}</p>
+                <p className={clsx(styles.productPricing, 'bk-product-price')}>
+                  {calculatePrice()}
+
+                  <span className={styles.productRegularPrice}>{calculateRegularPrice()}</span>
+                </p>
               </div>
               <div className="col-12 position-relative">
                 {_relationProd.length ? (

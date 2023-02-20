@@ -229,12 +229,11 @@ export default class ProductController {
       let minPrice = 0
 
       if (variations) {
-        minPrice = formData.variations?.reduce((prev, current) => {
-          if (prev > current.price) {
-            return current.price
-          }
-          return prev
-        }, 0)
+        let sort = variations.filter((item) => item.price)
+        sort = sort.sort((a, b) => a.price - b.price)
+        if (sort.length) {
+          minPrice = +sort[0]?.price
+        }
       }
 
       let baseProd = new Product({
@@ -368,12 +367,11 @@ export default class ProductController {
       } = formData
       let minPrice = 0
       if (variations) {
-        minPrice = variations?.reduce((prev, current) => {
-          if (prev > current.price) {
-            return current.price
-          }
-          return prev
-        }, 0)
+        let sort = variations.filter((item) => item.price)
+        sort = sort.sort((a, b) => a.price - b.price)
+        if (sort.length) {
+          minPrice = sort[0]?.price
+        }
       }
 
       const prodUpdate = {
