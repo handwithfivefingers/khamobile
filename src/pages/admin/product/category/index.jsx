@@ -71,6 +71,7 @@ const RenderAlert = forwardRef(({ right, top, className, ...props }, ref) => {
     </Popover>
   )
 })
+
 const ActionCell = ({ rowData, dataKey, onEdit, ...props }) => {
   const whisperRef = useRef()
   const onProgress = (event) => {
