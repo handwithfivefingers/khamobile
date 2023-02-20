@@ -8,6 +8,9 @@ import { GlobalProductService } from 'service/global'
 import { formatCurrency } from 'src/helper'
 import { useCartStore } from 'src/store'
 import styles from './styles.module.scss'
+import { NextSeo, DefaultSeo } from 'next-seo'
+import Head from 'next/head'
+
 const { HeaderCell, Cell, Column } = Table
 
 export default function Cart(props) {
@@ -157,74 +160,98 @@ export default function Cart(props) {
   }
 
   return (
-    <div className="row p-0">
-      <div className="col-12 p-0">
-        <PageHeader type="h3" left divideClass={styles.divideLeft}>
-          Giỏ hàng
-        </PageHeader>
-      </div>
-      <div className="col-12 p-0 py-2 border-top">
-        <div className="container">
-          <div className="row gy-2">
-            <div className="col-12 col-md-12 col-lg-8">
-              <CardBlock>
-                <Panel bordered bodyFill>
-                  <Form formValue={data}>
-                    <Table height={400} data={data} rowHeight={58}>
-                      <Column align="center" verticalAlign="middle" resizable flexGrow={1}>
-                        <HeaderCell>Tên sản phẩm</HeaderCell>
-                        <Cell dataKey="title" />
-                      </Column>
+    <>
+      {/* <SiteLinksSearchBoxJsonLd
+        url={process.env.host}
+        potentialActions={[
+          {
+            target: `${process.env.host}/search?q`,
+            queryInput: 'page',
+          },
+        ]}
+      /> */}
+      <Head>
+        <NextSeo
+          title="Giỏ hàng - Khamobile"
+          description="Kiểm tra sản phẩm trước khi tiến hành thanh toán"
+          canonical={`${process.env.host}/cart`}
+          openGraph={{
+            type: 'website',
+            locale: 'en_IE',
+            url: `${process.env.host}/cart`,
+            siteName: 'Giỏ hàng - Khamobile',
+          }}
+        />
+      </Head>
+      <div className="row p-0">
+        <div className="col-12 p-0">
+          <PageHeader type="h3" left divideClass={styles.divideLeft}>
+            Giỏ hàng
+          </PageHeader>
+        </div>
+        <div className="col-12 p-0 py-2 border-top">
+          <div className="container">
+            <div className="row gy-2">
+              <div className="col-12 col-md-12 col-lg-8">
+                <CardBlock>
+                  <Panel bordered bodyFill>
+                    <Form formValue={data}>
+                      <Table height={400} data={data} rowHeight={58}>
+                        <Column align="center" verticalAlign="middle" resizable flexGrow={1}>
+                          <HeaderCell>Tên sản phẩm</HeaderCell>
+                          <Cell dataKey="title" />
+                        </Column>
 
-                      <Column align="center" verticalAlign="middle" resizable width={200}>
-                        <HeaderCell>Đơn giá</HeaderCell>
-                        <Pricing dataKey="price" />
-                      </Column>
+                        <Column align="center" verticalAlign="middle" resizable width={200}>
+                          <HeaderCell>Đơn giá</HeaderCell>
+                          <Pricing dataKey="price" />
+                        </Column>
 
-                      <Column width={120} verticalAlign="middle" align="center" resizable>
-                        <HeaderCell>Số lượng</HeaderCell>
-                        <QuantityCell dataKey="quantity" />
-                      </Column>
+                        <Column width={120} verticalAlign="middle" align="center" resizable>
+                          <HeaderCell>Số lượng</HeaderCell>
+                          <QuantityCell dataKey="quantity" />
+                        </Column>
 
-                      <Column verticalAlign="middle" align="center" resizable width={200}>
-                        <HeaderCell>Tạm tính</HeaderCell>
-                        <TotalCell dataKey="total" />
-                      </Column>
-                    </Table>
-                  </Form>
-                </Panel>
-              </CardBlock>
-            </div>
-            <div className="col-12 col-md-12 col-lg-4">
-              <CardBlock>
-                <Panel header="Tổng cộng" bordered>
-                  {/* <Divider /> */}
-                  <List>
-                    <List.Item>
-                      Tạm tính:
-                      {formatCurrency(price.subTotal)}
-                    </List.Item>
-                    <List.Item>
-                      Tổng cộng:
-                      {formatCurrency(price.total)}
-                    </List.Item>
+                        <Column verticalAlign="middle" align="center" resizable width={200}>
+                          <HeaderCell>Tạm tính</HeaderCell>
+                          <TotalCell dataKey="total" />
+                        </Column>
+                      </Table>
+                    </Form>
+                  </Panel>
+                </CardBlock>
+              </div>
+              <div className="col-12 col-md-12 col-lg-4">
+                <CardBlock>
+                  <Panel header="Tổng cộng" bordered>
+                    {/* <Divider /> */}
+                    <List>
+                      <List.Item>
+                        Tạm tính:
+                        {formatCurrency(price.subTotal)}
+                      </List.Item>
+                      <List.Item>
+                        Tổng cộng:
+                        {formatCurrency(price.total)}
+                      </List.Item>
 
-                    <List.Item>
-                      <Button
-                        style={{ background: 'var(--rs-blue-800)', color: '#fff' }}
-                        onClick={() => router.push('/checkout')}
-                      >
-                        Tiến hành Thanh toán
-                      </Button>
-                    </List.Item>
-                  </List>
-                </Panel>
-              </CardBlock>
+                      <List.Item>
+                        <Button
+                          style={{ background: 'var(--rs-blue-800)', color: '#fff' }}
+                          onClick={() => router.push('/checkout')}
+                        >
+                          Tiến hành Thanh toán
+                        </Button>
+                      </List.Item>
+                    </List>
+                  </Panel>
+                </CardBlock>
+              </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </>
   )
 }
 

@@ -3,6 +3,7 @@ import qs from 'query-string'
 import crypto from 'crypto'
 import { ResponseCode } from '#common/ResponseCode'
 import Response from '#server/response'
+import { STATUS_ORDER } from '#constant/type'
 
 export default class PaymentController {
   constructor() {}
@@ -98,15 +99,15 @@ export default class PaymentController {
 
       let signed = hmac.update(new Buffer.from(signData, 'utf-8')).digest('hex')
 
-      const orderId = vnp_Params['vnp_OrderInfo']
-
+      const respCode = vnp_Params['vnp_ResponseCode']
+      const respTrans = vnp_Params['vnp_TransactionStatus']
       if (secureHash === signed) {
         //Kiem tra xem du lieu trong db co hop le hay khong va thong bao ket qua
         let _order = await Order.findOne({
           _id: vnp_Params.vnp_OrderInfo,
           'orderInfo.vnp_TxnRef': vnp_Params.vnp_TxnRef,
         })
-        
+
         // FIRST STEP - Order Exists
 
         if (!_order) return res.status(200).json({ RspCode: '01', Message: ResponseCode['01'] })
@@ -115,13 +116,19 @@ export default class PaymentController {
 
         if (!isMatchAmount) return res.status(200).json({ RspCode: '04', Message: ResponseCode['04'] })
 
-        if (_order.status === 'completed') return res.status(200).json({ RspCode: '02', Message: ResponseCode['02'] })
+        if (_order.status !== STATUS_ORDER[1])
+          return res.status(200).json({ RspCode: '02', Message: ResponseCode['02'] })
 
-        if (vnp_Params['vnp_ResponseCode'] === '00' && vnp_Params['vnp_TransactionStatus'] === '00') {
-          _order.status = 'completed'
+        if (respCode === '00' && respTrans === '00') {
+          _order.status = STATUS_ORDER[3]
+          _order.orderInfo = vnp_Params
+          await _order.save()
+        } else if (respCode !== '00' && respTrans !== '00') {
+          _order.status = STATUS_ORDER[2]
           _order.orderInfo = vnp_Params
           await _order.save()
         }
+
         return res.status(200).json({ Message: ResponseCode['00'], RspCode: '00' })
       }
 
