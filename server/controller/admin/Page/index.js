@@ -38,6 +38,17 @@ export default class PageController {
 
       const { ...formData } = req.body
 
+      let content = formData.content
+
+      for (let sectionName in content) {
+        const currentSection = content[sectionName]
+        if (currentSection.type === 'Products') {
+          currentSection.data = currentSection.data.map((item) => item._id)
+        }
+      }
+
+      formData.content = content
+
       await Page.updateOne({ _id: _id }, formData, { new: true })
 
       return new Response().updated({}, res)
@@ -49,7 +60,7 @@ export default class PageController {
   getPageById = async (req, res) => {
     try {
       const { _id } = req.params
-      console.log(_id)
+
       const _page = await Page.findOne({ _id: mongoose.Types.ObjectId(_id) })
 
       return new Response().fetched({ data: _page }, res)

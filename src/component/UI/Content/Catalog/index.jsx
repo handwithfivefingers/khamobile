@@ -7,7 +7,9 @@ import Card from '../Card'
 import ImageBlock from '../ImageBlock'
 import CustomSlider from '../Slider'
 import styles from './styles.module.scss'
+import { useEffect, useMemo, useState } from 'react'
 const Catalog = (props) => {
+  const [imgSrc, setImgSrc] = useState(props.data.image?.src)
   const router = useRouter()
   const className = clsx([
     styles.grid,
@@ -16,10 +18,31 @@ const Catalog = (props) => {
     },
   ])
 
+  useEffect(() => {
+    if (props.data.image?.src) {
+      setImgSrc((prev) => props.data.image?.src)
+    } else {
+      setImgSrc((prev) => '/public/404.png')
+    }
+  }, [props.data.image])
   const handleRedirect = (group) => {
-    // console.log(group)
     return router.push('/category/' + group.slug + '?page=1')
   }
+
+  const getImage = useMemo(() => {
+    let html = null
+
+    html = (
+      <ImageBlock
+        src={imgSrc || '/404.png'}
+        engine={imgSrc || '/404.png'}
+        height={'200px'}
+        className={styles.imgCatalog}
+        objectFit="contain"
+      />
+    )
+    return html
+  }, [imgSrc])
 
   return (
     <div className={className}>
@@ -30,16 +53,12 @@ const Catalog = (props) => {
         </div>
         <div className={styles.content}>
           <ImageBlock
-            src={
-              props?.data?.image?.src ||
-              'https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp'
-            }
-            engine={props?.data?.image?.src}
+            src={imgSrc || '/public/404.png'}
+            engine={imgSrc || '/public/404.png'}
             height={'200px'}
             className={styles.imgCatalog}
             objectFit="contain"
           />
-
           <div className={styles.listLink}>
             <ul className={styles.list}>
               {props.data?.categories?.map((cateItem) => (

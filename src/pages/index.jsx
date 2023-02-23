@@ -139,20 +139,11 @@ const Home = (props) => {
                   <SelfCarousel content={content?.['section_1']} />
                 </div>
                 <div className={styles.mainBanner}>
-                  <ImageBlock
-                    src={'/slide/banner-small-1.png'}
-                    className={styles.banner}
-                    alt="..."
-                    height="46%"
-                    modal
-                  />
-                  <ImageBlock
-                    src={'/slide/banner-small-2.png'}
-                    className={styles.banner}
-                    alt="..."
-                    height="46%"
-                    modal
-                  />
+                  {content?.['section_2']?.data.map((banner) => {
+                    return (
+                      <ImageBlock src={banner} className={styles.banner} alt="..." height="46%" modal key={banner} />
+                    )
+                  })}
                 </div>
               </div>
             </div>
@@ -162,46 +153,20 @@ const Home = (props) => {
 
       <section className="container">
         <div className="row">
-          <div className="col-6 col-md-3">
-            <ImageBlock
-              engine
-              src={'/public/service/service-1.png'}
-              className={styles.serviceBanner}
-              alt="..."
-              width={'390px'}
-              height="52%"
-            />
-          </div>
-          <div className="col-6 col-md-3">
-            <ImageBlock
-              engine
-              src={'/public/service/service-2.png'}
-              className={styles.serviceBanner}
-              alt="..."
-              width={'390px'}
-              height="52%"
-            />
-          </div>
-          <div className="col-6 col-md-3">
-            <ImageBlock
-              engine
-              src={'/public/service/service-3.png'}
-              className={styles.serviceBanner}
-              alt="..."
-              width={'390px'}
-              height="52%"
-            />
-          </div>
-          <div className="col-6 col-md-3">
-            <ImageBlock
-              engine
-              src={'/public/service/service-4.png'}
-              className={styles.serviceBanner}
-              alt="..."
-              width={'390px'}
-              height="52%"
-            />
-          </div>
+          {content?.['section_3']?.data.map((banner) => {
+            return (
+              <div className="col-6 col-md-3" key={banner}>
+                <ImageBlock
+                  engine
+                  src={banner}
+                  className={styles.serviceBanner}
+                  alt="..."
+                  width={'390px'}
+                  height="52%"
+                />
+              </div>
+            )
+          })}
         </div>
       </section>
 
