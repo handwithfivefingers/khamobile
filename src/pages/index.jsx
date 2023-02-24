@@ -12,15 +12,25 @@ import { useEffect, useState } from 'react'
 import { GlobalHomeService, PageService } from 'service/global'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import styles from './styles.module.scss'
+import { useCommonStore } from 'src/store'
 
 const Home = (props) => {
   const [data, setData] = useState([])
   const [content, setContent] = useState([])
+  const { product } = useCommonStore((state) => state)
+
+  const [section, setSection] = useState({})
   const router = useRouter()
   useEffect(() => {
     getHomeProd()
     getHomeSection()
   }, [])
+
+  useEffect(() => {
+    if (product.length && content) {
+      getProductInformation()
+    }
+  }, [product, content])
 
   const getHomeSection = async () => {
     try {
@@ -67,6 +77,19 @@ const Home = (props) => {
     } catch (error) {
       console.log(error)
     }
+  }
+
+  const getProductInformation = () => {
+    let productSection = content?.['section_4']?.data
+    const productData = []
+    for (let _id of productSection) {
+      let item = product.find((item) => item._id === _id)
+      if (item) {
+        productData.push(item)
+      }
+    }
+
+    setSection((prev) => ({ ...prev, section_4: productData }))
   }
 
   return (
@@ -141,7 +164,15 @@ const Home = (props) => {
                 <div className={styles.mainBanner}>
                   {content?.['section_2']?.data.map((banner) => {
                     return (
-                      <ImageBlock src={banner} className={styles.banner} alt="..." height="46%" modal key={banner} />
+                      <ImageBlock
+                        src={banner}
+                        className={styles.banner}
+                        alt="..."
+                        height="46%"
+                        modal
+                        key={banner}
+                        engine
+                      />
                     )
                   })}
                 </div>
@@ -177,14 +208,31 @@ const Home = (props) => {
               <div className="row">
                 <div className="col-12">
                   <Heading type="h3" center>
-                    {data?.[6]?.name}
+                    {/* {data?.[6]?.name} */}
                     {/* Sản Phẩm Nổi Bật */}
+                    {content?.['section_4']?.title}
                   </Heading>
                 </div>
 
                 <div className="col-12">
                   <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
-                    {data?.[6]?.child?.map((item, index) => {
+                    {/* {data?.[6]?.child?.map((item, index) => {
+                      return (
+                        <Card
+                          imgSrc={(item.image?.[0]?.src && item.image?.[0]?.src) || ''}
+                          cover
+                          title={item.title}
+                          price={item.price}
+                          type={item.type}
+                          slug={`/product/${item.slug}`}
+                          _id={item._id}
+                          key={[Math.random(), item._id, index]}
+                          border
+                          hover
+                        />
+                      )
+                    })} */}
+                    {section?.['section_4']?.map((item, index) => {
                       return (
                         <Card
                           imgSrc={(item.image?.[0]?.src && item.image?.[0]?.src) || ''}
@@ -218,7 +266,7 @@ const Home = (props) => {
 
           <div className="col-12">
             <CustomSlider type={TYPE_CAROUSEL.MUTI}>
-              {content?.['section_2']?.data?.map((customer, index) => (
+              {content?.['section_5']?.data?.map((customer, index) => (
                 <ImageBlock
                   src={process.env.API + customer}
                   height={'75%'}

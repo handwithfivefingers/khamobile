@@ -43,7 +43,20 @@ export default class PageController {
       for (let sectionName in content) {
         const currentSection = content[sectionName]
         if (currentSection.type === 'Products') {
-          currentSection.data = currentSection.data.map((item) => item._id)
+          currentSection.data = currentSection.data.map((item) => {
+            if (typeof item === 'string') {
+              return item
+            }
+            return item?._id
+          })
+        }
+        if (currentSection.type === 'Category') {
+          currentSection.data = currentSection.data.map((item) => {
+            if (typeof item === 'string') {
+              return item
+            }
+            return item?._id
+          })
         }
       }
 
@@ -53,6 +66,7 @@ export default class PageController {
 
       return new Response().updated({}, res)
     } catch (error) {
+      console.log('update error: ' + error)
       return new Response().error(error, res)
     }
   }

@@ -8,16 +8,16 @@ export default function DynamicImageComponentInput({ data, sectionName, onSubmit
   const { pageData, setPageData } = data
   const currentSection = pageData[sectionName]
 
-  const [sectionData, setSectionData] = useState(currentSection.data)
+  const [sectionData, setSectionData] = useState(currentSection)
 
   const handleAdd = () => {
-    const nextState = [...sectionData]
-    nextState.push('')
+    const nextState = { ...sectionData }
+    nextState.data.push('')
     setSectionData(nextState)
   }
   const handleRemove = (index) => {
-    const nextState = [...sectionData]
-    nextState.splice(index, 1)
+    const nextState = { ...sectionData }
+    nextState.data.splice(index, 1)
     setSectionData(nextState)
   }
 
@@ -31,7 +31,6 @@ export default function DynamicImageComponentInput({ data, sectionName, onSubmit
   const handleSubmit = () => {
     onSubmit(sectionName, sectionData)
   }
-  const handleMaxImage = () => {}
 
   return (
     <Form formValue={sectionData}>
@@ -39,7 +38,7 @@ export default function DynamicImageComponentInput({ data, sectionName, onSubmit
         <div className="col-12">
           <Stack spacing={12}>
             {max ? (
-              sectionData.length < currentSection.max && (
+              sectionData?.data?.length < currentSection.max && (
                 <Button onClick={handleAdd} appearance="default" color="primary">
                   Thêm
                 </Button>
@@ -53,16 +52,19 @@ export default function DynamicImageComponentInput({ data, sectionName, onSubmit
             {max && <code>Số lượng hình ảnh tối đa {currentSection.max}</code>}
           </Stack>
         </div>
-        {sectionData?.map((item, index) => {
+        {sectionData?.data?.map((item, index) => {
           return (
             <div className="col-6 ">
               <div className={styles.col}>
                 <KMInput
                   name={[sectionName, index].join('')}
-                  label={sectionName + `_${index + 1}`}
+                  label={`Hình ảnh ${index + 1}`}
                   onChange={(value) => handleInputchange(value, index)}
                   value={item}
                 />
+                <div className="d-flex" style={{ maxWidth: '100%', objectFit: 'contain' }}>
+                  <img src={process.env.API + item} style={{ objectFit: 'contain' }} width="100px" height="100px" />
+                </div>
                 <div className={styles.icon}>
                   <IconButton icon={<BsDashLg />} onClick={() => handleRemove(index)} />
                 </div>

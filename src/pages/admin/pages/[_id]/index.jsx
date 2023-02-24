@@ -47,9 +47,12 @@ export default function SinglePage(props) {
 
   const handleSubmit = async (sectionName, sectionData) => {
     try {
-      const nextState = JSON.parse(JSON.stringify(pageData))
-      nextState[sectionName].data = sectionData
-      const resp = await PageService.updatePage(data._id, { content: nextState })
+      const nextState = { ...pageData }
+      nextState[sectionName] = sectionData
+      const resp = await PageService.updatePage(data._id, {
+        content: nextState,
+      })
+
       toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
     } catch (error) {
       console.log(error)
@@ -65,21 +68,6 @@ export default function SinglePage(props) {
     <Content className="rounded">
       <PanelGroup>
         {Object.keys(pageData).map((key, index) => {
-          // const currentSection = pageData[key]
-          // if (currentSection.type === 'multiple') {
-          //   return (
-          //     <Panel header={currentSection.title} collapsible defaultExpanded={index === 0 ? true : false}>
-          //       <CardBlock className={'border-0'}>
-          //         <DynamicInput
-          //           data={{ pageData, setPageData }}
-          //           sectionName={key}
-          //           key={[key, index].join('_')}
-          //           onSubmit={handleSubmit}
-          //         />
-          //       </CardBlock>
-          //     </Panel>
-          //   )
-          // }
           return (
             <DynamicInput
               panelIndex={index}
@@ -98,32 +86,6 @@ export default function SinglePage(props) {
 const DynamicInput = ({ data, sectionName, onSubmit, panelIndex }) => {
   const { pageData, setPageData } = data
   const currentSection = pageData[sectionName]
-
-  const [sectionData, setSectionData] = useState(currentSection.data)
-
-  const handleAdd = () => {
-    const nextState = [...sectionData]
-    nextState.push('')
-    setSectionData(nextState)
-  }
-  const handleRemove = (index) => {
-    const nextState = [...sectionData]
-    nextState.splice(index, 1)
-    setSectionData(nextState)
-  }
-
-  const handleInputchange = (value, index) =>
-    setSectionData((prev) => {
-      let current = [...prev]
-      current[index] = value
-      return current
-    })
-
-  // console.log(sectionData)
-
-  const handleSubmit = () => {
-    onSubmit(sectionName, sectionData)
-  }
 
   return (
     <Panel
@@ -151,37 +113,6 @@ const DynamicInput = ({ data, sectionName, onSubmit, panelIndex }) => {
       defaultExpanded={panelIndex === 0 ? true : false}
     >
       <CardBlock className={'border-0'}>
-        {/* <Form formValue={sectionData}>
-          <div className="row">
-            <div className="col-12">
-              <Stack>
-                <Button onClick={handleAdd}>Thêm</Button>
-              </Stack>
-            </div>
-            {sectionData?.map((item, index) => {
-              return (
-                <div className="col-6 ">
-                  <div className={styles.col}>
-                    <KMInput
-                      name={[sectionName, index].join('')}
-                      label={sectionName + `_${index + 1}`}
-                      onChange={(value) => handleInputchange(value, index)}
-                      value={item}
-                    />
-                    <div className={styles.icon}>
-                      <IconButton icon={<BsDashLg />} onClick={() => handleRemove(index)} />
-                    </div>
-                  </div>
-                </div>
-              )
-            })}
-          </div>
-          <div className="d-flex justify-content-end">
-            <Button appearance="primary" onClick={handleSubmit}>
-              Save Section
-            </Button>
-          </div>
-        </Form> */}
         {currentSection.type === 'HomeSlider' ? (
           <DynamicImageComponentInput onSubmit={onSubmit} sectionName={sectionName} data={data} />
         ) : (

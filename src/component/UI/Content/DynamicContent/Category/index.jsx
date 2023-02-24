@@ -1,115 +1,271 @@
-import { useEffect, useState } from 'react'
+import Products from 'pages/admin/product'
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { BsPhone } from 'react-icons/bs'
-import { Button, Cascader, Form, SelectPicker, Tag, TagPicker } from 'rsuite'
+import { Button, Cascader, Form, Modal, SelectPicker, Tag, TagPicker } from 'rsuite'
 import ProductService from 'service/admin/Product.service'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import { useCommonStore } from 'src/store'
 import Card from '../../Card'
 import Catalog from '../../Catalog'
 import CustomSlider from '../../Slider'
+import styles from './styles.module.scss'
 export default function DynamicCategoryComponentInput({ data, sectionName, onSubmit }) {
   const { pageData, setPageData } = data
-  const currentSection = pageData[sectionName]
 
-  const [sectionData, setSectionData] = useState(currentSection.data)
-
-  const [position, setPosition] = useState('ltr')
+  const [sectionData, setSectionData] = useState(pageData[sectionName])
 
   const [catelogData, setCatelogData] = useState([])
 
-  const { productCategory, product } = useCommonStore((state) => state)
+  const { productCategory } = useCommonStore((state) => state)
+
+  const [activeCategory, setActiveCategory] = useState('')
+  const toolbarRef = useRef()
+
+  const [config, setConfig] = useState({
+    position: pageData[sectionName].config?.position || 'ltr',
+    moreLink: [],
+  })
+
+  useEffect(() => {
+    if (productCategory) {
+      let item = productCategory.find((cate) => cate.name === sectionData.title)
+      if (item) {
+        let { name, image, _id } = item
+        const formatData = {
+          _id,
+          name,
+          image,
+        }
+        setActiveCategory(_id)
+        setCatelogData((prev) => ({ ...prev, ...formatData }))
+      }
+    }
+  }, [productCategory])
 
   const handleSubmit = () => {
-    onSubmit(sectionName, sectionData)
+    const formatData = { ...sectionData }
+    formatData.config = config
+    console.log(formatData)
   }
 
-  const addProducts = (value, itemData, event) => {
-    const nextObject = []
-    for (let _id of value) {
-      let item = product.find((prod) => prod._id === _id)
-      nextObject.push(item)
-    }
-    setSectionData(nextObject)
+  const handleSelectCategory = ({ category, productFilter }) => {
+    setSectionData((prev) => ({ ...prev, title: category.name }))
+    setCatelogData(category)
   }
 
-  const onClean = (e) => {
-    setSectionData([])
+  const handleChangeCategory = (value) => {
+    setActiveCategory(value)
   }
+
+  const handleSetProduct = ({ rawProduct, formatProduct }) => {
+    // raw mean all field Product
+    // format mean just list id of array
+    setCatelogData((prev) => ({ ...prev, child: rawProduct }))
+    setSectionData((prev) => ({ ...prev, data: formatProduct }))
+  }
+
+  return (
+    <>
+      <Toolbar
+        position={{
+          pos: config.position,
+          setPos: (value) => setConfig((prev) => ({ ...prev, position: value })),
+        }}
+        category={{
+          categoryName: sectionData.title,
+          activeCategory: activeCategory,
+          productCategory: productCategory,
+          setSelectCategory: handleSelectCategory,
+          handleChangeCategory: handleChangeCategory,
+        }}
+        productProps={{
+          productSelect: sectionData.data,
+          setProduct: handleSetProduct,
+        }}
+        ref={toolbarRef}
+      />
+      <Form formValue={sectionData}>
+        <div className="row gx-2 gy-2">
+          <div className="col-12">
+            <Catalog data={catelogData} direction={config.position} />
+          </div>
+        </div>
+
+        <div className="d-flex justify-content-end">
+          <Button appearance="primary" onClick={handleSubmit}>
+            Save Section
+          </Button>
+        </div>
+      </Form>
+    </>
+  )
+}
+
+const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
+  const { pos, setPos } = position
+
+  const { categoryName, activeCategory, productCategory, setSelectCategory, handleChangeCategory } = category
+
+  const { productSelect, setProduct } = productProps
+
+  const [viewMode, setViewMode] = useState(true)
+
+  const { product } = useCommonStore((state) => state)
+
+  const [checkedKeys, setCheckedKeys] = useState(productSelect)
+
+  const [modal, setModal] = useState({
+    visible: false,
+    component: null,
+    window: 0,
+  })
+
+  useEffect(() => {
+    handleConfirm()
+  }, [product])
 
   const handleSelectCategory = (value, itemData, event) => {
-    console.log(value)
-    let { name, image } = value
+    let { name, image, _id } = value
     const formatData = {
+      _id,
       name,
       image,
       child: [],
     }
-    setCatelogData(formatData)
+    let productFilter = product.filter((item) => item.category.includes(_id))
+    setSelectCategory({
+      category: formatData,
+      productFilter: productFilter,
+    })
+    // reset List Product
+    setCheckedKeys([])
   }
-  console.log(catelogData)
+
+  const handleSelectPosition = (value) => {
+    setPos(value)
+  }
+
+  const handleOpenModalChangeProduct = () => {
+    setModal({
+      visible: true,
+    })
+  }
+
+  const handleClose = () => {
+    setModal((prev) => ({ ...prev, visible: false }))
+  }
+
+  const handleCancel = () => {
+    setCheckedKeys([])
+    handleClose()
+  }
+
+  const handleConfirm = () => {
+    let productOutCome = handleAddProduct(checkedKeys)
+    setProduct({ rawProduct: productOutCome, formatProduct: checkedKeys })
+    handleClose()
+  }
+
+  const handleAddProduct = (productIncome) => {
+    const productOutcome = []
+    for (let _id of productIncome) {
+      let item = product.find((prod) => prod._id === _id)
+      productOutcome.push(item)
+    }
+    return productOutcome
+  }
+
+  const renderPosition = useMemo(() => {
+    let html = null
+    if (viewMode) {
+      if (pos === 'ltr') {
+        html = <span className={styles.plainText}>Trái</span>
+      } else if (pos === 'rtl') {
+        html = <span className={styles.plainText}>Phải</span>
+      }
+    } else {
+      html = (
+        <SelectPicker
+          data={[
+            { label: 'Phải', value: 'rtl' },
+            { label: 'Trái', value: 'ltr' },
+          ]}
+          onSelect={handleSelectPosition}
+          value={pos}
+        />
+      )
+    }
+    return html
+  }, [viewMode, pos])
+
+  const renderCategory = useMemo(() => {
+    let html = null
+    if (viewMode) {
+      html = <span className={styles.plainText}>{categoryName}</span>
+    } else {
+      html = (
+        <Cascader
+          data={productCategory}
+          parentSelectable
+          style={{ width: 224 }}
+          labelKey="name"
+          valueKey="_id"
+          childrenKey="child"
+          onSelect={handleSelectCategory}
+          onChange={handleChangeCategory}
+          value={activeCategory}
+          preventOverflow
+        />
+      )
+    }
+    return html
+  }, [viewMode, category])
+
   return (
-    <Form formValue={sectionData} onChange={(value) => console.log(value)}>
-      <div className="row gx-2 gy-2">
-        <div className="col-12">
-          <div className="d-flex align-items-center" style={{ gap: 12 }}>
-            <div className="d-flex align-items-center" style={{ gap: 12 }}>
-              <span>Vị trí</span>
-              <SelectPicker
-                data={[
-                  { label: 'Phải', value: 'rtl' },
-                  { label: 'Trái', value: 'ltr' },
-                ]}
-                onSelect={(value) => setPosition(value)}
-              />
-            </div>
-            <div className="d-flex align-items-center" style={{ gap: 12 }}>
-              <span>Danh mục</span>
-              <Cascader
-                data={productCategory}
-                parentSelectable
-                style={{ width: 224 }}
-                labelKey="name"
-                valueKey="_id"
-                childrenKey="child"
-                onSelect={handleSelectCategory}
-              />
-            </div>
-          </div>
+    <div className={styles.toolbar}>
+      <div className={styles.listItem}>
+        <div className={styles.toolbarItem}>
+          <span className={styles.label}>Vị trí:</span>
+          {renderPosition}
         </div>
-        <div className="col-12">
-          <div className="d-flex align-items-center w-100">
-            <span style={{ width: '100px' }}>Sản phẩm</span>
-            <TagPicker
-              data={product}
-              valueKey={'_id'}
-              labelKey={'title'}
-              onSelect={addProducts}
-              onClean={onClean}
-              cleanable={false}
-              onClose={() => console.log('closed')}
-              block
-              renderValue={(values, items, tags) => {
-                return values.map((tag, index) => (
-                  <Tag key={tag}>
-                    <BsPhone /> {items[index]?.title}
-                  </Tag>
-                ))
-              }}
-              value={sectionData.map((item) => item._id || item)}
-              style={{ width: '100%' }}
-            />
-          </div>
+
+        <div className={styles.toolbarItem}>
+          <span>Danh mục:</span>
+          {renderCategory}
         </div>
-        <div className="col-12">
-          <Catalog data={catelogData} direction={position} />
+
+        <div className={styles.toolbarItem}>
+          {!viewMode && (
+            <Button appearance="default" color="primary" onClick={handleOpenModalChangeProduct}>
+              Thay đổi sản phẩm
+            </Button>
+          )}
         </div>
       </div>
 
-      <div className="d-flex justify-content-end">
-        <Button appearance="primary" onClick={handleSubmit}>
-          Save Section
+      <div className={styles.toggleButton}>
+        <Button appearance="default" color="primary" onClick={() => setViewMode(!viewMode)}>
+          {viewMode ? 'Chỉnh sửa' : 'Quay lại ban đầu'}
         </Button>
       </div>
-    </Form>
+
+      <Modal keyboard={false} open={modal.visible} onClose={handleClose} size={'full'}>
+        <Modal.Header>
+          <Modal.Title>Danh sách sản phẩm</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <Products select noEdit propsChecked={{ checkedKeys, setCheckedKeys }} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button onClick={handleConfirm} appearance="primary">
+            Ok
+          </Button>
+          <Button onClick={handleCancel} appearance="subtle">
+            Cancel
+          </Button>
+        </Modal.Footer>
+      </Modal>
+    </div>
   )
-}
+})

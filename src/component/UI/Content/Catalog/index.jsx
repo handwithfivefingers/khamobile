@@ -8,60 +8,52 @@ import ImageBlock from '../ImageBlock'
 import CustomSlider from '../Slider'
 import styles from './styles.module.scss'
 import { useEffect, useMemo, useState } from 'react'
-const Catalog = (props) => {
-  const [imgSrc, setImgSrc] = useState(props.data.image?.src)
+const Catalog = ({ data, direction }) => {
+  const [imgSrc, setImgSrc] = useState(data?.image?.src)
+  const [categories, setCategories] = useState()
   const router = useRouter()
+
   const className = clsx([
     styles.grid,
     {
-      [styles.rtl]: props?.direction === 'rtl',
+      [styles.rtl]: direction === 'rtl',
     },
   ])
 
   useEffect(() => {
-    if (props.data.image?.src) {
-      setImgSrc((prev) => props.data.image?.src)
+    onGetImage(data?.image)
+  }, [data])
+
+  const onGetImage = (image) => {
+    if (image?.src) {
+      setImgSrc(image?.src)
     } else {
-      setImgSrc((prev) => '/public/404.png')
+      setImgSrc('/400.png')
     }
-  }, [props.data.image])
+  }
+
   const handleRedirect = (group) => {
     return router.push('/category/' + group.slug + '?page=1')
   }
-
-  const getImage = useMemo(() => {
-    let html = null
-
-    html = (
-      <ImageBlock
-        src={imgSrc || '/404.png'}
-        engine={imgSrc || '/404.png'}
-        height={'200px'}
-        className={styles.imgCatalog}
-        objectFit="contain"
-      />
-    )
-    return html
-  }, [imgSrc])
 
   return (
     <div className={className}>
       <div className={clsx(styles.col, styles.firstCol)}>
         <div className={styles.title}>
-          <h5>{props.data?.name}</h5>
+          <h5>{data?.name}</h5>
           <div className="title__divider" />
         </div>
         <div className={styles.content}>
           <ImageBlock
-            src={imgSrc || '/public/404.png'}
-            engine={imgSrc || '/public/404.png'}
+            src={imgSrc || '/400.png'}
+            engine={imgSrc !== '/400.png' ? true : false}
             height={'200px'}
             className={styles.imgCatalog}
             objectFit="contain"
           />
           <div className={styles.listLink}>
             <ul className={styles.list}>
-              {props.data?.categories?.map((cateItem) => (
+              {data?.categories?.map((cateItem) => (
                 <li key={[cateItem._id, cateItem.slug]} className={styles.subCateItem}>
                   <Link href={`/category/${cateItem.slug}?page=1`} passHref>
                     <a className="text-truncate w-100" alt={cateItem.name}>
@@ -85,7 +77,7 @@ const Catalog = (props) => {
 
       <div className={clsx(styles.lastCol, styles.col)}>
         <div className={styles.title}>
-          <h5>{props.data?.name} Nổi bật </h5>
+          <h5>{data?.name} Nổi bật </h5>
           <div className="title__divider" />
         </div>
 
@@ -97,12 +89,12 @@ const Catalog = (props) => {
               autoplay: true,
             }}
           >
-            {props.data?.child?.map((item, index) => {
+            {data?.child?.map((item, index) => {
               return (
                 <Card
-                  imgSrc={item.image?.[0]?.src ? item.image?.[0]?.src : ''}
-                  title={item.title}
-                  price={item.price}
+                  imgSrc={item?.image?.[0]?.src ? item?.image?.[0]?.src : ''}
+                  title={item?.title}
+                  price={item?.price}
                   underlinePrice={item?.underlinePrice || null}
                   type={item.type}
                   variable={item.variable}

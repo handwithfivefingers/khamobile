@@ -9,19 +9,19 @@ export default function DynamicProductComponentInput({ data, sectionName, onSubm
   const { pageData, setPageData } = data
   const currentSection = pageData[sectionName]
 
-  const [sectionData, setSectionData] = useState(currentSection.data)
+  const [sectionData, setSectionData] = useState(currentSection)
+  const [activeProduct, setActiveProduct] = useState([])
   const { product } = useCommonStore((state) => state)
-
   useEffect(() => {
     if (product) {
-      const activeProduct = []
-      for (let _id of sectionData) {
+      const nextProduct = []
+      for (let _id of sectionData?.data) {
         let item = product.find((prod) => prod._id === _id)
         if (item) {
-          activeProduct.push(item)
+          nextProduct.push(item)
         }
       }
-      setSectionData(activeProduct)
+      setActiveProduct(nextProduct)
     }
   }, [product])
 
@@ -37,11 +37,9 @@ export default function DynamicProductComponentInput({ data, sectionName, onSubm
     }
     setSectionData(nextObject)
   }
-  const onClean = (e) => {
-    setSectionData([])
-  }
+
   return (
-    <Form formValue={sectionData} onChange={(value) => console.log(value)}>
+    <Form formValue={sectionData}>
       <div className="row">
         <div className="col-12">
           <TagPicker
@@ -49,9 +47,7 @@ export default function DynamicProductComponentInput({ data, sectionName, onSubm
             valueKey={'_id'}
             labelKey={'title'}
             onSelect={addProducts}
-            onClean={onClean}
             cleanable={false}
-            onClose={() => console.log('closed')}
             block
             renderValue={(values, items, tags) => {
               return values.map((tag, index) => (
@@ -60,29 +56,29 @@ export default function DynamicProductComponentInput({ data, sectionName, onSubm
                 </Tag>
               ))
             }}
-            value={sectionData.map((item) => item._id || item)}
+            value={sectionData.data?.map((item) => item?._id || item)}
           />
         </div>
         <div className="col-12">
           <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
-            {sectionData.map((item, index) => {
+            {activeProduct.map((item, index) => {
               return (
                 <Card
-                  imgSrc={(item.image?.[0]?.src && item.image?.[0]?.src) || ''}
+                  imgSrc={(item?.image?.[0]?.src && item.image?.[0]?.src) || ''}
                   cover
-                  title={item.title}
-                  price={item.price}
-                  type={item.type}
-                  slug={`/product/${item.slug}`}
-                  _id={item._id}
-                  key={[Math.random(), item._id, index]}
+                  title={item?.title}
+                  price={item?.price}
+                  type={item?.type}
+                  slug={`/product/${item?.slug}`}
+                  _id={item?._id}
+                  key={[Math.random(), item?._id, index]}
                   border
                   hover
                 />
               )
             })}
-            {sectionData.length < 5
-              ? Array.from(Array(5 - sectionData.length).keys()).map((item) => <h2>{item}</h2>)
+            {sectionData.data?.length < 5
+              ? Array.from(Array(5 - sectionData.data?.length).keys()).map((item) => <h2>{item}</h2>)
               : ''}
           </CustomSlider>
         </div>

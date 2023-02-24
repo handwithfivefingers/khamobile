@@ -18,14 +18,14 @@ const ImageBlock = ({
 }) => {
   useEffect(() => {})
 
-  const [img, setImg] = useState()
+  const [img, setImg] = useState(src)
   const [state, setState] = useState(false)
 
   useEffect(() => {
     if (src) {
       setImg(src)
     } else {
-      setImg('/404.png')
+      setImg('/400.png')
     }
   }, [src])
 
@@ -59,7 +59,7 @@ const ImageBlock = ({
         }}
         objectFit={objectFit}
         onError={() => {
-          setImg('/404.png')
+          setImg('/400.png')
         }}
       />
       {modal && (
