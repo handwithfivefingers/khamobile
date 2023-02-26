@@ -3,7 +3,7 @@ import Script from 'next/script'
 import { useEffect } from 'react'
 import { CustomProvider } from 'rsuite'
 import { AuthenticateService } from 'service/authenticate'
-import { GlobalCategoryService } from 'service/global'
+import { GlobalCategoryService, GlobalProductService } from 'service/global'
 import { useAuthorizationStore, useCommonStore, useCartStore } from 'src/store'
 import CommonLayout from '../component/UI/Layout'
 import 'rsuite/dist/rsuite.min.css'
@@ -16,12 +16,13 @@ export default function MyApp({ Component, pageProps }) {
   const { addToCart } = useCartStore()
 
   const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
-  const changeProductCategory = useCommonStore((state) => state.changeProductCategory)
+  const { changeProductCategory, changeProduct } = useCommonStore((state) => state)
 
   useEffect(() => {
     authenticateUser()
     getCartItem()
     loadCategory()
+    loadProduct()
   }, [])
 
   const getCartItem = () => {
@@ -53,8 +54,22 @@ export default function MyApp({ Component, pageProps }) {
   const loadCategory = async () => {
     try {
       const resp = await GlobalCategoryService.getProdCate({ all: true })
+      // console.log(resp.data.data)
+
       if (resp.status === 200) {
         changeProductCategory(resp.data.data)
+      }
+    } catch (error) {
+      console.log('fetch category failed', error.message)
+    }
+  }
+
+  const loadProduct = async () => {
+    try {
+      const resp = await GlobalProductService.getProduct({ all: true })
+      // console.log(resp.data.data)
+      if (resp.status === 200) {
+        changeProduct(resp.data.data)
       }
     } catch (error) {
       console.log('fetch category failed', error.message)

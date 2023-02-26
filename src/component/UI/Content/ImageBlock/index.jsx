@@ -1,11 +1,11 @@
 import clsx from 'clsx'
 import Image from 'next/image'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { Modal } from 'rsuite'
 import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
 
-export default function ImageBlock({
+const ImageBlock = ({
   src,
   alt,
   className,
@@ -15,10 +15,19 @@ export default function ImageBlock({
   objectFit = 'cover',
   modal = false,
   ...props
-}) {
-  const imageRef = useRef(src)
+}) => {
+  useEffect(() => {})
 
+  const [img, setImg] = useState(src)
   const [state, setState] = useState(false)
+
+  useEffect(() => {
+    if (src) {
+      setImg(src)
+    } else {
+      setImg('/400.png')
+    }
+  }, [src])
 
   const imgClass = clsx([
     styles.img,
@@ -38,19 +47,20 @@ export default function ImageBlock({
         alt={alt}
         onClick={() => openImageViewer(true)}
         layout="fill"
-        src={imageRef.current}
+        src={img}
         blurDataURL={
           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
         }
         placeholder="blur"
         loading={'lazy'}
         loader={({ src, width, quality }) => {
-          return engine ? process.env.API + src + `?w=${width}&q=${quality || 50}` : src
+          let newSrc = engine ? process.env.API + src + `?w=${width}&q=${quality || 50}` : src
+          return newSrc
         }}
         objectFit={objectFit}
-        ref={imageRef}
-        onError={() => (imageRef.current = '/400.png')}
-        // {...props}
+        onError={() => {
+          setImg('/400.png')
+        }}
       />
       {modal && (
         <Modal open={state} onClose={() => setState(false)} size="md" style={{ background: 'transparent' }}>
@@ -62,3 +72,5 @@ export default function ImageBlock({
     </div>
   )
 }
+
+export default ImageBlock

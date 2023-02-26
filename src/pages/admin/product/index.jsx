@@ -1,20 +1,17 @@
-import CheckIcon from '@rsuite/icons/Check'
-import CloseIcon from '@rsuite/icons/Close'
 import EditIcon from '@rsuite/icons/Edit'
 import PlusIcon from '@rsuite/icons/Plus'
 import TrashIcon from '@rsuite/icons/Trash'
 import AdminLayout from 'component/UI/AdminLayout'
 import moment from 'moment'
 import dynamic from 'next/dynamic'
-import { forwardRef, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FaClone } from 'react-icons/fa'
 import {
   Button,
-  ButtonGroup,
+  Checkbox,
   Content,
   IconButton,
   Input,
-  Message,
   Modal,
   Pagination,
   Popover,
@@ -89,8 +86,23 @@ const ActionCell = ({ rowData, dataKey, onEdit, onDuplicate, ...props }) => {
   )
 }
 
-const Products = () => {
-  const changeTitle = useCommonStore((state) => state.changeTitle)
+const CheckCell = ({ rowData, onChange, checkedKeys, dataKey, ...props }) => (
+  <Cell {...props} style={{ padding: 0 }}>
+    <div style={{ lineHeight: '46px' }}>
+      <Checkbox
+        value={rowData[dataKey]}
+        inline
+        onChange={onChange}
+        checked={checkedKeys?.some((item) => item === rowData[dataKey])}
+      />
+    </div>
+  </Cell>
+)
+
+const Products = (props) => {
+  const { select, noEdit, propsChecked } = props
+
+  const { product: productStore, changeProduct, changeTitle } = useCommonStore((state) => state)
 
   const [sortColumn, setSortColumn] = useState()
 
@@ -118,8 +130,12 @@ const Products = () => {
   })
 
   useEffect(() => {
-    changeTitle('Page Products')
-    getProducts()
+    if (!props) {
+      changeTitle('Page Products')
+      getProducts()
+    } else {
+      getProducts()
+    }
     getCategory()
   }, [])
 
@@ -136,7 +152,6 @@ const Products = () => {
 
   const getCategory = async () => {
     const resp = await CategoryService.getProdCate()
-    console.log(resp.data)
     setCategorySelector(resp.data.data.map((item) => ({ label: item.name, value: item.name })))
   }
 
@@ -144,6 +159,7 @@ const Products = () => {
     try {
       setLoading(true)
       const resp = await ProductService.getProduct()
+      // changeProduct(resp.data.data)
       setProduct(resp.data.data)
       setFilterData(resp.data.data)
     } catch (error) {
@@ -249,21 +265,27 @@ const Products = () => {
 
   const getData = () => {
     if (sortColumn && sortType) {
-      const prod = filterData.sort((a, b) => {
-        let x = moment(a[sortColumn]).valueOf()
-        let y = moment(b[sortColumn]).valueOf()
-        if (sortType === 'asc') {
-          return x - y
-        } else {
-          return y - x
-        }
-      })
-
-      return filterData.filter((v, i) => {
-        const start = limit * (page - 1)
-        const end = start + limit
-        return i >= start && i < end
-      })
+      if (select && propsChecked.checkedKeys) {
+        return filterData.sort((a, b) => {
+          // b._id
+          if (propsChecked.checkedKeys.includes(b._id) && propsChecked.checkedKeys.includes(a._id)) {
+            return -1
+          }
+          if (propsChecked.checkedKeys.includes(b._id)) {
+            return 1
+          }
+          if (propsChecked.checkedKeys.includes(a._id)) {
+            return -1
+          }
+          return 0
+        })
+      } else {
+        return filterData.filter((v, i) => {
+          const start = limit * (page - 1)
+          const end = start + limit
+          return i >= start && i < end
+        })
+      }
     }
 
     return filterData.filter((v, i) => {
@@ -287,13 +309,21 @@ const Products = () => {
     }
   }
 
-  const handleClose = () => setModal({ open: false, component: null })
+  const handleClose = () => {
+    setModal({ open: false, component: null })
+  }
 
   const handleChangeLimit = (dataKey) => {
     setPage(1)
     setLimit(dataKey)
   }
 
+  const handleCheck = (value, checked) => {
+    const { checkedKeys, setCheckedKeys } = propsChecked
+    const keys = checked ? [...checkedKeys, value] : checkedKeys.filter((item) => item !== value)
+    setCheckedKeys(keys)
+  }
+  // debugger
   return (
     <>
       <Stack spacing={10} className="py-2">
@@ -315,6 +345,13 @@ const Products = () => {
           sortType={sortType}
           onSortColumn={handleSortColumn}
         >
+          {select && (
+            <Column width={50} align="center" sortable>
+              <HeaderCell style={{ padding: 0 }}></HeaderCell>
+              <CheckCell dataKey="_id" checkedKeys={propsChecked.checkedKeys} onChange={handleCheck} />
+            </Column>
+          )}
+
           <Column width={60} align="center" fixed fullText>
             <HeaderCell>Id</HeaderCell>
             <Cell dataKey="_id">{(rowData) => <span onClick={(e) => e.preventDefault()}>{rowData['_id']}</span>}</Cell>
@@ -343,25 +380,26 @@ const Products = () => {
             <HeaderCell>Price</HeaderCell>
             <Cell dataKey="price">{(rowData) => <span>{formatCurrency(rowData.price, { symbol: ' đ' })}</span>}</Cell>
           </Column>
+          {!noEdit && (
+            <Column width={120} align="center">
+              <HeaderCell>
+                <IconButton
+                  icon={<PlusIcon />}
+                  size="xs"
+                  color="blue"
+                  appearance="primary"
+                  onClick={() =>
+                    setModal({
+                      open: true,
+                      component: <ProductCreateModal onSubmit={onCreate} />,
+                    })
+                  }
+                />
+              </HeaderCell>
 
-          <Column width={120} align="center">
-            <HeaderCell>
-              <IconButton
-                icon={<PlusIcon />}
-                size="xs"
-                color="blue"
-                appearance="primary"
-                onClick={() =>
-                  setModal({
-                    open: true,
-                    component: <ProductCreateModal onSubmit={onCreate} />,
-                  })
-                }
-              />
-            </HeaderCell>
-
-            <ActionCell onDelete={handleDelete} onEdit={handleOpenProduct} onDuplicate={handleDuplicate} right={0} />
-          </Column>
+              <ActionCell onDelete={handleDelete} onEdit={handleOpenProduct} onDuplicate={handleDuplicate} right={0} />
+            </Column>
+          )}
         </Table>
         <div style={{ padding: 20 }}>
           <Pagination

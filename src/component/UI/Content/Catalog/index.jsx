@@ -7,17 +7,32 @@ import Card from '../Card'
 import ImageBlock from '../ImageBlock'
 import CustomSlider from '../Slider'
 import styles from './styles.module.scss'
-const Catalog = (props) => {
+import { useEffect, useMemo, useState } from 'react'
+const Catalog = ({ data, direction }) => {
+  const [imgSrc, setImgSrc] = useState(data?.image?.src)
+  const [categories, setCategories] = useState()
   const router = useRouter()
+
   const className = clsx([
     styles.grid,
     {
-      [styles.rtl]: props?.direction === 'rtl',
+      [styles.rtl]: direction === 'rtl',
     },
   ])
 
+  useEffect(() => {
+    onGetImage(data?.image)
+  }, [data])
+
+  const onGetImage = (image) => {
+    if (image?.src) {
+      setImgSrc(image?.src)
+    } else {
+      setImgSrc('/400.png')
+    }
+  }
+
   const handleRedirect = (group) => {
-    // console.log(group)
     return router.push('/category/' + group.slug + '?page=1')
   }
 
@@ -25,24 +40,20 @@ const Catalog = (props) => {
     <div className={className}>
       <div className={clsx(styles.col, styles.firstCol)}>
         <div className={styles.title}>
-          <h5>{props.data?.name}</h5>
+          <h5>{data?.name}</h5>
           <div className="title__divider" />
         </div>
         <div className={styles.content}>
           <ImageBlock
-            src={
-              props?.data?.image?.src ||
-              'https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp'
-            }
-            engine={props?.data?.image?.src}
+            src={imgSrc || '/400.png'}
+            engine={imgSrc !== '/400.png' ? true : false}
             height={'200px'}
             className={styles.imgCatalog}
             objectFit="contain"
           />
-
           <div className={styles.listLink}>
             <ul className={styles.list}>
-              {props.data?.categories?.map((cateItem) => (
+              {data?.categories?.map((cateItem) => (
                 <li key={[cateItem._id, cateItem.slug]} className={styles.subCateItem}>
                   <Link href={`/category/${cateItem.slug}?page=1`} passHref>
                     <a className="text-truncate w-100" alt={cateItem.name}>
@@ -66,7 +77,7 @@ const Catalog = (props) => {
 
       <div className={clsx(styles.lastCol, styles.col)}>
         <div className={styles.title}>
-          <h5>{props.data?.name} Nổi bật </h5>
+          <h5>{data?.name} Nổi bật </h5>
           <div className="title__divider" />
         </div>
 
@@ -78,18 +89,19 @@ const Catalog = (props) => {
               autoplay: true,
             }}
           >
-            {props.data?.child?.map((item, index) => {
+            {data?.child?.map((item, index) => {
+              let { image, title, price, underlinePrice, type, variable, _id, slug } = item
               return (
                 <Card
-                  imgSrc={item.image?.[0]?.src ? item.image?.[0]?.src : ''}
-                  title={item.title}
-                  price={item.price}
-                  underlinePrice={item?.underlinePrice || null}
-                  type={item.type}
-                  variable={item.variable}
-                  slug={`/product/${item.slug}`}
-                  key={[index, item._id]}
-                  _id={item._id}
+                  imgSrc={image?.[0]?.src ? image[0]?.src : ''}
+                  title={title || undefined}
+                  price={price || undefined}
+                  underlinePrice={underlinePrice || undefined || null}
+                  type={type || undefined}
+                  variable={variable || undefined}
+                  slug={`/product/${slug || undefined}`}
+                  key={[index, _id || undefined]}
+                  _id={_id || undefined}
                   border
                   hover
                 />

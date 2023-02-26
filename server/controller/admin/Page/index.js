@@ -38,10 +38,35 @@ export default class PageController {
 
       const { ...formData } = req.body
 
+      let content = formData.content
+
+      for (let sectionName in content) {
+        const currentSection = content[sectionName]
+        if (currentSection.type === 'Products') {
+          currentSection.data = currentSection.data.map((item) => {
+            if (typeof item === 'string') {
+              return item
+            }
+            return item?._id
+          })
+        }
+        if (currentSection.type === 'Category') {
+          currentSection.data = currentSection.data.map((item) => {
+            if (typeof item === 'string') {
+              return item
+            }
+            return item?._id
+          })
+        }
+      }
+
+      formData.content = content
+
       await Page.updateOne({ _id: _id }, formData, { new: true })
 
       return new Response().updated({}, res)
     } catch (error) {
+      console.log('update error: ' + error)
       return new Response().error(error, res)
     }
   }
@@ -49,7 +74,7 @@ export default class PageController {
   getPageById = async (req, res) => {
     try {
       const { _id } = req.params
-      console.log(_id)
+
       const _page = await Page.findOne({ _id: mongoose.Types.ObjectId(_id) })
 
       return new Response().fetched({ data: _page }, res)

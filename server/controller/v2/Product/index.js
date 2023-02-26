@@ -298,7 +298,7 @@ export default class ProductController {
       }
 
       if (all) {
-        _prod = await Product.find().select('-content -_id -createdAt -updatedAt -__v')
+        _prod = await Product.find().select('-content -createdAt -updatedAt -__v')
       } else {
         if (price || createdAt) {
           _prod = await Product.find({
