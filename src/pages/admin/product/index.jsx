@@ -99,8 +99,10 @@ const CheckCell = ({ rowData, onChange, checkedKeys, dataKey, ...props }) => (
   </Cell>
 )
 
-const Products = ({ select = false, noEdit = false, propsChecked, ...props }) => {
-  const changeTitle = useCommonStore((state) => state.changeTitle)
+const Products = (props) => {
+  const { select, noEdit, propsChecked } = props
+
+  const { product: productStore, changeProduct, changeTitle } = useCommonStore((state) => state)
 
   const [sortColumn, setSortColumn] = useState()
 
@@ -128,8 +130,12 @@ const Products = ({ select = false, noEdit = false, propsChecked, ...props }) =>
   })
 
   useEffect(() => {
-    changeTitle('Page Products')
-    getProducts()
+    if (!props) {
+      changeTitle('Page Products')
+      getProducts()
+    } else {
+      getProducts()
+    }
     getCategory()
   }, [])
 
@@ -146,7 +152,6 @@ const Products = ({ select = false, noEdit = false, propsChecked, ...props }) =>
 
   const getCategory = async () => {
     const resp = await CategoryService.getProdCate()
-    console.log(resp.data)
     setCategorySelector(resp.data.data.map((item) => ({ label: item.name, value: item.name })))
   }
 
@@ -154,6 +159,7 @@ const Products = ({ select = false, noEdit = false, propsChecked, ...props }) =>
     try {
       setLoading(true)
       const resp = await ProductService.getProduct()
+      // changeProduct(resp.data.data)
       setProduct(resp.data.data)
       setFilterData(resp.data.data)
     } catch (error) {
@@ -258,7 +264,6 @@ const Products = ({ select = false, noEdit = false, propsChecked, ...props }) =>
   }
 
   const getData = () => {
-    console.log('getData', sortColumn, sortType)
     if (sortColumn && sortType) {
       if (select && propsChecked.checkedKeys) {
         return filterData.sort((a, b) => {
@@ -304,7 +309,9 @@ const Products = ({ select = false, noEdit = false, propsChecked, ...props }) =>
     }
   }
 
-  const handleClose = () => setModal({ open: false, component: null })
+  const handleClose = () => {
+    setModal({ open: false, component: null })
+  }
 
   const handleChangeLimit = (dataKey) => {
     setPage(1)
@@ -316,7 +323,7 @@ const Products = ({ select = false, noEdit = false, propsChecked, ...props }) =>
     const keys = checked ? [...checkedKeys, value] : checkedKeys.filter((item) => item !== value)
     setCheckedKeys(keys)
   }
-
+  // debugger
   return (
     <>
       <Stack spacing={10} className="py-2">

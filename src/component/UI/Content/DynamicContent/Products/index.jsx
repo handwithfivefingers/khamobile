@@ -1,67 +1,45 @@
-import { useEffect, useState } from 'react'
-import { BsPhone } from 'react-icons/bs'
-import { Button, Form, Tag, TagPicker } from 'rsuite'
+import Products from 'pages/admin/product'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Button, Modal } from 'rsuite'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import { useCommonStore } from 'src/store'
 import Card from '../../Card'
 import CustomSlider from '../../Slider'
-export default function DynamicProductComponentInput({ data, sectionName, onSubmit }) {
-  const { pageData, setPageData } = data
-  const currentSection = pageData[sectionName]
+import styles from './styles.module.scss'
+export default function DynamicProductComponentInput({ data, pageIndex, onSubmit }) {
+  // const currentSection = data
 
-  const [sectionData, setSectionData] = useState(currentSection)
-  const [activeProduct, setActiveProduct] = useState([])
-  const { product } = useCommonStore((state) => state)
-  useEffect(() => {
-    if (product) {
-      const nextProduct = []
-      for (let _id of sectionData?.data) {
-        let item = product.find((prod) => prod._id === _id)
-        if (item) {
-          nextProduct.push(item)
-        }
-      }
-      setActiveProduct(nextProduct)
-    }
-  }, [product])
+  const [sectionData, setSectionData] = useState(data)
+  const [product, setProduct] = useState()
+  const toolbarRef = useRef()
 
   const handleSubmit = () => {
-    onSubmit(sectionName, sectionData)
+    onSubmit(sectionData, pageIndex)
   }
 
-  const addProducts = (value, itemData, event) => {
-    const nextObject = []
-    for (let _id of value) {
-      let item = product.find((prod) => prod._id === _id)
-      nextObject.push(item)
-    }
-    setSectionData(nextObject)
+  const handleSetProduct = ({ rawProduct, formatProduct }) => {
+    setProduct({ rawProduct, formatProduct })
+    setSectionData((prev) => {
+      prev.data = formatProduct
+      return prev
+    })
   }
 
   return (
-    <Form formValue={sectionData}>
+    <>
       <div className="row">
         <div className="col-12">
-          <TagPicker
-            data={product}
-            valueKey={'_id'}
-            labelKey={'title'}
-            onSelect={addProducts}
-            cleanable={false}
-            block
-            renderValue={(values, items, tags) => {
-              return values.map((tag, index) => (
-                <Tag key={tag}>
-                  <BsPhone /> {items[index]?.title}
-                </Tag>
-              ))
+          <Toolbar
+            productProps={{
+              productSelect: sectionData?.data || [],
+              setProduct: handleSetProduct,
             }}
-            value={sectionData.data?.map((item) => item?._id || item)}
+            ref={toolbarRef}
           />
         </div>
         <div className="col-12">
           <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
-            {activeProduct.map((item, index) => {
+            {product?.rawProduct?.map((item, index) => {
               return (
                 <Card
                   imgSrc={(item?.image?.[0]?.src && item.image?.[0]?.src) || ''}
@@ -77,8 +55,8 @@ export default function DynamicProductComponentInput({ data, sectionName, onSubm
                 />
               )
             })}
-            {sectionData.data?.length < 5
-              ? Array.from(Array(5 - sectionData.data?.length).keys()).map((item) => <h2>{item}</h2>)
+            {sectionData?.data?.length < 5
+              ? Array.from(Array(5 - sectionData?.data?.length).keys()).map((item) => <h2>{item}</h2>)
               : ''}
           </CustomSlider>
         </div>
@@ -89,6 +67,101 @@ export default function DynamicProductComponentInput({ data, sectionName, onSubm
           Save Section
         </Button>
       </div>
-    </Form>
+    </>
+  )
+}
+
+const Toolbar = forwardRef(({ productProps }, ref) => {
+  const { productSelect, setProduct } = productProps
+
+  const [viewMode, setViewMode] = useState(true)
+
+  const { product } = useCommonStore((state) => state)
+
+  const [checkedKeys, setCheckedKeys] = useState(productSelect)
+
+  const [modal, setModal] = useState(false)
+
+  useEffect(() => {
+    handleConfirm()
+  }, [product, checkedKeys])
+
+  const handleOpenModalChangeProduct = (e) => {
+    e.preventDefault()
+    setModal(true)
+  }
+
+  const handleClose = () => {
+    setModal(false)
+  }
+
+  const handleCancel = () => {
+    setCheckedKeys([])
+    handleClose()
+  }
+
+  const handleConfirm = () => {
+    let productOutCome = handleAddProduct(checkedKeys)
+    setProduct({ rawProduct: productOutCome, formatProduct: checkedKeys })
+    handleClose()
+  }
+
+  const handleAddProduct = (productIncome) => {
+    const productOutcome = []
+    for (let _id of productIncome) {
+      let item = product.find((prod) => prod._id === _id)
+      productOutcome.push(item)
+    }
+    return productOutcome
+  }
+
+  return (
+    <div className={styles.toolbar}>
+      <div className={styles.listItem}>
+        <div className={styles.toolbarItem}>
+          {!viewMode && (
+            <Button appearance="default" color="primary" onClick={handleOpenModalChangeProduct} type="button">
+              Thay đổi sản phẩm
+            </Button>
+          )}
+        </div>
+      </div>
+
+      <div className={styles.toggleButton}>
+        <Button appearance="default" color="primary" onClick={() => setViewMode(!viewMode)} type="button">
+          {viewMode ? 'Chỉnh sửa' : 'Quay lại ban đầu'}
+        </Button>
+      </div>
+
+      <ProductModal
+        open={modal}
+        handleClose={handleClose}
+        handleConfirm={handleConfirm}
+        handleCancel={handleCancel}
+        propsChecked={{ checkedKeys, setCheckedKeys }}
+      />
+    </div>
+  )
+})
+
+const ProductModal = ({ open, handleClose, handleConfirm, handleCancel, ...props }) => {
+  return (
+    <Modal open={open} onClose={handleClose} size={'full'} backdrop={true} autoFocus>
+      <Modal.Header>
+        <Modal.Title>Danh sách sản phẩm</Modal.Title>
+      </Modal.Header>
+
+      <Modal.Body>
+        <Products select noEdit {...props} />
+      </Modal.Body>
+      <Modal.Footer>
+        <Button onClick={handleConfirm} appearance="primary">
+          Ok
+        </Button>
+        <Button onClick={handleCancel} appearance="subtle">
+          Cancel
+        </Button>
+      </Modal.Footer>
+    </Modal>
   )
 }

@@ -1,18 +1,11 @@
 import Products from 'pages/admin/product'
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
-import { BsPhone } from 'react-icons/bs'
-import { Button, Cascader, Form, Modal, SelectPicker, Tag, TagPicker } from 'rsuite'
-import ProductService from 'service/admin/Product.service'
-import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
+import { Button, Cascader, Form, Modal, SelectPicker } from 'rsuite'
 import { useCommonStore } from 'src/store'
-import Card from '../../Card'
 import Catalog from '../../Catalog'
-import CustomSlider from '../../Slider'
 import styles from './styles.module.scss'
-export default function DynamicCategoryComponentInput({ data, sectionName, onSubmit }) {
-  const { pageData, setPageData } = data
-
-  const [sectionData, setSectionData] = useState(pageData[sectionName])
+export default function DynamicCategoryComponentInput({ data, pageIndex, onSubmit }) {
+  const [sectionData, setSectionData] = useState(data)
 
   const [catelogData, setCatelogData] = useState([])
 
@@ -22,7 +15,7 @@ export default function DynamicCategoryComponentInput({ data, sectionName, onSub
   const toolbarRef = useRef()
 
   const [config, setConfig] = useState({
-    position: pageData[sectionName].config?.position || 'ltr',
+    position: data.options?.position || 'ltr',
     moreLink: [],
   })
 
@@ -42,10 +35,11 @@ export default function DynamicCategoryComponentInput({ data, sectionName, onSub
     }
   }, [productCategory])
 
-  const handleSubmit = () => {
+  const handleSubmit = (e) => {
+    e.preventDefault()
     const formatData = { ...sectionData }
-    formatData.config = config
-    console.log(formatData)
+    formatData.options = config
+    onSubmit(formatData, pageIndex)
   }
 
   const handleSelectCategory = ({ category, productFilter }) => {
@@ -92,7 +86,7 @@ export default function DynamicCategoryComponentInput({ data, sectionName, onSub
         </div>
 
         <div className="d-flex justify-content-end">
-          <Button appearance="primary" onClick={handleSubmit}>
+          <Button appearance="primary" onClick={handleSubmit} type="button">
             Save Section
           </Button>
         </div>

@@ -8,7 +8,7 @@ import CustomSlider from 'component/UI/Content/Slider'
 import SingleSlider from 'component/UI/Content/Slider/SingleItem'
 import { LocalBusinessJsonLd, SiteLinksSearchBoxJsonLd } from 'next-seo'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { GlobalHomeService, PageService } from 'service/global'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import styles from './styles.module.scss'
@@ -80,17 +80,112 @@ const Home = (props) => {
   }
 
   const getProductInformation = () => {
-    let productSection = content?.['section_4']?.data
+    let productSection = content?.[3]?.data
     const productData = []
-    for (let _id of productSection) {
-      let item = product.find((item) => item._id === _id)
-      if (item) {
-        productData.push(item)
+    if (productSection) {
+      for (let _id of productSection) {
+        let item = product.find((item) => item._id === _id)
+        if (item) {
+          productData.push(item)
+        }
       }
+      setSection((prev) => ({ ...prev, section_4: productData }))
+    }
+  }
+
+  const getSectionSlider = useMemo(() => {
+    let html = null
+    html = (
+      <div className={styles.grid}>
+        <div className={styles.mainCarousel}>
+          <SelfCarousel content={content?.[0]} />
+        </div>
+        <div className={styles.mainBanner}>
+          {content?.[1]?.data.map((banner) => {
+            return (
+              <ImageBlock src={banner} className={styles.banner} alt="..." height="46%" modal key={banner} engine />
+            )
+          })}
+        </div>
+      </div>
+    )
+
+    return html
+  }, [content])
+
+  const getSectionService = useMemo(() => {
+    console.log('render section service')
+    let html = null
+    html = (
+      <div className="row">
+        {content?.[2]?.data.map((banner) => {
+          return (
+            <div className="col-6 col-md-3" key={banner}>
+              <ImageBlock engine src={banner} className={styles.serviceBanner} alt="..." width={'390px'} height="52%" />
+            </div>
+          )
+        })}
+      </div>
+    )
+    return html
+  }, [content])
+
+  const getSectionFeatureProduct = useMemo(() => {
+    let html = null
+    let productSection = content?.[3]?.data
+
+    const productData = []
+
+    if (productSection) {
+      for (let _id of productSection) {
+        let item = product.find((item) => item._id === _id)
+        if (item) {
+          productData.push(item)
+        }
+      }
+      html = (
+        <div className="row">
+          <div className="col-12">
+            <div className="container">
+              <div className="row">
+                <div className="col-12">
+                  <Heading type="h3" center>
+                    {/* {data?.[6]?.name} */}
+                    {/* Sản Phẩm Nổi Bật */}
+                    {content?.[3]?.title}
+                  </Heading>
+                </div>
+
+                <div className="col-12">
+                  <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
+                    {productData?.map((item, index) => {
+                      let { image, title, price, type, slug, _id } = item
+                      return (
+                        <Card
+                          imgSrc={(image?.[0]?.src && image?.[0]?.src) || ''}
+                          cover
+                          title={title}
+                          price={price}
+                          type={type}
+                          slug={`/product/${slug}`}
+                          _id={_id}
+                          key={[Math.random(), _id, index]}
+                          border
+                          hover
+                        />
+                      )
+                    })}
+                  </CustomSlider>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
     }
 
-    setSection((prev) => ({ ...prev, section_4: productData }))
-  }
+    return html
+  }, [content, section])
 
   return (
     <>
@@ -157,104 +252,15 @@ const Home = (props) => {
         <div className="row gx-2 gy-2">
           <div className="col-12">
             <div className="container" style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
-              <div className={styles.grid}>
-                <div className={styles.mainCarousel}>
-                  <SelfCarousel content={content?.['section_1']} />
-                </div>
-                <div className={styles.mainBanner}>
-                  {content?.['section_2']?.data.map((banner) => {
-                    return (
-                      <ImageBlock
-                        src={banner}
-                        className={styles.banner}
-                        alt="..."
-                        height="46%"
-                        modal
-                        key={banner}
-                        engine
-                      />
-                    )
-                  })}
-                </div>
-              </div>
+              {getSectionSlider}
             </div>
           </div>
         </div>
       </section>
 
-      <section className="container">
-        <div className="row">
-          {content?.['section_3']?.data.map((banner) => {
-            return (
-              <div className="col-6 col-md-3" key={banner}>
-                <ImageBlock
-                  engine
-                  src={banner}
-                  className={styles.serviceBanner}
-                  alt="..."
-                  width={'390px'}
-                  height="52%"
-                />
-              </div>
-            )
-          })}
-        </div>
-      </section>
+      <section className="container">{getSectionService}</section>
 
-      <section className="container-fluid">
-        <div className="row">
-          <div className="col-12">
-            <div className="container">
-              <div className="row">
-                <div className="col-12">
-                  <Heading type="h3" center>
-                    {/* {data?.[6]?.name} */}
-                    {/* Sản Phẩm Nổi Bật */}
-                    {content?.['section_4']?.title}
-                  </Heading>
-                </div>
-
-                <div className="col-12">
-                  <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
-                    {/* {data?.[6]?.child?.map((item, index) => {
-                      return (
-                        <Card
-                          imgSrc={(item.image?.[0]?.src && item.image?.[0]?.src) || ''}
-                          cover
-                          title={item.title}
-                          price={item.price}
-                          type={item.type}
-                          slug={`/product/${item.slug}`}
-                          _id={item._id}
-                          key={[Math.random(), item._id, index]}
-                          border
-                          hover
-                        />
-                      )
-                    })} */}
-                    {section?.['section_4']?.map((item, index) => {
-                      return (
-                        <Card
-                          imgSrc={(item.image?.[0]?.src && item.image?.[0]?.src) || ''}
-                          cover
-                          title={item.title}
-                          price={item.price}
-                          type={item.type}
-                          slug={`/product/${item.slug}`}
-                          _id={item._id}
-                          key={[Math.random(), item._id, index]}
-                          border
-                          hover
-                        />
-                      )
-                    })}
-                  </CustomSlider>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <section className="container-fluid">{getSectionFeatureProduct}</section>
 
       <section className="container">
         <div className="row">
@@ -266,7 +272,7 @@ const Home = (props) => {
 
           <div className="col-12">
             <CustomSlider type={TYPE_CAROUSEL.MUTI}>
-              {content?.['section_5']?.data?.map((customer, index) => (
+              {content?.[4]?.data?.map((customer, index) => (
                 <ImageBlock
                   src={process.env.API + customer}
                   height={'75%'}

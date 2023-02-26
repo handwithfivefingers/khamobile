@@ -19,7 +19,7 @@ export default function SinglePage(props) {
 
   const router = useRouter()
   const [data, setData] = useState()
-  const [pageData, setPageData] = useState({})
+  const [pageData, setPageData] = useState([])
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const toaster = useToaster()
   useEffect(() => {
@@ -34,10 +34,7 @@ export default function SinglePage(props) {
       const resp = await PageService.getPageById(id)
       const { data: respData } = resp.data
       const content = respData.content
-
-      if (content) {
-        setPageData(content)
-      }
+      setPageData(content)
       setData(respData)
       changeTitle(respData?.title)
     } catch (error) {
@@ -45,10 +42,10 @@ export default function SinglePage(props) {
     }
   }
 
-  const handleSubmit = async (sectionName, sectionData) => {
+  const handleSubmit = async (sectionData, sectionIndex) => {
     try {
-      const nextState = { ...pageData }
-      nextState[sectionName] = sectionData
+      const nextState = [...pageData]
+      nextState[sectionIndex] = sectionData
       const resp = await PageService.updatePage(data._id, {
         content: nextState,
       })
@@ -63,17 +60,17 @@ export default function SinglePage(props) {
       getScreenData(router.query._id)
     }
   }
+  console.log(pageData)
 
   return (
     <Content className="rounded">
       <PanelGroup>
-        {Object.keys(pageData).map((key, index) => {
+        {pageData.map((page, index) => {
           return (
             <DynamicInput
               panelIndex={index}
-              data={{ pageData, setPageData }}
-              sectionName={key}
-              key={[key, index].join('_')}
+              data={page}
+              key={Math.random()}
               onSubmit={handleSubmit}
             />
           )
@@ -83,26 +80,25 @@ export default function SinglePage(props) {
   )
 }
 
-const DynamicInput = ({ data, sectionName, onSubmit, panelIndex }) => {
-  const { pageData, setPageData } = data
-  const currentSection = pageData[sectionName]
+const DynamicInput = ({ data, onSubmit, panelIndex }) => {
+
 
   return (
     <Panel
       header={
         <div className="w-100">
           <div className="d-flex justify-content-start align-items-center">
-            <span style={{ width: '250px' }}>{currentSection.title}</span>
+            <span style={{ width: '250px' }}>{data.title}</span>
             <div onClick={(e) => e.stopPropagation()}>
               <SelectPicker
                 data={[
                   { label: 'Home Slider', value: 'HomeSlider' },
                   { label: 'Slider Hình ảnh', value: 'ImageSlider' },
                   { label: 'Hình ảnh', value: 'Image' },
-                  { label: 'Sản phẩm', value: 'Products' },
-                  { label: 'Danh mục', value: 'Category' },
+                  { label: 'Sản phẩm', value: 'Product' },
+                  { label: 'Danh mục', value: 'ProductCategory' },
                 ]}
-                value={currentSection.type}
+                value={data.type}
                 className="px-5"
               />
             </div>
@@ -113,28 +109,28 @@ const DynamicInput = ({ data, sectionName, onSubmit, panelIndex }) => {
       defaultExpanded={panelIndex === 0 ? true : false}
     >
       <CardBlock className={'border-0'}>
-        {currentSection.type === 'HomeSlider' ? (
-          <DynamicImageComponentInput onSubmit={onSubmit} sectionName={sectionName} data={data} />
+        {data.type === 'HomeSlider' ? (
+          <DynamicImageComponentInput onSubmit={onSubmit} data={data} pageIndex={panelIndex} />
         ) : (
           ''
         )}
-        {currentSection.type === 'Image' ? (
-          <DynamicImageComponentInput onSubmit={onSubmit} sectionName={sectionName} data={data} max />
+        {data.type === 'Image' ? (
+          <DynamicImageComponentInput onSubmit={onSubmit} data={data} max pageIndex={panelIndex} />
         ) : (
           ''
         )}
-        {currentSection.type === 'ImageSlider' ? (
-          <DynamicImageComponentInput onSubmit={onSubmit} sectionName={sectionName} data={data} />
+        {data.type === 'ImageSlider' ? (
+          <DynamicImageComponentInput onSubmit={onSubmit} data={data} pageIndex={panelIndex} />
         ) : (
           ''
         )}
-        {currentSection.type === 'Products' ? (
-          <DynamicProductComponentInput onSubmit={onSubmit} sectionName={sectionName} data={data} />
+        {data.type === 'Product' ? (
+          <DynamicProductComponentInput onSubmit={onSubmit} data={data} pageIndex={panelIndex} />
         ) : (
           ''
         )}
-        {currentSection.type === 'Category' ? (
-          <DynamicCategoryComponentInput onSubmit={onSubmit} sectionName={sectionName} data={data} />
+        {data.type === 'ProductCategory' ? (
+          <DynamicCategoryComponentInput onSubmit={onSubmit} data={data} pageIndex={panelIndex} />
         ) : (
           ''
         )}

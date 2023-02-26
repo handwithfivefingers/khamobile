@@ -90,17 +90,18 @@ const Catalog = ({ data, direction }) => {
             }}
           >
             {data?.child?.map((item, index) => {
+              let { image, title, price, underlinePrice, type, variable, _id, slug } = item
               return (
                 <Card
-                  imgSrc={item?.image?.[0]?.src ? item?.image?.[0]?.src : ''}
-                  title={item?.title}
-                  price={item?.price}
-                  underlinePrice={item?.underlinePrice || null}
-                  type={item.type}
-                  variable={item.variable}
-                  slug={`/product/${item.slug}`}
-                  key={[index, item._id]}
-                  _id={item._id}
+                  imgSrc={image?.[0]?.src ? image[0]?.src : ''}
+                  title={title || undefined}
+                  price={price || undefined}
+                  underlinePrice={underlinePrice || undefined || null}
+                  type={type || undefined}
+                  variable={variable || undefined}
+                  slug={`/product/${slug || undefined}`}
+                  key={[index, _id || undefined]}
+                  _id={_id || undefined}
                   border
                   hover
                 />

@@ -4,11 +4,13 @@ import { Button, Form, IconButton, SelectPicker, Stack } from 'rsuite'
 import { KMInput } from '../../KMInput'
 import styles from './styles.module.scss'
 
-export default function DynamicImageComponentInput({ data, sectionName, onSubmit, max = false }) {
-  const { pageData, setPageData } = data
-  const currentSection = pageData[sectionName]
+export default function DynamicImageComponentInput({ data, onSubmit, pageIndex, max = false }) {
+  // const { pageData, setPageData } = data
+  // const currentSection = pageData[sectionName]
 
-  const [sectionData, setSectionData] = useState(currentSection)
+  // const pageData = data
+
+  const [sectionData, setSectionData] = useState(data)
 
   const handleAdd = () => {
     const nextState = { ...sectionData }
@@ -29,7 +31,7 @@ export default function DynamicImageComponentInput({ data, sectionName, onSubmit
     })
 
   const handleSubmit = () => {
-    onSubmit(sectionName, sectionData)
+    onSubmit(sectionData, pageIndex)
   }
 
   return (
@@ -38,7 +40,7 @@ export default function DynamicImageComponentInput({ data, sectionName, onSubmit
         <div className="col-12">
           <Stack spacing={12}>
             {max ? (
-              sectionData?.data?.length < currentSection.max && (
+              sectionData?.data?.length < sectionData?.options?.max && (
                 <Button onClick={handleAdd} appearance="default" color="primary">
                   Thêm
                 </Button>
@@ -49,7 +51,7 @@ export default function DynamicImageComponentInput({ data, sectionName, onSubmit
               </Button>
             )}
 
-            {max && <code>Số lượng hình ảnh tối đa {currentSection.max}</code>}
+            {max && <code>Số lượng hình ảnh tối đa {sectionData?.options?.max}</code>}
           </Stack>
         </div>
         {sectionData?.data?.map((item, index) => {
@@ -57,7 +59,7 @@ export default function DynamicImageComponentInput({ data, sectionName, onSubmit
             <div className="col-6 ">
               <div className={styles.col}>
                 <KMInput
-                  name={[sectionName, index].join('')}
+                  name={[sectionData.section_name, index].join('')}
                   label={`Hình ảnh ${index + 1}`}
                   onChange={(value) => handleInputchange(value, index)}
                   value={item}
