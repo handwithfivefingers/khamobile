@@ -40,22 +40,41 @@ export default class PageController {
 
       let content = formData.content
 
-      for (let sectionName in content) {
-        const currentSection = content[sectionName]
-        if (currentSection.type === 'Products') {
-          currentSection.data = currentSection.data.map((item) => {
+      // for (let sectionName in content) {
+      //   const currentSection = content[sectionName]
+      //   if (currentSection.type === 'Products') {
+      //     currentSection.data = currentSection.data.map((item) => {
+      //       if (typeof item === 'string') {
+      //         return item
+      //       }
+      //       return item?._id
+      //     })
+      //   }
+      //   if (currentSection.type === 'Category') {
+      //     currentSection.data = currentSection.data.map((item) => {
+      //       if (typeof item === 'string') {
+      //         return item
+      //       }
+      //       return item?._id
+      //     })
+      //   }
+      // }
+
+      for (let contentSection of content) {
+        if (contentSection.type === 'Product') {
+          contentSection.data = contentSection.data.map((item) => {
             if (typeof item === 'string') {
-              return item
+              return mongoose.Types.ObjectId(item)
             }
-            return item?._id
+            return mongoose.Types.ObjectId(item?._id)
           })
-        }
-        if (currentSection.type === 'Category') {
-          currentSection.data = currentSection.data.map((item) => {
+        } else if (contentSection.type === 'ProductCategory') {
+          let { options } = contentSection
+          options.moreLink = options.moreLink.map((item) => {
             if (typeof item === 'string') {
-              return item
+              return mongoose.Types.ObjectId(item)
             }
-            return item?._id
+            return mongoose.Types.ObjectId(item?._id)
           })
         }
       }
@@ -74,9 +93,16 @@ export default class PageController {
   getPageById = async (req, res) => {
     try {
       const { _id } = req.params
-
+      console.log('get pageById: ' + _id)
       const _page = await Page.findOne({ _id: mongoose.Types.ObjectId(_id) })
-
+        .populate({
+          path: 'content.options.moreLink',
+          select: 'name slug',
+        })
+        .populate({
+          path: 'content.data',
+          match: { 'content.dynamicRef': true },
+        })
       return new Response().fetched({ data: _page }, res)
     } catch (error) {
       console.log('getPageId error', error)

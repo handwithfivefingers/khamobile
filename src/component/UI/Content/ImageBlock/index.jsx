@@ -5,21 +5,10 @@ import { Modal } from 'rsuite'
 import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
 
-const ImageBlock = ({
-  src,
-  alt,
-  className,
-  bordered,
-  height,
-  engine,
-  objectFit = 'cover',
-  modal = false,
-  ...props
-}) => {
-  useEffect(() => {})
-
+const ImageBlock = ({ src, alt, className, height, engine, objectFit = 'cover', modal = false, ...props }) => {
   const [img, setImg] = useState(src)
   const [state, setState] = useState(false)
+  const { options } = props
 
   useEffect(() => {
     if (src) {
@@ -33,7 +22,8 @@ const ImageBlock = ({
     styles.img,
     className,
     {
-      [styles.border]: bordered,
+      [styles.imgHover]: options?.hover,
+      [styles.border]: options?.border,
     },
   ])
 

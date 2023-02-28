@@ -52,7 +52,7 @@ export default class SettingController {
   }
 
   getSetting = async (req, res) => {
-    try {
+    try { 
       const [_setting] = await Setting.find({}).populate({ path: 'menu._id', select: '_id title slug name' })
       const _menu = _setting.menu
 

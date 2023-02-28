@@ -9,6 +9,7 @@ import ProductService from 'service/admin/Product.service'
 import slugify from 'slugify'
 import { useCommonStore } from 'src/store/commonStore'
 import GroupVariant from './GroupVariant'
+import KMEditingTable from 'component/UI/KMEditingTable'
 const ProductCreateModal = (props) => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const [loading, setLoading] = useState(false)
@@ -108,14 +109,13 @@ const ProductCreateModal = (props) => {
   }
 
   const handleDeleteVariation = (_id = null, deleteAll = false) => {
-    if(_id) {
+    if (_id) {
       formDataRef.current?.delete.push(_id)
     }
 
-    if(deleteAll) {
+    if (deleteAll) {
       formDataRef.current.deleteAll = deleteAll
     }
-    
   }
 
   return (
@@ -142,6 +142,11 @@ const ProductCreateModal = (props) => {
               <Panel header="Mô tả" collapsible defaultExpanded>
                 <KMEditor name="description" onChange={(v) => (formDataRef.current.description = v)} />
               </Panel>
+
+              <Panel header="Thông tin sản phẩm" collapsible defaultExpanded>
+                <KMEditingTable name="information" onChange={(v) => (formDataRef.current.information = v)} />
+              </Panel>
+
               <Panel
                 header={
                   <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>

@@ -20,8 +20,26 @@ export default {
         type: String,
         enum: ['Image', 'HomeSlider', 'ImageSlider', 'ProductCategory', 'Product'],
       },
-      data: [],
-      options: {},
+      // dynamicRef: {
+      //   type: String,
+      //   enum: ['Product', 'ProductCategory'],
+      // },
+      data: [
+        // {
+        //   type: mongoose.Schema.Types.ObjectId,
+        //   refPath: 'content.dynamicRef',
+        // },
+      ],
+      options: {
+        moreLink: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'ProductCategory',
+          },
+        ],
+        max: String,
+        showTitle: Boolean,
+      },
     },
     /**
      * chia theo `section_` để quản lý : Example: section_1 , section_2

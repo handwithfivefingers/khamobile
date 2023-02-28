@@ -1,8 +1,11 @@
 import Products from 'pages/admin/product'
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
-import { Button, Cascader, Form, Modal, SelectPicker } from 'rsuite'
+import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
+import { BsDashLg, BsPlusLg, BsPlusSquareDotted } from 'react-icons/bs'
+import { Button, Cascader, Form, Input, Modal, SelectPicker, IconButton, InputGroup } from 'rsuite'
+import CategoryService from 'service/admin/Category.service'
 import { useCommonStore } from 'src/store'
 import Catalog from '../../Catalog'
+import ImageBlock from '../../ImageBlock'
 import styles from './styles.module.scss'
 export default function DynamicCategoryComponentInput({ data, pageIndex, onSubmit }) {
   const [sectionData, setSectionData] = useState(data)
@@ -12,12 +15,10 @@ export default function DynamicCategoryComponentInput({ data, pageIndex, onSubmi
   const { productCategory } = useCommonStore((state) => state)
 
   const [activeCategory, setActiveCategory] = useState('')
+
   const toolbarRef = useRef()
 
-  const [config, setConfig] = useState({
-    position: data.options?.position || 'ltr',
-    moreLink: [],
-  })
+  const [config, setConfig] = useState(data.options)
 
   useEffect(() => {
     if (productCategory) {
@@ -27,18 +28,30 @@ export default function DynamicCategoryComponentInput({ data, pageIndex, onSubmi
         const formatData = {
           _id,
           name,
-          image,
+          image: image?.src,
         }
         setActiveCategory(_id)
-        setCatelogData((prev) => ({ ...prev, ...formatData }))
+        setCatelogData((prev) => ({
+          ...prev,
+          ...formatData,
+          categories: config.moreLink.length > 0 ? config.moreLink : [''],
+        }))
       }
     }
   }, [productCategory])
 
   const handleSubmit = (e) => {
     e.preventDefault()
+
     const formatData = { ...sectionData }
-    formatData.options = config
+    const moreLink = toolbarRef.current.getExtraLink()
+    const position = toolbarRef.current.getPosition()
+
+    formatData.options = {
+      ...config,
+      position,
+      moreLink,
+    }
     onSubmit(formatData, pageIndex)
   }
 
@@ -61,10 +74,6 @@ export default function DynamicCategoryComponentInput({ data, pageIndex, onSubmi
   return (
     <>
       <Toolbar
-        position={{
-          pos: config.position,
-          setPos: (value) => setConfig((prev) => ({ ...prev, position: value })),
-        }}
         category={{
           categoryName: sectionData.title,
           activeCategory: activeCategory,
@@ -76,6 +85,7 @@ export default function DynamicCategoryComponentInput({ data, pageIndex, onSubmi
           productSelect: sectionData.data,
           setProduct: handleSetProduct,
         }}
+        config={config}
         ref={toolbarRef}
       />
       <Form formValue={sectionData}>
@@ -95,18 +105,22 @@ export default function DynamicCategoryComponentInput({ data, pageIndex, onSubmi
   )
 }
 
-const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
-  const { pos, setPos } = position
-
+const Toolbar = forwardRef(({ category, productProps, config }, ref) => {
   const { categoryName, activeCategory, productCategory, setSelectCategory, handleChangeCategory } = category
 
   const { productSelect, setProduct } = productProps
+
+  const [categoryPosition, setCategoryPosition] = useState(config?.position || 'ltr')
 
   const [viewMode, setViewMode] = useState(true)
 
   const { product } = useCommonStore((state) => state)
 
   const [checkedKeys, setCheckedKeys] = useState(productSelect)
+
+  const [links, setLinks] = useState()
+
+  const linkRef = useRef()
 
   const [modal, setModal] = useState({
     visible: false,
@@ -116,7 +130,12 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
 
   useEffect(() => {
     handleConfirm()
-  }, [product])
+    if (config?.moreLink) {
+      const nextState = config?.moreLink?.map((item) => item._id)
+
+      setLinks(nextState.length > 0 ? nextState : [''])
+    }
+  }, [product, config])
 
   const handleSelectCategory = (value, itemData, event) => {
     let { name, image, _id } = value
@@ -136,12 +155,26 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
   }
 
   const handleSelectPosition = (value) => {
-    setPos(value)
+    setCategoryPosition(value)
   }
 
   const handleOpenModalChangeProduct = () => {
     setModal({
       visible: true,
+      component: <Products select noEdit propsChecked={{ checkedKeys, setCheckedKeys }} />,
+      title: 'Danh sách sản phẩm',
+      handleConfirm: handleConfirm,
+      handleCancel: handleCancel,
+    })
+  }
+
+  const handleOpenModalAddLink = () => {
+    setModal({
+      visible: true,
+      component: <AddLinkModal activeCategory={activeCategory} handleLink={{ setLinks, links }} ref={linkRef} />,
+      title: 'Thêm đường dẫn',
+      handleConfirm: handleConfirmLinkChange,
+      handleCancel: handleCancel,
     })
   }
 
@@ -160,6 +193,12 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
     handleClose()
   }
 
+  const handleConfirmLinkChange = () => {
+    const linkData = linkRef.current.getData()
+    setLinks(linkData)
+    handleClose()
+  }
+
   const handleAddProduct = (productIncome) => {
     const productOutcome = []
     for (let _id of productIncome) {
@@ -172,9 +211,9 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
   const renderPosition = useMemo(() => {
     let html = null
     if (viewMode) {
-      if (pos === 'ltr') {
+      if (categoryPosition === 'ltr') {
         html = <span className={styles.plainText}>Trái</span>
-      } else if (pos === 'rtl') {
+      } else if (categoryPosition === 'rtl') {
         html = <span className={styles.plainText}>Phải</span>
       }
     } else {
@@ -185,12 +224,12 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
             { label: 'Trái', value: 'ltr' },
           ]}
           onSelect={handleSelectPosition}
-          value={pos}
+          value={categoryPosition}
         />
       )
     }
     return html
-  }, [viewMode, pos])
+  }, [viewMode, categoryPosition])
 
   const renderCategory = useMemo(() => {
     let html = null
@@ -215,6 +254,17 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
     return html
   }, [viewMode, category])
 
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        getExtraLink: () => links,
+        getPosition: () => categoryPosition,
+      }
+    },
+    [links],
+  )
+
   return (
     <div className={styles.toolbar}>
       <div className={styles.listItem}>
@@ -227,14 +277,20 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
           <span>Danh mục:</span>
           {renderCategory}
         </div>
-
-        <div className={styles.toolbarItem}>
-          {!viewMode && (
-            <Button appearance="default" color="primary" onClick={handleOpenModalChangeProduct}>
-              Thay đổi sản phẩm
-            </Button>
-          )}
-        </div>
+        {!viewMode && (
+          <>
+            <div className={styles.toolbarItem}>
+              <Button appearance="default" color="primary" onClick={handleOpenModalChangeProduct}>
+                Sản phẩm
+              </Button>
+            </div>
+            <div className={styles.toolbarItem}>
+              <Button appearance="default" color="primary" onClick={handleOpenModalAddLink}>
+                Liên kết
+              </Button>
+            </div>
+          </>
+        )}
       </div>
 
       <div className={styles.toggleButton}>
@@ -245,17 +301,15 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
 
       <Modal keyboard={false} open={modal.visible} onClose={handleClose} size={'full'}>
         <Modal.Header>
-          <Modal.Title>Danh sách sản phẩm</Modal.Title>
+          <Modal.Title>{modal.title} </Modal.Title>
         </Modal.Header>
 
-        <Modal.Body>
-          <Products select noEdit propsChecked={{ checkedKeys, setCheckedKeys }} />
-        </Modal.Body>
+        <Modal.Body>{modal.component}</Modal.Body>
         <Modal.Footer>
-          <Button onClick={handleConfirm} appearance="primary">
+          <Button onClick={modal.handleConfirm} appearance="primary">
             Ok
           </Button>
-          <Button onClick={handleCancel} appearance="subtle">
+          <Button onClick={modal.handleCancel} appearance="subtle">
             Cancel
           </Button>
         </Modal.Footer>
@@ -263,3 +317,111 @@ const Toolbar = forwardRef(({ position, category, productProps }, ref) => {
     </div>
   )
 })
+
+const AddLinkModal = forwardRef(({ activeCategory, handleLink }, ref) => {
+  console.log(handleLink)
+  const { links } = handleLink
+  const [state, setState] = useState(links)
+  const { productCategory } = useCommonStore((state) => state)
+
+  const handleAddField = (index) => {
+    const nextState = [...state]
+    nextState = [...nextState.slice(0, index + 1), undefined, ...nextState.slice(index + 1)]
+    setState(nextState)
+  }
+
+  const handleRemoveField = (index) => {
+    const nextState = [...state]
+    nextState.splice(index, 1)
+    setState(nextState)
+  }
+
+  const handleChange = (e, pos) => {
+    setState((prev) => {
+      prev[pos] = e
+      return prev
+    })
+  }
+
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        getData: () => state,
+      }
+    },
+    [state],
+  )
+
+  return (
+    <div className="container">
+      <div className="row gx-2 gy-2 p-2">
+        <div className="col-8">
+          {state.map((item, index) => {
+            return (
+              <DynamicInput
+                value={item}
+                position={index}
+                key={Math.random()}
+                handleAddField={handleAddField}
+                handleChange={handleChange}
+                handleRemoveField={handleRemoveField}
+                data={productCategory}
+                showRemove={state.length > 1}
+              />
+            )
+          })}
+        </div>
+        <div className="col-4">
+          <ImageBlock src="/public/example/dynamicCategory/category_link.png" engine objectFit="contain" options={{}} />
+        </div>
+      </div>
+    </div>
+  )
+})
+
+const DynamicInput = ({
+  value,
+  position,
+  handleAddField,
+  handleChange,
+  handleRemoveField,
+  data,
+  showRemove = true,
+}) => {
+  const [inpValue, setInpValue] = useState(value || '')
+
+  const handleSelectCategory = (value, item) => {
+    const { _id } = value
+    setInpValue(_id)
+    handleChange(_id, position)
+  }
+
+  return (
+    <div className="d-flex mb-1" style={{ gap: 4 }}>
+      <IconButton
+        icon={<BsDashLg style={{ fontSize: 16 }} />}
+        onClick={(e) => {
+          if (showRemove) {
+            handleRemoveField(position)
+          }
+        }}
+        style={{ opacity: showRemove ? 1 : 0 }}
+      />
+      <Cascader
+        data={data}
+        parentSelectable
+        style={{ width: '100%' }}
+        labelKey="name"
+        valueKey="_id"
+        childrenKey="child"
+        onSelect={handleSelectCategory}
+        value={inpValue}
+        preventOverflow
+        block
+        menuWidth={200}
+      />
+      <IconButton icon={<BsPlusLg style={{ fontSize: 16 }} />} onClick={() => handleAddField(position)} />
+    </div>
+  )
+}

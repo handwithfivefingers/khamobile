@@ -17,80 +17,113 @@ import { useCommonStore } from 'src/store'
 const Home = (props) => {
   const [data, setData] = useState([])
   const [content, setContent] = useState([])
-  const { product } = useCommonStore((state) => state)
 
-  const [section, setSection] = useState({})
+  const { product, productCategory } = useCommonStore((state) => state)
+
   const router = useRouter()
   useEffect(() => {
-    getHomeProd()
+    // getHomeProd()
     getHomeSection()
-  }, [])
-
-  useEffect(() => {
-    if (product.length && content) {
-      getProductInformation()
-    }
-  }, [product, content])
+  }, [product, productCategory])
 
   const getHomeSection = async () => {
     try {
       const resp = await PageService.getPage(router.pathname)
-      setContent(resp.data.data.content)
-    } catch (error) {
-      console.log(error)
-    }
-  }
 
-  const getHomeProd = async () => {
-    try {
-      let resp = await GlobalHomeService.getHomeProd()
-      // sort Item
+      let { content } = resp.data.data
 
-      const { data } = resp.data
+      for (let section of content) {
+        // Push product
+        if (section.type === 'Product') {
+          let listProduct = getProductFromStore(section.data)
+          section.data = listProduct
+        }
+        // Format Category
+        else if (section.type === 'ProductCategory') {
+          let products = getProductFromStore(section.data)
 
-      const nextState = [{}, {}, {}, {}, {}, {}, {}]
+          let categoryItem = getCategoryFromStore({ name: section.title, products })
 
-      for (let i = 0; i < data.length; i++) {
-        let item = data[i]
-        if (item._id === '6382d12ebd85e309e477dba3') {
-          /* Sản Phẩm Nổi Bật */
-          nextState[6] = item
-        } else if (item._id === '6382d12ebd85e309e477db84') {
-          /* Apple Watch */
-          nextState[1] = item
-        } else if (item._id === '6382d12dbd85e309e477db81') {
-          /* Accessories */
-          nextState[0] = item
-        } else if (item._id === '6382d12ebd85e309e477db86') {
-          /* Ipad */
-          nextState[2] = item
-        } else if (item._id === '6382d12ebd85e309e477db97') {
-          /* Macbook */
-          nextState[5] = item
-        } else if (item._id === '6382d12ebd85e309e477db8d') {
-          /* IPHONE */
-          nextState[3] = item
-        } else nextState[4] = item
-      }
+          const { name, image } = categoryItem
 
-      setData(nextState)
-    } catch (error) {
-      console.log(error)
-    }
-  }
+          const formatCate = {
+            name: name,
+            image: image?.src,
+            child: products,
+            categories: section?.options?.moreLink,
+          }
+          section.catalog = formatCate
+          // const nextSection = { ...section }
 
-  const getProductInformation = () => {
-    let productSection = content?.[3]?.data
-    const productData = []
-    if (productSection) {
-      for (let _id of productSection) {
-        let item = product.find((item) => item._id === _id)
-        if (item) {
-          productData.push(item)
+          // nextSection = {
+          //   ...nextSection,
+          //   ...formatCate,
+          // }
+
+          // section = nextSection
         }
       }
-      setSection((prev) => ({ ...prev, section_4: productData }))
+      setContent(content)
+    } catch (error) {
+      console.log(error)
     }
+  }
+
+  // const getHomeProd = async () => {
+  //   try {
+  //     let resp = await GlobalHomeService.getHomeProd()
+  //     // sort Item
+
+  //     const { data } = resp.data
+
+  //     const nextState = [{}, {}, {}, {}, {}, {}, {}]
+
+  //     for (let i = 0; i < data.length; i++) {
+  //       let item = data[i]
+  //       if (item._id === '6382d12ebd85e309e477dba3') {
+  //         /* Sản Phẩm Nổi Bật */
+  //         nextState[6] = item
+  //       } else if (item._id === '6382d12ebd85e309e477db84') {
+  //         /* Apple Watch */
+  //         nextState[1] = item
+  //       } else if (item._id === '6382d12dbd85e309e477db81') {
+  //         /* Accessories */
+  //         nextState[0] = item
+  //       } else if (item._id === '6382d12ebd85e309e477db86') {
+  //         /* Ipad */
+  //         nextState[2] = item
+  //       } else if (item._id === '6382d12ebd85e309e477db97') {
+  //         /* Macbook */
+  //         nextState[5] = item
+  //       } else if (item._id === '6382d12ebd85e309e477db8d') {
+  //         /* IPHONE */
+  //         nextState[3] = item
+  //       } else nextState[4] = item
+  //     }
+
+  //     setData(nextState)
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  // }
+
+  const getProductFromStore = (listProductIds) => {
+    const productData = []
+    for (let _id of listProductIds) {
+      let item = product.find((item) => item._id === _id)
+      if (item) {
+        productData.push(item)
+      }
+    }
+    return productData
+  }
+
+  const getCategoryFromStore = ({ name, products }) => {
+    let item = productCategory.find((item) => item.name === name)
+    if (item) {
+      return item
+    }
+    return {}
   }
 
   const getSectionSlider = useMemo(() => {
@@ -133,60 +166,75 @@ const Home = (props) => {
   const getSectionFeatureProduct = useMemo(() => {
     let html = null
     let productSection = content?.[3]?.data
+    console.log(productSection)
+    html = (
+      <div className="row">
+        <div className="col-12">
+          <div className="container">
+            <div className="row">
+              <div className="col-12">
+                <Heading type="h3" center>
+                  {content?.[3]?.title}
+                </Heading>
+              </div>
 
-    const productData = []
-
-    if (productSection) {
-      for (let _id of productSection) {
-        let item = product.find((item) => item._id === _id)
-        if (item) {
-          productData.push(item)
-        }
-      }
-      html = (
-        <div className="row">
-          <div className="col-12">
-            <div className="container">
-              <div className="row">
-                <div className="col-12">
-                  <Heading type="h3" center>
-                    {/* {data?.[6]?.name} */}
-                    {/* Sản Phẩm Nổi Bật */}
-                    {content?.[3]?.title}
-                  </Heading>
-                </div>
-
-                <div className="col-12">
-                  <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
-                    {productData?.map((item, index) => {
-                      let { image, title, price, type, slug, _id } = item
-                      return (
-                        <Card
-                          imgSrc={(image?.[0]?.src && image?.[0]?.src) || ''}
-                          cover
-                          title={title}
-                          price={price}
-                          type={type}
-                          slug={`/product/${slug}`}
-                          _id={_id}
-                          key={[Math.random(), _id, index]}
-                          border
-                          hover
-                        />
-                      )
-                    })}
-                  </CustomSlider>
-                </div>
+              <div className="col-12">
+                <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
+                  {productSection?.map((item, index) => {
+                    let { image, title, price, type, slug, _id } = item
+                    return (
+                      <Card
+                        imgSrc={(image?.[0]?.src && image?.[0]?.src) || ''}
+                        cover
+                        title={title}
+                        price={price}
+                        type={type}
+                        slug={`/product/${slug}`}
+                        _id={_id}
+                        key={[Math.random(), _id, index]}
+                        border
+                        hover
+                      />
+                    )
+                  })}
+                </CustomSlider>
               </div>
             </div>
           </div>
         </div>
-      )
-    }
+      </div>
+    )
 
     return html
-  }, [content, section])
+  }, [content])
 
+  const renderSection = useMemo(
+    () => (position) => {
+      let html = null
+      html = (
+        <section className="container">
+          <div className="row">
+            <div className="col-12">
+              <Heading type="h3" center>
+                {content?.[position]?.title}
+                {/* IPHONE */}
+              </Heading>
+            </div>
+
+            <div className="col-12">
+              <Catalog data={content?.[position]?.catalog} />
+              {/* <Catalog data={data?.[3]} /> */}
+            </div>
+          </div>
+        </section>
+      )
+
+      return html
+    },
+    [content],
+  )
+
+  console.log('::::::::::::::: rendered', content)
   return (
     <>
       <PostHelmet seo={props?.seo} />
@@ -286,80 +334,81 @@ const Home = (props) => {
         </div>
       </section>
 
-      <section className="container">
+      {/* <section className="container">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
-              {data?.[1]?.name}
-              {/* Apple Watch */}
+              {content?.[5]?.title}
             </Heading>
           </div>
 
           <div className="col-12">
-            <Catalog data={data?.[1]} />
+            <Catalog data={content?.[5].catalog} />
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section className="container">
+      {/* <section className="container">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
-              {data?.[0]?.name}
-              {/* Accessories */}
+              {content?.[6]?.title}
             </Heading>
           </div>
 
           <div className="col-12">
-            <Catalog data={data?.[0]} direction="rtl" />
+            <Catalog data={content?.[6].catalog} direction="rtl" />
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section className="container">
+      {/* <section className="container">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
-              {data?.[5]?.name}
-              {/* Macbook */}
+              {content?.[7]?.title}
             </Heading>
           </div>
 
           <div className="col-12">
-            <Catalog data={data?.[5]} />
+            <Catalog data={content?.[7].catalog} />
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section className="container">
+      {/* <section className="container">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
-              {data?.[2]?.name}
-              {/* Ipad */}
+              {content?.[8]?.title}
             </Heading>
           </div>
 
           <div className="col-12">
-            <Catalog data={data?.[2]} direction="rtl" />
+            <Catalog data={content?.[8].catalog} direction="rtl" />
           </div>
         </div>
-      </section>
+      </section> */}
 
-      <section className="container">
+      {renderSection(5)}
+      {renderSection(6)}
+      {renderSection(7)}
+      {renderSection(8)}
+      {renderSection(9)}
+
+      {/* <section className="container">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
-              {data?.[3]?.name}
-              {/* IPHONE */}
+              {content?.[9]?.title}
             </Heading>
           </div>
 
           <div className="col-12">
-            <Catalog data={data?.[3]} />
+            <Catalog data={content?.[9].catalog} />
           </div>
         </div>
-      </section>
+      </section> */}
     </>
   )
 }

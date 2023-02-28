@@ -1,27 +1,28 @@
 import AdminLayout from 'component/UI/AdminLayout'
-import { useEffect, useState } from 'react'
-import { Button, Content, Form, IconButton, Panel, PanelGroup, SelectPicker, Stack, useToaster } from 'rsuite'
-
+import { useEffect, useMemo, useState } from 'react'
+import { Content, Panel, PanelGroup, Placeholder, SelectPicker, useToaster } from 'rsuite'
 import CardBlock from 'component/UI/Content/CardBlock'
-import { KMInput } from 'component/UI/Content/KMInput'
 import { useRouter } from 'next/router'
-import { BsDashLg } from 'react-icons/bs'
 import PageService from 'service/admin/Page.service'
 import { message } from 'src/helper'
 import { useCommonStore } from 'src/store/commonStore'
-import styles from './styles.module.scss'
-import DynamicImageComponentInput from 'component/UI/Content/DynamicContent/Image'
-import DynamicProductComponentInput from 'component/UI/Content/DynamicContent/Products'
-import DynamicCategoryComponentInput from 'component/UI/Content/DynamicContent/Category'
+// import styles from './styles.module.scss'
+// import DynamicCategoryComponentInput from 'component/UI/Content/DynamicContent/Category'
+// import DynamicImageComponentInput from 'component/UI/Content/DynamicContent/Image'
+// import DynamicProductComponentInput from 'component/UI/Content/DynamicContent/Products'
 
+import dynamic from 'next/dynamic'
+
+const DynamicCategoryComponentInput = dynamic(() => import('component/UI/Content/DynamicContent/Category'))
+const DynamicImageComponentInput = dynamic(() => import('component/UI/Content/DynamicContent/Image'))
+const DynamicProductComponentInput = dynamic(() => import('component/UI/Content/DynamicContent/Products'))
 export default function SinglePage(props) {
-  const [customerShow, setCustomerShow] = useState([])
-
   const router = useRouter()
   const [data, setData] = useState()
   const [pageData, setPageData] = useState([])
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const toaster = useToaster()
+  const [loading, setLoading] = useState(false)
   useEffect(() => {
     const { _id } = router.query
     if (_id) {
@@ -31,6 +32,7 @@ export default function SinglePage(props) {
 
   const getScreenData = async (id) => {
     try {
+      setLoading(true)
       const resp = await PageService.getPageById(id)
       const { data: respData } = resp.data
       const content = respData.content
@@ -39,8 +41,29 @@ export default function SinglePage(props) {
       changeTitle(respData?.title)
     } catch (error) {
       console.log(error)
+    } finally {
+      setLoading(false)
     }
   }
+
+  const renderSkeleton = useMemo(() => {
+    let html = null
+
+    if (loading) {
+      html = (
+        <PanelGroup>
+          {[...Array(5).keys()].map((item) => {
+            return (
+              <Panel style={{ background: '#fff' }}>
+                <Placeholder.Paragraph style={{ marginTop: 30 }} rows={5} graph="image" active />
+              </Panel>
+            )
+          })}
+        </PanelGroup>
+      )
+    }
+    return html
+  }, [loading])
 
   const handleSubmit = async (sectionData, sectionIndex) => {
     try {
@@ -60,29 +83,22 @@ export default function SinglePage(props) {
       getScreenData(router.query._id)
     }
   }
-  console.log(pageData)
 
   return (
     <Content className="rounded">
-      <PanelGroup>
-        {pageData.map((page, index) => {
-          return (
-            <DynamicInput
-              panelIndex={index}
-              data={page}
-              key={Math.random()}
-              onSubmit={handleSubmit}
-            />
-          )
-        })}
-      </PanelGroup>
+      {renderSkeleton}
+      {!loading && (
+        <PanelGroup>
+          {pageData.map((page, index) => {
+            return <DynamicInput panelIndex={index} data={page} key={Math.random()} onSubmit={handleSubmit} />
+          })}
+        </PanelGroup>
+      )}
     </Content>
   )
 }
 
 const DynamicInput = ({ data, onSubmit, panelIndex }) => {
-
-
   return (
     <Panel
       header={

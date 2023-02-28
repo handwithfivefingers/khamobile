@@ -9,10 +9,8 @@ import CustomSlider from '../Slider'
 import styles from './styles.module.scss'
 import { useEffect, useMemo, useState } from 'react'
 const Catalog = ({ data, direction }) => {
-  const [imgSrc, setImgSrc] = useState(data?.image?.src)
-  const [categories, setCategories] = useState()
+  const [imgSrc, setImgSrc] = useState(data?.image)
   const router = useRouter()
-
   const className = clsx([
     styles.grid,
     {
@@ -25,8 +23,8 @@ const Catalog = ({ data, direction }) => {
   }, [data])
 
   const onGetImage = (image) => {
-    if (image?.src) {
-      setImgSrc(image?.src)
+    if (image) {
+      setImgSrc(image)
     } else {
       setImgSrc('/400.png')
     }
