@@ -15,6 +15,8 @@ export default {
 
   primary: String,
 
+  information: [],
+
   slug: {
     type: String,
     required: true,

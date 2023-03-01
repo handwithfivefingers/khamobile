@@ -73,6 +73,10 @@ const ProductCreateModal = (props) => {
   const onSubmit = async () => {
     try {
       setLoading(true)
+
+      // console.log(formDataRef.current)
+      // return
+
       if (props.onSubmit) {
         props.onSubmit(formDataRef.current)
       }
@@ -117,7 +121,6 @@ const ProductCreateModal = (props) => {
       formDataRef.current.deleteAll = deleteAll
     }
   }
-
   return (
     <>
       <Content className={'p-4'}>
@@ -144,7 +147,11 @@ const ProductCreateModal = (props) => {
               </Panel>
 
               <Panel header="Thông tin sản phẩm" collapsible defaultExpanded>
-                <KMEditingTable name="information" onChange={(v) => (formDataRef.current.information = v)} />
+                <KMEditingTable
+                  name="information"
+                  onChange={(v) => (formDataRef.current.information = v)}
+                  data={formDataRef.current?.information}
+                />
               </Panel>
 
               <Panel
@@ -215,53 +222,53 @@ const ProductCreateModal = (props) => {
               </Panel>
             </PanelGroup>
           </div>
+          {/* <Affix top={50}> */}
           <div className="col-3">
-            <Affix top={50}>
-              <PanelGroup>
-                <Panel header="Ảnh bài post" expanded>
-                  <Form.Group controlId="img">
-                    <Form.Control
-                      rows={5}
-                      name="upload"
-                      accepter={CustomUpload}
-                      group
-                      action={process.env.API + '/api/upload'}
-                      withCredentials={true}
-                      onSuccess={(resp, file) => {
-                        setRender(!_render)
-                        formDataRef.current = {
-                          ...formDataRef.current,
-                          image: formDataRef.current.image
-                            ? [...formDataRef.current.image, { src: resp.url, name: file.name }]
-                            : [{ src: resp.url, name: file.name }],
-                        }
-                      }}
-                      value={formDataRef.current?.image}
-                    />
-                  </Form.Group>
-                </Panel>
-                <Panel header="Danh mục" collapsible>
-                  <Form.Group controlId="category">
-                    <Form.Control
-                      name="category"
-                      data={cate || []}
-                      labelKey={'name'}
-                      accepter={Select}
-                      valueKey={'_id'}
-                      preventOverflow
-                      cascade
-                      onChange={(v) => (formDataRef.current.category = v)}
-                    />
-                  </Form.Group>
-                </Panel>
-                <Panel>
-                  <Button appearance="primary" onClick={onSubmit}>
-                    {props?.data ? 'Cập nhật' : 'Tạo'}
-                  </Button>
-                </Panel>
-              </PanelGroup>
-            </Affix>
+            <PanelGroup className="position-sticky top-0">
+              <Panel header="Ảnh bài post" expanded>
+                <Form.Group controlId="img">
+                  <Form.Control
+                    rows={5}
+                    name="upload"
+                    accepter={CustomUpload}
+                    group
+                    action={process.env.API + '/api/upload'}
+                    withCredentials={true}
+                    onSuccess={(resp, file) => {
+                      setRender(!_render)
+                      formDataRef.current = {
+                        ...formDataRef.current,
+                        image: formDataRef.current.image
+                          ? [...formDataRef.current.image, { src: resp.url, name: file.name }]
+                          : [{ src: resp.url, name: file.name }],
+                      }
+                    }}
+                    value={formDataRef.current?.image}
+                  />
+                </Form.Group>
+              </Panel>
+              <Panel header="Danh mục" collapsible>
+                <Form.Group controlId="category">
+                  <Form.Control
+                    name="category"
+                    data={cate || []}
+                    labelKey={'name'}
+                    accepter={Select}
+                    valueKey={'_id'}
+                    preventOverflow
+                    cascade
+                    onChange={(v) => (formDataRef.current.category = v)}
+                  />
+                </Form.Group>
+              </Panel>
+              <Panel>
+                <Button appearance="primary" onClick={onSubmit}>
+                  {props?.data ? 'Cập nhật' : 'Tạo'}
+                </Button>
+              </Panel>
+            </PanelGroup>
           </div>
+          {/* </Affix> */}
         </Form>
       </Content>
     </>

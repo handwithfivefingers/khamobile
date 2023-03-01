@@ -80,6 +80,7 @@ export default class ProductController {
               type: '$type',
               image: '$image',
               primary: '$primary',
+              information: '$information',
               'attr._id': '$variations._id',
               'attr.price': '$variations.price',
               'attr.regular_price': '$variations.regular_price',
@@ -103,6 +104,7 @@ export default class ProductController {
                 primary: '$primary',
                 image: '$image',
                 attributes: '$attributes',
+                information: '$information',
               },
               variations: {
                 $push: {
@@ -129,6 +131,7 @@ export default class ProductController {
               variations: '$variations',
               image: '$_id.image',
               attributes: '$_id.attributes',
+              information: '$_id.information',
             },
           },
         ])
@@ -187,7 +190,7 @@ export default class ProductController {
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, content, price, image } = formData
+      let { type, title, slug, description, content, price, image, information } = formData
 
       const parentId = new mongoose.Types.ObjectId()
 
@@ -200,6 +203,7 @@ export default class ProductController {
         type,
         price,
         image,
+        information,
       })
 
       await Product.create([baseProd], { session })
@@ -222,7 +226,8 @@ export default class ProductController {
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, variations, content, primary, image, attributes, category } = formData
+      let { type, title, slug, description, variations, content, primary, image, attributes, category, information } =
+        formData
 
       const parentId = new mongoose.Types.ObjectId()
 
@@ -248,6 +253,7 @@ export default class ProductController {
         image,
         attributes,
         category,
+        information,
       })
 
       await Product.create([baseProd], { session })
@@ -305,7 +311,7 @@ export default class ProductController {
       session.startTransaction()
       if (formData.type !== TYPE_VARIANT.SIMPLE) throw { message: 'Type didtn match' }
 
-      let { _id, type, title, slug, description, content, price, category, image } = formData
+      let { _id, type, title, slug, description, content, price, category, image, information } = formData
 
       const objUpdate = {
         type,
@@ -316,6 +322,7 @@ export default class ProductController {
         price,
         category,
         image,
+        information,
       }
 
       await Product.updateOne(
@@ -364,6 +371,7 @@ export default class ProductController {
         attributes,
         delete: listVariantDelete,
         deleteAll,
+        information,
       } = formData
       let minPrice = 0
       if (variations) {
@@ -385,6 +393,7 @@ export default class ProductController {
         category,
         image,
         attributes,
+        information,
       }
 
       await Product.updateOne(

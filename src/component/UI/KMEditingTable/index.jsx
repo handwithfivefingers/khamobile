@@ -1,121 +1,144 @@
-import React from 'react'
-import { Table, Button, Input } from 'rsuite'
-// const { Column, HeaderCell, Cell } = Table
+import clsx from 'clsx'
+import React, { Children, useMemo, useState, memo } from 'react'
+import { BsDashLg, BsPlusLg } from 'react-icons/bs'
+import { Table, Button, Input, IconButton } from 'rsuite'
+import { KMInput } from '../Content/KMInput'
+import { isEqual } from 'lodash'
+import styles from './styles.module.scss'
 
-// const EditableCell = ({ rowData, dataKey, onChange, ...props }) => {
-//   const editing = rowData.status === 'EDIT'
-//   return (
-//     <Cell {...props} className={editing ? 'table-content-editing' : ''}>
-//       <input
-//         className="rs-input"
-//         defaultValue={rowData[dataKey]}
-//         onChange={(event) => {
-//           onChange && onChange(rowData.id, dataKey, event.target.value)
-//         }}
-//       />
-//     </Cell>
-//   )
-// }
-
-// const ActionCell = ({ rowData, dataKey, onClick, ...props }) => {
-//   return (
-//     <Cell {...props} style={{ padding: '6px' }}>
-//       <Button
-//         appearance="link"
-//         onClick={() => {
-//           onClick(rowData.id)
-//         }}
-//       >
-//         {rowData.status === 'EDIT' ? 'Save' : 'Edit'}
-//       </Button>
-//     </Cell>
-//   )
-// }
-
-const CustomTable = ({ data, ...props }) => {
-  const renderChildren = (row) => {
-    console.log(props.children, row)
+const CustomTable = ({ data, bordered, ...props }) => {
+  const renderChildren = (row, rowIndex) => {
     if (props.children) {
-      // return React.cloneElement(props.children, row)
-      return React.Children.map(children, (child) => {
-        return React.cloneElement(child, row)
+      return Children.map(props.children, (child) => {
+        return React.cloneElement(child, { ...child.props, rowData: row, rowIndex }, row[child.props?.['dataIndex']])
       })
     }
-    return <CustomTable.Column {...row} />
+    return <CustomTable.Column {...row} rowIndex={rowIndex} />
   }
+  const classTable = clsx('table border rounded', {
+    ['table-bordered']: bordered,
+  })
+
+  const renderFooter = () => {
+    let html = null
+
+    html = props?.footer?.()
+    return html
+  }
+
   return (
-    <table>
+    <table className={classTable}>
       <tbody>
-        {/* {props.children} */}
-        {data?.map((row) => {
-          return <tr>{renderChildren(row)}</tr>
+        {data?.map((row, index) => {
+          return <tr key={index}>{renderChildren(row, index)}</tr>
         })}
       </tbody>
+      <tfoot>{props.footer ? renderFooter() : ''}</tfoot>
     </table>
   )
 }
 
-const Column = ({ dataIndex, render, ...props }) => {
-  return <td>{render ? render : props.children}</td>
+function isEqualColumn(prevProps, nextProps) {
+  const isEqualProps = isEqual(prevProps.children, nextProps.children)
+  // console.log('isEqualProps', isEqualProps, prevProps, nextProps)
+  return isEqualProps
 }
+
+const Column = memo((props) => {
+  const { render, rowData, dataIndex, rowIndex, width } = props
+  return (
+    <td style={{ width: width }}>
+      <span>{render ? render(rowData, rowData[dataIndex], rowIndex) : props.children}</span>
+    </td>
+  )
+}, isEqualColumn)
 
 CustomTable.Column = Column
 
-export default function KMEditingTable() {
-  const [data, setData] = React.useState([{ key: 'status', value: 'hello' }])
+export default function KMEditingTable({ data, ...props }) {
+  const [tableData, setTableData] = useState(data)
 
-  const handleChange = (id, key, value) => {
-    const nextData = Object.assign([], data)
-    nextData.find((item) => item.id === id)[key] = value
-    setData(nextData)
+  const addNewField = () => {
+    setTableData((prev) => {
+      return prev.concat({ key: '', value: '' })
+    })
   }
 
-  // const handleEditState = (id) => {
-  //   const nextData = Object.assign([], data)
-  //   const activeItem = nextData.find((item) => item.id === id)
-  //   activeItem.status = activeItem.status ? null : 'EDIT'
-  //   setData(nextData)
-  // }
+  const handleChange = (value, dataKey, position) => {
+    const next = [...tableData]
+    next[position][dataKey] = value
+    setTableData(next)
+    if (props.onChange) {
+      props.onChange(next)
+    }
+  }
+
+  const handleRemoveIndex = (value, index) => {
+    setTableData((prev) => {
+      const next = [...prev]
+      next.splice(index, 1)
+      return next
+    })
+  }
 
   return (
-    // <Table height={420} data={data} showHeader bordered>
-    //   <Column width={200}>
-    //     <HeaderCell>Tên </HeaderCell>
-    //     <EditableCell dataKey="key" onChange={handleChange} />
-    //   </Column>
+    <CustomTable
+      data={tableData}
+      bordered
+      footer={() => {
+        return (
+          <div className="d-flex justify-content-center">
+            <IconButton
+              icon={<BsPlusLg />}
+              appearance="primary"
+              ripple
+              style={{ background: 'var(--rs-blue-500)', color: '#fff' }}
+              size="sm"
+              className="my-2"
+              onClick={addNewField}
+            />
+          </div>
+        )
+      }}
+    >
+      <CustomTable.Column
+        dataIndex="key"
+        render={(rowData, rowValue, index) => (
+          <KMInput
+            value={rowValue}
+            key={index}
+            onChange={(e) => handleChange(e, 'key', index)}
+            placeHolder="Tên thuộc tính"
+          />
+        )}
+      />
+      <CustomTable.Column
+        dataIndex="value"
+        render={(rowData, rowValue, index) => (
+          <KMInput
+            value={rowValue}
+            key={index}
+            onChange={(e) => handleChange(e, 'value', index)}
+            placeHolder="Giá trị"
+          />
+        )}
+      />
 
-    //   <Column width={200}>
-    //     <HeaderCell>Thông số</HeaderCell>
-    //     <EditableCell dataKey="value" onChange={handleChange} />
-    //   </Column>
-    // </Table>
-    // <table>
-    //   <tbody>
-    //     <tr>
-    //       <td>
-    //         <input
-    //           className="rs-input"
-    //           // defaultValue={rowData[dataKey]}
-    //           // onChange={(event) => {
-    //           //   onChange && onChange(rowData.id, dataKey, event.target.value)
-    //           // }}
-    //         />
-    //       </td>
-    //       <td>
-    //         <input
-    //           className="rs-input"
-    //           // defaultValue={rowData[dataKey]}
-    //           // onChange={(event) => {
-    //           //   onChange && onChange(rowData.id, dataKey, event.target.value)
-    //           // }}
-    //         />
-    //       </td>
-    //     </tr>
-    //   </tbody>
-    // </table>
-    <CustomTable data={data}>
-      <CustomTable.Column dataIndex="key" />
-      <CustomTable.Column dataIndex="value" />
+      <CustomTable.Column
+        dataIndex="value"
+        width="50px"
+        render={(rowData, rowValue, index) => (
+          <IconButton
+            icon={<BsDashLg />}
+            onClick={() => handleRemoveIndex(rowValue, index)}
+            appearance="primary"
+            ripple
+            style={{ background: 'var(--rs-blue-500)', color: '#fff' }}
+            size="sm"
+            className="my-2"
+          />
+        )}
+      />
     </CustomTable>
   )
 }
