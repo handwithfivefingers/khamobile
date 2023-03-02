@@ -7,8 +7,8 @@ export default class SeoController {
   getHomeSeo = async (req, res) => {
     try {
       const seoTags = await generateSeoTag({
-        title: 'Trang chủ Khamobile',
-        description: 'Trang chủ Khamobile - Chuyên kinh doanh các mặt hàng về Apple',
+        title: 'Kha Mobile - Giá tốt mỗi ngày',
+        description: 'Kha Mobile - Giá tốt mỗi ngày - Chuyên kinh doanh các mặt hàng về Apple',
         url: `${process.env.CANONICAL}`,
         breadcrumb: [{ title: 'Trang chủ', url: process.env.CANONICAL }],
       })
@@ -65,8 +65,8 @@ export default class SeoController {
   getCategorySeo = async (req, res) => {
     try {
       const seoTags = await generateSeoTag({
-        title: `Danh mục Điện thoại mới nhất - Khamobile`,
-        description: 'Danh mục Điện thoại mới nhất - Khamobile',
+        title: `Danh mục Điện thoại mới nhất - Kha Mobile - Giá tốt mỗi ngày`,
+        description: 'Danh mục Điện thoại mới nhất - Kha Mobile - Giá tốt mỗi ngày',
         url: `${process.env.HOSTNAME}/category`,
       })
 
@@ -83,8 +83,8 @@ export default class SeoController {
   getProductSeo = async (req, res) => {
     try {
       const seoTags = await generateSeoTag({
-        title: `Danh sách Điện thoại mới nhất giá rẻ - Khamobile`,
-        description: 'Danh sách Điện thoại mới nhất giá rẻ - Khamobile',
+        title: `Danh sách Điện thoại mới nhất giá rẻ - Kha Mobile - Giá tốt mỗi ngày`,
+        description: 'Danh sách Điện thoại mới nhất giá rẻ - Kha Mobile - Giá tốt mỗi ngày',
         url: `${process.env.HOSTNAME}/product`,
       })
 
@@ -105,8 +105,8 @@ export default class SeoController {
       let _cate = await ProductCategory.findOne({ slug: slug })
 
       const seoTags = await generateSeoTag({
-        title: `Danh mục ${_cate?.name} mới nhất - Khamobile`,
-        description: `Danh mục ${_cate?.name} mới nhất - Khamobile`,
+        title: `Danh mục ${_cate?.name} mới nhất - Kha Mobile - Giá tốt mỗi ngày`,
+        description: `Danh mục ${_cate?.name} mới nhất - Kha Mobile - Giá tốt mỗi ngày`,
         url: `${process.env.HOSTNAME}/category/${_cate?.slug}`,
       })
 
