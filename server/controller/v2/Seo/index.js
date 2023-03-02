@@ -26,8 +26,8 @@ export default class SeoController {
   getAboutUsSeo = async (req, res) => {
     try {
       const seoTags = await generateSeoTag({
-        title: 'Về chúng tôi - Khamobile',
-        description: 'Về chúng tôi - Sứ mệnh Khamobile',
+        title: 'Về chúng tôi - Kha Mobile - Giá tốt mỗi ngày',
+        description: 'Về chúng tôi - Kha Mobile - Giá tốt mỗi ngày',
         url: `${process.env.CANONICAL}/about-us`,
         breadcrumb: [
           { title: 'Trang chủ', url: process.env.CANONICAL },
@@ -48,8 +48,8 @@ export default class SeoController {
   getPostSeo = async (req, res) => {
     try {
       const seoTags = await generateSeoTag({
-        title: 'Tin tức - Khamobile',
-        description: 'Tổng hợp tin tức điện thoại - Khamobile',
+        title: 'Tin tức - Kha Mobile - Giá tốt mỗi ngày',
+        description: 'Tổng hợp tin tức điện thoại - Kha Mobile - Giá tốt mỗi ngày',
         url: `${process.env.HOSTNAME}/tin-tuc`,
       })
 

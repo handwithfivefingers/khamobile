@@ -434,6 +434,14 @@ export default class ProductController {
   getProductFeed = async (req, res) => {
     try {
       let _prod = []
+
+      let simpleProd = await Product.find({ type: 'simple' })
+        .populate({
+          path: 'category',
+          select: 'name -_id',
+        })
+        .select('title slug price stock_status category image')
+
       _prod = await ProductVariant.find({
         purchasable: true,
       })
@@ -447,27 +455,37 @@ export default class ProductController {
         })
         .select('price parentId stock_status attributes -_id')
 
-      _prod = _prod
-        // ?.filter(({ parentId }) => parentId.purchasable)
-        ?.map(({ parentId, price, stock_status, attributes }, index) => {
-          let { title, slug, image, category } = parentId
+      _prod = _prod?.map(({ parentId, price, stock_status, attributes }, index) => {
+        let { title, slug, image, category } = parentId
 
-          for (let keys in attributes) {
-            const currentAttribute = attributes[keys]
-            if (!title.includes(currentAttribute)) title += ` - ${currentAttribute}`
-          }
+        for (let keys in attributes) {
+          const currentAttribute = attributes[keys]
+          if (!title.includes(currentAttribute)) title += ` - ${currentAttribute}`
+        }
 
-          return {
-            name: title,
-            url: process.env.HOST + '/product/' + slug,
-            price,
-            instock: stock_status === 'instock' ? 1 : 0,
-            category: category?.map(({ name }) => name),
-            imageUrls: image.map(({ src }) => process.env.API + src),
-          }
-        })
+        return {
+          name: title,
+          url: process.env.HOST + '/product/' + slug,
+          price,
+          instock: stock_status === 'instock' ? 1 : 0,
+          category: category?.map(({ name }) => name),
+          imageUrls: image.map(({ src }) => process.env.API + src),
+        }
+      })
 
-      return new Response().fetched(_prod, res, true)
+      simpleProd = simpleProd?.map(({ _doc }, index) => {
+        let { title: name, slug, image, category, stock_status, price } = _doc
+        console.log(category)
+        return {
+          name,
+          url: process.env.HOST + '/product/' + slug,
+          price,
+          instock: stock_status === 'instock' ? 1 : 0,
+          category: category?.map(({ name }) => name),
+          imageUrls: image.map(({ src }) => process.env.API + src),
+        }
+      })
+      return new Response().fetched([...simpleProd, ..._prod], res, true)
     } catch (error) {
       console.log(error)
       return new Response().error(error, res)
