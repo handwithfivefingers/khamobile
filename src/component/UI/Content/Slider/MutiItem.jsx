@@ -67,7 +67,7 @@ const MutiItem = (props) => {
   const test = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
   return (
-    <Slider {...settings}>
+    <Slider {...settings} className={props.className}>
       {children
         ? children
         : test.map((item, index) => (

@@ -1,3 +1,4 @@
+import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
 import Card from 'component/UI/Content/Card'
 import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
@@ -97,10 +98,15 @@ export default function Product(props) {
                   {loading && renderSkeleton}
 
                   {!loading &&
-                    product?.data?.map((prod) => {
+                    product?.data?.map((prod, index) => {
                       return (
                         <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
-                          <a className={styles.gridItem}>
+                          <a
+                            className={clsx('animate__animated animate__fadeIn', styles.gridItem)}
+                            style={{
+                              '--animate-duration': `${(0.15 * index) / 2}s`,
+                            }}
+                          >
                             <Card
                               imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
                               title={prod.title}

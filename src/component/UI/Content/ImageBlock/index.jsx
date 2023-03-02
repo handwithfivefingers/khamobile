@@ -5,7 +5,17 @@ import { Modal } from 'rsuite'
 import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
 
-const ImageBlock = ({ src, alt, className, height, engine, objectFit = 'cover', modal = false, ...props }) => {
+const ImageBlock = ({
+  src,
+  alt,
+  className,
+  height,
+  engine,
+  priority,
+  objectFit = 'cover',
+  modal = false,
+  ...props
+}) => {
   const [img, setImg] = useState(src)
   const [state, setState] = useState(false)
   const { options } = props
@@ -42,12 +52,13 @@ const ImageBlock = ({ src, alt, className, height, engine, objectFit = 'cover', 
           'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
         }
         placeholder="blur"
-        loading={'lazy'}
+        loading={priority ? 'eager' : 'lazy'}
         loader={({ src, width, quality }) => {
           let newSrc = engine ? process.env.API + src + `?w=${width}&q=${quality || 50}` : src
           return newSrc
         }}
         objectFit={objectFit}
+        priority={priority}
         onError={() => {
           setImg('/400.png')
         }}

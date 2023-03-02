@@ -227,12 +227,15 @@ const QueryStore = (props) => {
 
   // console.log(productStatus)
 
-  if (productData && productStatus === 'success') {
-    changeProduct(productData)
-  }
-  if (cateData && cateStatus === 'success') {
-    changeProductCategory(cateData)
-  }
-
+  useEffect(() => {
+    if (productData && productStatus === 'success') {
+      changeProduct(productData)
+    }
+  }, [productData, productStatus])
+  useEffect(() => {
+    if (cateData && cateStatus === 'success') {
+      changeProductCategory(cateData)
+    }
+  }, [cateData, cateStatus])
   return props.children
 }

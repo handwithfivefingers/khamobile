@@ -91,7 +91,16 @@ const Home = (props) => {
         <div className={styles.mainBanner}>
           {content?.[1]?.data.map((banner) => {
             return (
-              <ImageBlock src={banner} className={styles.banner} alt="..." height="46%" modal key={banner} engine />
+              <ImageBlock
+                src={banner}
+                className={styles.banner}
+                alt="..."
+                height="46%"
+                modal
+                key={banner}
+                engine
+                priority
+              />
             )
           })}
         </div>
@@ -166,18 +175,16 @@ const Home = (props) => {
     () => (position) => {
       let html = null
       html = (
-        <section className="container">
+        <section className="container animate__animated animate__fadeInUp">
           <div className="row">
             <div className="col-12">
               <Heading type="h3" center>
                 {content?.[position]?.title}
-                {/* IPHONE */}
               </Heading>
             </div>
 
             <div className="col-12">
               <Catalog data={content?.[position]?.catalog} />
-              {/* <Catalog data={data?.[3]} /> */}
             </div>
           </div>
         </section>
@@ -250,7 +257,7 @@ const Home = (props) => {
         />
       </PostHelmet>
 
-      <section className="container-fluid">
+      <section className="container-fluid  animate__animated animate__fadeIn">
         <div className="row gx-2 gy-2">
           <div className="col-12">
             <div className="container" style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
@@ -260,11 +267,13 @@ const Home = (props) => {
         </div>
       </section>
 
-      <section className="container">{getSectionService}</section>
+      <section className="container animate__animated animate__fadeInUp animate__faster">{getSectionService}</section>
 
-      <section className="container-fluid">{getSectionFeatureProduct}</section>
+      <section className="container-fluid animate__animated animate__fadeInUp animate__fast">
+        {getSectionFeatureProduct}
+      </section>
 
-      <section className="container">
+      <section className="container animate__animated animate__fadeInUp animate__slow">
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>
@@ -287,62 +296,6 @@ const Home = (props) => {
           </div>
         </div>
       </section>
-
-      {/* <section className="container">
-        <div className="row">
-          <div className="col-12">
-            <Heading type="h3" center>
-              {content?.[5]?.title}
-            </Heading>
-          </div>
-
-          <div className="col-12">
-            <Catalog data={content?.[5].catalog} />
-          </div>
-        </div>
-      </section> */}
-
-      {/* <section className="container">
-        <div className="row">
-          <div className="col-12">
-            <Heading type="h3" center>
-              {content?.[6]?.title}
-            </Heading>
-          </div>
-
-          <div className="col-12">
-            <Catalog data={content?.[6].catalog} direction="rtl" />
-          </div>
-        </div>
-      </section> */}
-
-      {/* <section className="container">
-        <div className="row">
-          <div className="col-12">
-            <Heading type="h3" center>
-              {content?.[7]?.title}
-            </Heading>
-          </div>
-
-          <div className="col-12">
-            <Catalog data={content?.[7].catalog} />
-          </div>
-        </div>
-      </section> */}
-
-      {/* <section className="container">
-        <div className="row">
-          <div className="col-12">
-            <Heading type="h3" center>
-              {content?.[8]?.title}
-            </Heading>
-          </div>
-
-          <div className="col-12">
-            <Catalog data={content?.[8].catalog} direction="rtl" />
-          </div>
-        </div>
-      </section> */}
 
       {renderSection(5)}
       {renderSection(6)}
@@ -380,7 +333,7 @@ const SelfCarousel = ({ content, ...props }) => {
       slidesToShow={1}
     >
       {content?.data?.map((item, index) => (
-        <img src={process.env.API + item} key={[Math.random(), index]} height={'53%'} width={'100%'} />
+        <ImageBlock src={process.env.API + item} key={[Math.random(), index]} height={'53%'} width={'100%'} priority />
       ))}
     </SingleSlider>
   )
