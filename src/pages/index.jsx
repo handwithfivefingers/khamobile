@@ -13,16 +13,17 @@ import { GlobalHomeService, PageService } from 'service/global'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import styles from './styles.module.scss'
 import { useCommonStore } from 'src/store'
-import Head from 'next/head'
+import { useQuery } from '@tanstack/react-query'
 
 const Home = (props) => {
+  // render 4 times
   const [content, setContent] = useState([])
 
   const { product, productCategory } = useCommonStore((state) => state)
 
   const router = useRouter()
+
   useEffect(() => {
-    // getHomeProd()
     getHomeSection()
   }, [product, productCategory])
 
@@ -53,14 +54,6 @@ const Home = (props) => {
             categories: section?.options?.moreLink,
           }
           section.catalog = formatCate
-          // const nextSection = { ...section }
-
-          // nextSection = {
-          //   ...nextSection,
-          //   ...formatCate,
-          // }
-
-          // section = nextSection
         }
       }
       setContent(content)
@@ -68,44 +61,6 @@ const Home = (props) => {
       console.log(error)
     }
   }
-
-  // const getHomeProd = async () => {
-  //   try {
-  //     let resp = await GlobalHomeService.getHomeProd()
-  //     // sort Item
-
-  //     const { data } = resp.data
-
-  //     const nextState = [{}, {}, {}, {}, {}, {}, {}]
-
-  //     for (let i = 0; i < data.length; i++) {
-  //       let item = data[i]
-  //       if (item._id === '6382d12ebd85e309e477dba3') {
-  //         /* Sản Phẩm Nổi Bật */
-  //         nextState[6] = item
-  //       } else if (item._id === '6382d12ebd85e309e477db84') {
-  //         /* Apple Watch */
-  //         nextState[1] = item
-  //       } else if (item._id === '6382d12dbd85e309e477db81') {
-  //         /* Accessories */
-  //         nextState[0] = item
-  //       } else if (item._id === '6382d12ebd85e309e477db86') {
-  //         /* Ipad */
-  //         nextState[2] = item
-  //       } else if (item._id === '6382d12ebd85e309e477db97') {
-  //         /* Macbook */
-  //         nextState[5] = item
-  //       } else if (item._id === '6382d12ebd85e309e477db8d') {
-  //         /* IPHONE */
-  //         nextState[3] = item
-  //       } else nextState[4] = item
-  //     }
-
-  //     setData(nextState)
-  //   } catch (error) {
-  //     console.log(error)
-  //   }
-  // }
 
   const getProductFromStore = (listProductIds) => {
     const productData = []

@@ -32,6 +32,7 @@ const UploadMutiple = forwardRef((props, ref) => {
 })
 
 const SingleUpload = forwardRef((props, ref) => {
+  console.log('CustomUpload.SingleUpload = SingleUpload', props)
   const [src, setSrc] = useState('')
 
   useEffect(() => {
@@ -96,9 +97,11 @@ const CustomUpload = forwardRef((props, ref) => {
   if (props.group) {
     return <UploadMutiple ref={ref} {...props} />
   }
-
   return <SingleUpload ref={ref} {...props} />
 })
+
+CustomUpload.SingleUpload = SingleUpload
+CustomUpload.UploadMutiple = UploadMutiple
 
 const isPropsEqual = (prev, current) => {
   if (isEqual(prev.image, current.image) || isEqual(current.upload, prev.upload)) {

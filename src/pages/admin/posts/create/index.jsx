@@ -45,66 +45,6 @@ const PostCreate = () => {
   return (
     <Content className={'bg-w p-2 shadow'}>
       <PostForm onSubmit={onSubmit} categoryData={categoryData} router={router} />
-
-      {/* <Form formValue={form} onChange={(formVal) => setForm(formVal)} className={'row'} fluid ref={formDataRef}>
-        <div className="col-12">
-          <Button appearance="primary" onClick={() => router.back()}>
-            Back
-          </Button>
-        </div>
-        <div className="col-10">
-          <PanelGroup>
-            <Panel header="Tiêu đề" collapsible defaultExpanded>
-              <KMInput name="title" onChange={(v) => (formDataRef.current.title = v)} />
-            </Panel>
-            <Panel header="Đường dẫn" collapsible defaultExpanded>
-              <KMInput name="slug" onChange={(v) => (formDataRef.current.slug = v)} />
-            </Panel>
-            <Panel header="Nội dung" collapsible defaultExpanded>
-              <KMEditor name="content" onChange={(v) => (formDataRef.current.content = v)} />
-            </Panel>
-            <Panel header="Mô tả" collapsible>
-              <KMEditor name="description" onChange={(v) => (formDataRef.current.description = v)} />
-            </Panel>
-          </PanelGroup>
-        </div>
-        <div className="col-2">
-          <Form.Group controlId="postImg">
-            <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
-            <Form.Control
-              rows={5}
-              name="upload"
-              accepter={CustomUpload}
-              action={process.env.API + '/api/upload'}
-              withCredentials={true}
-              onSuccess={(resp, file) => setForm((prev) => ({ ...prev, image: { src: resp.url, name: file.name } }))}
-              value={form?.image}
-            />
-          </Form.Group>
-
-          <Form.Group controlId="category">
-            <Form.ControlLabel>Danh mục</Form.ControlLabel>
-            <Form.Control
-              name="category"
-              accepter={Select}
-              data={data || []}
-              labelKey={'name'}
-              valueKey={'_id'}
-              preventOverflow
-              cascade
-            />
-          </Form.Group>
-        </div>
-        <div className="d-flex justify-content-end col-12">
-          <Form.Group>
-            <ButtonToolbar>
-              <Button appearance="primary" onClick={onSubmit}>
-                Tạo mới
-              </Button>
-            </ButtonToolbar>
-          </Form.Group>
-        </div>
-      </Form> */}
     </Content>
   )
 }

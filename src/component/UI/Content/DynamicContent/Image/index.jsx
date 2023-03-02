@@ -23,16 +23,19 @@ export default function DynamicImageComponentInput({ data, onSubmit, pageIndex, 
     setSectionData(nextState)
   }
 
-  const handleInputchange = (value, index) =>
-    setSectionData((prev) => {
-      let current = [...prev]
-      current[index] = value
-      return current
-    })
+  const handleInputchange = (value, index) => {
+    const nextState = { ...sectionData }
+    nextState.data[index] = value
+    setSectionData(nextState)
+  }
+
+  // /public/202303021756-banner-1.png.webp
 
   const handleSubmit = () => {
     onSubmit(sectionData, pageIndex)
   }
+
+  console.log(sectionData)
 
   return (
     <Form formValue={sectionData}>

@@ -3,39 +3,42 @@ import { upload, userMiddleware, adminMiddleware, authenticating, cacheControl }
 import AdminRouter from './admin'
 import WebRouter from './web'
 import ServiceRouter from './service'
-
+import sharp from 'sharp'
+import path from 'path'
+import moment from 'moment'
 const AppRouter = express()
 
-const UploadRouter = (req, res, next) => {
+const UploadRouter = async (req, res, next) => {
   try {
+    const [file] = req.files.upload
+
+    const { originalname, buffer } = file
+
+    // await sharp(buffer)
+    //   .webp({ quality: 20 })
+    //   .toFile('./uploads/' + ref)
     console.log('req.files', req.files)
+
+    const ref = `${moment().format('YYYYMMDDHHmm')}-${originalname}.webp`
+
+    const filePath = path.join(global.__basedir, 'uploads', ref)
+
+    await sharp(buffer).webp({ quality: 20 }).toFile(filePath)
+
     return res.status(200).json({
-      url: `/public/${req.files.upload[0].filename}`,
+      url: `/public/${ref}`,
     })
   } catch (error) {
     console.log('UploadRouter', error)
     return res.status(400).json({
       error: {
-        message: 'The image upload failed because the image was too big (max 1.5MB).',
+        message: 'The image upload failed because the image was too big (max 2MB).',
       },
     })
   }
 }
 
 AppRouter.use('/service', ServiceRouter)
-
-// AppRouter.use(
-//   '/admin',
-//   authenticating,
-//   adminMiddleware,
-//   AdminRouter.UserRouter,
-//   AdminRouter.CateRouter,
-//   AdminRouter.PostRouter,
-//   AdminRouter.ProductAttributeRoute,
-//   AdminRouter.ProductRouter,
-//   AdminRouter.OrderRouter,
-//   AdminRouter.PageRouter,
-// )
 
 AppRouter.use(
   '/admin',

@@ -49,7 +49,17 @@ export default function FileManger() {
   return (
     <>
       <div className="d-flex justify-content-center mb-5">
-        <CustomUpload action={process.env.API + '/api/upload'} withCredentials={true} />
+        <CustomUpload
+          name="upload"
+          action={process.env.API + '/api/upload'}
+          withCredentials={true}
+          onSuccess={(success) => {
+            console.log('Success')
+          }}
+          onError={(error) => {
+            console.log(error)
+          }}
+        />
       </div>
 
       <CardBlock className="border-0">

@@ -15,23 +15,25 @@ import moment from 'moment'
 import { User, Log } from '#model'
 import { VNPAY_WHITELIST } from '#constant/vnpay'
 
-const storage = multer.diskStorage({
-  limits: { fileSize: 1 * Math.pow(1024, 2 /* MBs*/) },
-  fileFilter(req, file, cb) {
-    if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
-      cb(null, true)
-    } else {
-      req.fileTypeInvalid = 'Invalid format, only JPG and PNG'
-      cb(null, false, req.fileTypeInvalid)
-    }
-  },
-  destination: function (req, file, cb) {
-    cb(null, path.join(path.resolve(''), 'uploads'))
-  },
-  filename: function (req, file, cb) {
-    cb(null, moment().format('YYYYMMDDHHmm') + '-' + file.originalname)
-  },
-})
+// const storage = multer.diskStorage({
+//   limits: { fileSize: 1 * Math.pow(1024, 2 /* MBs*/) },
+//   fileFilter(req, file, cb) {
+//     if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+//       cb(null, true)
+//     } else {
+//       req.fileTypeInvalid = 'Invalid format, only JPG and PNG'
+//       cb(null, false, req.fileTypeInvalid)
+//     }
+//   },
+//   destination: function (req, file, cb) {
+//     cb(null, path.join(path.resolve(''), 'uploads'))
+//   },
+//   filename: function (req, file, cb) {
+//     cb(null, moment().format('YYYYMMDDHHmm') + '-' + file.originalname)
+//   },
+// })
+
+const storage = multer.memoryStorage()
 
 const upload = multer({ storage })
 
