@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react'
-
-export default function BaoKim(props) {
-  const unique_id = new Date().getTime()
-
+import React, { useEffect, memo } from 'react'
+import { isEqual } from 'lodash'
+const BaoKim = (props) => {
+  const baokimScript =
+    process.env.NODE_ENV !== 'development' ? 'https://pc.baokim.vn/js/bk_plus_v2.popup.js' : '/assets/script/baokim.js'
   useEffect(() => {
     initScript()
   }, [props])
@@ -11,13 +11,13 @@ export default function BaoKim(props) {
     const allScript = document.querySelectorAll('script')
 
     for (let i = 0; i < allScript.length; i++) {
-      if (allScript[i].src.includes('/assets/script/baokim.js')) {
+      if (allScript[i].src.includes(baokimScript)) {
         document.body.removeChild(allScript[i])
       }
     }
     const script = document.createElement('script')
 
-    script.src = '/assets/script/baokim.js'
+    script.src = baokimScript
 
     script.onload = () => {
       document.querySelector(
@@ -33,3 +33,8 @@ export default function BaoKim(props) {
     </>
   )
 }
+
+function isEqualProps(prevProps, nextProps) {
+  return !isEqual(prevProps, nextProps)
+}
+export default memo(BaoKim, isEqualProps)

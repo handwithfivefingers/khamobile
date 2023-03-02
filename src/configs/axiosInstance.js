@@ -26,9 +26,6 @@ instance.interceptors.response.use(
     return res
   },
   (err) => {
-    // if (err.response.status === 401) {
-    // 	store.dispatch(AuthAction.AuthLogout());
-    // }
     return Promise.reject(err)
   },
 )

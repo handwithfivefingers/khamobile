@@ -46,6 +46,24 @@ export default function Category(props) {
     })
   }, [])
 
+  const renderCategory = useMemo(() => {
+    let html = null
+    html = data?.map((item, index) => {
+      return (
+        <Col key={[index, item._id]} md={6} sm={12} onClick={() => router.push(`/category/${item.slug}?page=1`)}>
+          <Card
+            title={item.name}
+            className={styles.imageBg}
+            imgSrc={item.image && `${process.env.API}${item.image?.src}`}
+            description={item.description}
+          />
+        </Col>
+      )
+    })
+
+    return html
+  }, [data])
+
   return (
     <>
       <PostHelmet seo={props?.seo} />
@@ -61,23 +79,8 @@ export default function Category(props) {
               <Row>
                 {loading && renderSkeleton}
 
-                {data?.map((item, index) => {
-                  return (
-                    <Col
-                      key={[index, item._id]}
-                      md={6}
-                      sm={12}
-                      onClick={() => router.push(`/category/${item.slug}?page=1`)}
-                    >
-                      <Card
-                        title={item.name}
-                        className={styles.imageBg}
-                        imgSrc={item.image && `${process.env.API}${item.image?.src}`}
-                        description={item.description}
-                      />
-                    </Col>
-                  )
-                })}
+                {renderCategory}
+                
               </Row>
             </Grid>
           </div>

@@ -13,9 +13,9 @@ import { GlobalHomeService, PageService } from 'service/global'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import styles from './styles.module.scss'
 import { useCommonStore } from 'src/store'
+import Head from 'next/head'
 
 const Home = (props) => {
-  const [data, setData] = useState([])
   const [content, setContent] = useState([])
 
   const { product, productCategory } = useCommonStore((state) => state)
@@ -147,7 +147,7 @@ const Home = (props) => {
   }, [content])
 
   const getSectionService = useMemo(() => {
-    console.log('render section service')
+    // console.log('render section service')
     let html = null
     html = (
       <div className="row">
@@ -166,7 +166,6 @@ const Home = (props) => {
   const getSectionFeatureProduct = useMemo(() => {
     let html = null
     let productSection = content?.[3]?.data
-    console.log(productSection)
     html = (
       <div className="row">
         <div className="col-12">
@@ -234,67 +233,67 @@ const Home = (props) => {
     [content],
   )
 
-  console.log('::::::::::::::: rendered', content)
   return (
     <>
-      <PostHelmet seo={props?.seo} />
-      <LocalBusinessJsonLd
-        type="Store"
-        id="https://khamobile.vn"
-        name="Cửa hàng Kha Mobile"
-        description="Dave's latest department store in San Jose, now open"
-        url="https://www.google.com/maps/place/Kha+mobile+-+gi%C3%A1+t%E1%BB%91t+m%E1%BB%97i+ng%C3%A0y/@10.7982922,106.7091931,17z/data=!3m1!4b1!4m13!1m7!3m6!1s0x317528affb2334a7:0x9ad5b46a56df7665!2zMjIwLzlBIFjDtCBWaeG6v3QgTmdo4buHIFTEqW5oLCBQaMaw4budbmcgMjEsIELDrG5oIFRo4bqhbmgsIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!3b1!8m2!3d10.798767!4d106.712177!3m4!1s0x317529700ef137cf:0x43ea80c21adbb00e!8m2!3d10.7982869!4d106.7113818?hl=vi-VN"
-        telephone="+14088717984"
-        address={{
-          streetAddress: '220/9A Xô Viết Nghệ Tĩnh',
-          addressLocality: 'Phường 21, Quận Bình Thạnh',
-          addressRegion: 'Thành Phố Hồ Chí Minh',
-          postalCode: '717455',
-          addressCountry: 'Việt Nam',
-        }}
-        geo={{
-          latitude: '10.798315590322954',
-          longitude: '106.71140159606115',
-        }}
-        images={[
-          'https://lh3.ggpht.com/p/AF1QipO_ysrKjenYzUaRajImQuUplPx06qrNJXucUjzI=s512',
-          'https://lh5.googleusercontent.com/p/AF1QipNa-FmkR6eBswQOBRrHhQxt-VCr8ZOxHcov_u8r=s406-k-no',
-        ]}
-        openingHours={[
-          {
-            opens: '09:00',
-            closes: '21:30',
-            dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-          },
-        ]}
-        rating={{
-          ratingValue: '5',
-          ratingCount: '6',
-        }}
-        review={[
-          {
-            author: 'Ngoc Duong',
-            datePublished: '20022-12-04',
-            name: 'A masterpiece of literature',
-            reviewBody: 'cam thay ok , qua day mua yen tam , se ung ho tiep',
-            reviewRating: {
-              bestRating: '5',
-              worstRating: '1',
-              reviewAspect: 'Ambiance',
-              ratingValue: '4',
+      <PostHelmet seo={props?.seo}>
+        <LocalBusinessJsonLd
+          type="Store"
+          id="https://khamobile.vn"
+          name="Cửa hàng Kha Mobile"
+          description="Kha Mobile - Giờ mở cửa"
+          url="https://www.google.com/maps/place/Kha+mobile+-+gi%C3%A1+t%E1%BB%91t+m%E1%BB%97i+ng%C3%A0y/@10.7982922,106.7091931,17z/data=!3m1!4b1!4m13!1m7!3m6!1s0x317528affb2334a7:0x9ad5b46a56df7665!2zMjIwLzlBIFjDtCBWaeG6v3QgTmdo4buHIFTEqW5oLCBQaMaw4budbmcgMjEsIELDrG5oIFRo4bqhbmgsIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!3b1!8m2!3d10.798767!4d106.712177!3m4!1s0x317529700ef137cf:0x43ea80c21adbb00e!8m2!3d10.7982869!4d106.7113818?hl=vi-VN"
+          telephone="+14088717984"
+          address={{
+            streetAddress: '220/9A Xô Viết Nghệ Tĩnh',
+            addressLocality: 'Phường 21, Quận Bình Thạnh',
+            addressRegion: 'Thành Phố Hồ Chí Minh',
+            postalCode: '717455',
+            addressCountry: 'Việt Nam',
+          }}
+          geo={{
+            latitude: '10.798315590322954',
+            longitude: '106.71140159606115',
+          }}
+          images={[
+            'https://lh3.ggpht.com/p/AF1QipO_ysrKjenYzUaRajImQuUplPx06qrNJXucUjzI=s512',
+            'https://lh5.googleusercontent.com/p/AF1QipNa-FmkR6eBswQOBRrHhQxt-VCr8ZOxHcov_u8r=s406-k-no',
+          ]}
+          openingHours={[
+            {
+              opens: '09:00',
+              closes: '21:30',
+              dayOfWeek: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
             },
-          },
-        ]}
-      />
-      <SiteLinksSearchBoxJsonLd
-        url={process.env.host}
-        potentialActions={[
-          {
-            target: `${process.env.host}/search?q`,
-            queryInput: 'page',
-          },
-        ]}
-      />
+          ]}
+          rating={{
+            ratingValue: '5',
+            ratingCount: '6',
+          }}
+          review={[
+            {
+              author: 'Ngoc Duong',
+              datePublished: '20022-12-04',
+              name: 'A masterpiece of literature',
+              reviewBody: 'cam thay ok , qua day mua yen tam , se ung ho tiep',
+              reviewRating: {
+                bestRating: '5',
+                worstRating: '1',
+                reviewAspect: 'Ambiance',
+                ratingValue: '4',
+              },
+            },
+          ]}
+        />
+        <SiteLinksSearchBoxJsonLd
+          url={process.env.host}
+          potentialActions={[
+            {
+              target: `${process.env.host}/search?q`,
+              queryInput: 'page',
+            },
+          ]}
+        />
+      </PostHelmet>
 
       <section className="container-fluid">
         <div className="row gx-2 gy-2">

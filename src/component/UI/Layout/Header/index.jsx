@@ -68,8 +68,6 @@ const CustomNavbar = ({ ...props }) => {
   }, [cart])
 
   const getHref = (item) => {
-    // menuItem.dynamicRef === 'Page' ? menuItem.slug : '/' + menuItem.slug
-
     switch (item.dynamicRef) {
       case 'Page':
         return item.slug
@@ -92,7 +90,7 @@ const CustomNavbar = ({ ...props }) => {
               as={NavLink}
               href={getHref(menuItem)}
               eventKey={getHref(menuItem)}
-              active={activeKey === getHref(menuItem)}
+              active={activeKey === getHref(menuItem) ? 1 : undefined}
             >
               {menuItem.name}
             </Nav.Item>
@@ -106,7 +104,7 @@ const CustomNavbar = ({ ...props }) => {
             href={getHref(menuItem)}
             key={[menuItem._id, index].join('_')}
             eventKey={getHref(menuItem)}
-            active={activeKey === getHref(menuItem)}
+            active={activeKey === getHref(menuItem) ? 1 : undefined}
           >
             {menuItem.name}
           </Nav.Item>

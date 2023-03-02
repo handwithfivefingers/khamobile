@@ -4,7 +4,6 @@ import React from 'react'
 export default class CustomDocument extends Document {
   static async getInitialProps(ctx) {
     const initialProps = await Document.getInitialProps(ctx)
-
     return initialProps
   }
 
@@ -13,7 +12,6 @@ export default class CustomDocument extends Document {
       <Html>
         <Head>
           <link rel="shortcut icon" href="/" />
-        
         </Head>
         <body>
           <Main />

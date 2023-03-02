@@ -161,15 +161,6 @@ export default function Cart(props) {
 
   return (
     <>
-      {/* <SiteLinksSearchBoxJsonLd
-        url={process.env.host}
-        potentialActions={[
-          {
-            target: `${process.env.host}/search?q`,
-            queryInput: 'page',
-          },
-        ]}
-      /> */}
       <Head>
         <NextSeo
           title="Giỏ hàng - Khamobile"

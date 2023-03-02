@@ -4,7 +4,7 @@ import PageFooter from './Footer'
 import CustomNavbar from './Header'
 import styles from './styles.module.scss'
 
-const CommonLayout = ({ children }) => {
+const CommonLayout = ({ children, ...props }) => {
   return (
     <>
       <Head>
@@ -34,7 +34,7 @@ const CommonLayout = ({ children }) => {
         <Container>
           <CustomNavbar style={{ position: 'fixed', top: 0, left: 0, width: '100%' }} />
           <Content style={{ marginTop: '56px' }}>
-            <div className="container-fluid">{children}</div>
+            <div className={`container-fluid ${props?.classAnimation}`}>{children}</div>
           </Content>
 
           <Footer>

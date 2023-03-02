@@ -1,4 +1,6 @@
 import { create } from 'zustand'
+import { devtools } from 'zustand/middleware'
+
 const cartState = {
   cart: [],
 }
@@ -7,21 +9,15 @@ const cartMutation = (set) => ({
   addToCart: (item) => set((state) => ({ cart: item })),
 })
 
-const useCartStore = create((set) => ({
+const store = (set) => ({
   ...cartState,
   ...cartMutation(set),
-  // addToCart: (item) => set((state) => ({ cart: [...state.cart, item] })),
-  // deleteItemFormCart: (item) =>
-  //   set((state) => {
-  //     let index = state.cart.findIndex((cartItem) => cartItem._id === item._id)
-  //     let newCart = []
-  //     if (index !== -1) {
-  //       newCart = [...state.cart.slice(0, index), ...state.cart.slice(index + 1)]
-  //     }
-  //     return {
-  //       cart: newCart,
-  //     }
-  //   }),
-}))
+})
+const useCartStore = create(
+  devtools(store, {
+    name: 'useCartStore',
+    enabled: process.env.NODE_ENV === 'development',
+  }),
+)
 
 export { useCartStore }

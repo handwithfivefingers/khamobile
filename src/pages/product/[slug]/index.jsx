@@ -8,9 +8,10 @@ import CommonLayout from 'component/UI/Layout'
 import axios from 'configs/axiosInstance'
 import parser from 'html-react-parser'
 import { ProductJsonLd } from 'next-seo'
+import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Button, Carousel, Table } from 'rsuite'
 import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
@@ -23,62 +24,90 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      console.log('parse')
       if (!window.FB) return
-      else {
-        window.FB.XFBML.parse()
-        clearTimeout(timeout)
-      }
+      window.FB.XFBML.parse()
+      clearTimeout(timeout)
     }, 1000)
-    console.log(process.env.host + router.asPath)
     return () => clearTimeout(timeout)
   }, [])
-  console.log(data)
+
+  const getProductContent = useMemo(() => {
+    let html = null
+
+    html = (
+      <CardBlock>
+        <div
+          className={clsx(styles.productContent, {
+            [styles.open]: toggleContent,
+          })}
+        >
+          {data?.content && parser(data?.content)}
+          {!toggleContent && (
+            <Button
+              appearance="ghost"
+              color="red"
+              onClick={() => setToggleContent(true)}
+              className={styles.btnToggle}
+              style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+            >
+              Xem thêm
+            </Button>
+          )}
+        </div>
+      </CardBlock>
+    )
+
+    return html
+  }, [toggleContent])
+
   return (
     <>
       <PostHelmet seo={seo} />
 
-      <ProductJsonLd
-        productName="Executive Anvil"
-        images={
-          data?.image?.map(({ src }) =>
-            process.env.NODE_ENV !== 'development' ? process.env.API + src : 'https://app.khamobile.vn' + src,
-          ) || []
-        }
-        description={data?.description}
-        brand="ACME"
-        color={data?.attribute?.['Màu sắc']}
-        reviews={[
-          {
-            author: 'Jim',
-            datePublished: '2017-01-06T03:37:40Z',
-            reviewBody: 'This is my favorite product yet! Thanks Nate for the example products and reviews.',
-            name: 'So awesome!!!',
-            reviewRating: {
-              bestRating: '5',
-              ratingValue: '5',
-              worstRating: '1',
+      <Head>
+        <ProductJsonLd
+          productName="Executive Anvil"
+          images={
+            data?.image?.map(({ src }) =>
+              process.env.NODE_ENV !== 'development' ? process.env.API + src : 'https://app.khamobile.vn' + src,
+            ) || []
+          }
+          description={data?.description}
+          brand="ACME"
+          color={data?.attribute?.['Màu sắc']}
+          reviews={[
+            {
+              author: 'Jim',
+              datePublished: '2017-01-06T03:37:40Z',
+              reviewBody: 'This is my favorite product yet! Thanks Nate for the example products and reviews.',
+              name: 'So awesome!!!',
+              reviewRating: {
+                bestRating: '5',
+                ratingValue: '5',
+                worstRating: '1',
+              },
+              publisher: {
+                type: 'Organization',
+                name: 'TwoVit',
+              },
             },
-            publisher: {
-              type: 'Organization',
-              name: 'TwoVit',
-            },
-          },
-        ]}
-        aggregateRating={{
-          ratingValue: '4.4',
-          reviewCount: '89',
-        }}
-        offers={_relationProd?.map((_relationItem) => ({
-          price: _relationItem.price,
-          priceCurrency: 'VND',
-          itemCondition: 'https://schema.org/UsedCondition',
-          availability: _relationItem.stock_status ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-          url: process.env.host + router.asPath,
-        }))}
-        lowPrice={data?.price}
-        priceCurrency={'VND'}
-      />
+          ]}
+          aggregateRating={{
+            ratingValue: '4.4',
+            reviewCount: '89',
+          }}
+          offers={_relationProd?.map((_relationItem) => ({
+            price: _relationItem.price,
+            priceCurrency: 'VND',
+            itemCondition: 'https://schema.org/UsedCondition',
+            availability: _relationItem.stock_status ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+            url: process.env.host + router.asPath,
+          }))}
+          lowPrice={data?.price}
+          priceCurrency={'VND'}
+        />
+      </Head>
+      
       <div className="row p-0">
         <div className="col-12 p-0">
           <PageHeader type="h1" left divideClass={styles.divideLeft}>
@@ -97,47 +126,28 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
                   <div className="col-12 col-md-12 col-lg-7">
                     <ProductForm data={data} _relationProd={_relationProd} slug={slug} />
 
-                    <CardBlock className="border-0 mt-4">
-                      {data?.description && <TabsList data={data?.description} />}
-                    </CardBlock>
+                    {data?.description && <TabsList data={data?.description} className="border-0 mt-4" />}
                   </div>
                 </div>
               </div>
 
-              <div className="col-lg-9 col-md-12">
-                <CardBlock>
-                  <div
-                    className={clsx(styles.productContent, {
-                      [styles.open]: toggleContent,
-                    })}
-                  >
-                    {data?.content && parser(data?.content)}
-                    {!toggleContent && (
-                      <Button
-                        appearance="ghost"
-                        color="red"
-                        onClick={() => setToggleContent(true)}
-                        className={styles.btnToggle}
-                        style={{ background: 'var(--rs-red-800)', color: '#fff' }}
-                      >
-                        Xem thêm
-                      </Button>
-                    )}
-                  </div>
-                </CardBlock>
-              </div>
+              <div className="col-lg-9 col-md-12">{getProductContent}</div>
 
               <div className={clsx('col-lg-3 col-md-12')}>
                 <CardBlock className="border-0">
-                  <Table height={400} data={data} renderEmpty={() => <NoData description="Chưa có dữ liệu" />}>
-                    <Column width={150}>
+                  <Table
+                    height={400}
+                    data={data?.information}
+                    renderEmpty={() => <NoData description="Chưa có dữ liệu" />}
+                  >
+                    <Column flexGrow={1} fullText>
                       <HeaderCell>Thông số kỹ thuật</HeaderCell>
-                      <Cell dataKey="firstName" />
+                      <Cell dataKey="key" />
                     </Column>
 
-                    <Column width={150}>
+                    <Column flexGrow={1} fullText>
                       <HeaderCell />
-                      <Cell dataKey="lastName" />
+                      <Cell dataKey="value" />
                     </Column>
                   </Table>
                 </CardBlock>
@@ -171,11 +181,11 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
   )
 }
 
-const TabsList = ({ data }) => {
+const TabsList = ({ data, className }) => {
   return (
-    <div className={styles.tabs}>
+    <div className={clsx(className, styles.tabs)}>
       <h6>Khuyến mãi</h6>
-      <div className={styles.tabsContent}>{parser(data || '')}</div>
+      <div className={clsx(styles.tabsContent)}>{parser(data || '')}</div>
     </div>
   )
 }
@@ -259,8 +269,6 @@ export const getServerSideProps = async (ctx) => {
     }
 
     const { data, _relationProd, seo } = resp.data
-
-    // console.log(data)
 
     return {
       props: {

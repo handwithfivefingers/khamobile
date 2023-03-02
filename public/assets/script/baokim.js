@@ -1,5 +1,7 @@
 // window.addEventListener('load', )
 
+// Script https://pc.baokim.vn/js/bk_plus_v2.popup.js
+
 function baokimScript() {
   var t,
     e = 'inline-block',

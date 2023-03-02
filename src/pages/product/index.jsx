@@ -56,9 +56,9 @@ export default function Product(props) {
   }
 
   const renderSkeleton = useMemo(() => {
-    return [...Array(20).keys()].map((item) => {
+    return [...Array(20).keys()].map((item, index) => {
       return (
-        <div className={styles.gridItem} key={Math.random()}>
+        <div className={styles.gridItem} key={[item, index].join('_')}>
           <CardSkeletonProduct />
         </div>
       )
@@ -99,7 +99,7 @@ export default function Product(props) {
                   {!loading &&
                     product?.data?.map((prod) => {
                       return (
-                        <Link href={`/product/${prod.slug}`} passHref>
+                        <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
                           <a className={styles.gridItem}>
                             <Card
                               imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}

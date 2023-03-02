@@ -1,4 +1,3 @@
-import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
 import Card from 'component/UI/Content/Card'
 import ImageBlock from 'component/UI/Content/ImageBlock'
@@ -7,9 +6,9 @@ import PageHeader from 'component/UI/Content/PageHeader'
 import SideFilter from 'component/UI/Content/SideFilter'
 import CommonLayout from 'component/UI/Layout'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { BsInboxes } from 'react-icons/bs'
-import { Button, Col, Divider, Drawer, Pagination, Row } from 'rsuite'
+import { Button, Divider, Drawer, Pagination } from 'rsuite'
 import { GlobalCategoryService, GlobalHomeService } from 'service/global'
 import styles from './styles.module.scss'
 
@@ -19,7 +18,6 @@ export default function SingleCategory({ seo, slug, page, ...props }) {
     open: false,
     placement: 'left',
   })
-  const cardRef = useRef()
 
   const router = useRouter()
 
@@ -63,7 +61,7 @@ export default function SingleCategory({ seo, slug, page, ...props }) {
     return <NoData />
   }
 
-  const renderProduct = () => {
+  const renderProduct = useMemo(() => {
     let html = null
     if (data?.product?.items?.length) {
       let currentData = data?.product?.items?.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE)
@@ -112,7 +110,7 @@ export default function SingleCategory({ seo, slug, page, ...props }) {
       )
     }
     return html
-  }
+  }, [data.product])
 
   return (
     <>
@@ -127,19 +125,17 @@ export default function SingleCategory({ seo, slug, page, ...props }) {
           <div className="container product_detail">
             <div className="row gy-4">
               <div className="col-3">
-                <ImageBlock src={data?.cate?.image || ''} engine />
+                <ImageBlock src={data?.cate?.image || ''} engine={data?.cate?.image ? true : false} />
               </div>
               <div className="col-9">
-                <p>
-                  The category description can be positioned anywhere on the page via the layout page builder inside the
-                </p>
+                <p>{data.cate?.description}</p>
               </div>
               <div className="col-24">
                 <SideFilter onChange={onFilterChange} filter={filter} tagClick={tagClick} withMemory />
               </div>
               <Divider />
 
-              {renderProduct()}
+              {renderProduct}
             </div>
           </div>
         </div>

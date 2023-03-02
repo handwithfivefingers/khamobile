@@ -3,15 +3,14 @@ import clsx from 'clsx'
 import BaoKim from 'component/UI/Content/BaoKim'
 import CardBlock from 'component/UI/Content/CardBlock'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState, memo } from 'react'
 import { BiCart } from 'react-icons/bi'
-import { Button, Cascader, Divider, Form, IconButton, InputNumber, Panel, SelectPicker } from 'rsuite'
+import { Button, Divider, Form, IconButton, Panel } from 'rsuite'
 import { ProductModel } from 'src/constant/model.constant'
 import { formatCurrency } from 'src/helper'
 import { useCartStore } from 'store/cartStore'
 import ProductOptions from '../ProductOption'
-import _ from 'lodash'
+import { isEqual } from 'lodash'
 import styles from './styles.module.scss'
 
 const ProductForm = ({ data, _relationProd, ...props }) => {
@@ -25,9 +24,8 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
 
   const [attributeSelect, setAttributeSelect] = useState({})
 
-  const [productFilter, setProductFilter] = useState([])
-
   const { addToCart } = useCartStore()
+
   const [form, setForm] = useState({
     quantity: 1,
     image: data?.image,
@@ -42,14 +40,6 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       getDefaultOptions()
     }
   }, [])
-
-  // useEffect(() => {
-  //   console.log(productFilter)
-  //   if (Object.keys(attributeSelect).length === data.attributes?.length && productFilter.length === 1) {
-  //     const [{ _id, ...rest }] = productFilter
-  //     setForm((prev) => ({ ...prev, ...rest, variantId: _id }))
-  //   }
-  // }, [attributeSelect])
 
   const getDefaultOptions = () => {
     if (_relationProd.length) {
@@ -104,8 +94,6 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
 
     await localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
 
-    // return
-
     router.push('/cart')
   }
 
@@ -138,10 +126,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
   }
 
   const calculateRegularPrice = () => {
-    console.log(form)
-
     let html = null
-
     if (form.regular_price !== form.price) {
       html = formatCurrency(form?.regular_price * form?.quantity || 0, { symbol: 'đ' })
     }
@@ -179,40 +164,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
         setForm((prev) => ({ ...prev, ...rest, image: data?.image, variantId: _id }))
       } else {
         setForm({ quantity: 1, image: data?.image, _id: data?._id })
-        // currentAttributeSelect = { [attributeName]: value }
 
-        // let resultByKey = filterByKey({ key: attributeName, value, productList: _relationProd })
-
-        // console.log(resultByKey)
-
-        // for(let key in resultByKey.attribute) {
-
-        //   if(resultByKey.attribute[key]) {
-
-        //   }
-        //  }
-
-        // let availableAttributes = resultByKey.reduce((prev, current) => {
-        //   for (let attrKey in current.attribute) {
-        //     if (prev.get(attrKey)) {
-        //       value = [...prev.get(attrKey), { active: true, v: current.attribute[attrKey] }]
-        //       prev.set(attrKey, value)
-        //     } else {
-        //       prev.set(attrKey, [{ active: true, v: current.attribute[attrKey] }])
-        //     }
-        //   }
-        //   return prev
-        // }, new Map())
-
-        // for (let [key, value] of [...map]) {
-        //   value = value.map((item) => ({
-        //     ...item,
-        //     active: resultByKey.some((_item) => _item.attribute[key] === item.v),
-        //   }))
-        //   map.set(key, value)
-        // }
-
-        // console.log(map)
         productFiltered = filterProductByAttributeName({ [attributeName]: value })
       }
     }
@@ -230,21 +182,9 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       }
     }
 
-    setProductFilter(productFiltered)
-
     setAttributeMap(map)
 
     setAttributeSelect(currentAttributeSelect)
-  }
-
-  const filterByKey = ({ key, value, productList }) => {
-    const result = []
-    for (let item of productList) {
-      if (item.attribute[key] === value) {
-        result.push(item)
-      }
-    }
-    return result
   }
 
   /**
@@ -373,8 +313,8 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
   )
 }
 
-const CustomInputNumber = ({ rowKey, value, ...props }) => {
-  return <InputNumber value={value} {...props} />
+function isEqualProps(prevProps, nextProps) {
+  return !isEqual(prevProps, nextProps)
 }
 
-export default ProductForm
+export default memo(ProductForm, isEqualProps)
