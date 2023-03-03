@@ -20,6 +20,8 @@ const { Column, HeaderCell, Cell } = Table
 
 export default function ProductDetail({ data, _relationProd, seo, slug, ...props }) {
   const [toggleContent, setToggleContent] = useState(false)
+
+  const [imageSlider, setImageSlider] = useState(data?.image)
   const router = useRouter()
 
   useEffect(() => {
@@ -60,6 +62,19 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
     return html
   }, [toggleContent])
 
+  const handleOutputSelect = (outputData) => {
+    // console.log(data)
+    if (outputData?.image) {
+      const listImage = [...data?.image]
+      listImage.push(outputData?.image)
+      setImageSlider(listImage)
+    }
+  }
+
+  const renderImageSlider = useMemo(() => {
+    return <Slider image={imageSlider} />
+  }, [imageSlider])
+  console.log(data, _relationProd)
   return (
     <>
       <PostHelmet seo={seo} />
@@ -107,7 +122,7 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
           priceCurrency={'VND'}
         />
       </Head>
-      
+
       <div className="row p-0">
         <div className="col-12 p-0">
           <PageHeader type="h1" left divideClass={styles.divideLeft}>
@@ -119,12 +134,15 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
             <div className="row gy-4">
               <div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
                 <div className="row gy-4">
-                  <div className="col-12 col-md-12 col-lg-5">
-                    <Slider image={data?.image} />
-                  </div>
+                  <div className="col-12 col-md-12 col-lg-5">{renderImageSlider}</div>
 
                   <div className="col-12 col-md-12 col-lg-7">
-                    <ProductForm data={data} _relationProd={_relationProd} slug={slug} />
+                    <ProductForm
+                      data={data}
+                      _relationProd={_relationProd}
+                      slug={slug}
+                      outputSelect={handleOutputSelect}
+                    />
 
                     {data?.description && <TabsList data={data?.description} className="border-0 mt-4" />}
                   </div>
@@ -190,8 +208,14 @@ const TabsList = ({ data, className }) => {
   )
 }
 
-const Slider = ({ image, ...props }) => {
+const Slider = ({ image, activeIndex, ...props }) => {
   const [sliderActive, setSliderActive] = useState(0)
+
+  useEffect(() => {
+    if (image) {
+      setSliderActive(image.length - 1)
+    }
+  }, [image])
 
   return (
     <>
@@ -219,9 +243,7 @@ const Slider = ({ image, ...props }) => {
                     loader={imageLoader}
                     loading="lazy"
                     placeholder="blur"
-                    blurDataURL={
-                      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
-                    }
+                    blurDataURL="/blur.jpg"
                   />
                 </div>
               )
@@ -243,9 +265,7 @@ const Slider = ({ image, ...props }) => {
                   loader={imageLoader}
                   loading="lazy"
                   placeholder="blur"
-                  blurDataURL={
-                    'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
-                  }
+                  blurDataURL="/blur.jpg"
                 />
               </div>
             )

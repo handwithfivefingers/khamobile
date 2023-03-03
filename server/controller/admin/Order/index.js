@@ -8,6 +8,17 @@ export default class OrderAdmin {
   getOrders = async (req, res) => {
     try {
       const _order = await Order.find({})
+        .populate({
+          path: 'product._id',
+          select: 'title price attributes',
+        })
+        .populate({
+          path: 'product.variantId',
+          select: 'title price attributes',
+        })
+        .sort({
+          createdAt: -1,
+        })
 
       return res.status(200).json({
         data: _order,

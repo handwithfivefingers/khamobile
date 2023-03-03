@@ -25,7 +25,7 @@ const GroupVariant = (props) => {
         html = <AttributeGroup {...props} ref={formRef} />
         break
       case 3:
-        html = <VariantGroup {...props} ref={formRef}  />
+        html = <VariantGroup {...props} ref={formRef} />
         break
       case 4:
         break
@@ -44,11 +44,16 @@ const GroupVariant = (props) => {
         defaultValue={1}
         onChange={(val) => setSideActiveKey(val)}
         className={styles.sideVariant}
+        style={{ minHeight: 200 }}
       >
         <Radio value={1}>Thông tin cơ bản</Radio>
-        <Radio value={2}>Thuộc tính</Radio>
-        <Radio value={3}>Các biến thể</Radio>
-        <Radio value={4}>Các sản phẩm được kết nối</Radio>
+        <Radio value={2} disabled={props?.productType?.type === 'simple'}>
+          Thuộc tính
+        </Radio>
+        <Radio value={3} disabled={props?.productType?.type === 'simple'}>
+          Các biến thể
+        </Radio>
+        <Radio value={4}>Liên kết sản phẩm</Radio>
       </RadioGroup>
 
       <div className={clsx(styles.contentVariant, 'position-relative')}>{renderBySideActiveKey}</div>

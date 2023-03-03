@@ -13,7 +13,6 @@ import { GlobalHomeService, PageService } from 'service/global'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import styles from './styles.module.scss'
 import { useCommonStore } from 'src/store'
-import { useQuery } from '@tanstack/react-query'
 
 const Home = (props) => {
   // render 4 times
@@ -111,7 +110,6 @@ const Home = (props) => {
   }, [content])
 
   const getSectionService = useMemo(() => {
-    // console.log('render section service')
     let html = null
     html = (
       <div className="row">
@@ -302,20 +300,6 @@ const Home = (props) => {
       {renderSection(7)}
       {renderSection(8)}
       {renderSection(9)}
-
-      {/* <section className="container">
-        <div className="row">
-          <div className="col-12">
-            <Heading type="h3" center>
-              {content?.[9]?.title}
-            </Heading>
-          </div>
-
-          <div className="col-12">
-            <Catalog data={content?.[9].catalog} />
-          </div>
-        </div>
-      </section> */}
     </>
   )
 }
@@ -333,7 +317,13 @@ const SelfCarousel = ({ content, ...props }) => {
       slidesToShow={1}
     >
       {content?.data?.map((item, index) => (
-        <ImageBlock src={process.env.API + item} key={[Math.random(), index]} height={'53%'} width={'100%'} priority />
+        <ImageBlock
+          src={process.env.API + item}
+          key={[process.env.API + item, index].join('_')}
+          height={'53%'}
+          width={'100%'}
+          priority
+        />
       ))}
     </SingleSlider>
   )

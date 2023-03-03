@@ -13,7 +13,7 @@ import ProductOptions from '../ProductOption'
 import { isEqual } from 'lodash'
 import styles from './styles.module.scss'
 
-const ProductForm = ({ data, _relationProd, ...props }) => {
+const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
   const pricingRef = useRef()
 
   const formRef = useRef()
@@ -40,6 +40,13 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       getDefaultOptions()
     }
   }, [])
+
+  useEffect(() => {
+    if (form.variantId) {
+      let item = _relationProd.find((item) => item._id === form.variantId)
+      outputSelect?.(item)
+    }
+  }, [form])
 
   const getDefaultOptions = () => {
     if (_relationProd.length) {
@@ -182,6 +189,7 @@ const ProductForm = ({ data, _relationProd, ...props }) => {
       }
     }
 
+    console.log(map)
     setAttributeMap(map)
 
     setAttributeSelect(currentAttributeSelect)

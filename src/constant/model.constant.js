@@ -30,4 +30,11 @@ const CategoryModel = Schema.Model({
   slug: Schema.Types.StringType().isRequired('Đường dẫn là bắt buộc'),
 })
 
-export { CheckoutModel, AttributeModel, DeliveryModel, UserInformationModel, ProductModel, CategoryModel }
+const LoginModel = Schema.Model({
+  username: Schema.Types.StringType()
+    .isRequired('Tên tài khoản là bắt buộc')
+    .minLength(3, 'Tên tài khoản thấp hơn 3 kí tự'),
+  password: Schema.Types.StringType().isRequired('Mật khẩu là bắt buộc').minLength(8, 'Mật khẩu thấp hơn 8 kí tự'),
+})
+
+export { CheckoutModel, AttributeModel, DeliveryModel, UserInformationModel, ProductModel, CategoryModel, LoginModel }

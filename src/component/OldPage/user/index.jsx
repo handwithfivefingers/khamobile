@@ -93,7 +93,6 @@ export default function MyOrder() {
     }
   }
 
-  console.log('rendered', user)
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -249,7 +248,6 @@ const UserInformation = ({ data, ...props }) => {
   const [loading, setLoading] = useState(false)
 
   const handleSubmit = async () => {
-    console.log('handleSubmit', formVal)
     try {
       setLoading(true)
       const resp = await AuthenticateService.changeInformation(formVal)

@@ -1,5 +1,5 @@
 import { forwardRef, lazy, useEffect, useMemo, useRef, useState, Suspense } from 'react'
-import { Button, ButtonGroup, IconButton, Loader, Panel, PanelGroup, SelectPicker, Stack } from 'rsuite'
+import { Button, ButtonGroup, FlexboxGrid, IconButton, Loader, Panel, PanelGroup, SelectPicker, Stack } from 'rsuite'
 import styles from './styles.module.scss'
 import { GrFormClose } from 'react-icons/gr'
 // import VariantItem from './VariantItem'
@@ -161,27 +161,30 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, deleteVar
       <Panel
         collapsible
         header={
-          <Stack justifyContent="space-between">
+          <div className="d-flex justify-content-between">
             <span>
               {Object.keys(attributesItem)
                 .map((key) => attributesItem[key])
                 ?.join(' - ')}
             </span>
-            <IconButton
-              icon={<GrFormClose />}
-              className="p-1 mx-4"
-              style={{ fontSize: 16 }}
-              appearance="subtle"
-              color="red"
-              onClick={() => onHandleRemoveVariantPosition(position)}
-            />
-          </Stack>
+            <div className="d-flex mx-4" onClick={(e) => e.stopPropagation()}>
+              <IconButton
+                icon={<GrFormClose />}
+                className="p-1 mx-4"
+                style={{ fontSize: 16 }}
+                appearance="subtle"
+                color="red"
+                onClick={() => onHandleRemoveVariantPosition(position)}
+              />
+            </div>
+          </div>
         }
         bordered
         key={[position, attributesItem]}
       >
         <Suspense fallback={<Loader content="vertical Loading..." vertical />}>
           <VariantItem
+            {...props}
             data={restItem}
             attributes={attributes}
             attributesItem={attributesItem}
@@ -201,11 +204,7 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, deleteVar
       <div className={styles.selectAttr}>
         <VariantTypeSelection options={options} ref={typeRef} />
 
-        <Button
-          className="px-4 "
-          style={{ color: 'var(--rs-primary-100)', background: 'var(--rs-blue-800)' }}
-          onClick={handleAddVariant}
-        >
+        <Button className="px-4 " appearance="primary" onClick={handleAddVariant}>
           Thêm
         </Button>
       </div>
@@ -225,7 +224,7 @@ const VariantTypeSelection = forwardRef(({ options }, ref) => {
     setRender(!_render)
   }
 
-  return <SelectPicker data={options} onSelect={handleSelect} />
+  return <SelectPicker data={options} onSelect={handleSelect} style={{ minWidth: 150 }} />
 })
 
 export default VariantGroup

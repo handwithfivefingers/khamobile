@@ -3,7 +3,6 @@ import mongoose from 'mongoose'
 export default {
   price: Number,
   regular_price: Number,
-  image: String,
   purchasable: {
     type: Boolean,
     default: true,
@@ -20,5 +19,9 @@ export default {
   parentId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Product',
+  },
+  image: {
+    src: String,
+    name: String,
   },
 }

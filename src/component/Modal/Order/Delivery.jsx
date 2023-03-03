@@ -1,8 +1,11 @@
+import ImageBlock from 'component/UI/Content/ImageBlock'
 import { KMInput } from 'component/UI/Content/KMInput'
 import { isEqual } from 'lodash'
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { Button, Col, Form, Grid, Row } from 'rsuite'
+import { Button, Col, Form, Grid, Panel, PanelGroup, Row, Input, Table, List } from 'rsuite'
+import { formatCurrency } from 'src/helper'
 
+const { Column, HeaderCell, Cell } = Table
 export default function DeliveryModal({ data, ...props }) {
   const [state, setState] = useState(data)
   const userInformationRef = useRef(null)
@@ -14,29 +17,21 @@ export default function DeliveryModal({ data, ...props }) {
     }
   }, [data])
 
+  const { userInformation, deliveryInformation, ...rest } = state
   return (
     <>
       <div className="container">
-        <div className="d-flex">
-          <Button
-            onClick={() => {
-              userInformationRef.current.toggleEdit()
-              userDeliveryRef.current.toggleEdit()
-            }}
-          >
-            Edit
-          </Button>
-        </div>
-        <Grid fluid>
-          <Row gutter={16}>
-            <Col xs={12}>
-              <UserInformation data={state.userInformation} ref={userInformationRef} />
-            </Col>
-            <Col xs={12}>
-              <UserDelivery data={state.deliveryInformation} ref={userDeliveryRef} />
-            </Col>
-          </Row>
-        </Grid>
+        <PanelGroup>
+          <Panel header="Thông tin liên lạc" collapsible defaultExpanded>
+            <UserInformation data={userInformation} ref={userInformationRef} />
+          </Panel>
+          <Panel header="Địa chỉ giao hàng / Thánh toán" collapsible defaultExpanded>
+            <UserDelivery data={deliveryInformation} ref={userDeliveryRef} />
+          </Panel>
+          <Panel header="Đơn hàng" collapsible defaultExpanded>
+            <OrderInformation data={rest} ref={userDeliveryRef} />
+          </Panel>
+        </PanelGroup>
       </div>
     </>
   )
@@ -66,9 +61,26 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
 
   return (
     <Form formValue={state} plaintext={isEdit} onChange={(val) => setState((prevState) => ({ ...prevState, ...val }))}>
-      <KMInput className="w-100" name="fullName" label="Họ và tên" />
-      <KMInput className="w-100" name="email" label="Địa chỉ email" />
-      <KMInput className="w-100" name="phone" label="Số điện thoại" />
+      <div className="row">
+        <div className="col">
+          <div className="d-flex flex-column justify-content-between">
+            <label className="text-muted fs-6 fw-normal">Họ và tên</label>
+            <KMInput name="fullName" />
+          </div>
+        </div>
+        <div className="col">
+          <div className="d-flex flex-column justify-content-between">
+            <label className="text-muted fs-6 fw-normal">Địa chỉ email</label>
+            <KMInput name="email" />
+          </div>
+        </div>
+        <div className="col">
+          <div className="d-flex flex-column justify-content-between">
+            <label className="text-muted fs-6 fw-normal">Số điện thoại</label>
+            <KMInput name="phone" />
+          </div>
+        </div>
+      </div>
     </Form>
   )
 })
@@ -97,11 +109,93 @@ const UserDelivery = forwardRef(({ data, ...props }, ref) => {
 
   return (
     <Form formValue={state} plaintext={isEdit} onChange={(val) => setState((prevState) => ({ ...prevState, ...val }))}>
-      <KMInput name="company" className="w-100" label="Công ty" />
-      <KMInput name="address_1" className="w-100" label="Địa chỉ 1" />
-      <KMInput name="address_2" className="w-100" label="Địa chỉ 2" value={state.address_2 || ' '} />
-      <KMInput name="city" className="w-100" label="Tỉnh/Thành phố" />
-      <KMInput name="postCode" className="w-100" label="Mã vùng" />
+      <div className="row">
+        <div className="col">
+          <div className="d-flex flex-column justify-content-between">
+            <label className="text-muted fs-6 fw-normal">Địa chỉ</label>
+            <KMInput name="address" />
+          </div>
+        </div>
+        <div className="col">
+          <div className="d-flex flex-column justify-content-between">
+            <label className="text-muted fs-6 fw-normal">Phường/Xã</label>
+            <KMInput name="wards" />
+          </div>
+        </div>
+        <div className="col">
+          <div className="d-flex flex-column justify-content-between">
+            <label className="text-muted fs-6 fw-normal">Quận/Huyện</label>
+            <KMInput name="district" />
+          </div>
+        </div>
+        <div className="col">
+          <div className="d-flex flex-column justify-content-between">
+            <label className="text-muted fs-6 fw-normal">Tỉnh/Thành Phố</label>
+            <KMInput name="city" />
+          </div>
+        </div>
+      </div>
+    </Form>
+  )
+})
+
+const OrderInformation = forwardRef(({ data, ...props }, ref) => {
+  const [state, setState] = useState(data)
+  const [isEdit, setIsEdit] = useState(true)
+  useEffect(() => {
+    const isEqualObject = isEqual(state, data)
+
+    if (!isEqualObject) {
+      setState(data)
+    }
+  }, [data])
+  useImperativeHandle(
+    ref,
+    () => {
+      return {
+        toggleEdit: () => setIsEdit(!isEdit),
+      }
+    },
+    [isEdit],
+  )
+  return (
+    <Form formValue={state} plaintext={isEdit} onChange={(val) => setState((prevState) => ({ ...prevState, ...val }))}>
+      <Table data={data?.product} rowHeight={100}>
+        <Column width={80}>
+          <HeaderCell>Hình ảnh</HeaderCell>
+          <Cell>{(rowData) => <ImageBlock src={rowData.image.src} engine objectFit="contain" />}</Cell>
+        </Column>
+        <Column fullText flexGrow={1}>
+          <HeaderCell>Sản phẩm</HeaderCell>
+          <Cell>{(rowData) => <span>{rowData._id.title}</span>}</Cell>
+        </Column>
+        <Column>
+          <HeaderCell>Số lượng</HeaderCell>
+          <Cell>{(rowData) => <span>{rowData.quantity}</span>}</Cell>
+        </Column>
+        <Column>
+          <HeaderCell>Thuộc tính</HeaderCell>
+          <Cell>{(rowData) => <span>{rowData.quantity}</span>}</Cell>
+        </Column>
+        <Column width={150}>
+          <HeaderCell>⭐️ Giá tiền</HeaderCell>
+          <Cell>
+            {(rowData) => (
+              <span>
+                {formatCurrency((rowData.variantId?.price || rowData._id.price) * rowData.quantity, { symbol: 'đ' })}
+              </span>
+            )}
+          </Cell>
+        </Column>
+      </Table>
+
+      <List>
+        <List.Item>
+          Tổng giá tiền : <span>{formatCurrency(data.amount, { symbol: 'đ' })}</span>
+          <br />
+          <i className="text-muted fs-6 fw-light">Giá trị đơn hàng tại thời điểm mua hàng</i>
+        </List.Item>
+      </List>
     </Form>
   )
 })

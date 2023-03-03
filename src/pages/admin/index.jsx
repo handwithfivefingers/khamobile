@@ -24,7 +24,6 @@ const Admin = () => {
     }
   }
 
-  console.log(chartData)
   return (
     <>
       <Row className="dashboard-header p-3">

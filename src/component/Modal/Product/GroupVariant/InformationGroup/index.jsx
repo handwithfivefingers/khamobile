@@ -1,10 +1,11 @@
-import React, { forwardRef, useRef, useState } from 'react'
-import { Button, Toggle } from 'rsuite'
+import React, { forwardRef, useMemo, useRef, useState } from 'react'
+import { Button, Form, Toggle, SelectPicker } from 'rsuite'
 import styles from './styles.module.scss'
 
 import CheckIcon from '@rsuite/icons/Check'
 import CloseIcon from '@rsuite/icons/Close'
-const InformationGroup = forwardRef(({ stockData }, ref) => {
+import { KMPrice } from 'component/UI/Content/KMInput'
+const InformationGroup = forwardRef(({ stockData, productType }, ref) => {
   const { purchasable, stock_status, setStock } = stockData
 
   const checkboxRef = useRef({
@@ -12,34 +13,97 @@ const InformationGroup = forwardRef(({ stockData }, ref) => {
     stock_status,
   })
 
-  return (
-    <div className={styles.group}>
-      <div className={styles.selectAttr}>
-        <div className="row gx-2 gy-2">
-          <div className="col">
-            <div className="label">Hiển thị</div>
-            <div className="label">
-              <CheckboxVariant
-                ref={checkboxRef}
-                data={checkboxRef.current.purchasable}
-                onChange={setStock}
-                name="purchasable"
-                checkValue={true}
-                unCheckValue={false}
+  const renderPricingForSimpleProduct = useMemo(() => {
+    let html = null
+    if (productType.type === 'simple') {
+      html = (
+        <>
+          <div className="col-12">
+            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+              <label style={{ minWidth: 150 }}>Giá niêm yết :</label>
+              <KMPrice
+                name="regular_price"
+                onChange={(v) => {
+                  console.log('price changed', v)
+                  formDataRef.current.regular_price = v
+                }}
+                style={{ minWidth: 200 }}
               />
             </div>
           </div>
-          <div className="col">
-            <div className="label">Trạng thái hàng hóa</div>
-            <div className="label">
-              <CheckboxVariant
-                ref={checkboxRef}
-                data={checkboxRef.current.stock_status}
-                name="stock_status"
-                checkValue="instock"
-                unCheckValue="outofstock"
-                onChange={setStock}
+
+          <div className="col-12">
+            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+              <label style={{ minWidth: 150 }}>Giá tiền :</label>
+              <KMPrice
+                name="price"
+                onChange={(v) => {
+                  console.log('price changed', v)
+                  formDataRef.current.price = v
+                }}
+                style={{ minWidth: 200 }}
               />
+            </div>
+          </div>
+        </>
+      )
+    }
+    return html
+  }, [productType])
+
+  return (
+    <div className={styles.group}>
+      <div className={styles.selectAttr}>
+        <div className="row gx-2 gy-3">
+          <div className="col-12">
+            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+              <label style={{ minWidth: 150 }}>Loại sản phẩm :</label>
+              <Form.Group controlId="type">
+                <SelectPicker
+                  name="type"
+                  value={productType.type}
+                  onChange={(value, e) => productType.setProductType(value, e)}
+                  onClick={(e) => e.preventDefault()}
+                  data={[
+                    { label: 'Đơn giản', value: 'simple' },
+                    { label: 'Nhiều biến thể', value: 'variable' },
+                  ]}
+                  style={{ minWidth: 200 }}
+                />
+              </Form.Group>
+            </div>
+          </div>
+
+          {renderPricingForSimpleProduct}
+
+          <div className="col-6">
+            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+              <div className="label">Hiển thị sản phẩm</div>
+              <div className="label">
+                <CheckboxVariant
+                  ref={checkboxRef}
+                  data={checkboxRef.current.purchasable}
+                  onChange={setStock}
+                  name="purchasable"
+                  checkValue={true}
+                  unCheckValue={false}
+                />
+              </div>
+            </div>
+          </div>
+          <div className="col-6">
+            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+              <div className="label">Còn hàng</div>
+              <div className="label">
+                <CheckboxVariant
+                  ref={checkboxRef}
+                  data={checkboxRef.current.stock_status}
+                  name="stock_status"
+                  checkValue="instock"
+                  unCheckValue="outofstock"
+                  onChange={setStock}
+                />
+              </div>
             </div>
           </div>
         </div>

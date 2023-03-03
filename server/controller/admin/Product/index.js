@@ -12,20 +12,6 @@ export default class ProductController {
         .select(
           '_id title price slug category stock_status type image attributes createdAt updatedAt description content',
         )
-      // console.log(_prod)
-
-      // let listProduct = _prod.map((prod, index) => {
-      //   if (index === 59) {
-      //     prod.content = prod.content.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, `${process.env.API}/public/`)
-      //     console.log(prod.content)
-      //   }
-
-      //   return {
-      //     ...prod._doc,
-      //   }
-      // })
-
-      // console.log(listProduct)
 
       return new Response().fetched({ data: _prod }, res)
     } catch (error) {
@@ -88,6 +74,7 @@ export default class ProductController {
               'attr.stock_status': '$variations.stock_status',
               'attr.attributes': '$variations.attributes',
               'attr.parentId': '$variations.parentId',
+              'attr.image': '$variations.image',
               attributes: '$attributes',
             },
           },
@@ -114,6 +101,7 @@ export default class ProductController {
                   purchasable: '$attr.purchasable',
                   stock_status: '$attr.stock_status',
                   attributes: '$attr.attributes',
+                  image: '$attr.image',
                 },
               },
             },
@@ -128,10 +116,10 @@ export default class ProductController {
               category: '$_id.category',
               type: '$_id.type',
               primary: '$_id.primary',
-              variations: '$variations',
               image: '$_id.image',
               attributes: '$_id.attributes',
               information: '$_id.information',
+              variations: '$variations',
             },
           },
         ])
@@ -190,20 +178,11 @@ export default class ProductController {
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, content, price, image, information } = formData
-
       const parentId = new mongoose.Types.ObjectId()
 
       let baseProd = new Product({
+        ...formData,
         _id: parentId,
-        title,
-        slug,
-        description,
-        content,
-        type,
-        price,
-        image,
-        information,
       })
 
       await Product.create([baseProd], { session })
@@ -226,34 +205,19 @@ export default class ProductController {
     try {
       session.startTransaction()
 
-      let { type, title, slug, description, variations, content, primary, image, attributes, category, information } =
-        formData
+      let { variations, type, ...rest } = formData
+      // let { variations, type, title, slug, description, content, primary, image, attributes, category, information } =
+      //   formData
 
       const parentId = new mongoose.Types.ObjectId()
 
-      let minPrice = 0
-
-      if (variations) {
-        let sort = variations.filter((item) => item.price)
-        sort = sort.sort((a, b) => a.price - b.price)
-        if (sort.length) {
-          minPrice = +sort[0]?.price
-        }
-      }
+      let minPrice = this.getMinPrice(variations) || 0
 
       let baseProd = new Product({
+        ...rest,
         _id: parentId,
-        title,
-        slug,
-        description,
-        content,
         type,
         price: minPrice,
-        primary,
-        image,
-        attributes,
-        category,
-        information,
       })
 
       await Product.create([baseProd], { session })
@@ -311,24 +275,13 @@ export default class ProductController {
       session.startTransaction()
       if (formData.type !== TYPE_VARIANT.SIMPLE) throw { message: 'Type didtn match' }
 
-      let { _id, type, title, slug, description, content, price, category, image, information } = formData
-
-      const objUpdate = {
-        type,
-        title,
-        slug,
-        description,
-        content,
-        price,
-        category,
-        image,
-        information,
-      }
+      // let { _id, type, title, slug, description, content, price, category, image, information } = formData
+      let { _id, ...rest } = formData
 
       await Product.updateOne(
         { _id: mongoose.Types.ObjectId(_id) },
         {
-          ...objUpdate,
+          ...rest,
         },
         {
           upsert: true,
@@ -357,43 +310,13 @@ export default class ProductController {
 
       session.startTransaction()
 
-      const {
-        _id,
-        type,
-        title,
-        slug,
-        description,
-        content,
-        primary,
-        variations,
-        category,
-        image,
-        attributes,
-        delete: listVariantDelete,
-        deleteAll,
-        information,
-      } = formData
-      let minPrice = 0
-      if (variations) {
-        let sort = variations.filter((item) => item.price)
-        sort = sort.sort((a, b) => a.price - b.price)
-        if (sort.length) {
-          minPrice = sort[0]?.price
-        }
-      }
+      const { _id, delete: listVariantDelete, deleteAll, variations, ...rest } = formData
+
+      let minPrice = this.getMinPrice(variations) || 0
 
       const prodUpdate = {
-        title,
-        slug,
-        description,
-        content,
-        type,
+        ...rest,
         price: minPrice || 0,
-        primary,
-        category,
-        image,
-        attributes,
-        information,
       }
 
       await Product.updateOne(
@@ -543,5 +466,17 @@ export default class ProductController {
       console.log('create error', error)
       return new Response().error(error, res)
     }
+  }
+
+  getMinPrice = (listData) => {
+    let minPrice = 0
+    if (listData) {
+      let sort = listData.filter((item) => item.price)
+      sort = sort.sort((a, b) => a.price - b.price)
+      if (sort.length) {
+        minPrice = sort[0]?.price
+      }
+    }
+    return minPrice
   }
 }

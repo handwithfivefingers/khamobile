@@ -1,62 +1,50 @@
-import googleAnalytics from '@analytics/google-analytics'
-import googleTagManager from '@analytics/google-tag-manager'
-import Analytics from 'analytics'
-import 'animate.css'
 import Head from 'next/head'
-import Router from 'next/router'
+import Router, { useRouter } from 'next/router'
 import Script from 'next/script'
 import { useEffect, useMemo, useState } from 'react'
 import { CustomProvider, Loader } from 'rsuite'
-import 'rsuite/dist/rsuite.min.css'
 import { AuthenticateService } from 'service/authenticate'
 import { GlobalCategoryService, GlobalProductService } from 'service/global'
+import { queryClient, QueryClientProvider, ReactQueryDevtools, useQuery } from 'src/queryClient'
 import { useAuthorizationStore, useCartStore, useCommonStore } from 'src/store'
-import '../assets/css/style.scss'
 import CommonLayout from '../component/UI/Layout'
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query'
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      retry: 0,
-      refetchOnWindowFocus: false,
-      staleTime: 1000 * 15,
-    },
-  },
+import googleAnalytics from '@analytics/google-analytics'
+import googleTagManager from '@analytics/google-tag-manager'
+import Analytics from 'analytics'
+
+import 'rsuite/dist/rsuite.min.css'
+import 'animate.css'
+import '../assets/css/style.scss'
+
+const analytics = Analytics({
+  app: 'Kha Mobile',
+  plugins: [
+    googleTagManager({
+      containerId: 'GTM-PH54855',
+    }),
+    googleAnalytics({
+      measurementIds: ['G-LTP9H80YRD'],
+    }),
+  ],
 })
 export default function MyApp({ Component, pageProps }) {
   const Layout = Component.Layout || CommonLayout
 
   const [loading, setLoading] = useState(false)
-
+  const router = useRouter()
   const { addToCart } = useCartStore()
 
   const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
 
-  // const { changeProductCategory, changeProduct } = useCommonStore((state) => state)
-
   useEffect(() => {
     authenticateUser()
     getCartItem()
-    // loadCategory()
-    // loadProduct()
-    const analytics = Analytics({
-      app: 'Kha Mobile',
-      plugins: [
-        googleTagManager({
-          containerId: 'GTM-PH54855',
-        }),
-        googleAnalytics({
-          measurementIds: ['G-LTP9H80YRD'],
-        }),
-      ],
-    })
 
-    const start = () => {
+    const start = (routerPathName) => {
       setLoading(true)
     }
-    const end = () => {
-      analytics.page()
+
+    const end = (routerPathName) => {
       setLoading(false)
     }
 
@@ -69,6 +57,24 @@ export default function MyApp({ Component, pageProps }) {
       Router.events.off('routeChangeError', end)
     }
   }, [])
+
+  useEffect(() => {
+    const url = process.env.host + router.asPath
+    if (!router.asPath.includes('admin')) {
+      analytics.page({
+        url,
+      })
+      const isCategory = router.asPath.includes('category')
+      if (isCategory) {
+        const [_, categoryName] = router.asPath.split('/').filter((item) => item)
+        if (categoryName) {
+          analytics.track('category', {
+            categoryName,
+          })
+        }
+      }
+    }
+  }, [router.asPath])
 
   const getCartItem = () => {
     let cartItemFromLocal = JSON.parse(localStorage.getItem('khaMobileCart'))
@@ -98,28 +104,6 @@ export default function MyApp({ Component, pageProps }) {
       })
     }
   }
-
-  // const loadCategory = async () => {
-  //   try {
-  //     const resp = await GlobalCategoryService.getProdCate({ all: true })
-  //     if (resp.status === 200) {
-  //       changeProductCategory(resp.data.data)
-  //     }
-  //   } catch (error) {
-  //     console.log('fetch category failed', error.message)
-  //   }
-  // }
-
-  // const loadProduct = async () => {
-  //   try {
-  //     const resp = await GlobalProductService.getProduct({ all: true })
-  //     if (resp.status === 200) {
-  //       changeProduct(resp.data.data)
-  //     }
-  //   } catch (error) {
-  //     console.log('fetch category failed', error.message)
-  //   }
-  // }
 
   const renderComponent = () => {
     let html = null

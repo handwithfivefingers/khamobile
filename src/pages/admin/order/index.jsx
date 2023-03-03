@@ -1,7 +1,8 @@
 import DeliveryModal from 'component/Modal/Order/Delivery'
 import AdminLayout from 'component/UI/AdminLayout'
+import moment from 'moment'
 import { useEffect, useState } from 'react'
-import { Button, Content, Modal, Table, Tag } from 'rsuite'
+import { Button, Content, Modal, SelectPicker, Stack, Table, Tag, Input } from 'rsuite'
 import OrderService from 'service/admin/Order.service'
 import { useCommonStore } from 'src/store/commonStore'
 
@@ -10,37 +11,62 @@ const { Column, HeaderCell, Cell } = Table
 const Orders = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const [data, setData] = useState([])
+  const [dataFilter, setDataFilter] = useState([])
+  const [filter, setFilter] = useState({
+    fullName: '',
+  })
   const [modal, setModal] = useState({
     visible: false,
     component: null,
   })
+
   useEffect(() => {
     changeTitle('Page Orders')
     getOrder()
   }, [])
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      let nextData = []
+      if (filter.fullName) {
+        nextData = data.filter((item) =>
+          item.userInformation.fullName.toLowerCase()?.includes(filter.fullName.toLowerCase()),
+        )
+      } else {
+        nextData = data
+      }
+      setDataFilter(nextData)
+    }, 500)
+    return () => clearTimeout(timeout)
+  }, [filter.fullName, data])
+
   const getOrder = async () => {
     try {
       const resp = await OrderService.getOrders()
-      console.log(resp)
       const { data } = resp.data
       setData(data)
+      setDataFilter(data)
     } catch (error) {
       console.log('getOrders error: ' + error)
     }
   }
 
   const handleOpenModalDelivery = (rowData) => {
-    // console.log(rowData)
     setModal({ ...modal, visible: true, component: <DeliveryModal data={rowData} /> })
   }
 
   return (
     <>
+      <Stack spacing={10} className="py-2">
+        <span>Tìm kiếm: </span>
+        <Input placeholder="Tên người dùng" onChange={(v) => setFilter((state) => ({ ...state, fullName: v }))} />
+      </Stack>
       <Content className={'bg-w'}>
         <Table
-          height={400}
-          data={data}
+          // height={400}
+          height={60 * (10 + 1)}
+          rowHeight={60}
+          data={dataFilter}
           onRowClick={(rowData) => {
             console.log(rowData)
           }}
@@ -62,7 +88,12 @@ const Orders = () => {
             <HeaderCell>Email</HeaderCell>
             <Cell dataKey="userInformation.email" />
           </Column>
-
+          <Column flexGrow={1}>
+            <HeaderCell>Ngày tạo</HeaderCell>
+            <Cell dataKey="createdAt">
+              {(rowData) => <span>{moment(rowData.createdAt).format('DD/MM/YYYY HH:mm')}</span>}
+            </Cell>
+          </Column>
           <Column width={150}>
             <HeaderCell>Phương thức thanh toán</HeaderCell>
             <Cell dataKey="paymentType">
@@ -79,7 +110,9 @@ const Orders = () => {
             <Cell dataKey="status">
               {(rowData) => (
                 <span>
-                  <Tag color={rowData.status === 'pending' ? 'orange' : 'green'}>{rowData.status}</Tag>
+                  <Tag color={rowData.status === 'pending' ? 'orange' : rowData.status === 'failed' ? 'red' : 'green'}>
+                    {rowData.status}
+                  </Tag>
                 </span>
               )}
             </Cell>
@@ -98,7 +131,12 @@ const Orders = () => {
           </Column>
         </Table>
       </Content>
-      <Modal open={modal.visible} onClose={() => setModal({ ...modal, visible: false })}>
+      <Modal
+        open={modal.visible}
+        onClose={() => setModal({ ...modal, visible: false })}
+        size="lg"
+        className="animate__animated animate__fadeInUp"
+      >
         <Modal.Header>
           <Modal.Title>Thông tin giao hàng</Modal.Title>
         </Modal.Header>

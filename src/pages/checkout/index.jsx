@@ -71,10 +71,9 @@ export default function Checkout() {
   const handleSaveOrder = async () => {
     try {
       let { deliveryCheck, ...restForm } = formRef.current
+      let { userInformationCheck, fullName, phone, email, _id } = informationRef.current
 
-      if (!deliveryCheck()) return
-
-      let { fullName, phone, email, _id } = informationRef.current
+      if (!userInformationCheck() || !deliveryCheck()) return
 
       const params = {
         ...restForm,
@@ -121,7 +120,10 @@ export default function Checkout() {
 
   return (
     <>
-      <NextSeo title="Thanh toán - Khamobile" description="Thanh toán" />
+      <NextSeo
+        title="Thanh toán - Kha Mobile - Giá rẻ mỗi ngày"
+        description="Thanh toán - Kha Mobile - Giá rẻ mỗi ngày"
+      />
       <div className="row p-0">
         <div className="col-12 p-0">
           <PageHeader type="h3" left>
@@ -209,6 +211,10 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
     setState(data)
   }, [data])
 
+  ref.current = {
+    ...ref.current,
+    userInformationCheck: () => userForm.current.check(),
+  }
   return (
     <Form
       formValue={state}

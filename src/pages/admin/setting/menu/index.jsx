@@ -1,21 +1,22 @@
 import AdminLayout from 'component/UI/AdminLayout'
 import CardBlock from 'component/UI/Content/CardBlock'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Button, IconButton, List, Tree, Message, useToaster } from 'rsuite'
+import { useEffect, useRef, useState } from 'react'
+import { Button, ButtonGroup, IconButton, Message, Tree, useToaster } from 'rsuite'
 import PageService from 'service/admin/Page.service'
 import { useCommonStore } from 'src/store/commonStore'
-import FolderFillIcon from '@rsuite/icons/FolderFill'
-import PageIcon from '@rsuite/icons/Page'
-import CategoryService from 'service/admin/Category.service'
+// import FolderFillIcon from '@rsuite/icons/FolderFill'
+// import PageIcon from '@rsuite/icons/Page'
+import { CloseOutline } from '@rsuite/icons'
 import { BiCategory } from 'react-icons/bi'
 import { TbSquareRotated } from 'react-icons/tb'
+import CategoryService from 'service/admin/Category.service'
 import SettingService from 'service/admin/Setting.service'
-import { CloseOutline } from '@rsuite/icons'
-import { CgArrowsExpandDownRight, CgArrowsExpandUpLeft, CgArrowsExpandUpRight } from 'react-icons/cg'
+// import { CgArrowsExpandDownRight, CgArrowsExpandUpLeft, CgArrowsExpandUpRight } from 'react-icons/cg'
 import PostService from 'service/admin/Post.service'
-import styles from './styles.module.scss'
+// import styles from './styles.module.scss'
 import { AiOutlinePlus } from 'react-icons/ai'
-import * as ReactIcon from 'react-icons/fa'
+// import * as ReactDOMServer from 'react-dom/server'
+// import parse from 'html-react-parser'
 const defaultData = [
   { text: 'Roses are red' },
   { text: 'Violets are blue' },
@@ -70,7 +71,6 @@ export default function SettingMenu() {
     try {
       const resp = await PageService.getPages()
       const mapData = resp.data.data.map(({ title, ...item }) => ({ ...item, name: title }))
-
       setPageData(mapData)
     } catch (error) {
       console.log(error)
@@ -95,7 +95,7 @@ export default function SettingMenu() {
     }
   }
 
-  console.log(ReactIcon)
+  console.log()
 
   const renderTabs = () => {
     let html = null
@@ -230,19 +230,22 @@ export default function SettingMenu() {
     }
     return result
   }
-
+  // console.log(ReactIcon)
   return (
     <div className="row gy-2">
+      {/* {parse(ReactDOMServer.renderToString(ReactIcon.FaStore()))} */}
       <div className="col-12 d-flex" style={{ gap: 12 }}>
-        <Button appearance="primary" onClick={() => setTabsKey(1)}>
-          Page
-        </Button>
-        <Button appearance="primary" onClick={() => setTabsKey(2)}>
-          Post
-        </Button>
-        <Button appearance="primary" onClick={() => setTabsKey(3)}>
-          Product
-        </Button>
+        <ButtonGroup>
+          <Button appearance="primary" onClick={() => setTabsKey(1)} active={tabsKey === 1}>
+            Trang
+          </Button>
+          <Button appearance="primary" onClick={() => setTabsKey(2)} active={tabsKey === 2}>
+            Bài viết
+          </Button>
+          <Button appearance="primary" onClick={() => setTabsKey(3)} active={tabsKey === 3}>
+            Danh mục sản phẩm
+          </Button>
+        </ButtonGroup>
       </div>
       <div className="col-12 col-md-6">
         <CardBlock className="border-0">

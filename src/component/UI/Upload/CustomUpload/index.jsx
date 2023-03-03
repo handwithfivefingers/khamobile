@@ -32,7 +32,6 @@ const UploadMutiple = forwardRef((props, ref) => {
 })
 
 const SingleUpload = forwardRef((props, ref) => {
-  console.log('CustomUpload.SingleUpload = SingleUpload', props)
   const [src, setSrc] = useState('')
 
   useEffect(() => {

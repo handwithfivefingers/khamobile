@@ -121,6 +121,18 @@ const ProductCreateModal = (props) => {
       formDataRef.current.deleteAll = deleteAll
     }
   }
+
+  const handleProductType = (value, e) => {
+    formDataRef.current.type = value
+    setRender(!_render)
+  }
+
+  const handleProductInformation = (value, fieldName) => {
+    formDataRef.current[fieldName] = value
+    setRender(!_render)
+  }
+
+  console.log(formDataRef.current)
   return (
     <>
       <Content className={'p-4'}>
@@ -139,14 +151,14 @@ const ProductCreateModal = (props) => {
               <Panel header="Đường dẫn" collapsible defaultExpanded>
                 <KMInput name="slug" onChange={(v) => (formDataRef.current.slug = v)} />
               </Panel>
-              <Panel header="Nội dung" collapsible defaultExpanded>
+              <Panel header="Nội dung" collapsible>
                 <KMEditor name="content" onChange={(v) => (formDataRef.current.content = v)} />
               </Panel>
-              <Panel header="Mô tả" collapsible defaultExpanded>
+              <Panel header="Mô tả" collapsible>
                 <KMEditor name="description" onChange={(v) => (formDataRef.current.description = v)} />
               </Panel>
 
-              <Panel header="Thông tin sản phẩm" collapsible defaultExpanded>
+              <Panel header="Thông số kỹ thuật" collapsible>
                 <KMEditingTable
                   name="information"
                   onChange={(v) => (formDataRef.current.information = v)}
@@ -157,68 +169,40 @@ const ProductCreateModal = (props) => {
               <Panel
                 header={
                   <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
-                    Loại biến thể
-                    <Form.Group controlId="type" className="p-1">
-                      <SelectPicker
-                        name="type"
-                        value={formDataRef.current?.type}
-                        onChange={(value, e) => {
-                          formDataRef.current.type = value
-                          setRender(!_render)
-                        }}
-                        onClick={(e) => e.preventDefault()}
-                        data={[
-                          { label: 'Đơn giản', value: 'simple' },
-                          { label: 'Nhiều biến thể', value: 'variable' },
-                        ]}
-                      />
-                    </Form.Group>
+                    Thông tin sản phẩm
                   </div>
                 }
-                // collapsible
+                collapsible
                 defaultExpanded
               >
-                <FlexboxGrid>
-                  <FlexboxGrid.Item></FlexboxGrid.Item>
-
-                  {formDataRef.current?.type === 'simple' && (
-                    <div className="p-1">
-                      <KMPrice
-                        name="price"
-                        label="Giá tiền"
-                        onChange={(v) => {
-                          console.log('price changed', v)
-                          formDataRef.current.price = v
-                        }}
-                      />
-                    </div>
-                  )}
-
-                  {formDataRef.current?.type === 'variable' && (
-                    <FlexboxGrid.Item style={{ width: '100%' }}>
-                      <GroupVariant
-                        stockData={{
-                          stock_status: formDataRef.current?.stock_status,
-                          purchasable: formDataRef.current?.purchasable,
-                          setStock: handleStockStatus,
-                        }}
-                        variableData={variable}
-                        attribute={{
-                          attributes: formDataRef.current?.attributes || [],
-                          setAttributes: handleAttributes,
-                        }}
-                        variation={{
-                          variations: formDataRef.current?.variations || [],
-                          setVariations: handleVariations,
-                        }}
-                        deleteVariation={{
-                          delete: formDataRef.current?.delete || [],
-                          setDeleteVariation: handleDeleteVariation,
-                        }}
-                      />
-                    </FlexboxGrid.Item>
-                  )}
-                </FlexboxGrid>
+                <GroupVariant
+                  stockData={{
+                    stock_status: formDataRef.current?.stock_status,
+                    purchasable: formDataRef.current?.purchasable,
+                    setStock: handleStockStatus,
+                  }}
+                  variableData={variable}
+                  attribute={{
+                    attributes: formDataRef.current?.attributes || [],
+                    setAttributes: handleAttributes,
+                  }}
+                  variation={{
+                    variations: formDataRef.current?.variations || [],
+                    setVariations: handleVariations,
+                  }}
+                  deleteVariation={{
+                    delete: formDataRef.current?.delete || [],
+                    setDeleteVariation: handleDeleteVariation,
+                  }}
+                  productType={{
+                    type: formDataRef.current?.type,
+                    setProductType: handleProductType,
+                  }}
+                  information={{
+                    data: formDataRef.current,
+                    setProductInformation: handleProductInformation,
+                  }}
+                />
               </Panel>
             </PanelGroup>
           </div>

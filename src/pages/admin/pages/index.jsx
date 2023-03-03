@@ -1,9 +1,10 @@
 import AdminLayout from 'component/UI/AdminLayout'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { Content, Table } from 'rsuite'
+import { Content, IconButton, Table } from 'rsuite'
 import PageService from 'service/admin/Page.service'
 import { useCommonStore } from 'src/store/commonStore'
+import EditIcon from '@rsuite/icons/Edit'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -29,46 +30,16 @@ const Pages = () => {
     }
   }
 
-  //   const tableData = [
-  //     {
-  //       id: 1,
-  //       name: 'Homepage',
-  //       slug: 'home',
-  //     },
-  //     {
-  //       id: 2,
-  //       name: 'Danh mục',
-  //       slug: 'category',
-  //     },
-  //     {
-  //       id: 3,
-  //       name: 'Sản phẩm',
-  //       slug: 'san-pham',
-  //     },
-  //   ]
-
   return (
     <>
       <Content className={'bg-w'}>
-        <Table
-          height={400}
-          data={page}
-          onRowClick={(rowData) => {
-            router.push(`./pages/${rowData._id}`)
-          }}
-          loading={loading}
-        >
-          <Column width={60} align="center" fixed>
-            <HeaderCell>Id</HeaderCell>
-            <Cell dataKey="_id" />
-          </Column>
-
-          <Column width={150}>
+        <Table height={400} data={page} loading={loading}>
+          <Column flexGrow={1}>
             <HeaderCell>Trang</HeaderCell>
             <Cell dataKey="title" />
           </Column>
 
-          <Column width={100}>
+          <Column flexGrow={1}>
             <HeaderCell>Đường dẫn</HeaderCell>
             <Cell dataKey="slug" />
           </Column>
@@ -79,7 +50,14 @@ const Pages = () => {
             <Cell>
               {(rowData) => (
                 <span>
-                  <a onClick={() => router.push(`/admin/pages/${rowData._id}`)}> Edit </a>
+                  <IconButton
+                    onClick={() => router.push(`./pages/${rowData._id}`)}
+                    size="sm"
+                    appearance="primary"
+                    icon={<EditIcon />}
+                    color="blue"
+                    disabled={rowData.slug !== '/'}
+                  />
                 </span>
               )}
             </Cell>

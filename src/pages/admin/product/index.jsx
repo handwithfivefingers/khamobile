@@ -140,14 +140,7 @@ const Products = (props) => {
   }, [])
 
   useEffect(() => {
-    if (Object.keys(filter)) {
-      const data = [...product]
-      if (filter.category) data = data.filter((item) => item.category.some((_cate) => _cate.name === filter?.category))
-      if (filter.title) data = data.filter((item) => item.title?.toLowerCase().includes(filter?.title?.toLowerCase()))
-      setFilterData(data)
-    } else {
-      setFilterData(product)
-    }
+    getSortData()
   }, [filter])
 
   const getCategory = async () => {
@@ -159,14 +152,27 @@ const Products = (props) => {
     try {
       setLoading(true)
       const resp = await ProductService.getProduct()
-      // changeProduct(resp.data.data)
-      setProduct(resp.data.data)
-      setFilterData(resp.data.data)
+
+      const respData = resp.data.data
+
+      setProduct(respData)
+      setFilterData(respData)
     } catch (error) {
       console.log('getProducts error: ' + error)
     } finally {
       setLoading(false)
     }
+  }
+
+  const getSortData = () => {
+    let filterResult = [...product]
+    if (Object.keys(filter)) {
+      if (filter.category)
+        filterResult = product.filter((item) => item.category.some((_cate) => _cate.name === filter?.category))
+      if (filter.title)
+        filterResult = product.filter((item) => item.title?.toLowerCase().includes(filter?.title?.toLowerCase()))
+    }
+    setFilterData(filterResult)
   }
 
   const onUpdate = async (formValue) => {
@@ -188,7 +194,8 @@ const Products = (props) => {
       )
       handleClose()
     } finally {
-      getProducts()
+      await getProducts()
+      getSortData()
     }
   }
 
@@ -333,6 +340,7 @@ const Products = (props) => {
           placeholder="Danh mục"
           data={categorySelector || []}
           onChange={(v) => setFilter((state) => ({ ...state, category: v }))}
+          onClean={() => setFilter(product)}
         />
       </Stack>
       <Content className={'bg-w'}>

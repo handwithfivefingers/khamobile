@@ -11,7 +11,7 @@ export default class ProductController {
 
       let parentItem = await Product.findOne({
         slug,
-      })
+      }).select('_id title attributes content description information image type price regular_price')
 
       let _relationProd = await Product.aggregate([
         {
@@ -25,6 +25,13 @@ export default class ProductController {
             localField: '_id',
             foreignField: 'parentId',
             as: 'child',
+            pipeline: [
+              {
+                $match: {
+                  purchasable: true,
+                },
+              },
+            ],
           },
         },
         {
@@ -33,43 +40,33 @@ export default class ProductController {
         {
           $project: {
             _id: '$child._id',
-            parentId: '$_id',
-            title: '$title',
-            slug: '$slug',
-            type: '$type',
+            // parentId: '$_id',
+            // title: '$title',
+            // slug: '$slug',
+            // type: '$type',
             price: '$child.price',
             regular_price: '$child.regular_price',
             attribute: '$child.attributes',
-            primary: '$primary',
+            // primary: '$primary',
             stock_status: '$child.stock_status',
-            purchasable: '$child.purchasable',
+            // purchasable: '$child.purchasable',
+            image: '$child.image',
           },
         },
       ])
-
-      _relationProd = _relationProd
-        .map((item) => {
-          let obj = { ...item }
-          for (let key in item.attribute) {
-            obj[key] = item.attribute[key]
-          }
-          return obj
-        })
-        ?.filter((item) => item.purchasable)
+      _relationProd = _relationProd.map((item) => {
+        let obj = { ...item }
+        for (let key in item.attribute) {
+          obj[key] = item.attribute[key]
+        }
+        return obj
+      })
+      // ?.filter((item) => item.purchasable)
 
       if (parentItem.content) {
-        const pathImg = `${
-          process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
-        }/public/wp/`
-
-        if (parentItem.content?.match(/https:\/\/khamobile.vn\/wp-content\/uploads\//g)) {
-          parentItem.content = parentItem.content?.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
-
-          parentItem.description = parentItem.description?.replace(
-            /https:\/\/khamobile.vn\/wp-content\/uploads\//g,
-            pathImg,
-          )
-        }
+        const resultConvert = this.formatWP_URLToCurrentHost(parentItem.content, parentItem.description)
+        parentItem.content = resultConvert.content
+        parentItem.description = resultConvert.description
       }
 
       const seoTags = await generateSeoTag({
@@ -489,6 +486,28 @@ export default class ProductController {
     } catch (error) {
       console.log(error)
       return new Response().error(error, res)
+    }
+  }
+
+  formatWP_URLToCurrentHost = (content, description) => {
+    try {
+      const result = {
+        content: content,
+        description: description,
+      }
+      const pathImg = `${
+        process.env.NODE_ENV !== 'development' ? process.env.API : 'https://app.khamobile.vn'
+      }/public/wp/`
+
+      if (content?.match(/https:\/\/khamobile.vn\/wp-content\/uploads\//g)) {
+        result.content = content?.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+
+        result.description = description?.replace(/https:\/\/khamobile.vn\/wp-content\/uploads\//g, pathImg)
+      }
+      return result
+    } catch (error) {
+      console.log(error)
+      return { content, description }
     }
   }
 }

@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
 import { Button, Form, Schema } from 'rsuite'
 import { AuthenticateService } from 'service/authenticate'
+import { LoginModel } from 'src/constant/model.constant'
 import { useAuthorizationStore } from 'src/store'
 import styles from './styles.module.scss'
 export default function LoginPage() {
@@ -18,13 +19,11 @@ export default function LoginPage() {
     password: '',
   })
 
-  const { authenticate, isAdmin, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
+  const { authenticate, changeAuthenticateStatus } = useAuthorizationStore((state) => state)
 
   useEffect(() => {
-    if (authenticate && isAdmin) {
+    if (authenticate) {
       router.push('/admin')
-    } else if (authenticate && !isAdmin) {
-      router.push('/user')
     }
   }, [authenticate])
 
@@ -61,13 +60,6 @@ export default function LoginPage() {
     }
   }
 
-  const model = Schema.Model({
-    username: Schema.Types.StringType()
-      .isRequired('Tên tài khoản là bắt buộc')
-      .minLength(3, 'Tên tài khoản thấp hơn 3 kí tự'),
-    password: Schema.Types.StringType().isRequired('Mật khẩu là bắt buộc').minLength(8, 'Mật khẩu thấp hơn 8 kí tự'),
-  })
-
   return (
     <div className="row p-0">
       <div className="col-12 p-0">
@@ -79,7 +71,7 @@ export default function LoginPage() {
         <div className="container">
           <div className="row gy-4">
             <div className={clsx(styles.loginForm)}>
-              <Form formValue={form} ref={formRef} model={model} onChange={(val) => setForm({ ...val })}>
+              <Form formValue={form} ref={formRef} model={LoginModel} onChange={(val) => setForm({ ...val })}>
                 <CardBlock>
                   <KMInput name="username" label="Tên đăng nhập" />
 

@@ -10,7 +10,6 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
 
   useEffect(() => {
     if (attributes?.length) {
-      // const value =
       const nextState = []
       for (const { name } of attributes) {
         let item = variableData.find((item) => item._id?.key === name)
@@ -60,15 +59,14 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
     html = (
       <Panel header={name} collapsible bordered className={styles.contentItem}>
         <Stack spacing={12}>
-          <label>Tên:</label>
+          <label style={{ minWidth: 150 }}>Tên:</label>
           <Input value={name} plaintext />
         </Stack>
 
         <Stack spacing={12} className="mt-3">
-          <label>Giá trị:</label>
+          <label style={{ minWidth: 150 }}>Giá trị:</label>
           <Stack.Item grow={1}>
             <TagPicker
-              // creatable
               trigger={['Enter', 'Space', 'Comma']}
               placeholder="Enter, Space, Comma"
               data={child?.map((_item) => ({ label: _item.name, value: _item.name }))}
@@ -97,11 +95,7 @@ const AttributeGroup = forwardRef(({ variableData, attribute, ...props }, ref) =
       <div className={styles.selectAttr}>
         <AttributeSelection ref={attributesRef} options={options} groupAttr={groupAttr} />
 
-        <Button
-          className="px-4 "
-          style={{ color: 'var(--rs-primary-100)', background: 'var(--rs-blue-800)' }}
-          onClick={handleAddAttribute}
-        >
+        <Button className="px-4 " appearance="primary" onClick={handleAddAttribute}>
           Thêm
         </Button>
       </div>
@@ -125,6 +119,7 @@ const AttributeSelection = forwardRef(({ options, groupAttr }, ref) => {
       data={options}
       onSelect={handleSelect}
       disabledItemValues={groupAttr?.map((item) => [item.name, item.child])}
+      style={{ minWidth: 150 }}
     />
   )
 })

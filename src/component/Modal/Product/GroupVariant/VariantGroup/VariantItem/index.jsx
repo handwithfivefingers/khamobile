@@ -1,54 +1,126 @@
-import React, { forwardRef, useState } from 'react'
-import { Form, SelectPicker, Toggle } from 'rsuite'
+import React, { forwardRef, useRef, useState } from 'react'
+import { Form, SelectPicker, Toggle, Uploader } from 'rsuite'
 import styles from './styles.module.scss'
 import CheckIcon from '@rsuite/icons/Check'
 import CloseIcon from '@rsuite/icons/Close'
 import { NumericFormat } from 'react-number-format'
+import CustomUpload from 'component/UI/Upload/CustomUpload'
 
 const VariantItem = forwardRef(({ data, attributes, attributesItem, position, ...props }, ref) => {
+  const imageRef = useRef()
+  console.log(ref.current[position].image?.src)
   return (
-    <div className={styles.groupItem}>
-      <Form.Group controlId={['instock', position]} style={{ width: 'calc(50% - 4px)' }}>
-        <Form.ControlLabel>Còn hàng</Form.ControlLabel>
+    <div className="row">
+      <div className="col-8">
+        <div className="row">
+          <div className="col-12">
+            <div className="d-flex justify-content-start" style={{ gap: 12 }}>
+              <Form.Group controlId={['purchasable', position]}>
+                <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                  Hiển thị
+                </Form.ControlLabel>
+                <CheckboxVariant
+                  ref={ref}
+                  position={position}
+                  name={'purchasable'}
+                  value={data?.purchasable}
+                  checkValue={true}
+                  unCheckValue={false}
+                />
+              </Form.Group>
+              <Form.Group controlId={['instock', position]}>
+                <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                  Còn hàng
+                </Form.ControlLabel>
+                <CheckboxVariant
+                  ref={ref}
+                  position={position}
+                  name={'stock_status'}
+                  value={data?.stock_status}
+                  checkValue={'instock'}
+                  unCheckValue={'outofstock'}
+                />
+              </Form.Group>
+            </div>
+          </div>
+          <div className="col-12">
+            <div className="d-flex justify-content-start" style={{ gap: 12 }}>
+              <Form.Group controlId={['price', position]}>
+                <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                  Giá tiền
+                </Form.ControlLabel>
+                <PInput position={position} value={data?.price} name={'price'} ref={ref} price />
+              </Form.Group>
 
-        <CheckboxVariant
-          ref={ref}
-          position={position}
-          name={'stock_status'}
-          value={data?.stock_status}
-          checkValue={'instock'}
-          unCheckValue={'outofstock'}
-        />
-      </Form.Group>
+              <Form.Group controlId={['regular_price', position]}>
+                <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                  Giá niêm yết
+                </Form.ControlLabel>
+                <PInput position={position} value={data?.regular_price} name={'regular_price'} ref={ref} price />
+              </Form.Group>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div className="col-4">
+        <div className="d-flex flex-column align-items-center">
+          <label>Hình ảnh</label>
+          {/* <Uploader
+            name="upload"
+            action={process.env.API + '/api/upload'}
+            withCredentials={true}
+            onSuccess={(response, file) => {
+              let { information } = props
+              let { setProductInformation } = information
+              let nextState = ref.current
+              let currentItem = nextState[position]
+              currentItem.image = {
+                src: response.url,
+                name: file.name,
+              }
+              setProductInformation(nextState, 'variations')
+            }}
+            onError={(error) => {
+              console.log(error)
+            }}
+            style={{ width: 50 }}
+          /> */}
+          <CustomUpload
+            value={ref.current[position].image}
+            name="upload"
+            action={process.env.API + '/api/upload'}
+            withCredentials={true}
+            onSuccess={(response, file) => {
+              let { information } = props
+              let { setProductInformation } = information
+              let nextState = ref.current
+              let currentItem = nextState[position]
+              currentItem.image = {
+                src: response.url,
+                name: file.name,
+              }
+              setProductInformation(nextState, 'variations')
+            }}
+            onError={(error) => {
+              console.log(error)
+            }}
+            ref={imageRef}
+          />
+        </div>
+      </div>
 
-      <Form.Group controlId={['purchasable', position]} style={{ width: 'calc(50% - 4px)' }}>
-        <Form.ControlLabel>Bật</Form.ControlLabel>
-        <CheckboxVariant
-          ref={ref}
-          position={position}
-          name={'purchasable'}
-          value={data?.purchasable}
-          checkValue={true}
-          unCheckValue={false}
-        />
-      </Form.Group>
-
-      <Form.Group controlId={['price', position]}>
-        <Form.ControlLabel>Giá tiền</Form.ControlLabel>
-        <PInput position={position} value={data?.price} name={'price'} ref={ref} price />
-      </Form.Group>
-
-      <Form.Group controlId={['regular_price', position]}>
-        <Form.ControlLabel>Giá gạch</Form.ControlLabel>
-        <PInput position={position} value={data?.regular_price} name={'regular_price'} ref={ref} price />
-      </Form.Group>
-
-      {Object.keys(attributesItem).map((key) => (
-        <Form.Group controlId={[key, position]}>
-          <Form.ControlLabel>{key}</Form.ControlLabel>
-          <Select attributes={attributes} position={position} name={key} ref={ref} />
-        </Form.Group>
-      ))}
+      <div className="col-12">
+        <div className="d-flex justify-content-start" style={{ gap: 12 }}>
+          {Object.keys(attributesItem).map((key) => (
+            <Form.Group controlId={[key, position]}>
+              <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                {key}
+              </Form.ControlLabel>
+              <Select attributes={attributes} position={position} name={key} ref={ref} />
+            </Form.Group>
+          ))}
+        </div>
+      </div>
     </div>
   )
 })
@@ -74,6 +146,7 @@ const Select = forwardRef(({ attributes, name, position, ...props }, ref) => {
       className={styles.selectItem}
       value={item.attributes[name] || ''}
       onSelect={handleSelect}
+      style={{ minWidth: 150 }}
     />
   )
 })
@@ -125,7 +198,6 @@ const CheckboxVariant = forwardRef(
       }
       setRender(!_render)
     }
-
 
     return (
       <Toggle
