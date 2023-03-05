@@ -1,8 +1,7 @@
 import Products from 'pages/admin/product'
 import { forwardRef, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react'
-import { BsDashLg, BsPlusLg, BsPlusSquareDotted } from 'react-icons/bs'
-import { Button, Cascader, Form, Input, Modal, SelectPicker, IconButton, InputGroup } from 'rsuite'
-import CategoryService from 'service/admin/Category.service'
+import { BsDashLg, BsPlusLg } from 'react-icons/bs'
+import { Button, Cascader, Form, IconButton, Modal, SelectPicker } from 'rsuite'
 import { useCommonStore } from 'src/store'
 import Catalog from '../../Catalog'
 import ImageBlock from '../../ImageBlock'
@@ -183,11 +182,11 @@ const Toolbar = forwardRef(({ category, productProps, config }, ref) => {
   }
 
   const handleCancel = () => {
-    setCheckedKeys([])
+    setCheckedKeys(productSelect)
     handleClose()
   }
 
-  const handleConfirm = () => {
+  const handleConfirm = (value) => {
     let productOutCome = handleAddProduct(checkedKeys)
     setProduct({ rawProduct: productOutCome, formatProduct: checkedKeys })
     handleClose()

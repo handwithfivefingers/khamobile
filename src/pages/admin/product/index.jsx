@@ -104,6 +104,8 @@ const Products = (props) => {
 
   const { product: productStore, changeProduct, changeTitle } = useCommonStore((state) => state)
 
+  const [checked, setChecked] = useState(propsChecked?.checkedKeys || [])
+
   const [sortColumn, setSortColumn] = useState()
 
   const [sortType, setSortType] = useState()
@@ -325,12 +327,15 @@ const Products = (props) => {
     setLimit(dataKey)
   }
 
-  const handleCheck = (value, checked) => {
-    const { checkedKeys, setCheckedKeys } = propsChecked
-    const keys = checked ? [...checkedKeys, value] : checkedKeys.filter((item) => item !== value)
+  const handleCheck = (value, check) => {
+    const { setCheckedKeys } = propsChecked
+    const keys = check ? [...checked, value] : checked?.filter((item) => item !== value)
+    setChecked(keys)
     setCheckedKeys(keys)
   }
   // debugger
+
+  console.log(propsChecked)
   return (
     <>
       <Stack spacing={10} className="py-2">
@@ -356,7 +361,8 @@ const Products = (props) => {
           {select && (
             <Column width={50} align="center" sortable>
               <HeaderCell style={{ padding: 0 }}></HeaderCell>
-              <CheckCell dataKey="_id" checkedKeys={propsChecked.checkedKeys} onChange={handleCheck} />
+              {/* <CheckCell dataKey="_id" checkedKeys={propsChecked.checkedKeys} onChange={handleCheck} /> */}
+              <CheckCell dataKey="_id" checkedKeys={checked} onChange={handleCheck} />
             </Column>
           )}
 

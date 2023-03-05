@@ -1,18 +1,16 @@
-import GridIcon from '@rsuite/icons/Grid'
 import CogIcon from '@rsuite/icons/legacy/Cog'
-import ListIcon from '@rsuite/icons/List'
+import MenuIcon from '@rsuite/icons/Menu'
 import LOGO from 'assets/img/logo.png'
 import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { FaShoppingBasket } from 'react-icons/fa'
-import { Badge, Drawer, Dropdown, IconButton, Nav, Navbar, Sidenav } from 'rsuite'
+import { Badge, Drawer, IconButton, Nav, Navbar, Sidenav } from 'rsuite'
 import { GlobalHomeService } from 'service/global'
 import { useAuthorizationStore, useCartStore } from 'src/store'
 import styles from './styles.module.scss'
-
 const NavLink = (props) => {
   const { href, as, ...rest } = props
   return (
@@ -124,10 +122,12 @@ const CustomNavbar = ({ ...props }) => {
       </Link>
 
       <IconButton
-        icon={<GridIcon />}
+        icon={<MenuIcon style={{ background: 'var(--rs-blue-800)', color: '#fff' }} />}
         onClick={() => setDrawer(!drawer)}
-        className={clsx(styles.hamLeft, 'ml-2 shadow')}
-      />
+        className={clsx(styles.hamLeft, 'ml-2')}
+      >
+        <span>Danh mục</span>
+      </IconButton>
 
       <Nav onSelect={(v) => setActiveKey(v)} activeKey={activeKey} className={styles.navLeft}>
         {renderListMenu(menu)}
