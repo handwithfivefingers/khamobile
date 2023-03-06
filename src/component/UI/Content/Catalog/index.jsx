@@ -30,8 +30,8 @@ const Catalog = ({ data, direction }) => {
     }
   }
 
-  const handleRedirect = (group) => {
-    return router.push('/category/' + group.slug + '?page=1')
+  const handleRedirect = (slug) => {
+    return router.push('/category/' + slug + '?page=1')
   }
 
   return (
@@ -65,7 +65,7 @@ const Catalog = ({ data, direction }) => {
 
           <Button
             appearance="primary"
-            onClick={() => handleRedirect(props.data)}
+            onClick={() => handleRedirect(data?.slug)}
             style={{ background: 'var(--rs-blue-800)' }}
           >
             Xem tất cả

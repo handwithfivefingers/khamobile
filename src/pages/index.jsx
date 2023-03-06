@@ -43,11 +43,12 @@ const Home = (props) => {
 
           let categoryItem = getCategoryFromStore({ name: section.title, products })
 
-          const { name, image } = categoryItem
+          const { name, image, slug } = categoryItem
 
           const formatCate = {
             name: name,
             image: image?.src,
+            slug,
             child: products,
             categories: section?.options?.moreLink,
           }
