@@ -46,6 +46,10 @@ self.addEventListener('fetch', (event) => {
   //   // just let the browser do the normal thing:
   //   return
   // } else
+
+  // console.log(event.request.destination, event.request.url)
+
+  
   if (isImage && event.request.destination === 'image') {
     event.respondWith(
       // Offline First For Image <--------------
@@ -68,6 +72,22 @@ self.addEventListener('fetch', (event) => {
         }
         return caches.open(RUNTIME).then((cache) => {
           return fetch(event.request, {}).then((response) => {
+            return cache.put(event.request, response.clone()).then(() => {
+              return response
+            })
+          })
+        })
+      }),
+    )
+  } else if (event.request.destination === 'style' || event.request.destination === 'font') {
+    event.respondWith(
+      caches.match(event.request).then((cachedResponse) => {
+        if (cachedResponse) {
+          return cachedResponse
+        }
+        return caches.open(RUNTIME).then((cache) => {
+          return fetch(event.request, {}).then((response) => {
+            // Put a copy of the response in the runtime cache.
             return cache.put(event.request, response.clone()).then(() => {
               return response
             })
