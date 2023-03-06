@@ -13,6 +13,7 @@ import { GlobalHomeService, PageService } from 'service/global'
 import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import styles from './styles.module.scss'
 import { useCommonStore } from 'src/store'
+import { Placeholder } from 'rsuite'
 
 const Home = (props) => {
   // render 4 times
@@ -29,9 +30,7 @@ const Home = (props) => {
   const getHomeSection = async () => {
     try {
       const resp = await PageService.getPage(router.pathname)
-
       let { content } = resp.data.data
-
       for (let section of content) {
         // Push product
         if (section.type === 'Product') {
@@ -82,89 +81,169 @@ const Home = (props) => {
 
   const getSectionSlider = useMemo(() => {
     let html = null
-    html = (
-      <div className={styles.grid}>
-        <div className={styles.mainCarousel}>
-          <SelfCarousel content={content?.[0]} />
+
+    if (content) {
+      html = (
+        <div className={styles.grid}>
+          <div className={styles.mainCarousel}>
+            <SelfCarousel content={content?.[0]} />
+          </div>
+          <div className={styles.mainBanner}>
+            {!content?.[1] ? (
+              <>
+                <Placeholder.Graph active height={200} />
+                <Placeholder.Graph active height={200} />
+              </>
+            ) : (
+              content?.[1]?.data.map((banner) => {
+                return (
+                  <ImageBlock
+                    src={banner}
+                    className={styles.banner}
+                    alt="..."
+                    height="46%"
+                    modal
+                    key={banner}
+                    engine
+                    priority
+                  />
+                )
+              })
+            )}
+          </div>
         </div>
-        <div className={styles.mainBanner}>
-          {content?.[1]?.data.map((banner) => {
-            return (
-              <ImageBlock
-                src={banner}
-                className={styles.banner}
-                alt="..."
-                height="46%"
-                modal
-                key={banner}
-                engine
-                priority
-              />
-            )
-          })}
-        </div>
-      </div>
-    )
+      )
+    }
 
     return html
   }, [content])
 
   const getSectionService = useMemo(() => {
     let html = null
-    html = (
-      <div className="row">
-        {content?.[2]?.data.map((banner) => {
-          return (
-            <div className="col-6 col-md-3" key={banner}>
-              <ImageBlock engine src={banner} className={styles.serviceBanner} alt="..." width={'390px'} height="52%" />
-            </div>
-          )
-        })}
-      </div>
-    )
+
+    if (!content[2]) {
+      html = (
+        <div className="row">
+          <div className="col-12">
+            <Heading type="h3" center>
+              <Placeholder.Graph active height={40} width={200} />
+            </Heading>
+          </div>
+
+          <div className="col-6 col-md-3">
+            <Placeholder.Graph active height={150} />
+          </div>
+          <div className="col-6 col-md-3">
+            <Placeholder.Graph active height={150} />
+          </div>
+          <div className="col-6 col-md-3">
+            <Placeholder.Graph active height={150} />
+          </div>
+          <div className="col-6 col-md-3">
+            <Placeholder.Graph active height={150} />
+          </div>
+        </div>
+      )
+    } else {
+      html = (
+        <div className="row">
+          <div className="col-12">
+            <Heading type="h3" center>
+              Dịch vụ của Kha Mobile
+            </Heading>
+          </div>
+
+          {content?.[2]?.data.map((banner) => {
+            return (
+              <div className="col-6 col-md-3" key={banner}>
+                <ImageBlock
+                  engine
+                  src={banner}
+                  className={styles.serviceBanner}
+                  alt="..."
+                  width={'390px'}
+                  height="52%"
+                />
+              </div>
+            )
+          })}
+        </div>
+      )
+    }
+
     return html
   }, [content])
 
   const getSectionFeatureProduct = useMemo(() => {
     let html = null
     let productSection = content?.[3]?.data
-    html = (
-      <div className="row">
-        <div className="col-12">
-          <div className="container">
-            <div className="row">
-              <div className="col-12">
-                <Heading type="h3" center>
-                  {content?.[3]?.title}
-                </Heading>
-              </div>
 
-              <div className="col-12">
-                <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
-                  {productSection?.map((item, index) => {
-                    let { image, title, price, type, slug, _id } = item
-                    return (
-                      <Card
-                        imgSrc={(image?.[0]?.src && image?.[0]?.src) || ''}
-                        cover
-                        title={title}
-                        price={price}
-                        type={type}
-                        slug={`/product/${slug}`}
-                        _id={_id}
-                        key={[Math.random(), _id, index]}
-                        border
-                        hover
-                      />
-                    )
-                  })}
-                </CustomSlider>
+    if (!productSection) {
+      html = (
+        <div className="row">
+          <div className="col-12">
+            <div className="container">
+              <div className="row">
+                <div className="col-12">
+                  <Heading type="h3" center>
+                    <Placeholder.Graph active height={40} width={200} />
+                  </Heading>
+                </div>
+
+                <div className="col-12">
+                  <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
+                    <Placeholder.Graph active height={300} />
+                    <Placeholder.Graph active height={300} />
+                    <Placeholder.Graph active height={300} />
+                    <Placeholder.Graph active height={300} />
+                    <Placeholder.Graph active height={300} />
+                    <Placeholder.Graph active height={300} />
+                  </CustomSlider>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    )
+      )
+    } else {
+      html = (
+        <div className="row">
+          <div className="col-12">
+            <div className="container">
+              <div className="row">
+                <div className="col-12">
+                  <Heading type="h3" center>
+                    {content?.[3]?.title}
+                  </Heading>
+                </div>
+
+                <div className="col-12">
+                  <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
+                    {productSection?.map((item, index) => {
+                      let { image, title, price, type, slug, _id } = item
+                      return (
+                        <Card
+                          imgSrc={(image?.[0]?.src && image?.[0]?.src) || ''}
+                          cover
+                          title={title}
+                          price={price}
+                          type={type}
+                          slug={`/product/${slug}`}
+                          _id={_id}
+                          key={[Math.random(), _id, index]}
+                          border
+                          hover
+                        />
+                      )
+                    })}
+                  </CustomSlider>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      )
+    }
 
     return html
   }, [content])
@@ -307,6 +386,9 @@ const Home = (props) => {
 Home.Layout = CommonLayout
 
 const SelfCarousel = ({ content, ...props }) => {
+  if (!content) {
+    return <Placeholder.Graph active height={412} />
+  }
   return (
     <SingleSlider
       placement={'bottom'}

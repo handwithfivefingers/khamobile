@@ -83,7 +83,7 @@ const Toolbar = forwardRef(({ productProps }, ref) => {
   const [modal, setModal] = useState(false)
 
   useEffect(() => {
-    handleConfirm()
+    handleConfirm(checkedKeys)
   }, [product, checkedKeys])
 
   const handleOpenModalChangeProduct = (e) => {
@@ -100,9 +100,10 @@ const Toolbar = forwardRef(({ productProps }, ref) => {
     handleClose()
   }
 
-  const handleConfirm = () => {
-    let productOutCome = handleAddProduct(checkedKeys)
-    setProduct({ rawProduct: productOutCome, formatProduct: checkedKeys })
+  const handleConfirm = (checkedValue) => {
+    let productOutCome = handleAddProduct(checkedValue)
+    setCheckedKeys(checkedValue)
+    setProduct({ rawProduct: productOutCome, formatProduct: checkedValue })
     handleClose()
   }
 
@@ -152,16 +153,16 @@ const ProductModal = ({ open, handleClose, handleConfirm, handleCancel, ...props
       </Modal.Header>
 
       <Modal.Body>
-        <Products select noEdit {...props} />
+        <Products select noEdit isModal handleConfirm={handleConfirm} handleCancel={handleCancel} {...props} />
       </Modal.Body>
-      <Modal.Footer>
+      {/* <Modal.Footer>
         <Button onClick={handleConfirm} appearance="primary">
           Ok
         </Button>
         <Button onClick={handleCancel} appearance="subtle">
           Cancel
         </Button>
-      </Modal.Footer>
+      </Modal.Footer> */}
     </Modal>
   )
 }

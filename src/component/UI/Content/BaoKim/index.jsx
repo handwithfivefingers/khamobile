@@ -1,8 +1,9 @@
 import React, { useEffect, memo } from 'react'
 import { isEqual } from 'lodash'
 const BaoKim = (props) => {
-  const baokimScript =
-    process.env.NODE_ENV !== 'development' ? 'https://pc.baokim.vn/js/bk_plus_v2.popup.js' : '/assets/script/baokim.js'
+  // const baokimScript =
+  //   process.env.NODE_ENV !== 'development' ? 'https://pc.baokim.vn/js/bk_plus_v2.popup.js' : '/assets/script/baokim.js'
+  const baokimScript = '/assets/script/baokim.js'
   useEffect(() => {
     initScript()
   }, [props])

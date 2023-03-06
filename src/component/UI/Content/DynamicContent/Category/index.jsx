@@ -128,13 +128,15 @@ const Toolbar = forwardRef(({ category, productProps, config }, ref) => {
   })
 
   useEffect(() => {
-    handleConfirm()
     if (config?.moreLink) {
       const nextState = config?.moreLink?.map((item) => item._id)
-
       setLinks(nextState.length > 0 ? nextState : [''])
     }
   }, [product, config])
+
+  useEffect(() => {
+    handleConfirm(checkedKeys)
+  }, [product, checkedKeys])
 
   const handleSelectCategory = (value, itemData, event) => {
     let { name, image, _id } = value
@@ -160,20 +162,33 @@ const Toolbar = forwardRef(({ category, productProps, config }, ref) => {
   const handleOpenModalChangeProduct = () => {
     setModal({
       visible: true,
-      component: <Products select noEdit propsChecked={{ checkedKeys, setCheckedKeys }} />,
-      title: 'Danh sách sản phẩm',
-      handleConfirm: handleConfirm,
-      handleCancel: handleCancel,
+      component: (
+        <Products
+          select
+          noEdit
+          isModal
+          handleConfirm={handleConfirm}
+          handleCancel={handleCancel}
+          propsChecked={{ checkedKeys, setCheckedKeys }}
+        />
+      ),
+      title: 'Tùy chỉnh sản phẩm',
     })
   }
 
   const handleOpenModalAddLink = () => {
     setModal({
       visible: true,
-      component: <AddLinkModal activeCategory={activeCategory} handleLink={{ setLinks, links }} ref={linkRef} />,
-      title: 'Thêm đường dẫn',
-      handleConfirm: handleConfirmLinkChange,
-      handleCancel: handleCancel,
+      component: (
+        <AddLinkModal
+          activeCategory={activeCategory}
+          handleLink={{ setLinks, links }}
+          ref={linkRef}
+          handleConfirm={handleConfirmLinkChange}
+          handleCancel={handleCancel}
+        />
+      ),
+      title: 'Tùy chỉnh liên kết',
     })
   }
 
@@ -186,15 +201,15 @@ const Toolbar = forwardRef(({ category, productProps, config }, ref) => {
     handleClose()
   }
 
-  const handleConfirm = (value) => {
-    let productOutCome = handleAddProduct(checkedKeys)
+  const handleConfirm = (checkedValue) => {
+    let productOutCome = handleAddProduct(checkedValue)
+    setCheckedKeys(checkedValue)
     setProduct({ rawProduct: productOutCome, formatProduct: checkedKeys })
     handleClose()
   }
 
-  const handleConfirmLinkChange = () => {
-    const linkData = linkRef.current.getData()
-    setLinks(linkData)
+  const handleConfirmLinkChange = (listLink) => {
+    setLinks(listLink)
     handleClose()
   }
 
@@ -304,21 +319,12 @@ const Toolbar = forwardRef(({ category, productProps, config }, ref) => {
         </Modal.Header>
 
         <Modal.Body>{modal.component}</Modal.Body>
-        <Modal.Footer>
-          <Button onClick={modal.handleConfirm} appearance="primary">
-            Ok
-          </Button>
-          <Button onClick={modal.handleCancel} appearance="subtle">
-            Cancel
-          </Button>
-        </Modal.Footer>
       </Modal>
     </div>
   )
 })
 
-const AddLinkModal = forwardRef(({ activeCategory, handleLink }, ref) => {
-  console.log(handleLink)
+const AddLinkModal = forwardRef(({ handleLink, handleConfirm, handleCancel }, ref) => {
   const { links } = handleLink
   const [state, setState] = useState(links)
   const { productCategory } = useCommonStore((state) => state)
@@ -374,6 +380,16 @@ const AddLinkModal = forwardRef(({ activeCategory, handleLink }, ref) => {
         <div className="col-4">
           <ImageBlock src="/public/example/dynamicCategory/category_link.png" engine objectFit="contain" options={{}} />
         </div>
+        <div className="col-12">
+          <div className="position-sticky bg-white p-2 d-flex justify-content-end" style={{ bottom: '-20px' }}>
+            <Button color="blue" appearance="primary" style={{ borderRadius: 0 }} onClick={() => handleConfirm(state)}>
+              Xác nhận
+            </Button>
+            <Button color="red" appearance="subtle" style={{ borderRadius: 0 }} onClick={handleCancel}>
+              Hủy
+            </Button>
+          </div>
+        </div>
       </div>
     </div>
   )
@@ -419,6 +435,10 @@ const DynamicInput = ({
         preventOverflow
         block
         menuWidth={200}
+        onClean={() => {
+          setInpValue('')
+          handleChange('', position)
+        }}
       />
       <IconButton icon={<BsPlusLg style={{ fontSize: 16 }} />} onClick={() => handleAddField(position)} />
     </div>

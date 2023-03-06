@@ -39,7 +39,7 @@ export default function MyApp({ Component, pageProps }) {
   useEffect(() => {
     authenticateUser()
     getCartItem()
-
+    initServiceWorker()
     const start = (routerPathName) => {
       setLoading(true)
     }
@@ -75,6 +75,21 @@ export default function MyApp({ Component, pageProps }) {
       }
     }
   }, [router.asPath])
+
+  const initServiceWorker = () => {
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function () {
+        navigator.serviceWorker.register('/sw.js').then(
+          function (registration) {
+            console.log('Service Worker registration successful with scope: ', registration.scope)
+          },
+          function (err) {
+            console.log('Service Worker registration failed: ', err)
+          },
+        )
+      })
+    }
+  }
 
   const getCartItem = () => {
     let cartItemFromLocal = JSON.parse(localStorage.getItem('khaMobileCart'))

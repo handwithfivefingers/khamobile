@@ -100,7 +100,7 @@ const CheckCell = ({ rowData, onChange, checkedKeys, dataKey, ...props }) => (
 )
 
 const Products = (props) => {
-  const { select, noEdit, propsChecked } = props
+  const { select, noEdit, propsChecked, isModal, handleConfirm, handleCancel } = props
 
   const { product: productStore, changeProduct, changeTitle } = useCommonStore((state) => state)
 
@@ -132,13 +132,11 @@ const Products = (props) => {
   })
 
   useEffect(() => {
-    if (!props) {
+    if (!isModal) {
       changeTitle('Page Products')
-      getProducts()
-    } else {
-      getProducts()
     }
     getCategory()
+    getProducts()
   }, [])
 
   useEffect(() => {
@@ -154,9 +152,7 @@ const Products = (props) => {
     try {
       setLoading(true)
       const resp = await ProductService.getProduct()
-
       const respData = resp.data.data
-
       setProduct(respData)
       setFilterData(respData)
     } catch (error) {
@@ -328,10 +324,8 @@ const Products = (props) => {
   }
 
   const handleCheck = (value, check) => {
-    const { setCheckedKeys } = propsChecked
     const keys = check ? [...checked, value] : checked?.filter((item) => item !== value)
     setChecked(keys)
-    setCheckedKeys(keys)
   }
   // debugger
 
@@ -361,7 +355,6 @@ const Products = (props) => {
           {select && (
             <Column width={50} align="center" sortable>
               <HeaderCell style={{ padding: 0 }}></HeaderCell>
-              {/* <CheckCell dataKey="_id" checkedKeys={propsChecked.checkedKeys} onChange={handleCheck} /> */}
               <CheckCell dataKey="_id" checkedKeys={checked} onChange={handleCheck} />
             </Column>
           )}
@@ -434,6 +427,22 @@ const Products = (props) => {
             onChangeLimit={handleChangeLimit}
           />
         </div>
+
+        {isModal && (
+          <div className="position-sticky bg-white p-2 d-flex justify-content-end" style={{ bottom: '-20px' }}>
+            <Button
+              color="blue"
+              appearance="primary"
+              style={{ borderRadius: 0 }}
+              onClick={() => handleConfirm(checked)}
+            >
+              Xác nhận
+            </Button>
+            <Button color="red" appearance="subtle" style={{ borderRadius: 0 }} onClick={() => handleCancel()}>
+              Hủy
+            </Button>
+          </div>
+        )}
       </Content>
 
       <Modal size={'full'} open={modal.open} onClose={handleClose} keyboard={false} backdrop={'static'}>

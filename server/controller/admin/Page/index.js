@@ -40,26 +40,6 @@ export default class PageController {
 
       let content = formData.content
 
-      // for (let sectionName in content) {
-      //   const currentSection = content[sectionName]
-      //   if (currentSection.type === 'Products') {
-      //     currentSection.data = currentSection.data.map((item) => {
-      //       if (typeof item === 'string') {
-      //         return item
-      //       }
-      //       return item?._id
-      //     })
-      //   }
-      //   if (currentSection.type === 'Category') {
-      //     currentSection.data = currentSection.data.map((item) => {
-      //       if (typeof item === 'string') {
-      //         return item
-      //       }
-      //       return item?._id
-      //     })
-      //   }
-      // }
-
       for (let contentSection of content) {
         if (contentSection.type === 'Product') {
           contentSection.data = contentSection.data.map((item) => {
@@ -70,7 +50,7 @@ export default class PageController {
           })
         } else if (contentSection.type === 'ProductCategory') {
           let { options } = contentSection
-          options.moreLink = options.moreLink.map((item) => {
+          options.moreLink = options.moreLink?.filter(item => item)?.map((item) => {
             if (typeof item === 'string') {
               return mongoose.Types.ObjectId(item)
             }

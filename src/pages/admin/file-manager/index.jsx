@@ -71,12 +71,16 @@ export default function FileManger() {
 
           {listFile.map(({ folder, name, src }) => {
             return folder ? (
-              <div className={styles.gridItem} onDoubleClick={() => getScreenData(src)}>
+              <div
+                className={styles.gridItem}
+                onDoubleClick={() => getScreenData(src)}
+                key={[folder, name, src].join('_')}
+              >
                 <FcFolder style={{ fontSize: 32, cursor: 'pointer' }} />
                 <p>{name}</p>
               </div>
             ) : (
-              <div className={styles.gridItem}>
+              <div className={styles.gridItem} key={[folder, name, src].join('_')}>
                 <ImageBlock src={src} engine height="75%" objectFit="contain" />
                 <ul className={styles.fileInformation}>
                   <li>

@@ -11,10 +11,7 @@ const path = {
 }
 
 const AuthenticateService = {
-  isAuthenticate: async () => {
-    await new Promise((resolve, reject) => setTimeout(resolve, 5000))
-    return await axios.post(path.authenticate)
-  },
+  isAuthenticate: async () => await axios.post(path.authenticate),
   login: async (params) => await axios.post(path.login, params),
   register: async (params) => await axios.post(path.register, params),
   logout: async () => await axios.post(path.logout),
