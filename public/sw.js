@@ -40,37 +40,34 @@ self.addEventListener('fetch', (event) => {
 
   const isImage = itemUrl.match(/png/) || itemUrl.match(/webp/) || itemUrl.match(/jpg/) || itemUrl.match(/jpeg/)
   // just let the browser do the normal thing:
-  const url = new URL(event.request.url)
-  console.log(url.pathname.match(/admin/), location.origin)
-  if (url.origin === location.origin && url.pathname.match(/admin/)) {
-    // just let the browser do the normal thing:
-    return
-  } else if (isImage) {
+  // const url = new URL(event.request.url)
+  // console.log(url.pathname.match(/admin/), location.origin)
+  // if (url.origin === location.origin && url.pathname.match(/admin/)) {
+  //   // just let the browser do the normal thing:
+  //   return
+  // } else
+  if (isImage && event.request.destination === 'image') {
     event.respondWith(
       // Offline First For Image <--------------
       caches.match(event.request).then((cachedResponse) => {
         if (cachedResponse) {
-          return cachedResponse
-        }
-        return caches.open(RUNTIME).then((cache) => {
-          return fetch(event.request, {}).then((response) => {
-            // Put a copy of the response in the runtime cache.
-            return cache.put(event.request, response.clone()).then(() => {
-              return response
+          const imageExpDate = new Date(cachedResponse.headers.get('date'))
+          const isHigherThan24Hours = Date.now() > imageExpDate.getTime() + 1000 * 60 * 60 * 24
+          // 60 * 60 * 24
+          // console.log('higher 1 minutes', isHigherThan24Hours, Date.now(), imageExpDate.getTime() + 1000 * 60)
+          if (isHigherThan24Hours) {
+            return caches.open(RUNTIME).then((cache) => {
+              return fetch(event.request, {}).then((response) => {
+                return cache.put(event.request, response.clone()).then(() => {
+                  return response
+                })
+              })
             })
-          })
-        })
-      }),
-    )
-  } else if (event.request.url.startsWith(self.location.origin)) {
-    event.respondWith(
-      caches.match(event.request).then((cachedResponse) => {
-        if (cachedResponse) {
+          }
           return cachedResponse
         }
         return caches.open(RUNTIME).then((cache) => {
           return fetch(event.request, {}).then((response) => {
-            // Put a copy of the response in the runtime cache.
             return cache.put(event.request, response.clone()).then(() => {
               return response
             })
@@ -79,6 +76,24 @@ self.addEventListener('fetch', (event) => {
       }),
     )
   }
+  //  else if (event.request.url.startsWith(self.location.origin)) {
+  //   event.respondWith(
+  //     caches.match(event.request).then((cachedResponse) => {
+  //       if (cachedResponse) {
+  //         return cachedResponse
+  //       }
+  //       return caches.open(RUNTIME).then((cache) => {
+  //         return fetch(event.request, {}).then((response) => {
+  //           // Put a copy of the response in the runtime cache.
+  //           return cache.put(event.request, response.clone()).then(() => {
+  //             return response
+  //           })
+  //         })
+  //       })
+  //     }),
+  //   )
+  // }
+  return
 })
 
 /**
