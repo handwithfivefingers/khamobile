@@ -1,8 +1,7 @@
 import clsx from 'clsx'
 import Image from 'next/image'
-import React, { useEffect, useRef, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Modal } from 'rsuite'
-import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
 
 const ImageBlock = ({
@@ -46,12 +45,13 @@ const ImageBlock = ({
       <Image
         alt={alt}
         onClick={() => openImageViewer(true)}
-        layout="fill"
+        layout={props.layout || 'fill'}
         src={img}
         blurDataURL={'/blur.jpg'}
         placeholder="blur"
         loading={priority ? 'eager' : 'lazy'}
         loader={({ src, width, quality }) => {
+          if (src.match(/400.png/)) return src
           let newSrc = engine ? process.env.API + src + `?w=${width}&q=${quality || 50}` : src
           return newSrc
         }}

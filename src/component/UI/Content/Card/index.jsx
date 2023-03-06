@@ -1,15 +1,13 @@
-import React, { useEffect, useState } from 'react'
-import demoImg from 'assets/img/demo-phone.png'
-import styles from './styles.module.scss'
-import clsx from 'clsx'
-import { formatCurrency, imageLoader } from 'src/helper'
-import { useRouter } from 'next/router'
-import { IconButton, Placeholder } from 'rsuite'
 import { Image } from '@rsuite/icons'
+import clsx from 'clsx'
 import * as NextImage from 'next/image'
-import LOADER from 'assets/img/loader2.gif'
-import { AiOutlineHeart, AiFillHeart } from 'react-icons/ai'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
+import { IconButton, Placeholder } from 'rsuite'
+import { formatCurrency, imageLoader } from 'src/helper'
+import styles from './styles.module.scss'
 
 export default function Card({
   imgSrc,
@@ -28,8 +26,6 @@ export default function Card({
   _id,
 }) {
   const [wish, setWish] = useState(wishList.status)
-
-  const router = useRouter()
 
   useEffect(() => {
     const wishItem = JSON.parse(localStorage.getItem('khaMobileWish')) || []
@@ -86,17 +82,15 @@ export default function Card({
   if (slug) {
     return (
       <Link href={slug} passHref>
-        <a className={classCard} style={{ textDecoration: 'none' }}>
+        <a className={classCard} style={{ textDecoration: 'none' }} title={title}>
           <div className={clsx('card-img-top', styles.cardImg)}>
             {imgSrc ? (
               <NextImage
                 src={imgSrc}
                 className={styles.img}
-                alt="..."
+                alt={title}
                 layout="fill"
-                blurDataURL={
-                  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
-                }
+                blurDataURL="/blur.png"
                 placeholder="blur"
                 loading={'lazy'}
                 loader={imageLoader}
@@ -140,9 +134,7 @@ export default function Card({
             className={styles.img}
             alt="..."
             layout="fill"
-            blurDataURL={
-              'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mPcXw8AAgMBQLfkYc4AAAAASUVORK5CYII='
-            }
+            blurDataURL="/blur.png"
             placeholder="blur"
             loading={'lazy'}
             loader={imageLoader}

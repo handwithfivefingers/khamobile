@@ -2,6 +2,7 @@ import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
 import ProductForm from 'component/Product/ProductForm'
 import CardBlock from 'component/UI/Content/CardBlock'
+import ImageBlock from 'component/UI/Content/ImageBlock'
 import NoData from 'component/UI/Content/NoData'
 import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
@@ -9,12 +10,11 @@ import axios from 'configs/axiosInstance'
 import parser from 'html-react-parser'
 import { ProductJsonLd } from 'next-seo'
 import Head from 'next/head'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Carousel, Table } from 'rsuite'
-import { imageLoader } from 'src/helper'
 import styles from './styles.module.scss'
+import { isEqual } from 'lodash'
 
 const { Column, HeaderCell, Cell } = Table
 
@@ -22,16 +22,21 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
   const [toggleContent, setToggleContent] = useState(false)
 
   const [imageSlider, setImageSlider] = useState(data?.image)
+
   const router = useRouter()
 
+  const productInformationRef = useRef()
+
   useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (!window.FB) return
-      window.FB.XFBML.parse()
-      clearTimeout(timeout)
-    }, 1000)
-    return () => clearTimeout(timeout)
+    handleFBLoad()
   }, [])
+
+  const handleFBLoad = async () => {
+    while (!window.FB) {
+      await new Promise((resolve) => setTimeout(resolve, 1000))
+    }
+    window.FB.XFBML.parse()
+  }
 
   const getProductContent = useMemo(() => {
     let html = null
@@ -63,10 +68,11 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
   }, [toggleContent])
 
   const handleOutputSelect = (outputData) => {
-    // console.log(data)
+    const listImage = [...data?.image]
     if (outputData?.image) {
-      const listImage = [...data?.image]
-      listImage.push(outputData?.image)
+      listImage.unshift(outputData?.image)
+    }
+    if (!isEqual(listImage, imageSlider)) {
       setImageSlider(listImage)
     }
   }
@@ -74,7 +80,6 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
   const renderImageSlider = useMemo(() => {
     return <Slider image={imageSlider} />
   }, [imageSlider])
-  console.log(data, _relationProd)
   return (
     <>
       <PostHelmet seo={seo} />
@@ -151,7 +156,7 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
 
               <div className="col-lg-9 col-md-12">{getProductContent}</div>
 
-              <div className={clsx('col-lg-3 col-md-12')}>
+              <div className={clsx('col-lg-3 col-md-12')} ref={productInformationRef}>
                 <CardBlock className="border-0">
                   <Table
                     height={400}
@@ -213,7 +218,8 @@ const Slider = ({ image, activeIndex, ...props }) => {
 
   useEffect(() => {
     if (image) {
-      setSliderActive(image.length - 1)
+      console.log('changed ???')
+      setSliderActive(0)
     }
   }, [image])
 
@@ -232,18 +238,16 @@ const Slider = ({ image, activeIndex, ...props }) => {
             onSelect={(index) => setSliderActive(index)}
             onSlideStart={(index, event) => setSliderActive(index)}
           >
-            {image?.map((item) => {
+            {image?.map((item, index) => {
               return (
-                <div style={{ position: 'relative' }}>
-                  <Image
+                <div style={{ position: 'relative' }} key={[item.src, index].join('_')}>
+                  <ImageBlock
                     src={item?.src}
+                    className="bk-product-image"
                     layout="fill"
                     objectFit="contain"
-                    className="bk-product-image"
-                    loader={imageLoader}
-                    loading="lazy"
-                    placeholder="blur"
-                    blurDataURL="/blur.jpg"
+                    engine
+                    height="75%"
                   />
                 </div>
               )
@@ -258,15 +262,7 @@ const Slider = ({ image, activeIndex, ...props }) => {
                 className={clsx(styles.thumbItem, { [styles.active]: index === sliderActive })}
                 onClick={() => setSliderActive(index)}
               >
-                <Image
-                  src={item?.src}
-                  layout="fill"
-                  objectFit="contain"
-                  loader={imageLoader}
-                  loading="lazy"
-                  placeholder="blur"
-                  blurDataURL="/blur.jpg"
-                />
+                <ImageBlock src={item?.src} layout="fill" objectFit="contain" engine />
               </div>
             )
           })}

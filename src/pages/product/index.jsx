@@ -79,21 +79,41 @@ export default function Product(props) {
       <PostHelmet seo={props.seo} />
 
       <div className="row p-0">
-        <div className="col-12 p-0">
+        <div
+          className="col-12 p-0 animate__animated animate__fadeInUp"
+          style={{
+            '--animate-duration': `${0.3}s`,
+          }}
+        >
           <PageHeader type="h3" left divideClass={styles.divideLeft}>
             Sản phẩm
           </PageHeader>
         </div>
-        <div className="col-12 p-0 py-2 border-top">
+        <div
+          className="col-12 p-0 py-2 border-top"
+          style={{
+            '--animate-duration': `${0.4}s`,
+          }}
+        >
           <div className="container">
             <div className="row">
-              <div className="col-12">
+              <div
+                className="col-12 animate__animated animate__fadeInUp"
+                style={{
+                  '--animate-duration': `${0.5}s`,
+                }}
+              >
                 <SideFilter onChange={onFilterChange} filter={filter} tagClick={tagClick} />
               </div>
 
-              <Divider />
+              <Divider
+                className="animate__animated animate__fadeInUp"
+                style={{
+                  '--animate-duration': `${0.6}s`,
+                }}
+              />
 
-              <div className="col-12">
+              <div className="col-12 animate__animated animate__fadeInUp">
                 <div className={styles.grid}>
                   {loading && renderSkeleton}
 
@@ -102,9 +122,9 @@ export default function Product(props) {
                       return (
                         <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
                           <a
-                            className={clsx('animate__animated animate__fadeIn', styles.gridItem)}
+                            className={clsx('animate__animated animate__fadeInUp', styles.gridItem)}
                             style={{
-                              '--animate-duration': `${(0.15 * index) / 2}s`,
+                              '--animate-duration': `${(0.2 * index) / 2}s`,
                             }}
                           >
                             <Card

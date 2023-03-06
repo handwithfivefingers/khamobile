@@ -334,7 +334,12 @@ const Home = (props) => {
         />
       </PostHelmet>
 
-      <section className="container-fluid  animate__animated animate__fadeIn">
+      <section
+        className="container-fluid  animate__animated animate__fadeIn"
+        style={{
+          '--animate-duration': `${0.3}s`,
+        }}
+      >
         <div className="row gx-2 gy-2">
           <div className="col-12">
             <div className="container" style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
@@ -344,13 +349,30 @@ const Home = (props) => {
         </div>
       </section>
 
-      <section className="container animate__animated animate__fadeInUp animate__faster">{getSectionService}</section>
+      <section
+        className="container animate__animated animate__fadeInUp "
+        style={{
+          '--animate-duration': `${0.5}s`,
+        }}
+      >
+        {getSectionService}
+      </section>
 
-      <section className="container-fluid animate__animated animate__fadeInUp animate__fast">
+      <section
+        className="container-fluid animate__animated animate__fadeInUp"
+        style={{
+          '--animate-duration': `${0.7}s`,
+        }}
+      >
         {getSectionFeatureProduct}
       </section>
 
-      <section className="container animate__animated animate__fadeInUp animate__slow">
+      <section
+        className="container animate__animated animate__fadeInUp"
+        style={{
+          '--animate-duration': `${0.9}s`,
+        }}
+      >
         <div className="row">
           <div className="col-12">
             <Heading type="h3" center>

@@ -44,6 +44,8 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
   useEffect(() => {
     if (form.variantId) {
       let item = _relationProd.find((item) => item._id === form.variantId)
+
+      console.log(item)
       outputSelect?.(item)
     }
   }, [form])
@@ -188,8 +190,8 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
         map.set(key, value)
       }
     }
+    console.log(productFiltered)
 
-    console.log(map)
     setAttributeMap(map)
 
     setAttributeSelect(currentAttributeSelect)

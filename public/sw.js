@@ -49,7 +49,6 @@ self.addEventListener('fetch', (event) => {
 
   // console.log(event.request.destination, event.request.url)
 
-  
   if (isImage && event.request.destination === 'image') {
     event.respondWith(
       // Offline First For Image <--------------
