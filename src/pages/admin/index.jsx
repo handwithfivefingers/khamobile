@@ -62,6 +62,5 @@ const Admin = () => {
   )
 }
 
-// Admin.Layout = CommonLayout;
 Admin.Admin = AdminLayout
 export default Admin

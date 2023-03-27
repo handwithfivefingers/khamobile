@@ -260,7 +260,6 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
               }
               placeholder="0123456789"
               guide={false}
-              onChange={(val) => console.log(val)}
               keepCharPositions={true}
             />
           </FlexboxGrid.Item>

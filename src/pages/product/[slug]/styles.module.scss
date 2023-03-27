@@ -255,6 +255,10 @@
       &.active {
         border-color: var(--rs-blue-800);
       }
+      img {
+        width: 100%;
+        object-fit: contain;
+      }
     }
     &::-webkit-scrollbar {
       width: 8px;

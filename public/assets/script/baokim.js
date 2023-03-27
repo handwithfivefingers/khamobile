@@ -123,7 +123,7 @@ function baokimScript() {
       _ = d.installment_amigo
     p &&
       ((m += '<div id="bk-modal-payment" class="bk-modal">'),
-      (m += '<div class="bk-modal-content" id="bk-modal-content-style">'),
+      (m += '<div class="bk-modal-content" id="bk-modal-content-style" style="margin-top:68px">'),
       (m += '<div id="bk-modal-pop" class="bk-modal-header">'),
       (m += '<div class="bk-container-fluid" style="box-sizing: border-box">'),
       (m += '<div class="bk-row bk-popup-header">'),

@@ -46,7 +46,6 @@ export default function LoginPage() {
           isAdmin: data?.data?.role === 'admin',
         })
       }
-      console.log('logged')
     } catch (error) {
       console.log('handleSubmit', error)
     } finally {

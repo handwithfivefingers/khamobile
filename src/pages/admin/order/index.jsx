@@ -67,9 +67,9 @@ const Orders = () => {
           height={60 * (10 + 1)}
           rowHeight={60}
           data={dataFilter}
-          onRowClick={(rowData) => {
-            console.log(rowData)
-          }}
+          // onRowClick={(rowData) => {
+          //   console.log(rowData)
+          // }}
         >
           <Column width={60} align="center" fixed>
             <HeaderCell>Id</HeaderCell>

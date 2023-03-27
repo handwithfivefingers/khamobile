@@ -1,15 +1,13 @@
 import AdminLayout from 'component/UI/AdminLayout'
 import CardBlock from 'component/UI/Content/CardBlock'
 import ImageBlock from 'component/UI/Content/ImageBlock'
-import React, { useState } from 'react'
-import { useEffect } from 'react'
+import CustomUpload from 'component/UI/Upload/CustomUpload'
+import { useEffect, useState } from 'react'
 import { BsClipboard } from 'react-icons/bs'
 import { FcFolder } from 'react-icons/fc'
-import { IconButton, Placeholder, Uploader } from 'rsuite'
+import { IconButton, Placeholder } from 'rsuite'
 import FileManagerService from 'service/admin/FileManager.service'
 import styles from './styles.module.scss'
-import ReactDOM from 'react-dom'
-import CustomUpload from 'component/UI/Upload/CustomUpload'
 export default function FileManger() {
   const [listFile, setListFile] = useState([])
   const [loading, setLoading] = useState(false)
@@ -26,8 +24,6 @@ export default function FileManger() {
         params.folder = folder
       }
       const resp = await FileManagerService.getListFileAndFolder(params)
-
-      console.log(resp.data.data)
       setListFile(resp.data.data)
     } catch (error) {
       console.log(error)

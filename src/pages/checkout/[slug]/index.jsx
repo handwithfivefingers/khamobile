@@ -150,7 +150,6 @@ export default function OrderReceived({ data }) {
     return html
   }
 
-  console.log(data)
   if (!data)
     return (
       <div className="d-flex justify-content-center flex-column align-items-center">
@@ -299,8 +298,6 @@ export default function OrderReceived({ data }) {
 
 export const getServerSideProps = async (ctx) => {
   const { slug } = ctx.query
-
-  console.log(ctx.query)
   ctx.res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=59')
   try {
     const resp = await axios.get('/order' + '/' + slug)

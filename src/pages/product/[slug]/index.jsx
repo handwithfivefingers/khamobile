@@ -218,7 +218,6 @@ const Slider = ({ image, activeIndex, ...props }) => {
 
   useEffect(() => {
     if (image) {
-      console.log('changed ???')
       setSliderActive(0)
     }
   }, [image])
@@ -241,14 +240,7 @@ const Slider = ({ image, activeIndex, ...props }) => {
             {image?.map((item, index) => {
               return (
                 <div style={{ position: 'relative' }} key={[item.src, index].join('_')}>
-                  <ImageBlock
-                    src={item?.src}
-                    className="bk-product-image"
-                    layout="fill"
-                    objectFit="contain"
-                    engine
-                    height="75%"
-                  />
+                  <ImageBlock src={item?.src} layout="fill" objectFit="contain" engine height="75%" />
                 </div>
               )
             })}
@@ -261,8 +253,15 @@ const Slider = ({ image, activeIndex, ...props }) => {
                 style={{ position: 'relative' }}
                 className={clsx(styles.thumbItem, { [styles.active]: index === sliderActive })}
                 onClick={() => setSliderActive(index)}
+                key={[item?.src, index].join('_')}
               >
-                <ImageBlock src={item?.src} layout="fill" objectFit="contain" engine />
+                <img
+                  src={process.env.API + item?.src}
+                  alt={'Product Image'}
+                  className={clsx({
+                    ['bk-product-image']: index === 0,
+                  })}
+                />
               </div>
             )
           })}

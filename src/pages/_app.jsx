@@ -182,24 +182,12 @@ export default function MyApp({ Component, pageProps }) {
 }
 
 const QueryStore = (props) => {
-  const {
-    data: productData,
-    refetch: productRefetch,
-    isLoading: productLoading,
-    isError: productError,
-    status: productStatus,
-  } = useQuery({
+  const { data: productData, status: productStatus } = useQuery({
     queryKey: ['products'],
     queryFn: async () => await getProducts(),
   })
 
-  const {
-    data: cateData,
-    refetch: refetchCate,
-    isLoading: cateLoading,
-    isError: cateError,
-    status: cateStatus,
-  } = useQuery({
+  const { data: cateData, status: cateStatus } = useQuery({
     queryKey: ['category'],
     queryFn: async () => await loadCategory(),
   })
@@ -223,8 +211,6 @@ const QueryStore = (props) => {
       console.log('fetch category failed', error.message)
     }
   }
-
-  // console.log(productStatus)
 
   useEffect(() => {
     if (productData && productStatus === 'success') {

@@ -90,9 +90,7 @@ const Posts = () => {
 
   const handleDelete = async (rowData, event) => {
     try {
-      // let resp = await ProductService.deleteProduct({ _id: rowData._id, type: rowData.type })
-      // if (resp.status === 200) {
-      // }
+ 
     } catch (error) {
       console.log('deleteProduct', error, error?.response?.data)
     } finally {

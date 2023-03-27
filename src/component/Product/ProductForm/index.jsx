@@ -5,9 +5,9 @@ import CardBlock from 'component/UI/Content/CardBlock'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState, memo } from 'react'
 import { BiCart } from 'react-icons/bi'
-import { Button, Divider, Form, IconButton, Panel } from 'rsuite'
+import { Button, Divider, Form, IconButton, Panel, useToaster } from 'rsuite'
 import { ProductModel } from 'src/constant/model.constant'
-import { formatCurrency } from 'src/helper'
+import { formatCurrency, message } from 'src/helper'
 import { useCartStore } from 'store/cartStore'
 import ProductOptions from '../ProductOption'
 import { isEqual } from 'lodash'
@@ -31,6 +31,8 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
     image: data?.image,
     _id: data?._id,
   })
+
+  const toaster = useToaster()
 
   useEffect(() => {
     if (data) {
@@ -66,22 +68,26 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
   }
 
   const handleAddToCart = () => {
-    const cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
+    try {
+      const cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
+      let listItem = []
+      if (cartItem?.length) {
+        listItem = [...cartItem]
+      }
+      let index = listItem.findIndex((item) => item._id === form._id && item?.variantId === form?.variantId)
+      if (index !== -1) {
+        listItem[index].quantity = listItem[index].quantity + +form.quantity
+      } else {
+        listItem.push(form)
+      }
 
-    let listItem = []
-    if (cartItem?.length) {
-      listItem = [...cartItem]
+      addToCart(listItem)
+
+      localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
+      toaster.push(message('success', 'Thêm sản phẩm thành công !'), { placement: 'topEnd' })
+    } catch (error) {
+      toaster.push(message('error', 'Thêm sản phẩm thất bại ! \n Vui lòng thử lại sau'), { placement: 'topEnd' })
     }
-    let index = listItem.findIndex((item) => item._id === form._id && item?.variantId === form?.variantId)
-    if (index !== -1) {
-      listItem[index].quantity = listItem[index].quantity + +form.quantity
-    } else {
-      listItem.push(form)
-    }
-
-    addToCart(listItem)
-
-    localStorage.setItem('khaMobileCart', JSON.stringify(listItem))
   }
 
   const handleBuyNow = async () => {
@@ -190,7 +196,7 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
         map.set(key, value)
       }
     }
-    console.log(productFiltered)
+    // console.log(productFiltered)
 
     setAttributeMap(map)
 
@@ -254,8 +260,8 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
           <div className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)} style={{ gap: 4 }}>
             <div className={'row w-100 '} ref={pricingRef}>
               <div className="col-12">
-                <p className={clsx(styles.productPricing, 'bk-product-price')}>
-                  {calculatePrice()}
+                <p className={clsx(styles.productPricing)}>
+                  <span className="bk-product-price">{calculatePrice()}</span>
 
                   <span className={styles.productRegularPrice}>{calculateRegularPrice()}</span>
                 </p>

@@ -11,7 +11,9 @@ const BaoKim = (props) => {
   const initScript = () => {
     const allScript = document.querySelectorAll('script')
 
-    for (let i = 0; i < allScript.length; i++) {
+    const scriptLength = allScript.length
+
+    for (let i = 0; i < scriptLength; i++) {
       if (allScript[i].src.includes(baokimScript)) {
         document.body.removeChild(allScript[i])
       }

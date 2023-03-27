@@ -22,7 +22,6 @@ export default function Search() {
   useEffect(() => {
     getCategories()
     let { q } = router.query
-    console.log(q)
     if (q) {
       getScreenData(q)
     }
@@ -39,8 +38,6 @@ export default function Search() {
     try {
       setLoading(true)
       const resp = await ProductService.searchProduct({ title: q })
-      console.log('resp', resp)
-
       setData(resp.data.data)
     } catch (error) {
       console.log(error)
