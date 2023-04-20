@@ -90,7 +90,7 @@ export default function Card({
                 className={styles.img}
                 alt={title}
                 layout="fill"
-                blurDataURL="/blur.png"
+                blurDataURL="/blur.jpg"
                 placeholder="blur"
                 loading={'lazy'}
                 loader={imageLoader}
