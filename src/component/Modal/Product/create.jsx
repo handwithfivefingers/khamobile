@@ -132,7 +132,30 @@ const ProductCreateModal = (props) => {
     setRender(!_render)
   }
 
-  console.log(formDataRef.current)
+  const handleRemoveFile = (file) => {
+    const listImage = [...formDataRef.current.image]
+    let fileListLength = listImage.length
+    let index = -1
+    if (fileListLength) {
+      index = listImage.findIndex((imageFile) => imageFile._id === file._id)
+    }
+    if (index !== -1) {
+      listImage.splice(index, 1)
+    }
+    formDataRef.current.image = listImage
+    setRender(!_render)
+  }
+
+  const handleUploadSuccess = (resp, file) => {
+    setRender(!_render)
+    formDataRef.current = {
+      ...formDataRef.current,
+      image: formDataRef.current.image
+        ? [...formDataRef.current.image, { src: resp.url, name: file.name }]
+        : [{ src: resp.url, name: file.name }],
+    }
+  }
+
   return (
     <>
       <Content className={'p-4'}>
@@ -206,7 +229,6 @@ const ProductCreateModal = (props) => {
               </Panel>
             </PanelGroup>
           </div>
-          {/* <Affix top={50}> */}
           <div className="col-3">
             <PanelGroup className="position-sticky top-0">
               <Panel header="Ảnh bài post" expanded>
@@ -218,16 +240,9 @@ const ProductCreateModal = (props) => {
                     group
                     action={process.env.API + '/api/upload'}
                     withCredentials={true}
-                    onSuccess={(resp, file) => {
-                      setRender(!_render)
-                      formDataRef.current = {
-                        ...formDataRef.current,
-                        image: formDataRef.current.image
-                          ? [...formDataRef.current.image, { src: resp.url, name: file.name }]
-                          : [{ src: resp.url, name: file.name }],
-                      }
-                    }}
+                    onSuccess={handleUploadSuccess}
                     value={formDataRef.current?.image}
+                    onRemove={handleRemoveFile}
                   />
                 </Form.Group>
               </Panel>
@@ -252,7 +267,6 @@ const ProductCreateModal = (props) => {
               </Panel>
             </PanelGroup>
           </div>
-          {/* </Affix> */}
         </Form>
       </Content>
     </>

@@ -329,7 +329,6 @@ const Products = (props) => {
   }
   // debugger
 
-  console.log(propsChecked)
   return (
     <>
       <Stack spacing={10} className="py-2">
@@ -364,7 +363,7 @@ const Products = (props) => {
             <Cell dataKey="_id">{(rowData) => <span onClick={(e) => e.preventDefault()}>{rowData['_id']}</span>}</Cell>
           </Column>
 
-          <Column width={150} flexGrow={1}>
+          <Column width={150} flexGrow={1} fullText>
             <HeaderCell>Title</HeaderCell>
             <Cell dataKey="title" />
           </Column>
