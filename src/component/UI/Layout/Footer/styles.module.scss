@@ -114,3 +114,14 @@
     transform: scale(1.5);
   }
 }
+.copyRightWrapper {
+  .copyRight,
+  .payment {
+    @media (max-width: 525px) {
+      margin: 0 auto;
+    }
+  }
+}
+.bct {
+  margin: 0 auto;
+}

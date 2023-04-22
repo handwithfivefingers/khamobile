@@ -147,7 +147,12 @@ const CustomNavbar = ({ ...props }) => {
 
       <Drawer open={drawer} onClose={() => setDrawer(false)} size={'xs'} style={{ width: 250 }} placement="left">
         <Drawer.Header>
-          <Drawer.Title>
+          <Drawer.Title
+            onClick={() => {
+              setDrawer(false)
+              router.push('/')
+            }}
+          >
             <Image src={LOGO} alt="Kha mobile" priority />
           </Drawer.Title>
         </Drawer.Header>

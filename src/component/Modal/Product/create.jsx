@@ -27,6 +27,7 @@ const ProductCreateModal = (props) => {
     category: [],
     delete: [],
     deleteAll: false,
+    type: 'simple',
     ...props?.data,
   })
 

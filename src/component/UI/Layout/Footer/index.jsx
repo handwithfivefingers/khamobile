@@ -11,8 +11,10 @@ import { FaCcJcb, FaCcPaypal, FaCcStripe, FaCcVisa } from 'react-icons/fa'
 import { FcIphone } from 'react-icons/fc'
 import { IconButton, Panel } from 'rsuite'
 import styles from './styles.module.scss'
+import { useRouter } from 'next/router'
 export default function Footer() {
   const [expand, setExpand] = useState(false)
+  const router = useRouter()
   useEffect(() => {
     if (window.FB) {
       window.FB.XFBML.parse()
@@ -48,7 +50,7 @@ export default function Footer() {
           <div className="container p-0">
             <div className="row p-2 py-4 gy-4">
               <div className="col-12 col-lg-3 col-md-12 col-sm-12">
-                <Panel>
+                <Panel onClick={() => router.push('/')}>
                   <Image src={LOGO} alt="Kha mobile" priority />
                 </Panel>
               </div>
@@ -65,10 +67,11 @@ export default function Footer() {
                     </li>
                   </Link>
                 </ul>
-                <Image src={BCT} alt="Kha mobile" priority width={200} height={77} />
+                <div className={styles.bct}>
+                  <Image src={BCT} alt="Kha mobile" priority width={200} height={77} />
+                </div>
               </div>
               <div className="col-12 col-lg-3  col-md-4 col-sm-6">
-                {/* <Placeholder.Paragraph rows={5} /> */}
                 <ul className={styles.listLink}>
                   <h6>Địa chỉ liên hệ</h6>
                   <li>
@@ -114,9 +117,16 @@ export default function Footer() {
 
         <div className="col-12 py-2" style={{ background: 'var(--rs-red-900)' }}>
           <div className="container p-0">
-            <div className="d-flex flex-row justify-content-between align-items-center flex-wrap">
-              <div className="text-light">Copyright {new Date().getFullYear()} © Kha Mobile</div>
-              <div className="payment-icons d-flex flex-row" style={{ gap: 8 }}>
+            <div
+              className={clsx(
+                'd-flex flex-row justify-content-between align-items-center flex-wrap',
+                styles.copyRightWrapper,
+              )}
+            >
+              <div className={clsx('text-light', styles.copyRight)}>
+                Copyright {new Date().getFullYear()} © Kha Mobile
+              </div>
+              <div className={clsx('payment-icons d-flex flex-row', styles.payment)} style={{ gap: 8 }}>
                 <IconButton
                   className="px-2 py-1"
                   icon={<FaCcVisa />}

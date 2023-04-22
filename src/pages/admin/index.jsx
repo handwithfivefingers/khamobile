@@ -1,15 +1,16 @@
+import { Paragraph } from '@rsuite/icons'
 import AdminLayout from 'component/UI/AdminLayout'
 import BarChart from 'component/UI/Chart/BarChart'
 import LineChart from 'component/UI/Chart/LineChart'
 import PolaArea from 'component/UI/Chart/PolaArea'
+import CardBlock from 'component/UI/Content/CardBlock'
 import Copyright from 'component/UI/Copyright'
-import { useEffect, useState } from 'react'
-import { Button, ButtonGroup, Col, Row } from 'rsuite'
+import { useEffect, useMemo, useState } from 'react'
+import { Button, ButtonGroup, Col, Panel, Placeholder, Row } from 'rsuite'
 import OrderService from 'service/admin/Order.service'
 
 const Admin = () => {
   const [chartData, setChartData] = useState({})
-  const [currentChart, setCurrentChart] = useState('bar')
 
   useEffect(() => {
     getMonthChart()
@@ -24,29 +25,43 @@ const Admin = () => {
     }
   }
 
+  const renderChart = useMemo(() => {
+    return <BarChart data={chartData.monthData} />
+  }, [chartData])
+
   return (
     <>
       <Row className="dashboard-header p-3">
-        <ButtonGroup>
-          <Button active={currentChart === 'bar'} appearance="primary" onClick={() => setCurrentChart('bar')}>
-            Bar
-          </Button>
-          <Button active={currentChart === 'line'} appearance="primary" onClick={() => setCurrentChart('line')}>
-            Line
-          </Button>
-        </ButtonGroup>
+        <Col xs={8}>
+          <CardBlock className="border-0  w-100">
+            <h5>Tổng số lượng sản phẩm</h5>
+            <p>
+              <Placeholder.Paragraph rows={2} />
+            </p>
+          </CardBlock>
+        </Col>
+
+        <Col xs={8}>
+          <CardBlock className="border-0 w-100">
+            <h5>Doanh thu</h5>
+            <p>
+              <Placeholder.Paragraph rows={2} />
+            </p>
+          </CardBlock>
+        </Col>
+
+        <Col xs={8}>
+          <CardBlock className="border-0 w-100">
+            <h5>Doanh thu</h5>
+            <p>
+              <Placeholder.Paragraph rows={2} />
+            </p>
+          </CardBlock>
+        </Col>
       </Row>
 
       <Row className="p-2">
-        <Col xs={16}>
-          {chartData.monthData && currentChart === 'bar' ? (
-            <BarChart data={chartData.monthData} />
-          ) : currentChart === 'line' ? (
-            <LineChart data={chartData.monthData} />
-          ) : (
-            ''
-          )}
-        </Col>
+        <Col xs={16}>{renderChart}</Col>
 
         <Col xs={8} className=" h-100">
           <PolaArea />
@@ -54,8 +69,16 @@ const Admin = () => {
       </Row>
 
       <Row className="p-2">
-        <Col xs={16}></Col>
-        <Col xs={8}></Col>
+        <Col xs={16}>
+          <CardBlock className="border-0 w-100">
+            <Placeholder.Paragraph rows={6} />
+          </CardBlock>
+        </Col>
+        <Col xs={8}>
+          <CardBlock className="border-0 w-100">
+            <Placeholder.Paragraph rows={6} />
+          </CardBlock>
+        </Col>
       </Row>
       <Copyright />
     </>

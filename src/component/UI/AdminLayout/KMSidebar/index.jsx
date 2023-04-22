@@ -12,20 +12,25 @@ import PageIcon from '@rsuite/icons/Page'
 import PeoplesIcon from '@rsuite/icons/Peoples'
 import StorageIcon from '@rsuite/icons/Storage'
 import TextImageIcon from '@rsuite/icons/TextImage'
+import ImageBlock from 'component/UI/Content/ImageBlock'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { Nav, Navbar, Sidebar, Sidenav } from 'rsuite'
 import { AuthenticateService } from 'service/authenticate'
 import { useAuthorizationStore } from 'src/store'
+import LOGO from 'assets/img/logo.png'
+import Image from 'next/image'
+
 const headerStyles = {
-  padding: 18,
+  padding: 12,
   fontSize: 16,
-  height: 56,
-  background: '#34c3ff',
+  height: 72,
+  background: 'rgba(52, 195, 255,0.7)',
   color: ' #fff',
   whiteSpace: 'nowrap',
   overflow: 'hidden',
+  cursor: 'pointer',
 }
 
 export default function KMSidebar() {
@@ -53,7 +58,20 @@ export default function KMSidebar() {
       <Sidenav.Header>
         <Link href="/" passHref>
           <div style={headerStyles}>
-            <span style={{ marginLeft: 12 }}> BRAND</span>
+            {expand ? (
+              <Image src={LOGO} alt="Kha mobile" priority />
+            ) : (
+              <div
+                style={{
+                  fontSize: 32,
+                  fontWeight: 600,
+                  textAlign: 'center',
+                  color: 'var(--rs-red-800)',
+                }}
+              >
+                K
+              </div>
+            )}
           </div>
         </Link>
       </Sidenav.Header>

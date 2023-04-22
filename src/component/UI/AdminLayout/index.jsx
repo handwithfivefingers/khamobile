@@ -9,6 +9,7 @@ import KMBreadcrumb from '../Content/Breadcrumb'
 import KMSidebar from './KMSidebar'
 import LoaderAdmin from './LoaderAdmin'
 import styles from './styles.module.scss'
+import { NextSeo } from 'next-seo'
 const AdminLayout = ({ children, ...props }) => {
   const title = useCommonStore((state) => state.title)
 
@@ -23,39 +24,42 @@ const AdminLayout = ({ children, ...props }) => {
   }, [authenticate, isAuthenticating])
 
   return (
-    <div className={clsx(styles.admin, `${props?.classAnimation}`)}>
-      <Container
-        className={!authenticate && isAuthenticating ? 'animate__animated animate__faster animate__fadeOut' : ''}
-      >
-        {!authenticate && !isAuthenticating ? (
-          <Loader backdrop content="loading..." vertical />
-        ) : (
-          <>
-            <KMSidebar />
-            <Container className={styles.container}>
-              <div className="container-fluid ">
-                <div className="row">
-                  <div className="col-12">
-                    <Header>
-                      <h2>{title}</h2>
-                    </Header>
-                  </div>
+    <>
+      <NextSeo title="Kha Mobile - Admin" />
+      <div className={clsx(styles.admin, `${props?.classAnimation}`)}>
+        <Container
+          className={!authenticate && isAuthenticating ? 'animate__animated animate__faster animate__fadeOut' : ''}
+        >
+          {!authenticate && !isAuthenticating ? (
+            <Loader backdrop content="loading..." vertical />
+          ) : (
+            <>
+              <KMSidebar />
+              <Container className={styles.container}>
+                <div className="container-fluid ">
+                  <div className="row">
+                    <div className="col-12">
+                      <Header>
+                        <h2>{title}</h2>
+                      </Header>
+                    </div>
 
-                  <div className="col-12">
-                    <KMBreadcrumb />
-                  </div>
+                    <div className="col-12">
+                      <KMBreadcrumb />
+                    </div>
 
-                  <div className={clsx('col-12  position-relative', styles.content)}>
-                    <LoaderAdmin />
-                    {children}
+                    <div className={clsx('col-12  position-relative', styles.content)}>
+                      <LoaderAdmin />
+                      {children}
+                    </div>
                   </div>
                 </div>
-              </div>
-            </Container>
-          </>
-        )}
-      </Container>
-    </div>
+              </Container>
+            </>
+          )}
+        </Container>
+      </div>
+    </>
   )
 }
 
