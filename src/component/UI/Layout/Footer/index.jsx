@@ -49,7 +49,7 @@ export default function Footer() {
         <div className="col-12 p-0">
           <div className="container p-0">
             <div className="row p-2 py-4 gy-4">
-              <div className="col-12 col-lg-2 col-md-12 col-sm-12">
+              <div className="col-12 col-lg-2 col-md-4 col-sm-12">
                 <Panel onClick={() => router.push('/')}>
                   <Image src={LOGO} alt="Kha mobile" priority />
                 </Panel>
@@ -94,7 +94,7 @@ export default function Footer() {
                   </li>
                 </ul>
               </div>
-              <div className="col-12 col-lg-2 col-md-4 col-sm-6">
+              <div className="col-12 col-lg-2 col-md-6 col-sm-6">
                 <ul className={styles.listLink}>
                   <li className={styles.bct}>
                     <Image src={BCT} alt="Kha mobile" priority width={200} height={77} />
@@ -103,7 +103,7 @@ export default function Footer() {
                   <li>Giấy chứng nhận ĐKKD số 41O8041012 do UBND quận Bình Thạnh cấp ngày 07/08/2020</li>
                 </ul>
               </div>
-              <div className="col-12 col-lg-3  col-md-4 col-sm-6 offset-sm-6 offset-md-0 text-center">
+              <div className="col-12 col-lg-3  col-md-6 col-sm-6 text-center">
                 <div
                   className="fb-page"
                   data-href="https://www.facebook.com/Kha44Mobile/"
