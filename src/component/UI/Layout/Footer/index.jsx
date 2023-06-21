@@ -135,9 +135,9 @@ export default function Footer() {
               <div className={clsx('text-light', styles.copyRight)}>
                 © {new Date().getFullYear()}{' '}
                 <a href="https://truyenmai.com" target="_blank" style={{ textDecoration: 'none', color: '#fff' }}>
-                  Truyenmai
+                  Truyen Mai
                 </a>{' '}
-                & Kha Mobile
+                & Kha Mobile.
               </div>
               <div className={clsx('payment-icons d-flex flex-row', styles.payment)} style={{ gap: 8 }}>
                 <IconButton
