@@ -49,41 +49,41 @@ export default function Footer() {
         <div className="col-12 p-0">
           <div className="container p-0">
             <div className="row p-2 py-4 gy-4">
-              <div className="col-12 col-lg-3 col-md-12 col-sm-12">
+              <div className="col-12 col-lg-2 col-md-12 col-sm-12">
                 <Panel onClick={() => router.push('/')}>
                   <Image src={LOGO} alt="Kha mobile" priority />
                 </Panel>
               </div>
-              <div className="col-12 col-lg-3 col-md-4 col-sm-6">
+              <div className="col-12 col-lg-2 col-md-4 col-sm-6">
                 <ul className={styles.listLink}>
+                  <h6>Thông tin</h6>
                   <Link href="/chinh-sach" passHref>
                     <li>
                       <a>Chính sách</a>
                     </li>
                   </Link>
-                  <Link href="/chinh-sach" passHref>
+                  {/* <Link href="/chinh-sach" passHref>
                     <li>
                       <a>Liên hệ</a>
                     </li>
-                  </Link>
+                  </Link> */}
                 </ul>
-                <div className={styles.bct}>
-                  <Image src={BCT} alt="Kha mobile" priority width={200} height={77} />
-                </div>
               </div>
               <div className="col-12 col-lg-3  col-md-4 col-sm-6">
                 <ul className={styles.listLink}>
                   <h6>Địa chỉ liên hệ</h6>
                   <li>
                     <IconButton icon={<MessageIcon />} appearance="subtle" />
-                    <span>220/9A, Đường Xô Viết Nghệ Tĩnh, Phường 21, Bình Thạnh, Hồ Chí Minh</span>
+                    <span>
+                      <a href="https://goo.gl/maps/SZuQkWvbjciy9pyp6" target="_blank">
+                        220/9A, Đường Xô Viết Nghệ Tĩnh, Phường 21, Bình Thạnh, Hồ Chí Minh
+                      </a>
+                    </span>
                   </li>
                   <li>
                     <IconButton icon={<PhoneIcon />} appearance="subtle" />
                     <span>
-                      <a href="tel:+0777999966">
-                        <b>0777 9999 66</b>
-                      </a>
+                      <a href="tel:+0777999966">0777 9999 66</a>
                     </span>
                   </li>
                   <li>
@@ -92,6 +92,15 @@ export default function Footer() {
                       <a href="mailto:kha44mobile@gmail.com">kha44mobile@gmail.com</a>
                     </span>
                   </li>
+                </ul>
+              </div>
+              <div className="col-12 col-lg-2 col-md-4 col-sm-6">
+                <ul className={styles.listLink}>
+                  <li className={styles.bct}>
+                    <Image src={BCT} alt="Kha mobile" priority width={200} height={77} />
+                  </li>
+                  <li>Hộ kinh doanh Kha Mobile - www.khamobile.vn</li>
+                  <li>Giấy chứng nhận ĐKKD số 41O8041012 do UBND quận Bình Thạnh cấp ngày 07/08/2020</li>
                 </ul>
               </div>
               <div className="col-12 col-lg-3  col-md-4 col-sm-6 offset-sm-6 offset-md-0 text-center">
@@ -124,7 +133,11 @@ export default function Footer() {
               )}
             >
               <div className={clsx('text-light', styles.copyRight)}>
-                Copyright {new Date().getFullYear()} © Kha Mobile
+                © {new Date().getFullYear()}{' '}
+                <a href="https://truyenmai.com" target="_blank" style={{ textDecoration: 'none', color: '#fff' }}>
+                  Truyenmai
+                </a>{' '}
+                & Kha Mobile
               </div>
               <div className={clsx('payment-icons d-flex flex-row', styles.payment)} style={{ gap: 8 }}>
                 <IconButton
