@@ -1,0 +1,48 @@
+.title__divider {
+  display: block;
+  max-width: 50px;
+  height: 2px;
+  background: rgba(233, 102, 49, 1);
+  margin-top: 15px;
+  margin-bottom: 15px;
+  margin-left: auto;
+  margin-right: auto;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.ck-editor__editable {
+  min-height: 300px;
+}
+.auto-size {
+  width: 100%;
+  height: auto;
+}
+
+.w-100 {
+  .rs-form-group {
+    // width: 100%;
+    .rs-form-control {
+      width: 100%;
+      input {
+        width: 100%;
+      }
+    }
+  }
+}
+.t-primary {
+  color: var(--rs-blue-800);
+}
+.t-secondary {
+  color: var(--rs-red-500);
+}
+
+.bg-primary {
+  background: var(--rs-blue-800) !important;
+  background-color: var(--rs-blue-800) !important;
+}
+
+.bg-secondary {
+  background-color: var(--rs-red-600);
+  background: var(--rs-red-600);
+}

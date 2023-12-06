@@ -1,0 +1,15 @@
+.groupVariant {
+  display: grid;
+  grid-template-columns: 200px 1fr;
+  row-gap: 12px;
+  column-gap: 12px;
+  padding: 4px;
+  .sideVariant {
+    padding: 12px 0;
+  }
+
+  .contentVariant {
+    display: flex;
+    flex-direction: column;
+  }
+}

@@ -1,0 +1,46 @@
+version: '3.1'
+networks:
+  app_network:
+    driver: bridge
+name: 'kha-mobile'
+services:
+  kha-fe:
+    container_name: kha-fe
+    build:
+      context: .
+      dockerfile: ./env/Dockerfile.fe
+    ports:
+      - 3001:3001
+    volumes:
+      - ./app:/app
+      - /app/node_modules
+    env_file:
+      - ./env/.env
+    environment:
+      - NODE_ENV=development
+    networks:
+      - app_network
+    entrypoint: ['/bin/sh', '-c']
+    command: 
+      # - yarn build:prod && yarn start
+      - yarn dev
+  kha-server:
+    container_name: kha-server
+    restart: always
+    build:
+      context: .
+      dockerfile: ./env/Dockerfile.server
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    env_file:
+      - ./env/.env
+    environment:
+      - WATCHFILES_FORCE_POLLING=true
+    entrypoint: ['/bin/sh', '-c']
+    command:
+      - yarn start
+    ports:
+      - 3000:3000
+    networks:
+      - app_network

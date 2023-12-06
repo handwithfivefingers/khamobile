@@ -1,0 +1,49 @@
+@import './reset.scss';
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import '~slick-carousel/slick/slick.css';
+@import '~slick-carousel/slick/slick-theme.css';
+@import './carousel';
+@import './utility';
+@import './rsuite';
+@import './root';
+@import './loader';
+
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap');
+
+$buttonPadding: 0.5rem 1rem;
+$inputPadding: 4px 8px;
+
+.bg-w {
+  background-color: #fff;
+}
+
+section {
+  padding: 20px 0;
+}
+
+.dev {
+  position: fixed;
+  bottom: 50%;
+  right: 5px;
+  button {
+    background: var(--rs-blue-800);
+    &:active,
+    &:hover,
+    &:focus {
+      background: var(--rs-blue-500);
+    }
+  }
+  svg {
+    fill: var(--rs-primary-100);
+    animation: rotation 3s linear 0s infinite;
+  }
+}
+
+@keyframes rotation {
+  0% {
+    transform: rotate(0);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}

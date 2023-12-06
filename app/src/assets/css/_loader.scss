@@ -1,0 +1,6 @@
+.rs-loader-wrapper {
+  z-index: 9;
+  &.animate__fadeOut {
+    z-index: -1;
+  }
+}
