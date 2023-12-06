@@ -1,14 +1,20 @@
 import clsx from 'clsx'
-import CardBlock from 'component/UI/Content/CardBlock'
-import { KMInput, KMInputPassword } from 'component/UI/Content/KMInput'
-import PageHeader from 'component/UI/Content/PageHeader'
+// import CardBlock from 'component/UI/Content/CardBlock'
+// import { KMInput, KMInputPassword } from 'component/UI/Content/KMInput'
+// import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
-import { Button, Form, Schema } from 'rsuite'
+import { Button, Form } from 'rsuite'
 import { AuthenticateService } from 'service/authenticate'
 import { LoginModel } from 'src/constant/model.constant'
 import { useAuthorizationStore } from 'src/store'
 import styles from './styles.module.scss'
+import dynamic from 'next/dynamic'
+const CardBlock = dynamic(() => import('component/UI/Content/CardBlock'))
+const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
+const KMInput = dynamic(() => import('component/UI/Content/KMInput').then((m) => m.KMInput))
+const KMInputPassword = dynamic(() => import('component/UI/Content/KMInput').then((m) => m.KMInputPassword))
+
 export default function LoginPage() {
   const router = useRouter()
 

@@ -1,5 +1,5 @@
 import { GlobalProductService, GlobalCategoryService } from 'service/global'
-
+import axios from 'configs/axiosService'
 const EXTERNAL_DATA_URL = process.env.CANONICAL
 
 function generateSiteMap(posts) {
@@ -25,9 +25,11 @@ function SiteMap() {
 
 export async function getServerSideProps({ res }) {
   // We make an API call to gather the URLs for our site
-  const productResponse = await GlobalProductService.getProduct({ all: true })
+  // const productResponse = await GlobalProductService.getProduct({ all: true })
+  // const categoriesResponse = await GlobalCategoryService.getProdCate({ all: true })
 
-  const categoriesResponse = await GlobalCategoryService.getProdCate({ all: true })
+  const productResponse = await axios.get('/products', { params: { all: true } })
+  const categoriesResponse = await axios.get('/product_category',{ params: { all: true } })
 
   const products = productResponse.data.data
 

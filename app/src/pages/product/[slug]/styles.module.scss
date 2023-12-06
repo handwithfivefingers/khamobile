@@ -291,3 +291,21 @@
     cursor: not-allowed;
   }
 }
+
+.vr {
+  :global {
+    .rs-radio {
+      .rs-radio-checker {
+        padding: 0 12px;
+        border-radius: 12px;
+        label {
+          :nth-child(2) {
+            border-radius: 4px;
+            // box-shadow: 0 5px 15px -15px #333;
+            // z-index: -1;
+          }
+        }
+      }
+    }
+  }
+}

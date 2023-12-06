@@ -55,13 +55,12 @@ const ActionCell = ({ rowData, dataKey, onEdit, onDuplicate, ...props }) => {
               <span className="m-2" style={{ fontSize: 16, fontWeight: 500 }}>
                 Bạn có muốn xóa ?
               </span>
-
               <Button
                 className="m-2"
                 size="sm"
                 appearance="primary"
                 color="red"
-                onClick={(e) => {
+                onClick={() => {
                   onProgress(rowData)
                   whisperRef.current.close()
                 }}
@@ -245,6 +244,7 @@ const Products = (props) => {
 
   const handleDelete = async (rowData, event) => {
     try {
+      console.log('rowData', rowData, event)
       let resp = await ProductService.deleteProduct({ _id: rowData._id, type: rowData.type })
       if (resp.status === 200) {
         toaster.push(message('success', resp.data.message), { placement: 'topEnd' })
@@ -359,8 +359,12 @@ const Products = (props) => {
           )}
 
           <Column width={60} align="center" fixed fullText>
-            <HeaderCell>Id</HeaderCell>
-            <Cell dataKey="_id">{(rowData) => <span onClick={(e) => e.preventDefault()}>{rowData['_id']}</span>}</Cell>
+            <HeaderCell>Số thứ tự</HeaderCell>
+            <Cell dataKey="">
+              {(rowData, rest) => {
+                return <span onClick={(e) => e.preventDefault()}>{rest + (page * limit - limit) + 1}</span>
+              }}
+            </Cell>
           </Column>
 
           <Column width={150} flexGrow={1} fullText>

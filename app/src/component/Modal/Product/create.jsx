@@ -1,15 +1,14 @@
-import { memo, useEffect, useRef, useState } from 'react'
-import CardBlock from 'component/UI/Content/CardBlock'
-import { KMEditor, KMInput, KMPrice } from 'component/UI/Content/KMInput'
+import { KMEditor, KMInput } from 'component/UI/Content/KMInput'
 import Select from 'component/UI/Content/MutiSelect'
+import KMEditingTable from 'component/UI/KMEditingTable'
 import CustomUpload from 'component/UI/Upload/CustomUpload'
-import { Affix, Button, Content, FlexboxGrid, Form, Panel, PanelGroup, SelectPicker } from 'rsuite'
+import { memo, useEffect, useRef, useState } from 'react'
+import { Button, Content, Form, Panel, PanelGroup } from 'rsuite'
 import CategoryService from 'service/admin/Category.service'
 import ProductService from 'service/admin/Product.service'
 import slugify from 'slugify'
 import { useCommonStore } from 'src/store/commonStore'
 import GroupVariant from './GroupVariant'
-import KMEditingTable from 'component/UI/KMEditingTable'
 const ProductCreateModal = (props) => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
   const [loading, setLoading] = useState(false)

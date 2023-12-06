@@ -62,18 +62,14 @@ const Orders = () => {
         <Input placeholder="Tên người dùng" onChange={(v) => setFilter((state) => ({ ...state, fullName: v }))} />
       </Stack>
       <Content className={'bg-w'}>
-        <Table
-          // height={400}
-          height={60 * (10 + 1)}
-          rowHeight={60}
-          data={dataFilter}
-          // onRowClick={(rowData) => {
-          //   console.log(rowData)
-          // }}
-        >
+        <Table height={60 * (10 + 1)} rowHeight={60} data={dataFilter}>
           <Column width={60} align="center" fixed>
-            <HeaderCell>Id</HeaderCell>
-            <Cell dataKey="_id" />
+            <HeaderCell>No.</HeaderCell>
+            <Cell dataKey="">
+              {(rowData, rest) => {
+                return <span onClick={(e) => e.preventDefault()}>{rest + 1}</span>
+              }}
+            </Cell>
           </Column>
 
           <Column width={150}>

@@ -1,7 +1,8 @@
-import React, { useState, forwardRef, useEffect, memo, useRef } from 'react'
-import { Button, Uploader } from 'rsuite'
 import AvatarIcon from '@rsuite/icons/legacy/Avatar'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
+import { forwardRef, memo, useEffect, useRef, useState } from 'react'
+import { Uploader } from 'rsuite'
+
 function previewFile(file, callback) {
   const reader = new FileReader()
   reader.onloadend = () => {

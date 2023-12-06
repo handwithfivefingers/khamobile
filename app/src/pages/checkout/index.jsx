@@ -173,7 +173,7 @@ export default function Checkout() {
                             defaultValue={formRef.current?.paymentType}
                           >
                             <Radio value="transfer">Chuyển khoản</Radio>
-                            <Radio value="vnpay">Qua Vn-Pay</Radio>
+                            <Radio value="vnpay" disabled>Qua Vn-Pay</Radio>
                           </RadioGroup>
                         </Form.Group>
                       </CardBlock>

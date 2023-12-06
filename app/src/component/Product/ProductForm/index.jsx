@@ -10,7 +10,8 @@ import { ProductModel } from 'src/constant/model.constant'
 import { formatCurrency, message } from 'src/helper'
 import { useCartStore } from 'store/cartStore'
 import ProductOptions from '../ProductOption'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
+
 import styles from './styles.module.scss'
 
 const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {

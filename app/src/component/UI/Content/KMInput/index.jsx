@@ -120,7 +120,7 @@ const Pricing = forwardRef(({ value, onChange, placeholder, ...props }, ref) => 
 })
 
 const InputProxy = forwardRef((props, ref) => {
-  return <input class="rs-input" type="text" {...props} ref={ref} />
+  return <input className="rs-input" type="text" {...props} ref={ref} />
 })
 
 const MaskInput = forwardRef((props, ref) => {

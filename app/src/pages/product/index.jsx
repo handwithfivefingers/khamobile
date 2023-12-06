@@ -1,19 +1,24 @@
 import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
-import Card from 'component/UI/Content/Card'
-import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
-import Divider from 'component/UI/Content/Divider'
-import PageHeader from 'component/UI/Content/PageHeader'
+// import Card from 'component/UI/Content/Card'
+// import Divider from 'component/UI/Content/Divider'
+// import PageHeader from 'component/UI/Content/PageHeader'
+// import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
 import CommonLayout from 'component/UI/Layout'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { FaSortAmountDown, FaSortAmountDownAlt } from 'react-icons/fa'
 import { Pagination } from 'rsuite'
 import { GlobalHomeService, GlobalProductService } from 'service/global'
 import styles from './styles.module.scss'
 
+const Card = dynamic(() => import('component/UI/Content/Card'))
+const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
+const Divider = dynamic(() => import('component/UI/Content/Divider'))
+const CardSkeletonProduct = dynamic(() =>
+  import('component/UI/Content/CardSkeleton').then((m) => m.CardSkeletonProduct),
+)
 const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
 
 export default function Product(props) {

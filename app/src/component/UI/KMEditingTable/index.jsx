@@ -1,10 +1,10 @@
 import clsx from 'clsx'
-import React, { Children, useMemo, useState, memo } from 'react'
+import isEqual from 'lodash/isEqual'
+import React, { Children, memo, useState } from 'react'
 import { BsDashLg, BsPlusLg } from 'react-icons/bs'
-import { Table, Button, Input, IconButton } from 'rsuite'
+import { IconButton } from 'rsuite'
 import { KMInput } from '../Content/KMInput'
-import { isEqual } from 'lodash'
-import styles from './styles.module.scss'
+
 
 const CustomTable = ({ data, bordered, ...props }) => {
   const renderChildren = (row, rowIndex) => {

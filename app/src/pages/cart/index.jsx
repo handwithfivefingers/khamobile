@@ -1,6 +1,8 @@
-import CardBlock from 'component/UI/Content/CardBlock'
-import PageHeader from 'component/UI/Content/PageHeader'
+// import CardBlock from 'component/UI/Content/CardBlock'
+// import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
+import { NextSeo } from 'next-seo'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { Button, Form, InputGroup, InputNumber, List, Panel, Table } from 'rsuite'
@@ -8,9 +10,10 @@ import { GlobalProductService } from 'service/global'
 import { formatCurrency } from 'src/helper'
 import { useCartStore } from 'src/store'
 import styles from './styles.module.scss'
-import { NextSeo, DefaultSeo } from 'next-seo'
-import Head from 'next/head'
+import dynamic from 'next/dynamic'
 
+const CardBlock = dynamic(() => import('component/UI/Content/CardBlock'))
+const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
 const { HeaderCell, Cell, Column } = Table
 
 export default function Cart(props) {
@@ -21,14 +24,13 @@ export default function Cart(props) {
     subTotal: 0,
   })
   const { cart, addToCart } = useCartStore()
-
+  const [loading, setLoading] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
     try {
       let cartItem = JSON.parse(localStorage.getItem('khaMobileCart'))
       let isValidData = cartItem?.some((attr) => !attr.quantity || !attr.price || !attr._id)
-
       if (!isValidData) handleGetListItemPrice(cartItem)
       else {
         if (!cartItem || cartItem !== null) {
@@ -65,6 +67,7 @@ export default function Cart(props) {
 
   const handleGetListItemPrice = async (item) => {
     try {
+      setLoading(true)
       if (item?.length) {
         let groupItem = item?.map((item) => getScreenData(item?._id, item?.variantId, item?.quantity))
         if (groupItem?.length) {
@@ -74,6 +77,8 @@ export default function Cart(props) {
       }
     } catch (error) {
       console.log('handleGetListItemPrice', error)
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -187,10 +192,10 @@ export default function Cart(props) {
                 <CardBlock>
                   <Panel bordered bodyFill>
                     <Form formValue={data}>
-                      <Table height={400} data={data} rowHeight={58}>
+                      <Table height={400} data={data} rowHeight={58} loading={loading}>
                         <Column align="center" verticalAlign="middle" resizable flexGrow={1}>
                           <HeaderCell>Tên sản phẩm</HeaderCell>
-                          <Cell dataKey="title" />
+                          <Cell dataKey="title" style={{ justifyContent: 'flex-start' }} />
                         </Column>
 
                         <Column align="center" verticalAlign="middle" resizable width={200}>

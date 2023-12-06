@@ -12,9 +12,8 @@ import googleAnalytics from '@analytics/google-analytics'
 import googleTagManager from '@analytics/google-tag-manager'
 import Analytics from 'analytics'
 
-import 'rsuite/dist/rsuite.min.css'
 import 'animate.css'
-import '../assets/css/style.scss'
+import 'assets/css/style.scss'
 
 const analytics = Analytics({
   app: 'Kha Mobile',

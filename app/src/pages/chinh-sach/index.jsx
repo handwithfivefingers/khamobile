@@ -1,12 +1,16 @@
 import clsx from 'clsx'
-import CardBlock from 'component/UI/Content/CardBlock'
-import Heading from 'component/UI/Content/Heading'
-import PageHeader from 'component/UI/Content/PageHeader'
+// import CardBlock from 'component/UI/Content/CardBlock'
+// import Heading from 'component/UI/Content/Heading'
+// import PageHeader from 'component/UI/Content/PageHeader'
 import { useRouter } from 'next/router'
 import { useMemo, useState } from 'react'
 import { Nav, Panel, PanelGroup, Tag } from 'rsuite'
 import styles from './styles.module.scss'
+import dynamic from 'next/dynamic'
 
+const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
+const CardBlock = dynamic(() => import('component/UI/Content/CardBlock'))
+const Heading = dynamic(() => import('component/UI/Content/Heading'))
 export default function Policy() {
   const router = useRouter()
   const [active, setActive] = useState('protection')

@@ -57,7 +57,7 @@ export default function KMBreadcrumb() {
 
       {path?.map((item, index) => {
         return (
-          <Breadcrumb.Item as={NavLink} href={item.href} active={item.active}>
+          <Breadcrumb.Item as={NavLink} href={item.href} active={item.active} key={`${item.href}_${index}`}>
             {item.name}
           </Breadcrumb.Item>
         )

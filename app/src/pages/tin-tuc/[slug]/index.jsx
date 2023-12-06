@@ -1,5 +1,5 @@
 import React from 'react'
-import axios from 'configs/axiosInstance'
+import axios from 'configs/axiosService'
 import PostHelmet from 'component/PostHelmet'
 import Heading from 'component/UI/Content/Heading'
 import styles from './styles.module.scss'

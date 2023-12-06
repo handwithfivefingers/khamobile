@@ -1,11 +1,10 @@
-import { isEqual } from 'lodash'
-import { memo, useMemo, useRef, useState } from 'react'
-import { Radio, RadioGroup, Loader } from 'rsuite'
-import AttributeGroup from './AttributeGroup'
-import styles from './styles.module.scss'
-import dynamic from 'next/dynamic'
 import clsx from 'clsx'
+import dynamic from 'next/dynamic'
+import { memo, useMemo, useRef, useState } from 'react'
+import { Radio, RadioGroup } from 'rsuite'
+import AttributeGroup from './AttributeGroup'
 import InformationGroup from './InformationGroup'
+import styles from './styles.module.scss'
 
 const VariantGroup = dynamic(() => import('./VariantGroup'))
 

@@ -8,21 +8,21 @@ const path = {
 }
 
 const GlobalProductService = {
-  getProduct: async (params) => await axios.get(path.products, { params }),
+  getProduct: (params) => axios.get(path.products, { params }),
 
-  getProductById: async (_id, variantId) => await axios.post(path.product_id, { _id, variantId }),
+  getProductById: (_id, variantId) => axios.post(path.product_id, { _id, variantId }),
 
-  filterProduct: async (params) => await axios.get(path.product, { params }),
+  filterProduct: (params) => axios.get(path.product, { params }),
 
-  updateProduct: async (id, form) => await axios.post(path.product + '/' + id, form),
+  updateProduct: (id, form) => axios.post(path.product + '/' + id, form),
 
-  createProduct: async (form) => await axios.post(path.product, form),
+  createProduct: (form) => axios.post(path.product, form),
 
-  getVariables: async () => await axios.get(path.variable),
+  getVariables: () => axios.get(path.variable),
 
-  updateVariable: async (id, form) => await axios.post(path.variable + '/' + id, form),
+  updateVariable: (id, form) => axios.post(path.variable + '/' + id, form),
 
-  createVariable: async (form) => await axios.post(path.variable, form),
+  createVariable: (form) => axios.post(path.variable, form),
 }
 
 export { GlobalProductService }

@@ -1,12 +1,12 @@
 import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
-import ProductForm from 'component/Product/ProductForm'
-import CardBlock from 'component/UI/Content/CardBlock'
-import ImageBlock from 'component/UI/Content/ImageBlock'
-import NoData from 'component/UI/Content/NoData'
-import PageHeader from 'component/UI/Content/PageHeader'
+// import ProductForm from 'component/Product/ProductForm'
+// import CardBlock from 'component/UI/Content/CardBlock'
+// import ImageBlock from 'component/UI/Content/ImageBlock'
+// import NoData from 'component/UI/Content/NoData'
+// import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
-import axios from 'configs/axiosInstance'
+import axios from 'configs/axiosService'
 import parser from 'html-react-parser'
 import { ProductJsonLd } from 'next-seo'
 import Head from 'next/head'
@@ -14,7 +14,16 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Button, Carousel, Table } from 'rsuite'
 import styles from './styles.module.scss'
-import { isEqual } from 'lodash'
+import isEqual from 'lodash/isEqual'
+// const dynamic =
+import dynamic from 'next/dynamic'
+
+const ProductForm = dynamic(() => import('component/Product/ProductForm'))
+const CardBlock = dynamic(() => import('component/UI/Content/CardBlock'))
+const ImageBlock = dynamic(() => import('component/UI/Content/ImageBlock'))
+const NoData = dynamic(() => import('component/UI/Content/NoData'))
+const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
+// const NoData = dynamic(() => import())
 
 const { Column, HeaderCell, Cell } = Table
 

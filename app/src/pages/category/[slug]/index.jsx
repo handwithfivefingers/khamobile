@@ -1,9 +1,9 @@
 import PostHelmet from 'component/PostHelmet'
-import Card from 'component/UI/Content/Card'
-import ImageBlock from 'component/UI/Content/ImageBlock'
-import NoData from 'component/UI/Content/NoData'
-import PageHeader from 'component/UI/Content/PageHeader'
-import SideFilter from 'component/UI/Content/SideFilter'
+// import Card from 'component/UI/Content/Card'
+// import ImageBlock from 'component/UI/Content/ImageBlock'
+// import NoData from 'component/UI/Content/NoData'
+// import PageHeader from 'component/UI/Content/PageHeader'
+// import SideFilter from 'component/UI/Content/SideFilter'
 import CommonLayout from 'component/UI/Layout'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
@@ -11,6 +11,13 @@ import { BsInboxes } from 'react-icons/bs'
 import { Button, Divider, Drawer, Pagination } from 'rsuite'
 import { GlobalCategoryService, GlobalHomeService } from 'service/global'
 import styles from './styles.module.scss'
+import dynamic from 'next/dynamic'
+
+const Card = dynamic(() => import('component/UI/Content/Card'))
+const ImageBlock = dynamic(() => import('component/UI/Content/ImageBlock'))
+const NoData = dynamic(() => import('component/UI/Content/NoData'))
+const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
+const SideFilter = dynamic(() => import('component/UI/Content/SideFilter'))
 
 const PAGE_SIZE = 20
 export default function SingleCategory({ seo, slug, page, ...props }) {

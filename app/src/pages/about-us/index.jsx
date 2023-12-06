@@ -1,8 +1,10 @@
 import PostHelmet from 'component/PostHelmet'
-import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
 import { Placeholder } from 'rsuite'
 import { GlobalHomeService } from 'service/global'
+import dynamic from 'next/dynamic'
+
+const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
 
 export default function AboutUs(props) {
   return (

@@ -1,8 +1,8 @@
 import ImageBlock from 'component/UI/Content/ImageBlock'
 import { KMInput } from 'component/UI/Content/KMInput'
-import { isEqual } from 'lodash'
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
-import { Button, Col, Form, Grid, Panel, PanelGroup, Row, Input, Table, List } from 'rsuite'
+import isEqual from 'lodash/isEqual'
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react'
+import { Form, List, Panel, PanelGroup, Table } from 'rsuite'
 import { formatCurrency } from 'src/helper'
 
 const { Column, HeaderCell, Cell } = Table

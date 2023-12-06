@@ -1,13 +1,18 @@
 import PostHelmet from 'component/PostHelmet'
-import { CardSkeletonCategory } from 'component/UI/Content/CardSkeleton'
-import PageHeader from 'component/UI/Content/PageHeader'
+// import { CardSkeletonCategory } from 'component/UI/Content/CardSkeleton'
+// import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
 import { Col, Grid, Panel, Placeholder, Row } from 'rsuite'
 import { GlobalHomeService, GlobalCategoryService } from 'service/global'
 import styles from './styles.module.scss'
+import dynamic from 'next/dynamic'
 
+const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
+const CardSkeletonCategory = dynamic(() =>
+  import('component/UI/Content/CardSkeleton').then((m) => m.CardSkeletonCategory),
+)
 const Card = (props) => {
   return (
     <Panel {...props} bordered header={<h5>{props.title}</h5>} style={{ backgroundImage: `url(${props.imgSrc})` }}>
@@ -80,7 +85,6 @@ export default function Category(props) {
                 {loading && renderSkeleton}
 
                 {renderCategory}
-                
               </Row>
             </Grid>
           </div>

@@ -1,11 +1,6 @@
-import Card from 'component/UI/Content/Card'
-import Heading from 'component/UI/Content/Heading'
 import CommonLayout from 'component/UI/Layout'
 import PostHelmet from 'component/PostHelmet'
-import Catalog from 'component/UI/Content/Catalog'
 import ImageBlock from 'component/UI/Content/ImageBlock'
-import CustomSlider from 'component/UI/Content/Slider'
-import SingleSlider from 'component/UI/Content/Slider/SingleItem'
 import { LocalBusinessJsonLd, SiteLinksSearchBoxJsonLd } from 'next-seo'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
@@ -14,7 +9,33 @@ import { TYPE_CAROUSEL } from 'src/constant/carousel.constant'
 import styles from './styles.module.scss'
 import { useCommonStore } from 'src/store'
 import { Placeholder } from 'rsuite'
-import axios from 'axios'
+import dynamic from 'next/dynamic'
+
+// import Card from 'component/UI/Content/Card'
+// import Heading from 'component/UI/Content/Heading'
+// import Catalog from 'component/UI/Content/Catalog'
+// import CustomSlider from 'component/UI/Content/Slider'
+// import SingleSlider from 'component/UI/Content/Slider/SingleItem'
+const SingleSlider = dynamic(() => import('src/component/UI/Content/Slider/SingleItem'), {
+  ssr: false,
+  loading:() =>  <Placeholder.Graph active height={412} />,
+})
+const CustomSlider = dynamic(() => import('src/component/UI/Content/Slider'), {
+  ssr: false,
+  loading:() =>  <Placeholder.Graph active height={300} />,
+})
+const Catalog = dynamic(() => import('src/component/UI/Content/Catalog'), {
+  ssr: false,
+  loading:() =>  <Placeholder.Graph active height={400} />,
+})
+const Heading = dynamic(() => import('src/component/UI/Content/Heading'), {
+  ssr: false,
+  loading:() =>  <Placeholder.Graph active height={40} width={200} />,
+})
+const Card = dynamic(() => import('src/component/UI/Content/Card'), {
+  ssr: false,
+  loading:() =>  <Placeholder.Graph active width={350} />,
+})
 
 const Home = (props) => {
   // render 4 times
