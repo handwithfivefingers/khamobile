@@ -1,7 +1,0 @@
-const TOAST_STATUS = {
-	PUSHED: 'PUSHED',
-	REMOVE: 'REMOVE',
-	CLEAR: 'CLEAR',
-};
-
-export default TOAST_STATUS;

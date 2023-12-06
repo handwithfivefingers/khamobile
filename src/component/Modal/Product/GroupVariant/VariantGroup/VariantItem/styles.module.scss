@@ -1,8 +1,0 @@
-.groupItem {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-  .selectItem {
-    flex: 0 1 calc(100% / 4 - 8px);
-  }
-}

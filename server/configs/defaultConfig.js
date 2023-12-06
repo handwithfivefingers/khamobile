@@ -2,21 +2,11 @@ import express from 'express'
 import cors from 'cors'
 import cookieParser from 'cookie-parser'
 import path from 'path'
-// import WebRouter from '#route/web';
-
-// import AdminRouter from '#route/admin';
 import AppRouter from '#route/index'
-
 import env from 'dotenv'
 import { TrackingApi } from '#middleware'
 
-// import multiparty from 'connect-multiparty';
-
-// const multiMiddleware = multiparty();
-
 env.config()
-
-const { NODE_ENV } = process.env
 
 const URL_PERMISSIONS = [
   'http://localhost:3000',
@@ -57,19 +47,13 @@ class ConfigApp {
 
   onLoadUploadConfigs = () => {
     let publicPath = path.join(global.__basedir, 'uploads')
+    console.log('publicPath', publicPath)
     this.app.use('/public', cors(corsOptions), express.static(publicPath, { etag: false }))
     return this
   }
 
   onLoadRouter = () => {
-    // console.log('WebRouter', handler)
-
     this.app.use('/api', cors(corsOptions), TrackingApi, AppRouter)
-
-    // this.app.get('/a', (req, res) => this.app.render(req, res, '/a', req.query))
-
-    // this.app.all('*', (req, res) => handler(req, res))
-
     return this
   }
 

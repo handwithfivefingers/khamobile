@@ -14,11 +14,6 @@ const UploadRouter = async (req, res, next) => {
 
     const { originalname, buffer } = file
 
-    // await sharp(buffer)
-    //   .webp({ quality: 20 })
-    //   .toFile('./uploads/' + ref)
-    console.log('req.files', req.files)
-
     const ref = `${moment().format('YYYYMMDDHHmm')}-${originalname}.webp`
 
     const filePath = path.join(global.__basedir, 'uploads', ref)

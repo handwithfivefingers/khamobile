@@ -1,7 +1,0 @@
-export * from './Category.service'
-export * from './Home.service'
-export * from './Order.service'
-export * from './Page.service'
-export * from './Post.service'
-export * from './Product.service'
-export * from './Province.service'

@@ -1,5 +1,4 @@
 import SeoController from '#controller/v2/Seo'
-import { upload, authenticating } from '#middleware'
 import express from 'express'
 
 const router = express.Router()
