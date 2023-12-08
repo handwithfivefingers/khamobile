@@ -1,8 +1,7 @@
 import { Image } from '@rsuite/icons'
 import clsx from 'clsx'
-import * as NextImage from 'next/image'
+import NextImage from 'next/image'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { AiFillHeart, AiOutlineHeart } from 'react-icons/ai'
 import { IconButton, Placeholder } from 'rsuite'
@@ -35,10 +34,11 @@ export default function Card({
   }, [])
 
   const handleAddWishList = (e) => {
+    e.preventDefault()
     e.stopPropagation()
     const wishItem = JSON.parse(localStorage.getItem('khaMobileWish')) || []
     let index = wishItem?.findIndex((item) => item === _id)
-    const nextState = []
+    let nextState = []
     if (index !== -1) {
       if (wish) {
         nextState = [...wishItem.slice(0, index), wishItem.slice(index + 1)]
@@ -54,7 +54,7 @@ export default function Card({
   }
 
   const classCard = clsx([
-    'card',
+    'card flex flex-col rounded-[8px] m-[-1px] p-[1px]',
     styles.card,
     {
       [styles.shadow]: shadow,
@@ -81,46 +81,44 @@ export default function Card({
 
   if (slug) {
     return (
-      <Link href={slug} passHref>
-        <a className={classCard} style={{ textDecoration: 'none' }} title={title}>
-          <div className={clsx('card-img-top', styles.cardImg)}>
-            {imgSrc ? (
-              <NextImage
-                src={imgSrc}
-                className={styles.img}
-                alt={title}
-                layout="fill"
-                blurDataURL="/blur.jpg"
-                placeholder="blur"
-                loading={'lazy'}
-                loader={imageLoader}
+      <Link href={slug} className={classCard} style={{ textDecoration: 'none' }} title={title}>
+        <div className={clsx('card-img-top', styles.cardImg)}>
+          {imgSrc ? (
+            <NextImage
+              src={imgSrc}
+              className={styles.img}
+              alt={title}
+              layout="fill"
+              blurDataURL="/blur.jpg"
+              placeholder="blur"
+              loading={'lazy'}
+              loader={imageLoader}
+            />
+          ) : (
+            <Image className={styles.img} />
+          )}
+        </div>
+        <div className={styles.cardBody}>
+          <div className={styles.cardTitle}>
+            <h5>{title}</h5>
+          </div>
+          <p className={clsx(styles.cardText, 'm-0')}>{getPrice(price)}</p>
+
+          {underlinePrice && (
+            <p className={styles.cardText}>
+              <s>{formatCurrency(underlinePrice)}</s>
+            </p>
+          )}
+
+          {wishList && (
+            <div className={styles.wishList}>
+              <IconButton
+                icon={wish ? <AiFillHeart style={{ fill: 'var(--rs-red-700)' }} /> : <AiOutlineHeart />}
+                onClick={handleAddWishList}
               />
-            ) : (
-              <Image className={styles.img} />
-            )}
-          </div>
-          <div className={styles.cardBody}>
-            <div className={styles.cardTitle}>
-              <h5>{title}</h5>
             </div>
-            <p className={clsx(styles.cardText, 'm-0')}>{getPrice(price)}</p>
-
-            {underlinePrice && (
-              <p className={styles.cardText}>
-                <s>{formatCurrency(underlinePrice)}</s>
-              </p>
-            )}
-
-            {wishList && (
-              <div className={styles.wishList}>
-                <IconButton
-                  icon={wish ? <AiFillHeart style={{ fill: 'var(--rs-red-700)' }} /> : <AiOutlineHeart />}
-                  onClick={handleAddWishList}
-                />
-              </div>
-            )}
-          </div>
-        </a>
+          )}
+        </div>
       </Link>
     )
   }

@@ -179,16 +179,16 @@ export default function Cart(props) {
           }}
         />
       </Head>
-      <div className="row p-0">
-        <div className="col-12 p-0">
+      <div className="grid grid-cols-12 p-0">
+        <div className="col-span-12 px-4">
           <PageHeader type="h3" left divideClass={styles.divideLeft}>
             Giỏ hàng
           </PageHeader>
         </div>
-        <div className="col-12 p-0 py-2 border-top">
-          <div className="container">
-            <div className="row gy-2">
-              <div className="col-12 col-md-12 col-lg-8">
+        <div className="col-span-12 px-4 py-2 border-t">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-12 gap-4">
+              <div className="col-span-12 md:col-span-12 lg:col-span-8">
                 <CardBlock>
                   <Panel bordered bodyFill>
                     <Form formValue={data}>
@@ -217,7 +217,7 @@ export default function Cart(props) {
                   </Panel>
                 </CardBlock>
               </div>
-              <div className="col-12 col-md-12 col-lg-4">
+              <div className="col-span-12 md:col-span-12 lg:col-span-4">
                 <CardBlock>
                   <Panel header="Tổng cộng" bordered>
                     {/* <Divider /> */}

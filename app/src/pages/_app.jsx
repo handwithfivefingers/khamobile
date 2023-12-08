@@ -11,7 +11,7 @@ import CommonLayout from '../component/UI/Layout'
 import googleAnalytics from '@analytics/google-analytics'
 import googleTagManager from '@analytics/google-tag-manager'
 import Analytics from 'analytics'
-
+import '../assets/css/tailwind.scss'
 import 'animate.css'
 import 'assets/css/style.scss'
 
@@ -151,6 +151,7 @@ export default function MyApp({ Component, pageProps }) {
   return (
     <>
       <Head>
+        <link rel="stylesheet" href="https://pc.baokim.vn/css/bk.css" />
         <Script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" />
       </Head>
 

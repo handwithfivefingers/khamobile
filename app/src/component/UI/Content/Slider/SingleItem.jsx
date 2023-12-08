@@ -84,7 +84,7 @@ const NextArrow = (props) => {
 
   return (
     <div className={clsx([styles.arrow, styles.next])} style={{ ...style }} onClick={onClick}>
-      <FaChevronRight />
+      <FaChevronRight className="!text-slate-50 bg-gradient-to-l from-blue-400  opacity-50 hover:opacity-100  shadow-lg shadow-blue-400/50 p-2 w-10 h-10 flex items-center justify-center rounded-full" />
     </div>
   )
 }
@@ -93,7 +93,7 @@ const PrevArrow = (props) => {
   const { className, style, onClick } = props
   return (
     <div className={clsx([styles.arrow, styles.prev])} style={{ ...style }} onClick={onClick}>
-      <FaChevronLeft />
+      <FaChevronLeft className="!text-slate-50 bg-gradient-to-r from-blue-400  opacity-50 hover:opacity-100  shadow-lg shadow-blue-400/50 p-2 w-10 h-10 flex items-center justify-center rounded-full" />
     </div>
   )
 }

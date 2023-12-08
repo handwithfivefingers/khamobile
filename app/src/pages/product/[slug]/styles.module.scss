@@ -121,7 +121,6 @@
     bottom: 0;
     left: 50%;
     transform: translate(-50%, -10px);
-    background-color: #fff;
     z-index: 2;
   }
   &:after {
@@ -219,8 +218,8 @@
 
 .tabs {
   // border: 1px solid #eee;
-  box-shadow: inset 0 0 2px #ccc;
-  border-radius: 10px;
+  // box-shadow: inset 0 0 2px #ccc;
+  border-radius: 4px;
   overflow: hidden;
   h6 {
     color: #fff;

@@ -32,7 +32,7 @@
   &:hover,
   &:active,
   &:focus {
-    background: var(--rs-blue-800);
+    // background: var(--rs-blue-800);
     color: #fff;
   }
 }
@@ -62,7 +62,7 @@
     display: grid;
     grid-template-rows: 1fr 1fr;
     row-gap: 12px;
-    div {
+    button {
       padding: 4px;
       font-weight: 500;
       overflow: hidden;

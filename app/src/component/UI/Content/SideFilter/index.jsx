@@ -53,8 +53,9 @@ const SideFilter = ({ withMemory = false, ...props }) => {
       return (
         <Button
           onClick={() => props?.onChange({ [item.value[0]]: item.value[1] })}
-          className={clsx(styles.btn, {
-            [styles.active]: props?.filter?.[item.value[0]] === item.value[1],
+          className={clsx(styles.btn, 'hover:!bg-blue-500 hover:!text-white hover:shadow-lg hover:shadow-blue-500/50', {
+            // [styles.active]: props?.filter?.[item.value[0]] === item.value[1],
+            ['!bg-blue-500 !text-white shadow-lg shadow-blue-500/50']: props?.filter?.[item.value[0]] === item.value[1],
           })}
           key={Math.random()}
         >
@@ -77,69 +78,79 @@ const SideFilter = ({ withMemory = false, ...props }) => {
     setParentChange()
   }
 
-  const color = ['orange', 'red', 'green', 'yellow', 'cyan', 'blue', 'white']
+  const color = ['blue', 'purple', 'pink', 'orange', 'cyan', 'white']
 
   const handleTagClick = (item) => {
     if (props.tagClick) {
       props.tagClick(item)
     }
   }
+  // ;<button class="bg-cyan-500 shadow-lg shadow-cyan-500/50 ...">Subscribe</button>
 
   const renderCategory = useMemo(() => {
     let html = []
 
     let cate_1 = productCategory.slice(0, productCategory.length / 2)
     let cate_2 = productCategory.slice(productCategory.length / 2)
-
     html = (
       <>
-        <TagGroup className={styles.tagGroup}>
+        <div className="grid grid-rows-1 grid-flow-col gap-4 overflow-x-auto">
           {cate_2.map((item, index) => {
+            let i = (Math.random() * 6).toFixed(0)
+            let cl = (num) =>
+              num == 1
+                ? `bg-blue-500 shadow-blue-500/50`
+                : num == 2
+                ? `bg-purple-500 shadow-purple-500/50`
+                : num == 3
+                ? `bg-pink-500 shadow-pink-500/50`
+                : num == 4
+                ? `bg-orange-500 shadow-orange-500/50`
+                : num == 5
+                ? `bg-cyan-500 shadow-cyan-500/50`
+                : num == 6
+                ? `bg-white-500 shadow-white-500/50`
+                : ''
+
             return (
-              <div className={styles.tagItem} key={Math.random() * 6}>
-                <Tag
-                  color={color[(Math.random() * 6).toFixed(0)]}
-                  className="shadow-sm"
+              <div className={clsx(styles.tagItem, '')} key={`randomColor_${i}_${index}`}>
+                <button
+                  class={`${cl(
+                    (Math.random() * 6).toFixed(0),
+                  )} !text-[rgba(0,0,0,0.5)] shadow-lg rounded px-4 py-1 w-[200px] truncate mb-3`}
                   onClick={() => handleTagClick(item)}
                 >
                   {item.name}
-                </Tag>
+                </button>
                 {cate_1[index] && (
-                  <Tag
-                    color={color[(Math.random() * 6).toFixed(0)]}
-                    key={Math.random() * 6}
-                    className="shadow-sm"
+                  <button
+                    class={`${cl(
+                      (Math.random() * 6).toFixed(0),
+                    )} !text-[rgba(0,0,0,0.5)] shadow-lg rounded px-4 py-1 w-[200px] truncate`}
                     onClick={() => handleTagClick(cate_1[index])}
                   >
                     {cate_1[index]?.name}
-                  </Tag>
+                  </button>
                 )}
               </div>
             )
           })}
-        </TagGroup>
+        </div>
       </>
     )
     return html
   }, [productCategory])
 
   return (
-    <div className={'row gy-2'}>
-      {/* <div className="col-12">
-        <div className={clsx(styles.filter, styles.showOnMD)}>
-          <Button onClick={() => openFilter('left')}>
-            <FunnelIcon /> Bộ lọc
-          </Button>
-        </div>
-      </div> */}
-      <div className="col-12">
+    <div className={'grid grid-cols-12 gap-y-2'}>
+      <div className="col-span-12">
         <div className={clsx(styles.filter, styles.showOnMD)}>
           <h5 style={{ color: 'var(--rs-gray-800)' }}>Danh mục</h5>
           {renderCategory}
         </div>
       </div>
 
-      <div className="col-12">
+      <div className="col-span-12">
         <div className={styles.sort}>
           <h5 style={{ color: 'var(--rs-gray-800)' }}>Sắp xếp theo</h5>
           <div className={styles.flex}>

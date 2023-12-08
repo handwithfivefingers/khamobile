@@ -10,31 +10,27 @@ import styles from './styles.module.scss'
 import { useCommonStore } from 'src/store'
 import { Placeholder } from 'rsuite'
 import dynamic from 'next/dynamic'
+import clsx from 'clsx'
 
-// import Card from 'component/UI/Content/Card'
-// import Heading from 'component/UI/Content/Heading'
-// import Catalog from 'component/UI/Content/Catalog'
-// import CustomSlider from 'component/UI/Content/Slider'
-// import SingleSlider from 'component/UI/Content/Slider/SingleItem'
 const SingleSlider = dynamic(() => import('src/component/UI/Content/Slider/SingleItem'), {
   ssr: false,
-  loading:() =>  <Placeholder.Graph active height={412} />,
+  loading: () => <Placeholder.Graph active height={412} />,
 })
 const CustomSlider = dynamic(() => import('src/component/UI/Content/Slider'), {
   ssr: false,
-  loading:() =>  <Placeholder.Graph active height={300} />,
+  loading: () => <Placeholder.Graph active height={300} />,
 })
 const Catalog = dynamic(() => import('src/component/UI/Content/Catalog'), {
   ssr: false,
-  loading:() =>  <Placeholder.Graph active height={400} />,
+  loading: () => <Placeholder.Graph active height={400} />,
 })
 const Heading = dynamic(() => import('src/component/UI/Content/Heading'), {
   ssr: false,
-  loading:() =>  <Placeholder.Graph active height={40} width={200} />,
+  loading: () => <Placeholder.Graph active height={40} width={200} />,
 })
 const Card = dynamic(() => import('src/component/UI/Content/Card'), {
   ssr: false,
-  loading:() =>  <Placeholder.Graph active width={350} />,
+  loading: () => <Placeholder.Graph active width={350} />,
 })
 
 const Home = (props) => {
@@ -107,8 +103,8 @@ const Home = (props) => {
 
     if (content) {
       html = (
-        <div className={styles.grid}>
-          <div className={styles.mainCarousel}>
+        <div className={clsx(styles.grid, '!px-[12px]')}>
+          <div className={clsx(styles.mainCarouse)}>
             <SelfCarousel content={content?.[0]} />
           </div>
           <div className={styles.mainBanner}>
@@ -123,8 +119,7 @@ const Home = (props) => {
                   <ImageBlock
                     src={banner}
                     className={styles.banner}
-                    alt="..."
-                    height="46%"
+                    alt={content?.[1]?.title}
                     modal
                     key={banner}
                     engine
@@ -146,31 +141,31 @@ const Home = (props) => {
 
     if (!content[2]) {
       html = (
-        <div className="row">
-          <div className="col-12">
+        <div className="grid grid-cols-12">
+          <div className="col-span-12">
             <Heading type="h3" center>
               <Placeholder.Graph active height={40} width={200} />
             </Heading>
           </div>
 
-          <div className="col-6 col-md-3">
+          <div className="sm:col-span-6 md:col-span-3 lg:col-span-6 ">
             <Placeholder.Graph active height={150} />
           </div>
-          <div className="col-6 col-md-3">
+          <div className="sm:col-span-6 md:col-span-3 lg:col-span-6">
             <Placeholder.Graph active height={150} />
           </div>
-          <div className="col-6 col-md-3">
+          <div className="sm:col-span-6 md:col-span-3 lg:col-span-6">
             <Placeholder.Graph active height={150} />
           </div>
-          <div className="col-6 col-md-3">
+          <div className="sm:col-span-6 md:col-span-3 lg:col-span-6">
             <Placeholder.Graph active height={150} />
           </div>
         </div>
       )
     } else {
       html = (
-        <div className="row">
-          <div className="col-12">
+        <div className="grid grid-cols-12">
+          <div className="col-span-12">
             <Heading type="h3" center>
               Dịch vụ của Kha Mobile
             </Heading>
@@ -178,14 +173,14 @@ const Home = (props) => {
 
           {content?.[2]?.data.map((banner) => {
             return (
-              <div className="col-6 col-md-3" key={banner}>
+              <div className="col-span-6 sm:col-span-6 md:col-span-3" key={banner}>
                 <ImageBlock
                   engine
                   src={banner}
                   className={styles.serviceBanner}
-                  alt="..."
-                  width={'390px'}
-                  height="52%"
+                  width={390}
+                  height={200}
+                  alt={content?.[2]?.title}
                 />
               </div>
             )
@@ -203,17 +198,17 @@ const Home = (props) => {
 
     if (!productSection) {
       html = (
-        <div className="row">
-          <div className="col-12">
-            <div className="container">
-              <div className="row">
-                <div className="col-12">
+        <div className="grid grid-cols-12">
+          <div className="col-span-12">
+            <div className="container mx-auto">
+              <div className="grid grid-cols-12">
+                <div className="col-span-12">
                   <Heading type="h3" center>
                     <Placeholder.Graph active height={40} width={200} />
                   </Heading>
                 </div>
 
-                <div className="col-12">
+                <div className="col-span-12">
                   <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
                     <Placeholder.Graph active height={300} />
                     <Placeholder.Graph active height={300} />
@@ -230,17 +225,17 @@ const Home = (props) => {
       )
     } else {
       html = (
-        <div className="row">
-          <div className="col-12">
-            <div className="container">
-              <div className="row">
-                <div className="col-12">
+        <div className="grid grid-cols-12">
+          <div className="col-span-12">
+            <div className="container  mx-auto px-4">
+              <div className="grid grid-cols-12">
+                <div className="col-span-12">
                   <Heading type="h3" center>
                     {content?.[3]?.title}
                   </Heading>
                 </div>
 
-                <div className="col-12">
+                <div className="col-span-12">
                   <CustomSlider type={TYPE_CAROUSEL.MUTI} slidesToShow={5}>
                     {productSection?.map((item, index) => {
                       let { image, title, price, type, slug, _id } = item
@@ -275,15 +270,15 @@ const Home = (props) => {
     () => (position) => {
       let html = null
       html = (
-        <section className="container animate__animated animate__fadeInUp">
-          <div className="row">
-            <div className="col-12">
+        <section className={clsx('container mx-auto animate__animated animate__fadeInUp', styles.section)}>
+          <div className="grid grid-cols-12">
+            <div className="col-span-12">
               <Heading type="h3" center>
                 {content?.[position]?.title}
               </Heading>
             </div>
 
-            <div className="col-12">
+            <div className="col-span-12">
               <Catalog data={content?.[position]?.catalog} />
             </div>
           </div>
@@ -303,7 +298,7 @@ const Home = (props) => {
           id="https://khamobile.vn"
           name="Cửa hàng Kha Mobile"
           description="Kha Mobile - Giờ mở cửa"
-          url="https://www.google.com/maps/place/Kha+mobile+-+gi%C3%A1+t%E1%BB%91t+m%E1%BB%97i+ng%C3%A0y/@10.7982922,106.7091931,17z/data=!3m1!4b1!4m13!1m7!3m6!1s0x317528affb2334a7:0x9ad5b46a56df7665!2zMjIwLzlBIFjDtCBWaeG6v3QgTmdo4buHIFTEqW5oLCBQaMaw4budbmcgMjEsIELDrG5oIFRo4bqhbmgsIFRow6BuaCBwaOG7kSBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!3b1!8m2!3d10.798767!4d106.712177!3m4!1s0x317529700ef137cf:0x43ea80c21adbb00e!8m2!3d10.7982869!4d106.7113818?hl=vi-VN"
+          url="https://www.google.com/maps/place/Kha+mobile+-+gi%C3%A1+t%E1%BB%91t+m%E1%BB%97i+ng%C3%A0y/@10.7982922,106.7091931,17z/data=!3m1!4b1!4m13!1m7!3m6!1s0x317528affb2334a7:0x9ad5b46a56df7665!2zMjIwLzlBIFjDtCBWaeG6v3QgTmdo4buHIFTEqW5oLCBQaMaw4budbmcgMjEsIELDrG5oIFRo4bqhbmgsIFgrid grid-cols-126BuaCBwaOG7kSBI4buTIENow60gTWluaCwgVmnhu4d0IE5hbQ!3b1!8m2!3d10.798767!4d106.712177!3m4!1s0x317529700ef137cf:0x43ea80c21adbb00e!8m2!3d10.7982869!4d106.7113818?hl=vi-VN"
           telephone="+14088717984"
           address={{
             streetAddress: '220/9A Xô Viết Nghệ Tĩnh',
@@ -357,73 +352,78 @@ const Home = (props) => {
         />
       </PostHelmet>
 
-      <section
-        className="container-fluid  animate__animated animate__fadeIn"
-        style={{
-          '--animate-duration': `${0.3}s`,
-        }}
-      >
-        <div className="row gx-2 gy-2">
-          <div className="col-12">
-            <div className="container" style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
-              {getSectionSlider}
+      <div className="px-4">
+        <section
+          className="container mx-auto max-w-[100vw]  animate__animated animate__fadeIn"
+          style={{
+            '--animate-duration': `${0.3}s`,
+          }}
+        >
+          <div className="grid grid-cols-12 gap-2">
+            <div className="col-span-12">
+              <div className="container mx-auto" style={{ background: '#fff', boxShadow: 'var(--main-box-shadow)' }}>
+                {getSectionSlider}
+              </div>
             </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      <section
-        className="container animate__animated animate__fadeInUp "
-        style={{
-          '--animate-duration': `${0.5}s`,
-        }}
-      >
-        {getSectionService}
-      </section>
+        <section
+          className="container mx-auto animate__animated animate__fadeInUp "
+          style={{
+            '--animate-duration': `${0.5}s`,
+          }}
+        >
+          {getSectionService}
+        </section>
 
-      <section
-        className="container-fluid animate__animated animate__fadeInUp"
-        style={{
-          '--animate-duration': `${0.7}s`,
-        }}
-      >
-        {getSectionFeatureProduct}
-      </section>
+        <section
+          className="container mx-auto max-w-[100vw] animate__animated animate__fadeInUp"
+          style={{
+            '--animate-duration': `${0.7}s`,
+          }}
+        >
+          {getSectionFeatureProduct}
+        </section>
 
-      <section
-        className="container animate__animated animate__fadeInUp"
-        style={{
-          '--animate-duration': `${0.9}s`,
-        }}
-      >
-        <div className="row">
-          <div className="col-12">
-            <Heading type="h3" center>
-              Khách hàng của Kha Mobile
-            </Heading>
+        <section
+          className="container mx-auto animate__animated animate__fadeInUp"
+          style={{
+            '--animate-duration': `${0.9}s`,
+          }}
+        >
+          <div className="grid grid-cols-12">
+            <div className="col-span-12">
+              <Heading type="h3" center>
+                Khách hàng của Kha Mobile
+              </Heading>
+            </div>
+
+            <div className="col-span-12">
+              <CustomSlider type={TYPE_CAROUSEL.MUTI}>
+                {content?.[4]?.data?.map((customer, index) => (
+                  <ImageBlock
+                    src={process.env.API + customer}
+                    width={400}
+                    height={576}
+                    loading="lazy"
+                    modal
+                    key={['customer_slider', customer?._id, index]}
+                    alt={content?.[4]?.title}
+                    objectFit="cover"
+                  />
+                ))}
+              </CustomSlider>
+            </div>
           </div>
+        </section>
 
-          <div className="col-12">
-            <CustomSlider type={TYPE_CAROUSEL.MUTI}>
-              {content?.[4]?.data?.map((customer, index) => (
-                <ImageBlock
-                  src={process.env.API + customer}
-                  height={'75%'}
-                  width={'100%'}
-                  modal
-                  key={[Math.random(), customer?._id, index]}
-                />
-              ))}
-            </CustomSlider>
-          </div>
-        </div>
-      </section>
-
-      {renderSection(5)}
-      {renderSection(6)}
-      {renderSection(7)}
-      {renderSection(8)}
-      {renderSection(9)}
+        {renderSection(5)}
+        {renderSection(6)}
+        {renderSection(7)}
+        {renderSection(8)}
+        {renderSection(9)}
+      </div>
     </>
   )
 }
@@ -447,9 +447,8 @@ const SelfCarousel = ({ content, ...props }) => {
         <ImageBlock
           src={process.env.API + item}
           key={[process.env.API + item, index].join('_')}
-          height={'53%'}
-          width={'100%'}
           priority
+          alt={content?.title}
         />
       ))}
     </SingleSlider>

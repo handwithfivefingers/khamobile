@@ -6,12 +6,12 @@ import CategoryService from 'service/admin/Category.service'
 import PostService from 'service/admin/Post.service'
 import { message } from 'src/helper'
 import { useCommonStore } from 'src/store'
-
+import { useRouter } from 'next/router'
 const PostCreate = () => {
   const changeTitle = useCommonStore((state) => state.changeTitle)
 
   const [categoryData, setCategoryData] = useState()
-
+  const router = useRouter()
   const toaster = useToaster()
 
   useEffect(() => {

@@ -60,11 +60,9 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
           {data?.content && parser(data?.content)}
           {!toggleContent && (
             <Button
-              appearance="ghost"
-              color="red"
+              appearance="primary"
               onClick={() => setToggleContent(true)}
-              className={styles.btnToggle}
-              style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+              className={clsx(styles.btnToggle, ' !bg-red-500  shadow-lg shadow-red-500/50')}
             >
               Xem thêm
             </Button>
@@ -137,20 +135,20 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
         />
       </Head>
 
-      <div className="row p-0">
-        <div className="col-12 p-0">
+      <div className="grid-cols-12 p-0">
+        <div className="col-span-12 px-4">
           <PageHeader type="h1" left divideClass={styles.divideLeft}>
             <span className="bk-product-name">{data.title}</span>
           </PageHeader>
         </div>
-        <div className="col-12 p-0 py-2 border-top">
-          <div className="container product_detail">
-            <div className="row gy-4">
-              <div className={clsx([styles.vr, 'col-lg-12 col-md-12'])}>
-                <div className="row gy-4">
-                  <div className="col-12 col-md-12 col-lg-5">{renderImageSlider}</div>
+        <div className="col-span-12 px-4 py-2 border-t">
+          <div className="container mx-auto product_detail">
+            <div className="grid grid-cols-12 gap-4">
+              <div className={clsx([styles.vr, 'col-span-12'])}>
+                <div className="grid grid-cols-12 gap-4">
+                  <div className="col-span-12 md:col-span-12 lg:col-span-5 sm:col-span-12">{renderImageSlider}</div>
 
-                  <div className="col-12 col-md-12 col-lg-7">
+                  <div className="col-span-12 md:col-span-12 lg:col-span-7 sm:col-span-12">
                     <ProductForm
                       data={data}
                       _relationProd={_relationProd}
@@ -163,9 +161,9 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
                 </div>
               </div>
 
-              <div className="col-lg-9 col-md-12">{getProductContent}</div>
+              <div className="lg:col-span-9 md:col-span-12 col-span-12">{getProductContent}</div>
 
-              <div className={clsx('col-lg-3 col-md-12')} ref={productInformationRef}>
+              <div className={clsx('lg:col-span-3 md:col-span-12 col-span-12')} ref={productInformationRef}>
                 <CardBlock className="border-0">
                   <Table
                     height={400}
@@ -185,7 +183,7 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
                 </CardBlock>
               </div>
 
-              <div className="col-12">
+              <div className="col-span-12">
                 <CardBlock className="border-0">
                   {process.env.NODE_ENV === 'development' ? (
                     <div
@@ -215,9 +213,9 @@ export default function ProductDetail({ data, _relationProd, seo, slug, ...props
 
 const TabsList = ({ data, className }) => {
   return (
-    <div className={clsx(className, styles.tabs)}>
-      <h6>Khuyến mãi</h6>
-      <div className={clsx(styles.tabsContent)}>{parser(data || '')}</div>
+    <div className={clsx(className, styles.tabs, ' shadow-lg shadow-[rgb(0,0,0,0.05)]')}>
+      <h6 className="!bg-blue-500">Khuyến mãi</h6>
+      <div className={clsx(styles.tabsContent, 'p-4')}>{parser(data || '')}</div>
     </div>
   )
 }
@@ -249,7 +247,7 @@ const Slider = ({ image, activeIndex, ...props }) => {
             {image?.map((item, index) => {
               return (
                 <div style={{ position: 'relative' }} key={[item.src, index].join('_')}>
-                  <ImageBlock src={item?.src} layout="fill" objectFit="contain" engine height="75%" />
+                  <ImageBlock alt={item?.src} src={item?.src} objectFit="contain" engine width={720} height={720} />
                 </div>
               )
             })}

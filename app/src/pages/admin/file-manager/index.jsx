@@ -77,7 +77,7 @@ export default function FileManger() {
               </div>
             ) : (
               <div className={styles.gridItem} key={[folder, name, src].join('_')}>
-                <ImageBlock src={src} engine height="75%" objectFit="contain" />
+                <ImageBlock alt="..." src={src} engine objectFit="contain" />
                 <ul className={styles.fileInformation}>
                   <li>
                     <span>Đường dẫn: </span>

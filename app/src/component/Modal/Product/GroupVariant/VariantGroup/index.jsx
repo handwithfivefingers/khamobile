@@ -161,13 +161,13 @@ const VariantGroup = forwardRef(({ variableData, variation, attribute, deleteVar
       <Panel
         collapsible
         header={
-          <div className="d-flex justify-content-between">
+          <div className="flex justify-between">
             <span>
               {Object.keys(attributesItem)
                 .map((key) => attributesItem[key])
                 ?.join(' - ')}
             </span>
-            <div className="d-flex mx-4" onClick={(e) => e.stopPropagation()}>
+            <div className="flex mx-4" onClick={(e) => e.stopPropagation()}>
               <IconButton
                 icon={<GrFormClose />}
                 className="p-1 mx-4"

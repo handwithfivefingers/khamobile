@@ -30,7 +30,7 @@ function Card({ title, description, imgSrc, shadow, border, hover, cover, cardTy
   return (
     <div className={classCard}>
       <div className={clsx('card-img-top', styles.cardImg)}>
-        <ImageBlock className={styles.img} src={imgSrc} ref={imgRef} objectFit={'cover'} height={imgHeight} />
+        <ImageBlock alt={title} className={styles.img} src={imgSrc} ref={imgRef} objectFit={'cover'} height={imgHeight} />
       </div>
 
       <div className={styles.content}>

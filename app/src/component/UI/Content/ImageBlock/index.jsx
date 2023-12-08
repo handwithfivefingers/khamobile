@@ -8,11 +8,13 @@ const ImageBlock = ({
   src,
   alt,
   className,
+  width,
   height,
   engine,
   priority,
   objectFit = 'cover',
   modal = false,
+  loading,
   ...props
 }) => {
   const [img, setImg] = useState(src)
@@ -39,32 +41,49 @@ const ImageBlock = ({
   const openImageViewer = (status) => {
     setState(status)
   }
-
+  const getLoader = ({ src, width, quality }) => {
+    if (src.match(/400.png/)) return src
+    let newSrc = engine ? process.env.API + src + `?w=${width}&q=${quality || 50}` : src
+    return newSrc
+  }
   return (
-    <div className={imgClass} style={{ '--height-offset': height ? height : '100%' }}>
+    <div className={imgClass} style={{ '--w-offset': width || 1024, '--h-offset': height || (1024 / 16) * 9 }}>
       <Image
-        alt={alt}
-        onClick={() => openImageViewer(true)}
-        layout={props.layout || 'fill'}
-        src={img}
+        alt={alt || '...'}
         blurDataURL={'/blur.jpg'}
         placeholder="blur"
-        loading={priority ? 'eager' : 'lazy'}
-        loader={({ src, width, quality }) => {
-          if (src.match(/400.png/)) return src
-          let newSrc = engine ? process.env.API + src + `?w=${width}&q=${quality || 50}` : src
-          return newSrc
-        }}
-        objectFit={objectFit}
+        src={img}
+        onClick={() => openImageViewer(true)}
+        loader={getLoader}
+        loading={priority ? 'eager' : loading || 'lazy'}
         priority={priority}
-        onError={() => {
-          setImg('/400.png')
-        }}
+        style={{ objectFit: objectFit }}
+        width={width || 1024}
+        height={height || (1024 / 16) * 9}
+        onError={() => setImg('/400.png')}
+        {...props}
       />
       {modal && (
         <Modal open={state} onClose={() => setState(false)} size="md" style={{ background: 'transparent' }}>
           <Modal.Body>
-            <img src={engine ? process.env.API + src : src} alt={alt} style={{ width: '100%', maxWidth: '1024px' }} />
+            <div className="relative w-full max-w-[90vw] before:content-[''] before:block before:pb-[100%]">
+              <Image
+                className={`absolute top-0 left-0 w-full h-full object-cover`}
+                alt={alt || '...'}
+                blurDataURL={'/blur.jpg'}
+                placeholder="blur"
+                src={src}
+                onClick={() => openImageViewer(true)}
+                loader={getLoader}
+                loading={priority ? 'eager' : loading || 'lazy'}
+                priority={priority}
+                style={{ objectFit: objectFit }}
+                width={width || 1024}
+                height={height || (1024 / 16) * 9}
+                onError={() => setImg('/400.png')}
+                {...props}
+              />
+            </div>
           </Modal.Body>
         </Modal>
       )}

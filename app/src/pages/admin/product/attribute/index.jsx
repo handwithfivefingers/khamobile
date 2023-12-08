@@ -104,86 +104,79 @@ const ProductVariable = () => {
   return (
     <>
       <Content>
-        <div className="row gy-4">
-          <Grid>
-            <Row>
-              <Col xs={6}>
-                <CardBlock style={{ border: 0 }}>
-                  <Form formValue={form} onChange={(val) => setForm(val)} ref={formRef} model={AttributeModel}>
-                    <KMInput name="key" label="Tên thuộc tính" className="w-100" helpText={'Thuộc tính là bắt buộc'} />
-                    <Form.Group>
-                      <Form.ControlLabel> </Form.ControlLabel>
-                      <Button onClick={onCreateAttributes} appearance="primary">
-                        Tạo thuộc tính
-                      </Button>
-                    </Form.Group>
-                  </Form>
-                </CardBlock>
-              </Col>
-              <Col xs={18}>
-                <CardBlock style={{ border: 0 }}>
-                  <Table
-                    height={420}
-                    data={attribute}
-                    bordered
-                    cellBordered
-                    // onSortColumn={(sortColumn, sortType) => {
-                    //   console.log(sortColumn, sortType)
-                    // }}
-                    rowHeight={60}
-                    onRowClick={handleOpenAttributesTerm}
-                  >
-                    <Column flexGrow={2}>
-                      <HeaderCell>Tên thuộc tính</HeaderCell>
-                      <Cell dataKey="key" />
-                    </Column>
-                    <Column width={80} align="center" verticalAlign="middle">
-                      <HeaderCell>...</HeaderCell>
-                      <Cell>
-                        {(rowData) => (
-                          <span>
-                            <Whisper
-                              placement="left"
-                              trigger="click"
-                              speaker={
-                                <Popover
-                                  arrow={false}
-                                  className="d-flex "
-                                  style={{ width: '200px' }}
-                                  onClick={(e) => e.stopPropagation()}
-                                >
-                                  <span>
-                                    Sau khi xóa thuộc tính này, các sản phẩm có biến thể này vẫn sẽ tồn tại. Các sản
-                                    phẩm được tạo mới sau này sẽ không còn thuộc tính này nữa.
-                                  </span>
-                                  <br />
-                                  <Button
-                                    size="sm"
-                                    appearance="primary"
-                                    color="red"
-                                    onClick={(e) => {
-                                      handleDelete(rowData)
-                                      whisperRef.current.close()
-                                    }}
-                                    style={{ background: 'var(--rs-red-800)' }}
-                                  >
-                                    Xác nhận
-                                  </Button>
-                                </Popover>
-                              }
-                              ref={whisperRef}
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-4">
+            <CardBlock style={{ border: 0 }}>
+              <Form formValue={form} onChange={(val) => setForm(val)} ref={formRef} model={AttributeModel}>
+                <KMInput name="key" label="Tên thuộc tính" className="w-100" helpText={'Thuộc tính là bắt buộc'} />
+                <Form.Group>
+                  <Form.ControlLabel> </Form.ControlLabel>
+                  <Button onClick={onCreateAttributes} appearance="primary">
+                    Tạo thuộc tính
+                  </Button>
+                </Form.Group>
+              </Form>
+            </CardBlock>
+          </div>
+          <div className="col-span-8">
+            <CardBlock style={{ border: 0 }}>
+              <Table
+                height={420}
+                data={attribute}
+                bordered
+                cellBordered
+                rowHeight={60}
+                onRowClick={handleOpenAttributesTerm}
+              >
+                <Column flexGrow={2}>
+                  <HeaderCell>Tên thuộc tính</HeaderCell>
+                  <Cell dataKey="key" />
+                </Column>
+                <Column width={80} align="center" verticalAlign="middle">
+                  <HeaderCell>...</HeaderCell>
+                  <Cell>
+                    {(rowData) => (
+                      <span>
+                        <Whisper
+                          placement="left"
+                          trigger="click"
+                          speaker={
+                            <Popover
+                              arrow={false}
+                              className="d-flex "
+                              style={{ width: '200px' }}
+                              onClick={(e) => e.stopPropagation()}
                             >
-                              <IconButton icon={<TrashIcon />} onClick={(e) => e.stopPropagation()} />
-                            </Whisper>
-                          </span>
-                        )}
-                      </Cell>
-                    </Column>
-                  </Table>
-                </CardBlock>
-              </Col>
-            </Row>
-          </Grid>
+                              <span>
+                                Sau khi xóa thuộc tính này, các sản phẩm có biến thể này vẫn sẽ tồn tại. Các sản phẩm
+                                được tạo mới sau này sẽ không còn thuộc tính này nữa.
+                              </span>
+                              <br />
+                              <Button
+                                size="sm"
+                                appearance="primary"
+                                color="red"
+                                onClick={(e) => {
+                                  handleDelete(rowData)
+                                  whisperRef.current.close()
+                                }}
+                                style={{ background: 'var(--rs-red-800)' }}
+                              >
+                                Xác nhận
+                              </Button>
+                            </Popover>
+                          }
+                          ref={whisperRef}
+                        >
+                          <IconButton icon={<TrashIcon />} onClick={(e) => e.stopPropagation()} />
+                        </Whisper>
+                      </span>
+                    )}
+                  </Cell>
+                </Column>
+              </Table>
+            </CardBlock>
+          </div>
         </div>
       </Content>
 

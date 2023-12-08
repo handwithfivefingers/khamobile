@@ -1,6 +1,4 @@
 import PostHelmet from 'component/PostHelmet'
-// import { CardSkeletonCategory } from 'component/UI/Content/CardSkeleton'
-// import PageHeader from 'component/UI/Content/PageHeader'
 import CommonLayout from 'component/UI/Layout'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useState } from 'react'
@@ -8,6 +6,8 @@ import { Col, Grid, Panel, Placeholder, Row } from 'rsuite'
 import { GlobalHomeService, GlobalCategoryService } from 'service/global'
 import styles from './styles.module.scss'
 import dynamic from 'next/dynamic'
+import Link from 'next/link'
+import clsx from 'clsx'
 
 const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
 const CardSkeletonCategory = dynamic(() =>
@@ -55,14 +55,14 @@ export default function Category(props) {
     let html = null
     html = data?.map((item, index) => {
       return (
-        <Col key={[index, item._id]} md={6} sm={12} onClick={() => router.push(`/category/${item.slug}?page=1`)}>
+        <Link href={`/category/${item.slug}?page=1`} key={[index, item._id]} className="col-span-6 md:col-span-6 lg:col-span-4 xl:col-span-3">
           <Card
             title={item.name}
-            className={styles.imageBg}
+            className={clsx(styles.imageBg)}
             imgSrc={item.image && `${process.env.API}${item.image?.src}`}
             description={item.description}
           />
-        </Col>
+        </Link>
       )
     })
 
@@ -72,21 +72,18 @@ export default function Category(props) {
   return (
     <>
       <PostHelmet seo={props?.seo} />
-      <div className="row p-0">
-        <div className="col-12 p-0">
+      <div className="grid grid-cols-12 p-0">
+        <div className="col-span-12 px-4">
           <PageHeader type="h3" left divideClass={styles.divideLeft}>
             Danh mục
           </PageHeader>
         </div>
-        <div className="col-12 p-0 py-2 border-top">
-          <div className="container p-0">
-            <Grid fluid>
-              <Row>
-                {loading && renderSkeleton}
-
-                {renderCategory}
-              </Row>
-            </Grid>
+        <div className="col-span-12 px-4 py-2 border-t-2">
+          <div className="container mx-auto p-0">
+            <div className="grid grid-cols-12 gap-4">
+              {loading && renderSkeleton}
+              {renderCategory}
+            </div>
           </div>
         </div>
       </div>

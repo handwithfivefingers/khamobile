@@ -27,7 +27,6 @@ const CommonLayout = ({ children, ...props }) => {
         <meta name="msapplication-wide310x150logo" content="/favicon.ico" />
         <meta name="msapplication-square270x270logo" content="/kha-mobile-270x270.jpg" />
 
-        <link rel="stylesheet" href="https://pc.baokim.vn/css/bk.css" />
       </Head>
 
       <div className={styles.wrapper} style={{ minHeight: '100vh', overflow: 'hidden overlay' }}>
@@ -36,7 +35,6 @@ const CommonLayout = ({ children, ...props }) => {
           <Content style={{ marginTop: '56px' }}>
             <div className={`container-fluid ${props?.classAnimation}`}>{children}</div>
           </Content>
-
           <Footer>
             <PageFooter />
           </Footer>

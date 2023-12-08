@@ -1,6 +1,7 @@
+
 @import 'reset.scss';
 @import 'rsuite_base';
-@import 'bootstrap/dist/css/bootstrap.min.css';
+// @import 'bootstrap/dist/css/bootstrap.min.css';
 @import '~slick-carousel/slick/slick.css';
 @import '~slick-carousel/slick/slick-theme.css';
 @import 'carousel';
@@ -8,7 +9,6 @@
 @import 'rsuite';
 @import 'root';
 @import 'loader';
-
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;500&display=swap');
 
 $buttonPadding: 0.5rem 1rem;
@@ -48,3 +48,6 @@ section {
     transform: rotate(360deg);
   }
 }
+// .tox {
+//   min-height: 400px;
+// }

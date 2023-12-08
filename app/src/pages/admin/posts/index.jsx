@@ -114,12 +114,7 @@ const Posts = () => {
     <>
       <Stack spacing={10} className="py-2">
         <span>Tìm kiếm: </span>
-        <Input placeholder="Tên sản phẩm" onChange={(v) => setFilter((state) => ({ ...state, title: v }))} />
-        {/* <SelectPicker
-            placeholder="Danh mục"
-            data={categorySelector || []}
-            onChange={(v) => setFilter((state) => ({ ...state, category: v }))}
-          /> */}
+        <Input placeholder="Tên bài viết" onChange={(v) => setFilter((state) => ({ ...state, title: v }))} />
       </Stack>
       <Content className={'bg-w'}>
         <Table height={60 * (pagiConfig.limit + 1)} rowHeight={60} data={getData()} loading={loading}>

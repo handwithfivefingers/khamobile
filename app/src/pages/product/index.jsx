@@ -1,9 +1,5 @@
 import clsx from 'clsx'
 import PostHelmet from 'component/PostHelmet'
-// import Card from 'component/UI/Content/Card'
-// import Divider from 'component/UI/Content/Divider'
-// import PageHeader from 'component/UI/Content/PageHeader'
-// import { CardSkeletonProduct } from 'component/UI/Content/CardSkeleton'
 import CommonLayout from 'component/UI/Layout'
 import dynamic from 'next/dynamic'
 import Link from 'next/link'
@@ -83,9 +79,9 @@ export default function Product(props) {
     <>
       <PostHelmet seo={props.seo} />
 
-      <div className="row p-0">
+      <div className="grid grid-cols-12 p-0">
         <div
-          className="col-12 p-0 animate__animated animate__fadeInUp"
+          className="col-span-12 px-4 animate__animated animate__fadeInUp"
           style={{
             '--animate-duration': `${0.3}s`,
           }}
@@ -95,15 +91,15 @@ export default function Product(props) {
           </PageHeader>
         </div>
         <div
-          className="col-12 p-0 py-2 border-top"
+          className="col-span-12 px-4 py-2 border-t"
           style={{
             '--animate-duration': `${0.4}s`,
           }}
         >
-          <div className="container">
-            <div className="row">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-12">
               <div
-                className="col-12 animate__animated animate__fadeInUp"
+                className="col-span-12 animate__animated animate__fadeInUp"
                 style={{
                   '--animate-duration': `${0.5}s`,
                 }}
@@ -118,36 +114,36 @@ export default function Product(props) {
                 }}
               />
 
-              <div className="col-12 animate__animated animate__fadeInUp">
+              <div className="col-span-12 animate__animated animate__fadeInUp max-w-[1120px] mx-auto">
                 <div className={styles.grid}>
                   {loading && renderSkeleton}
 
                   {!loading &&
                     product?.data?.map((prod, index) => {
                       return (
-                        <Link href={`/product/${prod.slug}`} passHref key={prod._id}>
-                          <a
-                            className={clsx('animate__animated animate__fadeInUp', styles.gridItem)}
-                            style={{
-                              '--animate-duration': `${(0.2 * index) / 2}s`,
-                            }}
-                          >
-                            <Card
-                              imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
-                              title={prod.title}
-                              price={prod.price}
-                              underlinePrice={prod?.underlinePrice || null}
-                              type={prod.type}
-                              variable={prod.variable}
-                              hover
-                            />
-                          </a>
+                        <Link
+                          href={`/product/${prod.slug}`}
+                          key={prod._id}
+                          className={clsx('animate__animated animate__fadeInUp', styles.gridItem)}
+                          style={{
+                            '--animate-duration': `${(0.2 * index) / 2}s`,
+                          }}
+                        >
+                          <Card
+                            imgSrc={prod.image?.[0]?.src ? prod.image?.[0]?.src : ''}
+                            title={prod.title}
+                            price={prod.price}
+                            underlinePrice={prod?.underlinePrice || null}
+                            type={prod.type}
+                            variable={prod.variable}
+                            hover
+                          />
                         </Link>
                       )
                     })}
                 </div>
               </div>
-              <div className="col-12">
+              <div className="col-span-12">
                 <div className={styles.pagi}>
                   <Pagination
                     prev

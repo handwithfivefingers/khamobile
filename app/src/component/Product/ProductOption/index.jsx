@@ -11,13 +11,13 @@ const ProductOptions = ({ attributeName, listAttribute, selectValue, onChange })
 
   return (
     <RadioGroup
-      className={clsx('d-flex flex-row border-0 flex-wrap p-1')}
+      className={clsx('!flex !flex-row !border-0 flex-wrap p-1')}
       appearance="picker"
       onChange={(value) => handleAttributeChange({ value, name: attributeName })}
       value={selectValue || ''} // get current attribute select
     >
       {/* Attribute Name */}
-      <p className=" flex-shrink-0" style={{ color: 'var(--rs-blue-800)' }}>
+      <p className=" shrink-0" style={{ color: 'var(--rs-blue-800)' }}>
         {attributeName} :
       </p>
 

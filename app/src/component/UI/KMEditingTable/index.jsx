@@ -56,7 +56,7 @@ const Column = memo((props) => {
 CustomTable.Column = Column
 
 export default function KMEditingTable({ data, ...props }) {
-  const [tableData, setTableData] = useState(data)
+  const [tableData, setTableData] = useState(data || [])
 
   const addNewField = () => {
     setTableData((prev) => {
@@ -87,7 +87,7 @@ export default function KMEditingTable({ data, ...props }) {
       bordered
       footer={() => {
         return (
-          <div className="d-flex justify-content-center">
+          <div className="flex justify-center w-full">
             <IconButton
               icon={<BsPlusLg />}
               appearance="primary"

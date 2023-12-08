@@ -5,23 +5,21 @@ import LOGO from 'assets/img/logo.png'
 import clsx from 'clsx'
 import Image from 'next/image'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
-import { BsCashCoin, BsTelephoneFill } from 'react-icons/bs'
+import { BsCashCoin } from 'react-icons/bs'
 import { FaCcJcb, FaCcPaypal, FaCcStripe, FaCcVisa } from 'react-icons/fa'
 import { FcIphone } from 'react-icons/fc'
-import { IconButton, Panel } from 'rsuite'
+import { IconButton } from 'rsuite'
 import styles from './styles.module.scss'
-import { useRouter } from 'next/router'
 export default function Footer() {
-  const [expand, setExpand] = useState(false)
-  const router = useRouter()
   useEffect(() => {
     if (window.FB) {
       window.FB.XFBML.parse()
     }
   }, [])
   return (
-    <div className="container-fluid border-top mt-4">
+    <div className="container max-w-[100vw] border-t-1 mt-4">
       <div id="fb-root"></div>
 
       <div className={styles.contact}>
@@ -31,7 +29,7 @@ export default function Footer() {
               <FcIphone />
             </div>
           </a>
-          <a className={styles.contactItem} href="https://zalo.me/0777999966" target="_blank">
+          <a className={clsx(styles.contactItem)} href="https://zalo.me/0777999966" target="_blank">
             <div className={styles.icon}>
               <img src="/zalo-icon.png" />
             </div>
@@ -45,31 +43,24 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="row p-0">
-        <div className="col-12 p-0">
-          <div className="container p-0">
-            <div className="row p-2 py-4 gy-4">
-              <div className="col-12 col-lg-2 col-md-4 col-sm-12">
-                <Panel onClick={() => router.push('/')}>
+      <div className="grid grid-span-12 p-0 border-t">
+        <div className="col-span-12 px-4">
+          <div className="container p-0 mx-auto">
+            <div className="grid grid-cols-12 p-2 gap-4">
+              <div className="col-span-12 lg:col-span-2 md:col-span-4 sm:col-span-12">
+                <Link href="/">
                   <Image src={LOGO} alt="Kha mobile" priority />
-                </Panel>
+                </Link>
               </div>
-              <div className="col-12 col-lg-2 col-md-4 col-sm-6">
+              <div className="col-span-12 lg:col-span-2 md:col-span-4 sm:col-span-6">
                 <ul className={styles.listLink}>
                   <h6>Thông tin</h6>
                   <Link href="/chinh-sach" passHref>
-                    <li>
-                      <a>Chính sách</a>
-                    </li>
+                    <li>Chính sách</li>
                   </Link>
-                  {/* <Link href="/chinh-sach" passHref>
-                    <li>
-                      <a>Liên hệ</a>
-                    </li>
-                  </Link> */}
                 </ul>
               </div>
-              <div className="col-12 col-lg-3  col-md-4 col-sm-6">
+              <div className="col-span-12 lg:col-span-2 md:col-span-4 sm:col-span-6">
                 <ul className={styles.listLink}>
                   <h6>Địa chỉ liên hệ</h6>
                   <li>
@@ -94,7 +85,7 @@ export default function Footer() {
                   </li>
                 </ul>
               </div>
-              <div className="col-12 col-lg-2 col-md-6 col-sm-6">
+              <div className="col-span-12 lg:col-span-2 md:col-span-6 sm:col-span-6">
                 <ul className={styles.listLink}>
                   <li className={styles.bct}>
                     <Image src={BCT} alt="Kha mobile" priority width={200} height={77} />
@@ -103,7 +94,7 @@ export default function Footer() {
                   <li>Giấy chứng nhận ĐKKD số 41O8041012 do UBND quận Bình Thạnh cấp ngày 07/08/2020</li>
                 </ul>
               </div>
-              <div className="col-12 col-lg-3  col-md-6 col-sm-6 text-center">
+              <div className="col-span-12 lg:col-span-3  md:col-span-6 sm:col-span-6 text-center">
                 <div
                   className="fb-page"
                   data-href="https://www.facebook.com/Kha44Mobile/"
@@ -124,54 +115,49 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="col-12 py-2" style={{ background: 'var(--rs-red-900)' }}>
-          <div className="container p-0">
-            <div
-              className={clsx(
-                'd-flex flex-row justify-content-between align-items-center flex-wrap',
-                styles.copyRightWrapper,
-              )}
-            >
-              <div className={clsx('text-light', styles.copyRight)}>
+        <div className="col-span-12 py-2" style={{ background: 'var(--rs-red-900)' }}>
+          <div className="container mx-auto p-0">
+            <div className={clsx('flex flex-row justify-between items-center flex-wrap', styles.copyRightWrapper)}>
+              <div className={clsx('text-[#ccc]', styles.copyRight)}>
                 © {new Date().getFullYear()}{' '}
                 <a href="https://truyenmai.com" target="_blank" style={{ textDecoration: 'none', color: '#fff' }}>
                   Truyen Mai
                 </a>{' '}
                 & Kha Mobile.
               </div>
-              <div className={clsx('payment-icons d-flex flex-row', styles.payment)} style={{ gap: 8 }}>
+              <div className={clsx('payment-icons flex flex-row', styles.payment)} style={{ gap: 8 }}>
                 <IconButton
-                  className="px-2 py-1"
+                  className="px-2 py-1 bg-blue-500 shadow-lg shadow-blue-500/50 "
                   icon={<FaCcVisa />}
-                  appearance="subtle"
+                  appearance="primary"
                   size="md"
                   style={{ fontSize: 16 }}
                 />
                 <IconButton
-                  className="px-2 py-1"
+                className="px-2 py-1 bg-blue-500 shadow-lg shadow-blue-500/50 "
                   icon={<FaCcPaypal />}
-                  appearance="subtle"
+                  appearance="primary"
                   size="md"
                   style={{ fontSize: 16 }}
                 />
                 <IconButton
-                  className="px-2 py-1"
+                className="px-2 py-1 bg-blue-500 shadow-lg shadow-blue-500/50 "
                   icon={<FaCcStripe />}
-                  appearance="subtle"
+                  appearance="primary"
                   size="md"
                   style={{ fontSize: 16 }}
                 />
                 <IconButton
-                  className="px-2 py-1"
+                className="px-2 py-1 bg-blue-500 shadow-lg shadow-blue-500/50 "
                   icon={<FaCcJcb />}
-                  appearance="subtle"
+                  appearance="primary"
                   size="md"
                   style={{ fontSize: 16 }}
                 />
                 <IconButton
-                  className="px-2 py-1"
+                className="px-2 py-1 bg-blue-500 shadow-lg shadow-blue-500/50 "
                   icon={<BsCashCoin />}
-                  appearance="subtle"
+                  appearance="primary"
                   size="md"
                   style={{ fontSize: 16 }}
                 />

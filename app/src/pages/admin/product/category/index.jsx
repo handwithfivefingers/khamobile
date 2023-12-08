@@ -121,7 +121,7 @@ const Products = () => {
 
   useEffect(() => {
     if (Object.keys(filter)) {
-      const dataFilter = [...data]
+      let dataFilter = [...data]
       if (filter) dataFilter = dataFilter.filter((item) => item.name?.toLowerCase().includes(filter?.toLowerCase()))
       setFilterData(dataFilter)
     } else {

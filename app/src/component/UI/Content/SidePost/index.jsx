@@ -9,7 +9,7 @@ const SidePost = () => {
 	return (
 		<div className={styles.row}>
 			<div className={styles.featureImg}>
-				<ImageBlock src='https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp' />
+				<ImageBlock  alt="..." src='https://www.journal-theme.com/1/image/cache/catalog/journal3/categories/demo09-260x260.jpg.webp' />
 			</div>
 
 			<div className={styles.filterItem}>

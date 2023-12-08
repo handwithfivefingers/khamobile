@@ -37,3 +37,10 @@
     }
   }
 }
+.section {
+  :global {
+    .slick-dots {
+      display: none !important;
+    }
+  }
+}

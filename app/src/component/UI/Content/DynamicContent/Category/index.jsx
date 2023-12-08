@@ -330,7 +330,7 @@ const AddLinkModal = forwardRef(({ handleLink, handleConfirm, handleCancel }, re
   const { productCategory } = useCommonStore((state) => state)
 
   const handleAddField = (index) => {
-    const nextState = [...state]
+    let nextState = [...state]
     nextState = [...nextState.slice(0, index + 1), undefined, ...nextState.slice(index + 1)]
     setState(nextState)
   }
@@ -360,8 +360,8 @@ const AddLinkModal = forwardRef(({ handleLink, handleConfirm, handleCancel }, re
 
   return (
     <div className="container">
-      <div className="row gx-2 gy-2 p-2">
-        <div className="col-8">
+      <div className="grid grid-cols-12 p-2 gap-2">
+        <div className="col-span-8">
           {state.map((item, index) => {
             return (
               <DynamicInput
@@ -377,10 +377,10 @@ const AddLinkModal = forwardRef(({ handleLink, handleConfirm, handleCancel }, re
             )
           })}
         </div>
-        <div className="col-4">
-          <ImageBlock src="/public/example/dynamicCategory/category_link.png" engine objectFit="contain" options={{}} />
+        <div className="col-span-4">
+          <ImageBlock alt="..." src="/public/example/dynamicCategory/category_link.png" engine objectFit="contain" options={{}} />
         </div>
-        <div className="col-12">
+        <div className="col-span-12">
           <div className="position-sticky bg-white p-2 d-flex justify-content-end" style={{ bottom: '-20px' }}>
             <Button color="blue" appearance="primary" style={{ borderRadius: 0 }} onClick={() => handleConfirm(state)}>
               Xác nhận

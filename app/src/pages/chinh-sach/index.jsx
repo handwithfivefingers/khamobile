@@ -12,7 +12,6 @@ const PageHeader = dynamic(() => import('component/UI/Content/PageHeader'))
 const CardBlock = dynamic(() => import('component/UI/Content/CardBlock'))
 const Heading = dynamic(() => import('component/UI/Content/Heading'))
 export default function Policy() {
-  const router = useRouter()
   const [active, setActive] = useState('protection')
   const onSelect = (v) => {
     setActive(v)
@@ -38,16 +37,16 @@ export default function Policy() {
     return html
   }, [active])
   return (
-    <div className="row p-0">
-      <div className="col-12 p-0">
+    <div className="grid grid-cols-12 p-0">
+      <div className="col-span-12 px-4">
         <PageHeader type="h3" left>
           Chính sách
         </PageHeader>
       </div>
-      <div className="col-12 p-0 py-2 border-top">
-        <div className="container">
-          <div className="row gy-4">
-            <div className="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+      <div className="col-span-12 px-4 py-2 border-t">
+        <div className="container mx-auto">
+          <div className="grid grid-cols-12 gap-y-4">
+            <div className="col-span-12 sm:col-span-4 md:col-span-4 lg:col-span-3 xl:col-span-2">
               <Nav vertical activeKey={active} onSelect={onSelect} appearance="tabs" style={{ height: '100%' }}>
                 <Nav.Item eventKey="protection">Chính sách bảo mật</Nav.Item>
                 <Nav.Item eventKey="warranty">Chính sách bảo hành</Nav.Item>
@@ -55,7 +54,7 @@ export default function Policy() {
                 <Nav.Item eventKey="refund">Chính sách hoàn tiền </Nav.Item>
               </Nav>
             </div>
-            <div className="col-12 col-sm-6 col-md-8 col-lg-9 col-xl-10">{renderPolicyByType}</div>
+            <div className="col-span-12 sm:col-span-8 md:col-span-8 lg:col-span-9 xl:col-span-10 ">{renderPolicyByType}</div>
           </div>
         </div>
       </div>

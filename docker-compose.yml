@@ -22,8 +22,8 @@ services:
       - app_network
     entrypoint: ['/bin/sh', '-c']
     command: 
-      - yarn build:prod && yarn start
-      # - yarn dev
+      # - yarn build:prod && yarn start
+      - yarn dev
   kha-server:
     container_name: kha-server
     restart: always

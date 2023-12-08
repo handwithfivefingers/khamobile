@@ -1,6 +1,6 @@
 import AdminLayout from 'component/UI/AdminLayout'
 import CardBlock from 'component/UI/Content/CardBlock'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { Button, ButtonGroup, IconButton, Message, Tree, useToaster } from 'rsuite'
 import PageService from 'service/admin/Page.service'
 import { useCommonStore } from 'src/store/commonStore'
@@ -97,102 +97,107 @@ export default function SettingMenu() {
 
   console.log()
 
-  const renderTabs = () => {
+  const renderTabs = useCallback(() => {
     let html = null
-    if (tabsKey === 1) {
-      html = (
-        <Tree
-          data={pageData}
-          className="km"
-          labelKey="name"
-          valueKey="_id"
-          showIndentLine
-          renderTreeNode={(node) => {
-            return (
-              <>
-                <div className="d-flex km-node-item">
-                  {node.children ? <BiCategory /> : <TbSquareRotated />}
-                  <span> {node.name}</span>
-                  <div className="d-flex" style={{ gap: 4 }}>
-                    <IconButton
-                      appearance="subtle"
-                      color="red"
-                      icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
-                      size="md"
-                      onClick={() => handleAddItem(node)}
-                    />
-                  </div>
-                </div>
-              </>
-            )
-          }}
-          onChange={(v) => (pageRef.current[tabsKey] = v)}
-        />
-      )
-    } else if (tabsKey === 2) {
-      html = (
-        <Tree
-          data={postData}
-          className="km"
-          labelKey="title"
-          valueKey="_id"
-          showIndentLine
-          renderTreeNode={(node) => {
-            return (
-              <>
-                <div className="d-flex km-node-item">
-                  {node.children ? <BiCategory /> : <TbSquareRotated />}
-                  <span> {node.title}</span>
-                  <div className="d-flex" style={{ gap: 4 }}>
-                    <IconButton
-                      appearance="subtle"
-                      color="red"
-                      icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
-                      size="md"
-                      onClick={() => handleAddItem(node)}
-                    />
-                  </div>
-                </div>
-              </>
-            )
-          }}
-          onChange={(v) => (pageRef.current[tabsKey] = v)}
-        />
-      )
-    } else if (tabsKey === 3) {
-      html = (
-        <Tree
-          data={prodCateData}
-          labelKey="name"
-          className="km"
-          valueKey="_id"
-          showIndentLine
-          renderTreeNode={(node) => {
-            return (
-              <>
-                <div className="d-flex km-node-item">
-                  {node.children ? <BiCategory /> : <TbSquareRotated />}
-                  <span> {node.name}</span>
-                  <div className="d-flex" style={{ gap: 4 }}>
-                    <IconButton
-                      appearance="subtle"
-                      color="red"
-                      icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
-                      size="md"
-                      onClick={() => handleAddItem(node)}
-                    />
-                  </div>
-                </div>
-              </>
-            )
-          }}
-          onChange={(v) => (pageRef.current[tabsKey] = v)}
-        />
-      )
-    }
 
+    try {
+      if (tabsKey === 1) {
+        html = (
+          <Tree
+            key="pageData"
+            data={pageData}
+            className="km"
+            labelKey="name"
+            valueKey="_id"
+            showIndentLine
+            renderTreeNode={(node) => {
+              return (
+                <div className="flex km-node-item">
+                  {node.children ? <BiCategory /> : <TbSquareRotated />}
+                  <span> {node.name}</span>
+                  <div className="flex" style={{ gap: 4 }}>
+                    <IconButton
+                      appearance="subtle"
+                      color="red"
+                      icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
+                      size="md"
+                      onClick={() => handleAddItem(node)}
+                    />
+                  </div>
+                </div>
+              )
+            }}
+            onChange={(v) => (pageRef.current[tabsKey] = v)}
+          />
+        )
+      } else if (tabsKey === 2) {
+        html = (
+          <Tree
+            key="postData"
+            data={postData}
+            className="km"
+            labelKey="title"
+            valueKey="_id"
+            showIndentLine
+            renderTreeNode={(node) => {
+              return (
+                <>
+                  <div className="d-flex km-node-item">
+                    {node.children ? <BiCategory /> : <TbSquareRotated />}
+                    <span> {node.title}</span>
+                    <div className="d-flex" style={{ gap: 4 }}>
+                      <IconButton
+                        appearance="subtle"
+                        color="red"
+                        icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
+                        size="md"
+                        onClick={() => handleAddItem(node)}
+                      />
+                    </div>
+                  </div>
+                </>
+              )
+            }}
+            onChange={(v) => (pageRef.current[tabsKey] = v)}
+          />
+        )
+      } else if (tabsKey === 3) {
+        html = (
+          <Tree
+            data={prodCateData}
+            labelKey="name"
+            className="km"
+            valueKey="_id"
+            showIndentLine
+            renderTreeNode={(node) => {
+              return (
+                <>
+                  <div className="d-flex km-node-item">
+                    {node.children ? <BiCategory /> : <TbSquareRotated />}
+                    <span> {node.name}</span>
+                    <div className="d-flex" style={{ gap: 4 }}>
+                      <IconButton
+                        appearance="subtle"
+                        color="red"
+                        icon={<AiOutlinePlus style={{ fontSize: 16 }} />}
+                        size="md"
+                        onClick={() => handleAddItem(node)}
+                      />
+                    </div>
+                  </div>
+                </>
+              )
+            }}
+            onChange={(v) => (pageRef.current[tabsKey] = v)}
+            key="prodCate"
+          />
+        )
+      }
+    } catch (error) {
+      console.log('error', error)
+    }
     return html
-  }
+  }, [tabsKey])
 
   const handleAddItem = (nodeItem) => {
     console.log(nodeItem)
@@ -232,9 +237,9 @@ export default function SettingMenu() {
   }
   // console.log(ReactIcon)
   return (
-    <div className="row gy-2">
+    <div className="grid grid-cols-2 gy-2 gap-4">
       {/* {parse(ReactDOMServer.renderToString(ReactIcon.FaStore()))} */}
-      <div className="col-12 d-flex" style={{ gap: 12 }}>
+      <div className="col-span-2 d-flex" style={{ gap: 12 }}>
         <ButtonGroup>
           <Button appearance="primary" onClick={() => setTabsKey(1)} active={tabsKey === 1}>
             Trang
@@ -247,7 +252,7 @@ export default function SettingMenu() {
           </Button>
         </ButtonGroup>
       </div>
-      <div className="col-12 col-md-6">
+      <div className="col-span-1 ">
         <CardBlock className="border-0">
           <Tree
             data={data?.menu}
@@ -288,7 +293,7 @@ export default function SettingMenu() {
           />
         </CardBlock>
       </div>
-      <div className="col-12 col-md-6">
+      <div className="col-span-1">
         <h5>Danh sách</h5>
         {renderTabs()}
       </div>

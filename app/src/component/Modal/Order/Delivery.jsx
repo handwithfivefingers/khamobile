@@ -61,22 +61,22 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
 
   return (
     <Form formValue={state} plaintext={isEdit} onChange={(val) => setState((prevState) => ({ ...prevState, ...val }))}>
-      <div className="row">
-        <div className="col">
-          <div className="d-flex flex-column justify-content-between">
-            <label className="text-muted fs-6 fw-normal">Họ và tên</label>
+      <div className="grid grid-cols-3">
+        <div className="col-span-1">
+          <div className="flex flex-col justify-center">
+            <label className="text-[rgba(0,0,0,0.5)] text-[12px]">Họ và tên</label>
             <KMInput name="fullName" />
           </div>
         </div>
-        <div className="col">
-          <div className="d-flex flex-column justify-content-between">
-            <label className="text-muted fs-6 fw-normal">Địa chỉ email</label>
+        <div className="col-span-1">
+          <div className="flex flex-col justify-center">
+            <label className="text-[rgba(0,0,0,0.5)] text-[12px]">Địa chỉ email</label>
             <KMInput name="email" />
           </div>
         </div>
-        <div className="col">
-          <div className="d-flex flex-column justify-content-between">
-            <label className="text-muted fs-6 fw-normal">Số điện thoại</label>
+        <div className="col-span-1">
+          <div className="flex flex-col justify-center">
+            <label className="text-[rgba(0,0,0,0.5)] text-[12px]">Số điện thoại</label>
             <KMInput name="phone" />
           </div>
         </div>
@@ -109,28 +109,28 @@ const UserDelivery = forwardRef(({ data, ...props }, ref) => {
 
   return (
     <Form formValue={state} plaintext={isEdit} onChange={(val) => setState((prevState) => ({ ...prevState, ...val }))}>
-      <div className="row">
-        <div className="col">
-          <div className="d-flex flex-column justify-content-between">
-            <label className="text-muted fs-6 fw-normal">Địa chỉ</label>
+      <div className="grid grid-cols-4">
+        <div className="col-span-1">
+          <div className="flex flex-col justify-center">
+            <label className="text-[rgba(0,0,0,0.5)] text-[12px]">Địa chỉ</label>
             <KMInput name="address" />
           </div>
         </div>
-        <div className="col">
-          <div className="d-flex flex-column justify-content-between">
-            <label className="text-muted fs-6 fw-normal">Phường/Xã</label>
+        <div className="col-span-1">
+          <div className="flex flex-col justify-center">
+            <label className="text-[rgba(0,0,0,0.5)] text-[12px]">Phường/Xã</label>
             <KMInput name="wards" />
           </div>
         </div>
-        <div className="col">
-          <div className="d-flex flex-column justify-content-between">
-            <label className="text-muted fs-6 fw-normal">Quận/Huyện</label>
+        <div className="col-span-1">
+          <div className="flex flex-col justify-center">
+            <label className="text-[rgba(0,0,0,0.5)] text-[12px]">Quận/Huyện</label>
             <KMInput name="district" />
           </div>
         </div>
-        <div className="col">
-          <div className="d-flex flex-column justify-content-between">
-            <label className="text-muted fs-6 fw-normal">Tỉnh/Thành Phố</label>
+        <div className="col-span-1">
+          <div className="flex flex-col justify-center">
+            <label className="text-[rgba(0,0,0,0.5)] text-[12px]">Tỉnh/Thành Phố</label>
             <KMInput name="city" />
           </div>
         </div>

@@ -211,7 +211,7 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
    */
 
   const filterProductByAttributeName = (attributeSelected) => {
-    const nextState = [..._relationProd] // get all list variant Product
+    let nextState = [..._relationProd] // get all list variant Product
 
     nextState = nextState.filter((productVariant) => {
       let result = true
@@ -233,7 +233,7 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
     html = [...attributeMap].map(([attributeName, attributeValue], index) => {
       return (
         <div
-          className={'row gx-2 gy-2 align-items-center w-100'}
+          className={'flex px-2 py-2 items-center w-full flex-1'}
           key={[attributeName, attributeValue, index].join('-')}
         >
           <ProductOptions
@@ -258,19 +258,19 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
     <CardBlock className="border-0">
       <Form ref={formRef} model={ProductModel}>
         <Panel style={{ paddingBottom: 0 }}>
-          <div className={clsx('d-flex align-items-center w-100 flex-1', styles.groupVariant)} style={{ gap: 4 }}>
-            <div className={'row w-100 '} ref={pricingRef}>
-              <div className="col-12">
+          <div className={clsx('w-full ')} style={{ gap: 4 }}>
+            <div className={'grid-cols-12 grid w-full '} ref={pricingRef}>
+              <div className="col-span-12">
                 <p className={clsx(styles.productPricing)}>
                   <span className="bk-product-price">{calculatePrice()}</span>
 
                   <span className={styles.productRegularPrice}>{calculateRegularPrice()}</span>
                 </p>
               </div>
-              <div className="col-12 position-relative">
+              <div className="col-span-12 relative">
                 {_relationProd.length ? (
                   <>
-                    <div className="position-absolute" style={{ top: 0, right: 0 }}>
+                    <div className="absolute top-0 right-0">
                       <IconButton
                         icon={<CloseOutline />}
                         circle
@@ -295,12 +295,11 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
 
             <Button
               appearance="primary"
-              className={styles.btnIcon}
+              className={clsx(styles.btnIcon, '!bg-blue-500 shadow-lg shadow-blue-500/50')}
               onClick={handleBuyNow}
-              style={{ background: 'var(--rs-blue-800)' }}
               disabled={!(form?.price * form?.quantity)}
             >
-              <div className="d-flex flex-column">
+              <div className="flex flex-col">
                 <span>Mua ngay</span>
                 <span style={{ fontSize: 12 }}>( giao tận nơi hoặc lấy tại cửa hàng )</span>
               </div>
@@ -309,12 +308,12 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
             <Button
               color="red"
               appearance="primary"
-              className={styles.btnIcon}
+              className={clsx(styles.btnIcon, 'bg-red-800 shadow-lg shadow-red-800/50')}
               onClick={handleAddToCart}
-              style={{ background: 'var(--rs-red-800)', color: '#fff' }}
+              // style={{ background: 'var(--rs-red-800)', color: '#fff' }}
               disabled={!(form?.price * form?.quantity)}
             >
-              <div className="d-flex flex-column align-items-center">
+              <div className="flex flex-col items-center">
                 <BiCart style={{ fontSize: 20 }} />
                 <span style={{ fontSize: 12 }}> Thêm vào giỏ hàng</span>
               </div>

@@ -26,7 +26,7 @@ const BaoKim = (props) => {
     script.onload = () => {
       document.querySelector(
         '.bk-btn-paynow',
-      ).innerHTML = `<strong>Mua ngay (Bảo Kim)</strong><span>Giao tận nơi hoặc nhận tại cửa hàng</span>`
+      ).innerHTML = `<div class="p-1"><strong>Mua ngay (Bảo Kim)</strong><span>Giao tận nơi hoặc nhận tại cửa hàng</span></div>`
     }
     document.body.appendChild(script)
   }

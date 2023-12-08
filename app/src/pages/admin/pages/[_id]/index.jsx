@@ -6,11 +6,6 @@ import { useRouter } from 'next/router'
 import PageService from 'service/admin/Page.service'
 import { message } from 'src/helper'
 import { useCommonStore } from 'src/store/commonStore'
-// import styles from './styles.module.scss'
-// import DynamicCategoryComponentInput from 'component/UI/Content/DynamicContent/Category'
-// import DynamicImageComponentInput from 'component/UI/Content/DynamicContent/Image'
-// import DynamicProductComponentInput from 'component/UI/Content/DynamicContent/Products'
-
 import dynamic from 'next/dynamic'
 
 const DynamicCategoryComponentInput = dynamic(() => import('component/UI/Content/DynamicContent/Category'))

@@ -42,21 +42,13 @@ const Catalog = ({ data, direction }) => {
           <div className="title__divider" />
         </div>
         <div className={styles.content}>
-          <ImageBlock
-            src={imgSrc || '/400.png'}
-            engine={imgSrc !== '/400.png' ? true : false}
-            height={'200px'}
-            className={styles.imgCatalog}
-            objectFit="contain"
-          />
+          <ImageBlock src={imgSrc} engine className={styles.imgCatalog} objectFit="contain" />
           <div className={styles.listLink}>
             <ul className={styles.list}>
               {data?.categories?.map((cateItem) => (
                 <li key={[cateItem._id, cateItem.slug]} className={styles.subCateItem}>
-                  <Link href={`/category/${cateItem.slug}?page=1`} passHref>
-                    <a className="text-truncate w-100" alt={cateItem.name}>
-                      {cateItem.name}
-                    </a>
+                  <Link href={`/category/${cateItem.slug}?page=1`} className="text-truncate w-100" alt={cateItem.name}>
+                    {cateItem.name}
                   </Link>
                 </li>
               ))}
@@ -64,9 +56,10 @@ const Catalog = ({ data, direction }) => {
           </div>
 
           <Button
+            className="bg-blue-500 shadow-lg shadow-blue-500/50"
             appearance="primary"
             onClick={() => handleRedirect(data?.slug)}
-            style={{ background: 'var(--rs-blue-800)' }}
+            // style={{ background: 'var(--rs-blue-800)' }}
           >
             Xem tất cả
           </Button>

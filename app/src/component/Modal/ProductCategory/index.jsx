@@ -7,7 +7,6 @@ import { Button, ButtonToolbar, Content, Form, Input, Schema, Toggle } from 'rsu
 
 export default function ProductCategory(props) {
   const [form, setForm] = useState(props?.data)
-  const [toggleUpload, setToggleUpload] = useState(true)
   const [render, setRender] = useState(false)
   const formRef = useRef()
 
@@ -31,7 +30,7 @@ export default function ProductCategory(props) {
       <Form
         formValue={form}
         onChange={(formVal) => setForm((prev) => ({ ...prev, ...formVal }))}
-        className={'row gx-2 gy-2 '}
+        className={'grid-cols-12 grid gap-2 '}
         fluid
         ref={formRef}
         model={model}
@@ -40,7 +39,7 @@ export default function ProductCategory(props) {
           <JsonViewer data={form} />
         </div> */}
 
-        <div className="col-8">
+        <div className="col-span-8">
           <CardBlock>
             <KMInput name="name" label="Tên danh mục" />
             <KMInput name="slug" label="đường dẫn" />
@@ -48,7 +47,7 @@ export default function ProductCategory(props) {
           </CardBlock>
         </div>
 
-        <div className="col-4 d-flex flex-column">
+        <div className="col-span-4 flex flex-col">
           <CardBlock>
             <Form.Group controlId="img">
               <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
@@ -68,7 +67,7 @@ export default function ProductCategory(props) {
           </CardBlock>
 
           <Form.Group
-            className="d-flex justify-content-end mt-2 align-items-end"
+            className="flex justify-end mt-2 items-end"
             style={{ flex: 1, marginTop: 'auto ' }}
           >
             <ButtonToolbar>

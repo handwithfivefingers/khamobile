@@ -1,5 +1,6 @@
-import { KMEditor, KMInput } from 'component/UI/Content/KMInput'
+import { KMInput } from 'component/UI/Content/KMInput'
 import Select from 'component/UI/Content/MutiSelect'
+import { TinyMceEditor } from 'component/UI/Editor/TinyMCE'
 import KMEditingTable from 'component/UI/KMEditingTable'
 import CustomUpload from 'component/UI/Upload/CustomUpload'
 import { memo, useEffect, useRef, useState } from 'react'
@@ -15,7 +16,8 @@ const ProductCreateModal = (props) => {
   const [variable, setVariable] = useState([])
 
   const [_render, setRender] = useState(false)
-
+  const editorRef = useRef(null)
+  const descRef = useRef(null)
   const formDataRef = useRef({
     price: 0,
     regular_price: 0,
@@ -40,45 +42,31 @@ const ProductCreateModal = (props) => {
 
   const getVariables = async () => {
     try {
-      setLoading(true)
-
       let resp = await ProductService.getAttribute()
-
       let _variables = resp.data.data
-
       setVariable(_variables)
     } catch (error) {
       console.log('getVariables error', error)
-    } finally {
-      setLoading(false)
     }
   }
 
   const getCategory = async () => {
     try {
-      setLoading(true)
-
       let resp = await CategoryService.getProdCate()
-
       let category = resp.data.data
-
       setCate(category)
     } catch (error) {
       console.log('getVariables error', error)
-    } finally {
-      setLoading(false)
     }
   }
 
   const onSubmit = async () => {
     try {
       setLoading(true)
-
-      // console.log(formDataRef.current)
-      // return
-
+      const content = editorRef.current.getContent()
+      const description = descRef.current.getContent()
       if (props.onSubmit) {
-        props.onSubmit(formDataRef.current)
+        props.onSubmit({ ...formDataRef.current, content, description })
       }
     } catch (error) {
       console.log('error', error, error?.response?.data?.message)
@@ -159,8 +147,8 @@ const ProductCreateModal = (props) => {
   return (
     <>
       <Content className={'p-4'}>
-        <Form formValue={formDataRef?.current} className={'row gx-2 '} fluid>
-          <div className="col-9 bg-w rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+        <Form formValue={formDataRef?.current} className={'grid-cols-12 grid gap-x-2 '} fluid>
+          <div className="col-span-9 bg-gray-50 rounded " style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
             <PanelGroup>
               <Panel header="Tên sản phẩm" collapsible defaultExpanded>
                 <KMInput
@@ -175,10 +163,10 @@ const ProductCreateModal = (props) => {
                 <KMInput name="slug" onChange={(v) => (formDataRef.current.slug = v)} />
               </Panel>
               <Panel header="Nội dung" collapsible>
-                <KMEditor name="content" onChange={(v) => (formDataRef.current.content = v)} />
+                <TinyMceEditor name="content" forwardRef={editorRef} data={props?.data?.content} />
               </Panel>
               <Panel header="Mô tả" collapsible>
-                <KMEditor name="description" onChange={(v) => (formDataRef.current.description = v)} />
+                <TinyMceEditor name="description" forwardRef={descRef} data={props?.data?.description} />
               </Panel>
 
               <Panel header="Thông số kỹ thuật" collapsible>
@@ -191,7 +179,7 @@ const ProductCreateModal = (props) => {
 
               <Panel
                 header={
-                  <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+                  <div className="flex justify-start items-center" style={{ gap: 12 }}>
                     Thông tin sản phẩm
                   </div>
                 }
@@ -229,8 +217,8 @@ const ProductCreateModal = (props) => {
               </Panel>
             </PanelGroup>
           </div>
-          <div className="col-3">
-            <PanelGroup className="position-sticky top-0">
+          <div className="col-span-3">
+            <PanelGroup className="sticky top-0">
               <Panel header="Ảnh bài post" expanded>
                 <Form.Group controlId="img">
                   <Form.Control

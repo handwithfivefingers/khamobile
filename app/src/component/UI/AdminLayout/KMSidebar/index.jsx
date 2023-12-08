@@ -12,15 +12,15 @@ import PageIcon from '@rsuite/icons/Page'
 import PeoplesIcon from '@rsuite/icons/Peoples'
 import StorageIcon from '@rsuite/icons/Storage'
 import TextImageIcon from '@rsuite/icons/TextImage'
-import ImageBlock from 'component/UI/Content/ImageBlock'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Nav, Navbar, Sidebar, Sidenav } from 'rsuite'
 import { AuthenticateService } from 'service/authenticate'
 import { useAuthorizationStore } from 'src/store'
 import LOGO from 'assets/img/logo.png'
 import Image from 'next/image'
+import { NavLink } from 'component/UI/Layout/Header'
 
 const headerStyles = {
   padding: 12,
@@ -33,7 +33,7 @@ const headerStyles = {
   cursor: 'pointer',
 }
 
-export default function KMSidebar() {
+export default function KMSidebar({ onExpand }) {
   const [expand, setExpand] = useState(true)
 
   const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
@@ -47,6 +47,9 @@ export default function KMSidebar() {
     })
     return router.push('/')
   }
+  useEffect(() => {
+    onExpand(expand)
+  }, [expand])
 
   return (
     <Sidebar
@@ -56,7 +59,7 @@ export default function KMSidebar() {
       appearance="inverse"
     >
       <Sidenav.Header>
-        <Link href="/" passHref>
+        <Link href="/">
           <div style={headerStyles}>
             {expand ? (
               <Image src={LOGO} alt="Kha mobile" priority />
@@ -84,79 +87,75 @@ export default function KMSidebar() {
             }}
             activeKey={active}
           >
-            <Link href={'/admin'} passHref>
-              <Nav.Item eventKey="/admin" icon={<DashboardIcon />}>
-                Dashboard
-              </Nav.Item>
-            </Link>
+            <Nav.Item eventKey="/admin" href={'/admin'} as={NavLink} icon={<DashboardIcon />}>
+              Dashboard
+            </Nav.Item>
 
-            <Link href="/admin/pages" passHref>
-              <Nav.Item eventKey="/admin/page" icon={<DetailIcon />}>
-                Pages
-              </Nav.Item>
-            </Link>
+            <Nav.Item eventKey="/admin/page" href="/admin/pages" as={NavLink} icon={<DetailIcon />}>
+              Pages
+            </Nav.Item>
 
             <Nav.Menu icon={<TextImageIcon />} title="Post">
-              <Link href="/admin/posts" passHref>
-                <Nav.Item eventKey="/admin/posts" icon={<TextImageIcon />}>
-                  Posts
-                </Nav.Item>
-              </Link>
-              <Link href="/admin/posts/category" passHref>
-                <Nav.Item eventKey="/admin/posts/category" icon={<ListIcon />}>
-                  Danh mục
-                </Nav.Item>
-              </Link>
+              <Nav.Item eventKey="/admin/posts" as={NavLink} href="/admin/posts">
+                <div className="flex gap-4 text-base items-center">
+                  <TextImageIcon />
+                  <span>Posts</span>
+                </div>
+              </Nav.Item>
+              <Nav.Item eventKey="/admin/posts/category" as={NavLink} href="/admin/posts/category">
+                <div className="flex gap-4 text-base items-center">
+                  <ListIcon />
+                  <span> Danh mục</span>
+                </div>
+              </Nav.Item>
             </Nav.Menu>
 
             <Nav.Menu icon={<MobileIcon />} title="Products">
-              <Link href="/admin/product" passHref>
-                <Nav.Item eventKey="/admin/product" icon={<DeviceOtherIcon />}>
-                  Products
-                </Nav.Item>
-              </Link>
-              <Link href="/admin/product/category" passHref>
-                <Nav.Item eventKey="/admin/product/category" icon={<ListIcon />}>
-                  Danh mục
-                </Nav.Item>
-              </Link>
-              <Link href="/admin/product/attribute" passHref>
-                <Nav.Item eventKey="/admin/product/attribute" icon={<StorageIcon />}>
-                  Biến thể
-                </Nav.Item>
-              </Link>
+              <Nav.Item eventKey="/admin/product" as={NavLink} href="/admin/product">
+                <div className="flex gap-4 text-base items-center">
+                  <DeviceOtherIcon />
+                  <span>Products</span>
+                </div>
+              </Nav.Item>
+              <Nav.Item eventKey="/admin/product/category" as={NavLink} href="/admin/product/category">
+                <div className="flex gap-4 text-base items-center">
+                  <ListIcon />
+                  <span>Danh mục</span>
+                </div>
+              </Nav.Item>
+              <Nav.Item eventKey="/admin/product/attribute" as={NavLink} href="/admin/product/attribute">
+                <div className="flex gap-4 text-base items-center">
+                  <StorageIcon />
+                  <span>Thuộc tính</span>
+                </div>
+              </Nav.Item>
             </Nav.Menu>
 
-            <Link href="/admin/users" passHref>
-              <Nav.Item eventKey="/admin/users" icon={<PeoplesIcon />}>
-                Users
-              </Nav.Item>
-            </Link>
+            <Nav.Item eventKey="/admin/users" icon={<PeoplesIcon />} as={NavLink} href="/admin/users">
+              Users
+            </Nav.Item>
 
-            <Link href="/admin/order" passHref>
-              <Nav.Item eventKey="/admin/order" icon={<PageIcon />}>
-                Order
-              </Nav.Item>
-            </Link>
+            <Nav.Item eventKey="/admin/order" icon={<PageIcon />} as={NavLink} href="/admin/order">
+              Order
+            </Nav.Item>
 
-            <Link href="/admin/file-manager" passHref>
-              <Nav.Item eventKey="/admin/file-manager" icon={<DetailIcon />}>
-                Quản lý file
-              </Nav.Item>
-            </Link>
+            <Nav.Item eventKey="/admin/file-manager" icon={<DetailIcon />} as={NavLink} href="/admin/file-manager">
+              Quản lý file
+            </Nav.Item>
 
             <Nav.Menu icon={<GearIcon />} title="Tùy chỉnh">
-              <Link href="/admin/setting/menu" passHref>
-                <Nav.Item eventKey="/admin/setting/menu" icon={<GearIcon />}>
-                  Menu
-                </Nav.Item>
-              </Link>
-
-              <Link href="/admin/setting/email" passHref>
-                <Nav.Item eventKey="/admin/setting/email" icon={<MessageIcon />}>
-                  Email
-                </Nav.Item>
-              </Link>
+              <Nav.Item eventKey="/admin/setting/menu" as={NavLink} href="/admin/setting/menu">
+                <div className="flex gap-4 text-base items-center">
+                  <GearIcon />
+                  <span>Menu</span>
+                </div>
+              </Nav.Item>
+              <Nav.Item eventKey="/admin/setting/email" as={NavLink} href="/admin/setting/email">
+                <div className="flex gap-4 text-base items-center">
+                  <MessageIcon />
+                  <span>Email</span>
+                </div>
+              </Nav.Item>
             </Nav.Menu>
 
             <Nav.Item eventKey="4" icon={<OffIcon />} onClick={logout}>

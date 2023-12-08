@@ -1,39 +1,47 @@
-import { useEffect, useState } from 'react'
-import { Button, Form, Panel, PanelGroup, SelectPicker } from 'rsuite'
-import { KMEditor, KMInput } from '../Content/KMInput'
+import { useEffect, useRef, useState } from 'react'
+import { Button, Form, Panel, PanelGroup, SelectPicker, Placeholder } from 'rsuite'
+import { KMEditor, KMInput, KMInputArea } from '../Content/KMInput'
 import CustomUpload from '../Upload/CustomUpload'
+// import { TinyMceEditor } from '../Editor/TinyMCE'
+import dynamic from 'next/dynamic'
+
+const TinyMceEditor = dynamic(() => import('../Editor/TinyMCE').then((m) => m.TinyMceEditor), {
+  ssr: false,
+  loading: () => <Placeholder.Graph active height={412} />,
+})
 
 export default function PostForm({ postData, onSubmit, router, ...props }) {
-  //   const formDataRef = useRef(postData)
-
   const [formData, setFormData] = useState(postData)
-
+  const editorRef = useRef(null)
   useEffect(() => {
     setFormData(postData)
   }, [postData])
 
+  const handleFormValueChange = (value) => {
+    setFormData(value)
+  }
+  const onFinish = () => {
+    const content = editorRef.current.getContent()
+    const value = {
+      ...formData,
+      content,
+    }
+    onSubmit(value)
+  }
+  console.log('render', formData)
   return (
     <Form
       formValue={formData}
-      className={'row p-2'}
+      className={'grid grid-cols-4 grid-rows-[2_auto] h-full overflow-hidden ' }
       fluid
-      onChange={(formValue) => {
-        setFormData((prev) => {
-          for (let key in formValue) {
-            if (prev[key] !== formValue[key]) {
-              prev[key] = formValue[key]
-            }
-          }
-          return prev
-        })
-      }}
+      onChange={handleFormValueChange}
     >
-      <div className="col-12">
+      <div className="col-span-4 row-span-1 ">
         <Button appearance="primary" onClick={() => router.back()}>
           Back
         </Button>
       </div>
-      <div className="col-9">
+      <div className="col-span-3 overflow-y-scroll">
         <PanelGroup>
           <Panel header="Tiêu đề" collapsible defaultExpanded>
             <KMInput name="title" />
@@ -42,14 +50,14 @@ export default function PostForm({ postData, onSubmit, router, ...props }) {
             <KMInput name="slug" />
           </Panel>
           <Panel header="Nội dung" collapsible defaultExpanded>
-            <KMEditor name="content" />
+            <TinyMceEditor name="content" forwardRef={editorRef} />
           </Panel>
           <Panel header="Mô tả" collapsible>
-            <KMEditor name="description" />
+            <KMInputArea name="description" />
           </Panel>
         </PanelGroup>
       </div>
-      <div className="col-3 ">
+      <div className="col-span-1 flex flex-col items-center">
         <Form.Group controlId="image">
           <Form.ControlLabel>Ảnh bài post</Form.ControlLabel>
           <Form.Control
@@ -79,13 +87,13 @@ export default function PostForm({ postData, onSubmit, router, ...props }) {
             cascade
           />
         </Form.Group>
-      </div>
-      <div className="d-flex justify-content-end col-12">
-        <Form.Group>
-          <Button appearance="primary" onClick={() => onSubmit(formData)}>
-            Tạo mới
-          </Button>
-        </Form.Group>
+        <div className="d-flex justify-content-end col-12">
+          <Form.Group>
+            <Button appearance="primary" onClick={onFinish}>
+              Tạo mới
+            </Button>
+          </Form.Group>
+        </div>
       </div>
     </Form>
   )

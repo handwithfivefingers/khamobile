@@ -58,7 +58,7 @@ export default function Category(props) {
               return (
                 <Link href={`/tin-tuc/${post.slug}`} passHref key={post._id}>
                   <article
-                    className={clsx('col-12', styles.gridItem, {
+                    className={clsx('col-span-12', styles.gridItem, {
                       [styles.firstItem]: index === 0,
                       [styles.secondItem]: index === 1,
                       [styles.thirdItem]: index === 2,
@@ -90,48 +90,43 @@ export default function Category(props) {
     <>
       <PostHelmet seo={props.seo} />
 
-      <div className="row p-0">
-        <div className="col-12 p-0">
+      <div className="grid grid-cols-12 p-0">
+        <div className="col-span-12 px-4">
           <PageHeader type="h3" left divideClass={styles.divideLeft}>
             Tin tức
           </PageHeader>
         </div>
-        <div className="col-12 p-0 py-2 border-top">
-          <div className="container">
-            <div className="row">
-              <div className={clsx([styles.vr, 'col-12'])}>
-                <Row gutter={[12, 12]}>
-                  <Col md={24}>
-                    <p>
-                      The category description can be positioned anywhere on the page via the layout page builder inside
-                      the
-                    </p>
-                  </Col>
-                </Row>
-
-                <Divider />
-
-                {renderPost()}
-                {posts.length ? (
-                  <div className="col-12">
-                    <div className={styles.pagi}>
-                      <Pagination
-                        prev
-                        last
-                        next
-                        first
-                        size="sm"
-                        total={posts.length}
-                        limit={10}
-                        activePage={activePage}
-                        onChangePage={(page) => setActivePage(page)}
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  ''
-                )}
+        <div className="col-span-12 px-4 py-2 border-t">
+          <div className="container mx-auto">
+            <div className="grid grid-cols-12">
+              <div className={clsx([styles.vr, 'col-span-12'])}>
+                <p>
+                  The category description can be positioned anywhere on the page via the layout page builder inside the
+                </p>
               </div>
+
+              <Divider />
+              <div className={clsx(['col-span-12'])}>{renderPost()}</div>
+
+              {posts.length ? (
+                <div className="col-span-12">
+                  <div className={styles.pagi}>
+                    <Pagination
+                      prev
+                      last
+                      next
+                      first
+                      size="sm"
+                      total={posts.length}
+                      limit={10}
+                      activePage={activePage}
+                      onChangePage={(page) => setActivePage(page)}
+                    />
+                  </div>
+                </div>
+              ) : (
+                ''
+              )}
             </div>
           </div>
         </div>

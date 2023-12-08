@@ -8,7 +8,7 @@ import { PATH_ROUTER } from 'src/constant/path.constant'
 const NavLink = forwardRef((props, ref) => {
   const { href, as, children, ...rest } = props
   return (
-    <Link href={href} passHref {...rest}>
+    <Link href={href} {...rest}>
       {children}
     </Link>
   )

@@ -18,8 +18,8 @@ const InformationGroup = forwardRef(({ stockData, productType }, ref) => {
     if (productType.type === 'simple') {
       html = (
         <>
-          <div className="col-12">
-            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+          <div className="col-span-12">
+            <div className="flex justify-start items-center" style={{ gap: 12 }}>
               <label style={{ minWidth: 150 }}>Giá niêm yết :</label>
               <KMPrice
                 name="regular_price"
@@ -32,8 +32,8 @@ const InformationGroup = forwardRef(({ stockData, productType }, ref) => {
             </div>
           </div>
 
-          <div className="col-12">
-            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+          <div className="col-span-12">
+            <div className="flex justify-start items-center" style={{ gap: 12 }}>
               <label style={{ minWidth: 150 }}>Giá tiền :</label>
               <KMPrice
                 name="price"
@@ -54,9 +54,9 @@ const InformationGroup = forwardRef(({ stockData, productType }, ref) => {
   return (
     <div className={styles.group}>
       <div className={styles.selectAttr}>
-        <div className="row gx-2 gy-3">
-          <div className="col-12">
-            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+        <div className="grid grid-cols-12 gap-4">
+          <div className="col-span-12">
+            <div className="flex justify-start items-center" style={{ gap: 12 }}>
               <label style={{ minWidth: 150 }}>Loại sản phẩm :</label>
               <Form.Group controlId="type">
                 <SelectPicker
@@ -76,8 +76,8 @@ const InformationGroup = forwardRef(({ stockData, productType }, ref) => {
 
           {renderPricingForSimpleProduct}
 
-          <div className="col-6">
-            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+          <div className="col-span-6">
+            <div className="flex justify-start items-center" style={{ gap: 12 }}>
               <div className="label">Hiển thị sản phẩm</div>
               <div className="label">
                 <CheckboxVariant
@@ -91,8 +91,8 @@ const InformationGroup = forwardRef(({ stockData, productType }, ref) => {
               </div>
             </div>
           </div>
-          <div className="col-6">
-            <div className="d-flex justify-content-start align-items-center" style={{ gap: 12 }}>
+          <div className="col-span-6">
+            <div className="flex justify-start items-center" style={{ gap: 12 }}>
               <div className="label">Còn hàng</div>
               <div className="label">
                 <CheckboxVariant
@@ -136,8 +136,8 @@ const CheckboxVariant = forwardRef(
       <>
         <Toggle
           defaultChecked={item?.[name] === checkValue}
-          checkedChildren={<CheckIcon />}
-          unCheckedChildren={<CloseIcon />}
+          checkedChildren={<CheckIcon className='flex items-center h-full'/>}
+          unCheckedChildren={<CloseIcon className='flex items-center h-full'/>}
           onChange={handleChange}
         />
       </>

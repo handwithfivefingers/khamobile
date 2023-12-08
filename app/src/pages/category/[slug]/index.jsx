@@ -36,7 +36,8 @@ export default function SingleCategory({ seo, slug, page, ...props }) {
 
   useEffect(() => {
     getScreenData()
-  }, [filter, slug])
+    console.log('slug', slug)
+  }, [filter, slug, page])
 
   const onFilterChange = (val) => {
     setFilter(val)
@@ -73,27 +74,26 @@ export default function SingleCategory({ seo, slug, page, ...props }) {
     if (data?.product?.items?.length) {
       let currentData = data?.product?.items?.slice((activePage - 1) * PAGE_SIZE, activePage * PAGE_SIZE)
       html = (
-        <div className="row">
-          <div className="col-12">
-            <div className={styles.grid}>
-              {currentData?.map((item) => {
-                return (
-                  <Card
-                    key={item._id}
-                    imgSrc={item.image?.[0]?.src || ''}
-                    title={item.title}
-                    price={item.price}
-                    underlinePrice={item?.underlinePrice || null}
-                    type={item.type}
-                    variable={item.variable}
-                    slug={`/product/${item.slug}`}
-                    hover
-                  />
-                )
-              })}
-            </div>
+        <div className="col-span-12">
+          <div className="max-w-[1120px] mx-auto gap-4 grid  2xl:grid-cols-6 xl:grid-cols-5 lg:grid-cols-5 md:grid-cols-4 grid-cols-2">
+            {currentData?.map((item) => {
+              return (
+                <Card
+                  key={item._id}
+                  imgSrc={item.image?.[0]?.src || ''}
+                  title={item.title}
+                  price={item.price}
+                  underlinePrice={item?.underlinePrice || null}
+                  type={item.type}
+                  variable={item.variable}
+                  slug={`/product/${item.slug}`}
+                  hover
+                  className="col-span-1"
+                />
+              )
+            })}
           </div>
-          <div className="col-12">
+          <div className="col-span-12">
             <div className={styles.pagi}>
               <Pagination
                 prev
@@ -110,34 +110,44 @@ export default function SingleCategory({ seo, slug, page, ...props }) {
       )
     } else {
       html = (
-        <div className="d-flex justify-content-center flex-column align-items-center">
-          <BsInboxes style={{ fontSize: 36, color: 'var(--rs-blue-800)' }} />
-          <p className="text-secondary">Không có sản phẩm phù hợp với tiêu chí bạn tìm</p>
+        <div className="flex flex-col items-center justify-center w-full flex-1 col-span-12 bg-slate-100 rounded px-4 py-20 gap-4">
+          <BsInboxes style={{ fontSize: 36, color: 'var(--rs-blue-800)' }} className="text-4xl !text-blue-500" />
+          <p className="text-blue-600">Không có sản phẩm phù hợp với tiêu chí bạn tìm</p>
         </div>
       )
     }
     return html
   }, [data.product])
-
+  console.log('data', data.cate)
   return (
     <>
       <PostHelmet seo={seo} />
-      <div className="row p-0">
-        <div className="col-12 p-0">
-          <PageHeader type="h3" left divideClass={styles.divideLeft}>
+      <div className="grid grid-cols-12 p-0">
+        <div className="col-span-12 px-4">
+          <PageHeader type="h3" left divideClass={styles.divideLeft} >
             Danh mục: {data?.cate?.name}
           </PageHeader>
         </div>
-        <div className="col-12 p-0 py-2 border-top">
-          <div className="container product_detail">
-            <div className="row gy-4">
-              <div className="col-3">
-                <ImageBlock src={data?.cate?.image || ''} engine={data?.cate?.image ? true : false} />
+        <div className="col-span-12 px-4 py-2 border-t">
+          <div className="container mx-auto product_detail">
+            <div className="grid grid-cols-12 gap-y-4">
+              <div className="col-span-3">
+                <ImageBlock
+                  alt={data?.cate?.name}
+                  src={data?.cate?.image?.src}
+                  engine={data?.cate?.image?.src ? true : false}
+                  width={400}
+                  height={200}
+                  loading="lazy"
+                  modal
+                  key={['category']}
+                  objectFit="contain"
+                />
               </div>
-              <div className="col-9">
+              <div className="col-span-9">
                 <p>{data.cate?.description}</p>
               </div>
-              <div className="col-24">
+              <div className="col-span-12">
                 <SideFilter onChange={onFilterChange} filter={filter} tagClick={tagClick} withMemory />
               </div>
               <Divider />

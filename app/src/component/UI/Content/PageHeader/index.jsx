@@ -45,5 +45,5 @@ export default function PageHeader(props) {
     }
   }
 
-  return <div className={clsx(styles.heading, 'container py-2')}>{getHeading()}</div>
+  return <div className={clsx(styles.heading, 'container mx-auto py-2')}>{getHeading()}</div>
 }

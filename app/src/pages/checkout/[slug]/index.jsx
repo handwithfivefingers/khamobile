@@ -71,7 +71,6 @@ const USER_SERVICE = {
 
 export default function OrderReceived({ data }) {
   const [tabsBank, setTabsBank] = useState(0)
-  const router = useRouter()
 
   const renderPaymentContent = () => {
     let html = null
@@ -80,7 +79,7 @@ export default function OrderReceived({ data }) {
       case 'transfer':
         html = (
           <>
-            <h5 className="text-secondary">Chuyển khoản ngân hàng</h5>
+            <h5 className="text-[rgba(0,0,0,50%) font-normal">Chuyển khoản ngân hàng</h5>
 
             <CardBlock className="border-0">
               <Stack>
@@ -88,8 +87,8 @@ export default function OrderReceived({ data }) {
                 {USER_SERVICE.name}
               </Stack>
 
-              <div className="row py-2">
-                <div className="col-12 col-sm-12 col-md-6 col-lg-4 d-flex flex-column p-2">
+              <div className="grid grid-cols-12 gap-2">
+                <div className="col-span-12 sm:col-span-12 md:col-span-6 lg:col-span-4 flex flex-col p-2">
                   {USER_SERVICE.value.map(({ bankName, bankCode }, index) => {
                     return (
                       <Button
@@ -104,7 +103,7 @@ export default function OrderReceived({ data }) {
                   })}
                 </div>
 
-                <div className="col-12 col-sm-12 col-md-6  col-lg-8 p-2">
+                <div className="col-span-12 sm:col-span-12 md:col-span-6 lg:col-span-8">
                   <Tag color="blue" id="p" size="lg" style={{ background: 'var(--rs-blue-700)' }}>
                     <span>
                       {USER_SERVICE.value[tabsBank].bankName} : {USER_SERVICE.value[tabsBank].bankCode}
@@ -131,7 +130,7 @@ export default function OrderReceived({ data }) {
               'bg-primary ': !data.status || data.status != 'completed',
             })}
           >
-            <h5 className="text-light d-flex align-item-center">
+            <h5 className="text-light flex item-center">
               {data.status == 'completed' ? (
                 <BiCheck style={{ fontSize: 36 }} />
               ) : (
@@ -152,26 +151,26 @@ export default function OrderReceived({ data }) {
 
   if (!data)
     return (
-      <div className="d-flex justify-content-center flex-column align-items-center">
+      <div className="flex justify-center flex-col items-center">
         <BsInboxes style={{ fontSize: 36, color: 'var(--rs-blue-800)' }} />
         <p className="text-secondary">Không có sản phẩm phù hợp với tiêu chí bạn tìm</p>
       </div>
     )
   return (
-    <div className="row p-0">
-      <div className="col-12 p-0">
+    <div className="grid grid-cols-12 p-0">
+      <div className="col-span-12 px-4">
         <PageHeader type="h3" left>
           Ordered
         </PageHeader>
       </div>
-      <div className="col-12 p-0 py-2 border-top">
-        <div className="container">
-          <Form className="row gx-4 gy-4" plaintext formValue={data}>
-            <div className="col-12 col-md-12 col-lg-8">
-              <div className="row gx-4 gy-4">
-                <div className="col-12">{renderPaymentContent()}</div>
-                <div className="col-12">
-                  <h5 className="text-secondary">Thông tin đơn hàng</h5>
+      <div className="col-span-12 px-4 py-2 border-t">
+        <div className="container mx-auto">
+          <Form className="grid grid-cols-12 gap-4" plaintext formValue={data}>
+            <div className="col-span-12 md:col-span-12 lg:col-span-8 ">
+              <div className="grid gird-cols-12 gap-y-4">
+                <div className="col-span-12">{renderPaymentContent()}</div>
+                <div className="col-span-12">
+                  <h5 className="text-[rgba(0,0,0,50%) font-normal">Thông tin đơn hàng</h5>
 
                   <CardBlock className="border-0">
                     <List>
@@ -218,8 +217,8 @@ export default function OrderReceived({ data }) {
                   </CardBlock>
                 </div>
 
-                <div className="col-12">
-                  <h5 className="text-secondary"></h5>
+                <div className="col-span-12">
+                  <h5 className="text-[rgba(0,0,0,50%) font-normal"></h5>
                   <CardBlock className="border-0">
                     <p>Chúng tôi sẽ liên lạc lại với bạn sau ít phút</p>
                     <ul>
@@ -227,14 +226,14 @@ export default function OrderReceived({ data }) {
                         <h6>Mọi thắc mắc xin vui lòng liên hệ:</h6>
                         <li>
                           <IconButton icon={<MessageIcon />} appearance="subtle" />
-                          <span className="text-dark">
+                          <span className="text-[#333]">
                             220/9A, Đường Xô Viết Nghệ Tĩnh, Phường 21, Bình Thạnh, Hồ Chí Minh
                           </span>
                         </li>
                         <li>
                           <IconButton icon={<PhoneIcon />} appearance="subtle" />
                           <span>
-                            <a href="tel:+0777999966" className="text-dark">
+                            <a href="tel:+0777999966" className="text-[#333]">
                               0777 9999 66
                             </a>
                           </span>
@@ -242,7 +241,7 @@ export default function OrderReceived({ data }) {
                         <li>
                           <IconButton icon={<MessageIcon />} appearance="subtle" />
                           <span>
-                            <a href="mailto:kha44mobile@gmail.com" className="text-dark">
+                            <a href="mailto:kha44mobile@gmail.com" className="text-[#333]">
                               kha44mobile@gmail.com
                             </a>
                           </span>
@@ -253,10 +252,10 @@ export default function OrderReceived({ data }) {
                 </div>
               </div>
             </div>
-            <div className="col-12 col-md-12 col-lg-4">
-              <div className="row gy-4">
-                <div className="col-12">
-                  <h5 className="text-secondary">Thông tin cá nhân</h5>
+            <div className="col-span-12 md:col-span-12 lg:col-span-4">
+              <div className="grid grid-cols-12 gap-y-4">
+                <div className="col-span-12">
+                  <h5 className="text-[rgba(0,0,0,50%) font-normal">Thông tin cá nhân</h5>
                   <CardBlock className="border-0">
                     <KMInput name="fullName" label="Họ và tên" value={data?.['userInformation']?.['fullName']} />
                     <KMInput name="phone" label="Số điện thoại liên lạc" value={data?.['userInformation']?.['phone']} />
@@ -264,8 +263,8 @@ export default function OrderReceived({ data }) {
                   </CardBlock>
                 </div>
 
-                <div className="col-12">
-                  <h5 className="text-secondary">Địa chỉ giao hàng/ thanh toán</h5>
+                <div className="col-span-12">
+                  <h5 className="text-[rgba(0,0,0,50%) font-normal">Địa chỉ giao hàng/ thanh toán</h5>
 
                   <CardBlock className="border-0">
                     <KMInput name="city" label="Thành phố" value={data?.['deliveryInformation']?.['city']} />
@@ -275,9 +274,8 @@ export default function OrderReceived({ data }) {
                   </CardBlock>
                 </div>
 
-                <div className="col-12">
-                  <h5 className="text-secondary">Thông tin giao nhận</h5>
-
+                <div className="col-span-12">
+                  <h5 className="text-[rgba(0,0,0,50%) font-normal">Thông tin giao nhận</h5>
                   <CardBlock className="border-0">
                     <Form.Group controlId="radioList">
                       <RadioGroup name="radioList" value={data?.deliveryType} plaintext>

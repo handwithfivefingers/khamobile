@@ -22,7 +22,15 @@ const Pages = () => {
     try {
       setLoading(true)
       const resp = await PageService.getPages()
-      setPage(resp.data.data)
+      const data = [
+        ...resp.data.data,
+        {
+          _id: 'demo',
+          title: 'demo',
+          slug: 'demo',
+        },
+      ]
+      setPage(data)
     } catch (error) {
       console.log(error)
     } finally {
@@ -56,7 +64,7 @@ const Pages = () => {
                     appearance="primary"
                     icon={<EditIcon />}
                     color="blue"
-                    disabled={rowData.slug !== '/'}
+                    disabled={rowData.slug !== '/' && rowData.slug !== 'demo'}
                   />
                 </span>
               )}

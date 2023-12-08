@@ -2,9 +2,7 @@ import EyeIcon from '@rsuite/icons/legacy/Eye'
 import EyeSlashIcon from '@rsuite/icons/legacy/EyeSlash'
 import { forwardRef, useState } from 'react'
 import { Form, Input, InputGroup, MaskedInput, SelectPicker } from 'rsuite'
-import dynamic from 'next/dynamic'
 import { NumericFormat } from 'react-number-format'
-const Textarea = dynamic(() => import('component/UI/Editor'))
 
 const CustomInput = forwardRef((props, ref) => {
   if (props.type) {
@@ -72,19 +70,6 @@ const KMSelect = ({ name, label, ...props }) => {
   )
 }
 
-const KMEditor = ({ name, label, ...props }) => {
-  const handleChange = (value) => {
-    if (props.onChange) props?.onChange(value)
-  }
-
-  return (
-    <Form.Group controlId={name}>
-      {label && <Form.ControlLabel>{label}</Form.ControlLabel>}
-      <Form.Control name={name} accepter={Textarea} {...props} onChange={handleChange} />
-    </Form.Group>
-  )
-}
-
 const KMPrice = ({ name, label, onChange, ...props }) => {
   const handleOnChange = (v) => {
     if (onChange) {
@@ -118,7 +103,23 @@ const Pricing = forwardRef(({ value, onChange, placeholder, ...props }, ref) => 
     />
   )
 })
-
+const KMInputArea = ({ name, label, onChange, helpText, ...props }) => {
+  const handleOnChange = (v) => {
+    if (onChange) {
+      onChange(v)
+    }
+  }
+  return (
+    <Form.Group controlId={name}>
+      <Form.ControlLabel>{label}</Form.ControlLabel>
+      <Form.Control name={name} accepter={InputAreaProxy} {...props} onChange={handleOnChange} />
+      {helpText && <Form.HelpText>{helpText}</Form.HelpText>}
+    </Form.Group>
+  )
+}
+const InputAreaProxy = forwardRef((props, ref) => {
+  return <input className="rs-input" type="textarea" {...props} ref={ref} />
+})
 const InputProxy = forwardRef((props, ref) => {
   return <input className="rs-input" type="text" {...props} ref={ref} />
 })
@@ -127,4 +128,4 @@ const MaskInput = forwardRef((props, ref) => {
   return <MaskedInput {...props} ref={ref} />
 })
 
-export { KMInput, KMSelect, KMEditor, KMInputPassword, KMPrice, Pricing }
+export { KMInput, KMSelect, KMInputPassword, KMPrice, Pricing, KMInputArea }

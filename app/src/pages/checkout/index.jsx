@@ -105,11 +105,11 @@ export default function Checkout() {
     } else {
       html = (
         <>
-          <div className="col-12">
+          <div className="col-span-12">
             <UserInformation ref={informationRef} data={informationRef.current} />
           </div>
 
-          <div className="col-12">
+          <div className="col-span-12">
             <DeliveryInformation ref={formRef} />
           </div>
         </>
@@ -124,25 +124,25 @@ export default function Checkout() {
         title="Thanh toán - Kha Mobile - Giá rẻ mỗi ngày"
         description="Thanh toán - Kha Mobile - Giá rẻ mỗi ngày"
       />
-      <div className="row p-0">
-        <div className="col-12 p-0">
+      <div className="grid grid-cols-12 p-0">
+        <div className="col-span-12 px-4">
           <PageHeader type="h3" left>
             Thanh toán
           </PageHeader>
         </div>
-        <div className="col-12 p-0 py-2 border-top">
-          {!cart?.length && <NoData description={'Sản phẩm không tồn tại, vui lòng thử lại'} />}
+        <div className="col-span-12 px-4 py-2 border-t">
+          {(!cart?.length && <NoData description={'Sản phẩm không tồn tại, vui lòng thử lại'} />) || ''}
 
-          {cart.length && (
-            <div className="container">
-              <div className="row gx-4 gy-4">
-                <div className="col-12 col-md-6 col-lg-6 col-xl-6">
-                  <div className="row gy-4">{renderUserInformationByCondition()}</div>
+          {(cart.length && (
+            <div className="container mx-auto">
+              <div className="grid grid-cols-12 gap-4">
+                <div className="col-span-12 md:col-span-6 lg:col-span-6 xl:col-span-6">
+                  <div className="grid grid-cols-12 gap-4">{renderUserInformationByCondition()}</div>
                 </div>
-                <div className="col-12 col-md-6 col-lg-6 col-xl-6">
-                  <div className="row gx-4 gy-4">
-                    <div className="col-12">
-                      <h5 className="text-secondary">Thông tin giao nhận</h5>
+                <div className="col-span-12 md:col-span-6 lg:col-span-6 xl:col-span-6">
+                  <div className="grid grid-cols-12 gap-4">
+                    <div className="col-span-12">
+                      <h5 className="text-[rgba(0,0,0,50%) font-normal">Thông tin giao nhận</h5>
 
                       <CardBlock className="border-0">
                         <Form.Group controlId="radioList">
@@ -158,13 +158,13 @@ export default function Checkout() {
                       </CardBlock>
                     </div>
 
-                    <div className="col-12">
-                      <h5 className="text-secondary">Thông tin đơn hàng</h5>
+                    <div className="col-span-12">
+                      <h5 className="text-[rgba(0,0,0,50%) font-normal">Thông tin đơn hàng</h5>
 
                       <TableInformation product={formRef.current?.product} price={price} />
                     </div>
-                    <div className="col-12">
-                      <h5 className="text-secondary">Hình thức thanh toán</h5>
+                    <div className="col-span-12">
+                      <h5 className="text-[rgba(0,0,0,50%)] font-normal">Hình thức thanh toán</h5>
                       <CardBlock className="border-0">
                         <Form.Group controlId="radioList">
                           <RadioGroup
@@ -173,13 +173,15 @@ export default function Checkout() {
                             defaultValue={formRef.current?.paymentType}
                           >
                             <Radio value="transfer">Chuyển khoản</Radio>
-                            <Radio value="vnpay" disabled>Qua Vn-Pay</Radio>
+                            <Radio value="vnpay" disabled>
+                              Qua Vn-Pay
+                            </Radio>
                           </RadioGroup>
                         </Form.Group>
                       </CardBlock>
                     </div>
 
-                    <div className="col-12">
+                    <div className="col-span-12">
                       <div className={styles.action}>
                         <ButtonGroup>
                           <Button
@@ -197,7 +199,8 @@ export default function Checkout() {
                 </div>
               </div>
             </div>
-          )}
+          )) ||
+            ''}
         </div>
       </div>
     </>
@@ -225,7 +228,7 @@ const UserInformation = forwardRef(({ data, ...props }, ref) => {
       ref={userForm}
       model={UserInformationModel}
     >
-      <h5 className="text-secondary">Thông tin cá nhân</h5>
+      <h5 className="text-[rgba(0,0,0,50%) font-normal">Thông tin cá nhân</h5>
       <CardBlock className="border-0">
         <FlexboxGrid style={{ gap: 12, flexDirection: 'column' }}>
           <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">
@@ -285,7 +288,7 @@ const DeliveryInformation = forwardRef(({ data, ...props }, ref) => {
 
   return (
     <Form key={['delivery']} formValue={state} ref={deliveryForm} model={DeliveryModel}>
-      <h5 className="text-secondary">Địa chỉ giao hàng/ thanh toán</h5>
+      <h5 className="text-[rgba(0,0,0,50%) font-normal">Địa chỉ giao hàng/ thanh toán</h5>
 
       <CardBlock className="border-0">
         <FlexboxGrid.Item style={{ width: '100%' }} className="w-100">

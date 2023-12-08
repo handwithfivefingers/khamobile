@@ -1,12 +1,10 @@
-import { Paragraph } from '@rsuite/icons'
 import AdminLayout from 'component/UI/AdminLayout'
 import BarChart from 'component/UI/Chart/BarChart'
-import LineChart from 'component/UI/Chart/LineChart'
 import PolaArea from 'component/UI/Chart/PolaArea'
 import CardBlock from 'component/UI/Content/CardBlock'
 import Copyright from 'component/UI/Copyright'
 import { useEffect, useMemo, useState } from 'react'
-import { Button, ButtonGroup, Col, Panel, Placeholder, Row } from 'rsuite'
+import { Col, Placeholder, Row } from 'rsuite'
 import OrderService from 'service/admin/Order.service'
 
 const Admin = () => {
@@ -33,29 +31,23 @@ const Admin = () => {
     <>
       <Row className="dashboard-header p-3">
         <Col xs={8}>
-          <CardBlock className="border-0  w-100">
+          <CardBlock className="border-0 w-100">
             <h5>Tổng số lượng sản phẩm</h5>
-            <p>
-              <Placeholder.Paragraph rows={2} />
-            </p>
+            <Placeholder rows={4} />
           </CardBlock>
         </Col>
 
         <Col xs={8}>
           <CardBlock className="border-0 w-100">
             <h5>Doanh thu</h5>
-            <p>
-              <Placeholder.Paragraph rows={2} />
-            </p>
+            <Placeholder rows={5} />
           </CardBlock>
         </Col>
 
         <Col xs={8}>
           <CardBlock className="border-0 w-100">
             <h5>Doanh thu</h5>
-            <p>
-              <Placeholder.Paragraph rows={2} />
-            </p>
+            <Placeholder rows={4} />
           </CardBlock>
         </Col>
       </Row>

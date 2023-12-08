@@ -1,7 +1,5 @@
-import clsx from 'clsx'
 import React, { useEffect, useRef, useState } from 'react'
 import MyUploadAdapter from './UploadAdapter'
-import styles from './styles.module.scss'
 function CKeditorComponent({ onChange, editorLoaded, name, value, className }) {
   const [editorValue, setEditorValue] = useState(value)
 

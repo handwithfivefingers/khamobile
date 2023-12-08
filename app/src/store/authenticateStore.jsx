@@ -1,6 +1,6 @@
-import { create } from 'zustand'
-import { devtools, persist, createJSONStorage } from 'zustand/middleware'
 import pipe from 'ramda/es/pipe'
+import { create } from 'zustand'
+import { devtools, persist } from 'zustand/middleware'
 
 const authenticateState = {
   authenticate: false,

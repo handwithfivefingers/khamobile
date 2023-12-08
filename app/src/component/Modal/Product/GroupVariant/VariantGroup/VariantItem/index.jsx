@@ -10,13 +10,13 @@ const VariantItem = forwardRef(({ data, attributes, attributesItem, position, ..
   const imageRef = useRef()
   console.log(ref.current[position].image?.src)
   return (
-    <div className="row">
-      <div className="col-8">
-        <div className="row">
-          <div className="col-12">
-            <div className="d-flex justify-content-start" style={{ gap: 12 }}>
+    <div className="grid grid-cols-12">
+      <div className="col-span-8">
+        <div className="grid grid-cols-12">
+          <div className="col-span-12">
+            <div className="flex justify-start" style={{ gap: 12 }}>
               <Form.Group controlId={['purchasable', position]}>
-                <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                <Form.ControlLabel className="text-gray-400" style={{ fontWeight: 500 }}>
                   Hiển thị
                 </Form.ControlLabel>
                 <CheckboxVariant
@@ -29,7 +29,7 @@ const VariantItem = forwardRef(({ data, attributes, attributesItem, position, ..
                 />
               </Form.Group>
               <Form.Group controlId={['instock', position]}>
-                <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                <Form.ControlLabel className="text-gray-400" style={{ fontWeight: 500 }}>
                   Còn hàng
                 </Form.ControlLabel>
                 <CheckboxVariant
@@ -43,17 +43,17 @@ const VariantItem = forwardRef(({ data, attributes, attributesItem, position, ..
               </Form.Group>
             </div>
           </div>
-          <div className="col-12">
-            <div className="d-flex justify-content-start" style={{ gap: 12 }}>
+          <div className="col-span-12">
+            <div className="flex justify-start" style={{ gap: 12 }}>
               <Form.Group controlId={['price', position]}>
-                <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                <Form.ControlLabel className="text-gray-400" style={{ fontWeight: 500 }}>
                   Giá tiền
                 </Form.ControlLabel>
                 <PInput position={position} value={data?.price} name={'price'} ref={ref} price />
               </Form.Group>
 
               <Form.Group controlId={['regular_price', position]}>
-                <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+                <Form.ControlLabel className="text-gray-400" style={{ fontWeight: 500 }}>
                   Giá niêm yết
                 </Form.ControlLabel>
                 <PInput position={position} value={data?.regular_price} name={'regular_price'} ref={ref} price />
@@ -62,29 +62,10 @@ const VariantItem = forwardRef(({ data, attributes, attributesItem, position, ..
           </div>
         </div>
       </div>
-      <div className="col-4">
-        <div className="d-flex flex-column align-items-center">
+      <div className="col-span-4">
+        <div className="flex flex-col items-center">
           <label>Hình ảnh</label>
-          {/* <Uploader
-            name="upload"
-            action={process.env.API + '/api/upload'}
-            withCredentials={true}
-            onSuccess={(response, file) => {
-              let { information } = props
-              let { setProductInformation } = information
-              let nextState = ref.current
-              let currentItem = nextState[position]
-              currentItem.image = {
-                src: response.url,
-                name: file.name,
-              }
-              setProductInformation(nextState, 'variations')
-            }}
-            onError={(error) => {
-              console.log(error)
-            }}
-            style={{ width: 50 }}
-          /> */}
+
           <CustomUpload
             value={ref.current[position].image}
             name="upload"
@@ -113,7 +94,7 @@ const VariantItem = forwardRef(({ data, attributes, attributesItem, position, ..
         <div className="d-flex justify-content-start" style={{ gap: 12 }}>
           {Object.keys(attributesItem).map((key) => (
             <Form.Group controlId={[key, position]}>
-              <Form.ControlLabel className="text-muted" style={{ fontWeight: 500 }}>
+              <Form.ControlLabel className="text-gray-400" style={{ fontWeight: 500 }}>
                 {key}
               </Form.ControlLabel>
               <Select attributes={attributes} position={position} name={key} ref={ref} />
@@ -202,8 +183,8 @@ const CheckboxVariant = forwardRef(
     return (
       <Toggle
         defaultChecked={item?.[name] === checkValue}
-        checkedChildren={<CheckIcon />}
-        unCheckedChildren={<CloseIcon />}
+        checkedChildren={<CheckIcon className='flex items-center h-full'/>}
+        unCheckedChildren={<CloseIcon className='flex items-center h-full'/>}
         onChange={handleChange}
       />
     )
