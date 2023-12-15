@@ -1,5 +1,5 @@
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   /* config options here */
   images: {
     formats: ['image/webp'],
@@ -34,6 +34,15 @@ const nextConfig = {
     GG_CLIENT_ID: process.env.GG_CLIENT_ID,
     GG_CLIENT_SECRET: process.env.GG_CLIENT_SECRET,
   },
+  // webpack: (config, { buildId, dev, isServer, defaultLoaders, nextRuntime, webpack }) => {
+  //   // Important: return the modified config
+  //   config.externals = {
+  //     'react-un': 'window.unlayer.React',
+  //     'react-dom-un': 'window.unlayer.ReactDOM',
+  //     'react-dnd-un': 'window.unlayer.ReactDND',
+  //   }
+  //   return config
+  // },
 }
 
 module.exports = nextConfig

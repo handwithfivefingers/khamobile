@@ -15,13 +15,16 @@ const AdminLayout = ({ children, ...props }) => {
   const authenticate = useAuthorizationStore((state) => state.authenticate)
   const isAuthenticating = useAuthorizationStore((state) => state.isAuthenticating)
   const [grid, setGrid] = useState(false)
+  
   useEffect(() => {
     if (!authenticate && isAuthenticating) {
       router.push('/login')
     }
   }, [authenticate, isAuthenticating])
+
+
+
   const handleExpand = (isExpand) => {
-    console.log('isExpande', isExpand)
     setGrid(isExpand)
   }
   // if (!authenticate && !isAuthenticating) return <svg class="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24"></svg>

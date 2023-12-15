@@ -34,7 +34,7 @@ const headerStyles = {
 }
 
 export default function KMSidebar({ onExpand }) {
-  const [expand, setExpand] = useState(true)
+  const [expand, setExpand] = useState(false)
 
   const { changeAuthenticateStatus } = useAuthorizationStore((state) => state)
   const router = useRouter()
