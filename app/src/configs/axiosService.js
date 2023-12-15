@@ -1,7 +1,7 @@
 import axios from 'axios'
 
 const instance = axios.create({
-  baseURL: `http://kha-server:3000/api`,
+  baseURL: process.env.API + `/api`,
   timeout: 1000 * 30, // Wait for 30 seconds
   headers: {
     'Access-Control-Allow-Origin': '*',
