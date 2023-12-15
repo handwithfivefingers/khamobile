@@ -19,7 +19,7 @@ export default function SinglePage(props) {
   const toaster = useToaster()
   const [loading, setLoading] = useState(false)
   useEffect(() => {
-    const { _id } = router.query
+    const { _id } = router?.query
     if (_id) {
       getScreenData(_id)
     }
@@ -75,7 +75,7 @@ export default function SinglePage(props) {
         placement: 'topEnd',
       })
     } finally {
-      getScreenData(router.query._id)
+      getScreenData(router?.query?._id)
     }
   }
 

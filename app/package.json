@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "next dev",
     "start": "next start",
-    "build:prod": "cross-env --max-old-space-size=500 next build",
+    "build:prod": "next build",
     "editor-install": "node ./postinstall.js"
   },
   "dependencies": {

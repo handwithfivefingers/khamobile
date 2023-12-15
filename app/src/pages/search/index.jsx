@@ -21,11 +21,11 @@ export default function Search() {
 
   useEffect(() => {
     getCategories()
-    let { q } = router.query
+    let { q } = router?.query
     if (q) {
       getScreenData(q)
     }
-  }, [router.query])
+  }, [router?.query])
 
   const getCategories = async () => {
     const resp = await GlobalCategoryService.getProdCate({ all: true })
@@ -110,7 +110,7 @@ export default function Search() {
       <div className="row p-0">
         <div className="col-12 p-0">
           <PageHeader type="h3" left divideClass={styles.divideLeft}>
-            Kết Quả Tìm Kiếm: '{router.query.q}'
+            Kết Quả Tìm Kiếm: '{router?.query?.q}'
           </PageHeader>
         </div>
         <div className="col-12 p-0 py-2 border-top">
