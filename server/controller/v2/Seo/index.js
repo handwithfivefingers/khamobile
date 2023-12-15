@@ -12,11 +12,12 @@ export default class SeoController {
         url: `${process.env.CANONICAL}`,
         breadcrumb: [{ title: 'Trang chủ', url: process.env.CANONICAL }],
       })
-
+      console.log('getHomeSeo success')
       return res.status(200).json({
         seo: [seoTags.head, seoTags.body],
       })
     } catch (error) {
+      console.log('getHomeSeo error', error)
       return res.status(400).json({
         message: 'something went wrong',
       })
