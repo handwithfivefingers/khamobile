@@ -24,9 +24,11 @@ const BaoKim = (props) => {
     script.src = baokimScript
 
     script.onload = () => {
-      document.querySelector(
-        '.bk-btn-paynow',
-      ).innerHTML = `<div class="p-1"><strong>Mua ngay (Bảo Kim)</strong><span>Giao tận nơi hoặc nhận tại cửa hàng</span></div>`
+      if (document.querySelector('.bk-btn-paynow')) {
+        document.querySelector(
+          '.bk-btn-paynow',
+        ).innerHTML = `<div class="p-1"><strong>Mua ngay (Bảo Kim)</strong><span>Giao tận nơi hoặc nhận tại cửa hàng</span></div>`
+      }
     }
     document.body.appendChild(script)
   }

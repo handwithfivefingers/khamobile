@@ -96,6 +96,15 @@ export default class ProductCategoryController {
             localField: '_id',
             foreignField: 'category',
             as: 'child',
+            pipeline:[
+              {
+                  $match: {   
+                      "purchasable" : {
+                          $ne: false
+                      }
+                  }
+              }
+          ]
           },
         },
         {

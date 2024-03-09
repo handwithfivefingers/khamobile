@@ -66,6 +66,8 @@ export default class ProductController {
               type: '$type',
               image: '$image',
               primary: '$primary',
+              stock_status: "$stock_status",
+              purchasable:"$purchasable",
               information: '$information',
               'attr._id': '$variations._id',
               'attr.price': '$variations.price',
@@ -92,6 +94,8 @@ export default class ProductController {
                 image: '$image',
                 attributes: '$attributes',
                 information: '$information',
+                stock_status: "$stock_status",
+                purchasable:"$purchasable"
               },
               variations: {
                 $push: {
@@ -120,6 +124,8 @@ export default class ProductController {
               attributes: '$_id.attributes',
               information: '$_id.information',
               variations: '$variations',
+              stock_status: "$_id.stock_status",
+              purchasable: "$_id.purchasable"
             },
           },
         ])

@@ -14,6 +14,23 @@ import isEqual from 'lodash/isEqual'
 
 import styles from './styles.module.scss'
 
+const ButtonOutOfStock = () => {
+  return (
+    <a
+      appearance="primary"
+      className={clsx(
+        styles.btnIcon,
+        '!bg-red-600 shadow-lg shadow-red-600/50 py-2 rounded text-white text-center justify-center hover:no-underline hover:text-white hover:!bg-red-800 transition-all',
+      )}
+      href="tel:+0777999966"
+    >
+      <div className="flex flex-row items-center gap-4">
+        <BiCart style={{ fontSize: 20 }} />
+        <span style={{ fontSize: 16 }}> Liên hệ</span>
+      </div>
+    </a>
+  )
+}
 const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
   const pricingRef = useRef()
 
@@ -47,8 +64,6 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
   useEffect(() => {
     if (form.variantId) {
       let item = _relationProd.find((item) => item._id === form.variantId)
-
-      console.log(item)
       outputSelect?.(item)
     }
   }, [form])
@@ -180,7 +195,7 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
         setForm((prev) => ({ ...prev, ...rest, image: data?.image, variantId: _id }))
       } else {
         setForm({ quantity: 1, image: data?.image, _id: data?._id })
-
+        console.log('productFiltered', productFiltered)
         productFiltered = filterProductByAttributeName({ [attributeName]: value })
       }
     }
@@ -247,6 +262,48 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
     })
     return html
   }
+  console.log('form', form)
+
+  const renderButtonByStock = () => {
+    // if (data.stock_status !== 'outofstock') {
+
+    // }
+    if (data.stock_status === 'outofstock' || form.stock_status === 'outofstock') {
+      return <ButtonOutOfStock />
+    }
+    return (
+      <>
+        <input type="hidden" value={form.quantity} className="bk-product-qty" />
+
+        <Button
+          appearance="primary"
+          className={clsx(styles.btnIcon, '!bg-blue-500 shadow-lg shadow-blue-500/50')}
+          onClick={handleBuyNow}
+          disabled={!(form?.price * form?.quantity)}
+        >
+          <div className="flex flex-col">
+            <span>Mua ngay</span>
+            <span style={{ fontSize: 12 }}>( giao tận nơi hoặc lấy tại cửa hàng )</span>
+          </div>
+        </Button>
+
+        <Button
+          color="red"
+          appearance="primary"
+          className={clsx(styles.btnIcon, 'bg-red-600 shadow-lg shadow-red-600/50 ')}
+          onClick={handleAddToCart}
+          disabled={!(form?.price * form?.quantity)}
+        >
+          <div className="flex flex-col items-center">
+            <BiCart style={{ fontSize: 20 }} />
+            <span style={{ fontSize: 12 }}> Thêm vào giỏ hàng</span>
+          </div>
+        </Button>
+
+        {renderBaoKimElement}
+      </>
+    )
+  }
 
   const renderBaoKimElement = useMemo(() => {
     let html = null
@@ -290,37 +347,7 @@ const ProductForm = ({ data, _relationProd, outputSelect, ...props }) => {
 
           <Divider className="my-2" />
 
-          <div className={clsx(styles.groupVariant)}>
-            <input type="hidden" value={form.quantity} className="bk-product-qty" />
-
-            <Button
-              appearance="primary"
-              className={clsx(styles.btnIcon, '!bg-blue-500 shadow-lg shadow-blue-500/50')}
-              onClick={handleBuyNow}
-              disabled={!(form?.price * form?.quantity)}
-            >
-              <div className="flex flex-col">
-                <span>Mua ngay</span>
-                <span style={{ fontSize: 12 }}>( giao tận nơi hoặc lấy tại cửa hàng )</span>
-              </div>
-            </Button>
-
-            <Button
-              color="red"
-              appearance="primary"
-              className={clsx(styles.btnIcon, 'bg-red-800 shadow-lg shadow-red-800/50')}
-              onClick={handleAddToCart}
-              // style={{ background: 'var(--rs-red-800)', color: '#fff' }}
-              disabled={!(form?.price * form?.quantity)}
-            >
-              <div className="flex flex-col items-center">
-                <BiCart style={{ fontSize: 20 }} />
-                <span style={{ fontSize: 12 }}> Thêm vào giỏ hàng</span>
-              </div>
-            </Button>
-
-            {renderBaoKimElement}
-          </div>
+          <div className={clsx(styles.groupVariant)}>{renderButtonByStock()}</div>
 
           <div id="bk-modal"></div>
         </Panel>

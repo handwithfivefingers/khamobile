@@ -11,7 +11,7 @@ export default class ProductController {
 
       let parentItem = await Product.findOne({
         slug,
-      }).select('_id title attributes content description information image type price regular_price')
+      }).select('_id title attributes content description information image type price regular_price stock_status')
 
       let _relationProd = await Product.aggregate([
         {
@@ -132,6 +132,7 @@ export default class ProductController {
             pipeline: [
               {
                 $limit: 6,
+                purchasable: true
               },
             ],
             as: 'child',
