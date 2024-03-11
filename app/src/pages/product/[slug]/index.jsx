@@ -237,7 +237,7 @@ const Slider = ({ image, activeIndex, ...props }) => {
             placement={'left'}
             shape={'bar'}
             className="custom-slider"
-            autoplay
+            autoplay={false}
             autoplayInterval={4000}
             defaultActiveIndex={0}
             activeIndex={sliderActive}
@@ -247,7 +247,15 @@ const Slider = ({ image, activeIndex, ...props }) => {
             {image?.map((item, index) => {
               return (
                 <div style={{ position: 'relative' }} key={[item.src, index].join('_')}>
-                  <ImageBlock alt={item?.src} src={item?.src} objectFit="contain" engine width={720} height={720} />
+                  <ImageBlock
+                    alt={item?.src}
+                    src={item?.src}
+                    objectFit="contain"
+                    engine
+                    width={720}
+                    height={720}
+                    fitImage
+                  />
                 </div>
               )
             })}

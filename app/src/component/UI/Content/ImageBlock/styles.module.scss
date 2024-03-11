@@ -16,16 +16,23 @@
     content: '';
   }
   img {
+    position: absolute;
     height: 100%;
     width: 100%;
-    object-position: center;
-    object-fit: cover;
     border: 0;
-    position: absolute;
     top: 0;
     left: 0;
+    object-position: center;
+    object-fit: cover;
     border-radius: 4px;
     transition: all 0.2s;
+  }
+  &.fitImage {
+    height: 100%;
+    &:before {
+      padding-bottom: unset;
+      height: 100%;
+    }
   }
 }
 

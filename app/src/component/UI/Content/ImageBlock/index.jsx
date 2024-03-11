@@ -15,6 +15,7 @@ const ImageBlock = ({
   objectFit = 'cover',
   modal = false,
   loading,
+  fitImage,
   ...props
 }) => {
   const [img, setImg] = useState(src)
@@ -33,6 +34,7 @@ const ImageBlock = ({
     styles.img,
     className,
     {
+      [styles.fitImage]: fitImage,
       [styles.imgHover]: options?.hover,
       [styles.border]: options?.border,
     },
@@ -61,6 +63,7 @@ const ImageBlock = ({
         width={width || 1024}
         height={height || (1024 / 16) * 9}
         onError={() => setImg('/400.png')}
+        // style
         {...props}
       />
       {modal && (
